@@ -54,6 +54,18 @@
             <artifactId>ruoyi-generator</artifactId>
         </dependency>
 
+        <!-- 设备模块 -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>heli-device</artifactId>
+        </dependency>
+
+        <!-- 排产模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>heli-production</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
