@@ -14,7 +14,7 @@ import lombok.Data;
  */
 @TableName(value ="production_vehicle_type")
 @Data
-public class VehicleType implements Serializable {
+public class VehicleTypeEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

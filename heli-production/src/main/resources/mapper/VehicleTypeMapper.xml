@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.production.mapper.VehicleTypeMapper">
 
-    <resultMap id="VehicleTypeResult" type="com.heli.production.domain.entity.VehicleType">
+    <resultMap id="VehicleTypeResult" type="com.heli.production.domain.entity.VehicleTypeEntity">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="series" column="series" jdbcType="VARCHAR"/>
             <result property="tonnage" column="tonnage" jdbcType="VARCHAR"/>
@@ -17,7 +17,7 @@
         select id, series, tonnage, vehicle_type, main_configuration, standard_equipment from production_vehicle_type
     </sql>
 
-    <select id="selectVehicleTypeList" parameterType="VehicleType" resultMap="VehicleTypeResult">
+    <select id="selectVehicleTypeList" parameterType="VehicleTypeEntity" resultMap="VehicleTypeResult">
         <include refid="selectVehicleTypeVo"/>
         <where>
             <if test="series != null  and series != ''"> and series = #{series}</if>
@@ -33,7 +33,7 @@
         where id = #{id}
     </select>
 
-    <insert id="insertVehicleType" parameterType="VehicleType">
+    <insert id="insertVehicleType" parameterType="VehicleTypeEntity">
         insert into production_vehicle_type
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -53,7 +53,7 @@
         </trim>
     </insert>
 
-    <update id="updateVehicleType" parameterType="VehicleType">
+    <update id="updateVehicleType" parameterType="VehicleTypeEntity">
         update production_vehicle_type
         <trim prefix="SET" suffixOverrides=",">
             <if test="series != null">series = #{series},</if>

@@ -1,7 +1,6 @@
 package com.heli.production.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.heli.production.domain.entity.VehicleType;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.heli.production.service.IVehicleTypeService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.util.List;
 
 @Slf4j
@@ -57,9 +55,9 @@ public class VehicleTypeController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('production:vehicle:list')")
     @GetMapping("/list")
-    public TableDataInfo list(VehicleType vehicleType) {
+    public TableDataInfo list(VehicleTypeEntity vehicleType) {
         startPage();
-        List<VehicleType> list = vehicleTypeService.selectVehicleTypeList(vehicleType);
+        List<VehicleTypeEntity> list = vehicleTypeService.selectVehicleTypeList(vehicleType);
         return getDataTable(list);
     }
 
@@ -69,9 +67,9 @@ public class VehicleTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:vehicle:export')")
     @Log(title = "车型", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, VehicleType vehicleType) {
-        List<VehicleType> list = vehicleTypeService.selectVehicleTypeList(vehicleType);
-        ExcelUtil<VehicleType> util = new ExcelUtil<VehicleType>(VehicleType.class);
+    public void export(HttpServletResponse response, VehicleTypeEntity vehicleType) {
+        List<VehicleTypeEntity> list = vehicleTypeService.selectVehicleTypeList(vehicleType);
+        ExcelUtil<VehicleTypeEntity> util = new ExcelUtil<VehicleTypeEntity>(VehicleTypeEntity.class);
         util.exportExcel(response, list, "车型数据");
     }
 
@@ -90,7 +88,7 @@ public class VehicleTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:vehicle:add')")
     @Log(title = "车型", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody VehicleType vehicleType) {
+    public AjaxResult add(@RequestBody VehicleTypeEntity vehicleType) {
         return toAjax(vehicleTypeService.insertVehicleType(vehicleType));
     }
 
@@ -100,7 +98,7 @@ public class VehicleTypeController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:vehicle:edit')")
     @Log(title = "车型", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody VehicleType vehicleType) {
+    public AjaxResult edit(@RequestBody VehicleTypeEntity vehicleType) {
         return toAjax(vehicleTypeService.updateVehicleType(vehicleType));
     }
 

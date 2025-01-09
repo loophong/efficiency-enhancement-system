@@ -3,8 +3,7 @@ package com.heli.production.Listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.alibaba.fastjson2.JSON;
-import com.heli.production.domain.entity.VehicleType;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.heli.production.mapper.VehicleTypeMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import com.alibaba.excel.metadata.CellExtra;
 import java.util.*;
 
 @Slf4j
-public class VehicleTypeTableListener implements ReadListener<VehicleType> {
+public class VehicleTypeTableListener implements ReadListener<VehicleTypeEntity> {
     private static final int BATCH_COUNT = 200;
 
     private int currentRow = 0;
@@ -26,7 +25,7 @@ public class VehicleTypeTableListener implements ReadListener<VehicleType> {
     @Autowired
     private VehicleTypeMapper vehicleTypeMapper;
 
-    private List<VehicleType> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<VehicleTypeEntity> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
     public VehicleTypeTableListener(VehicleTypeMapper vehicleTypeMapper) {
         this.vehicleTypeMapper = vehicleTypeMapper;
@@ -39,7 +38,7 @@ public class VehicleTypeTableListener implements ReadListener<VehicleType> {
      * @param analysisContext   读取到的Excel内容
      */
     @Override
-    public void invoke(VehicleType registerInfoExcel, AnalysisContext analysisContext) {
+    public void invoke(VehicleTypeEntity registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
 
         log.info("当前读取的数据为:" + registerInfoExcel);

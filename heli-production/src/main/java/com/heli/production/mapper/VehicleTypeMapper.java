@@ -1,6 +1,6 @@
 package com.heli.production.mapper;
 
-import com.heli.production.domain.entity.VehicleType;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -11,14 +11,14 @@ import java.util.List;
 * @createDate 2025-01-08 14:09:05
 * @Entity com.heli.production.domain.ProductionVehicleType
 */
-public interface VehicleTypeMapper extends BaseMapper<VehicleType> {
+public interface VehicleTypeMapper extends BaseMapper<VehicleTypeEntity> {
     /**
      * 查询车型
      *
      * @param id 车型主键
      * @return 车型
      */
-    public VehicleType selectVehicleTypeById(Long id);
+    public VehicleTypeEntity selectVehicleTypeById(Long id);
 
     /**
      * 查询车型列表
@@ -26,7 +26,7 @@ public interface VehicleTypeMapper extends BaseMapper<VehicleType> {
      * @param vehicleType 车型
      * @return 车型集合
      */
-    public List<VehicleType> selectVehicleTypeList(VehicleType vehicleType);
+    public List<VehicleTypeEntity> selectVehicleTypeList(VehicleTypeEntity vehicleType);
 
     /**
      * 新增车型
@@ -34,7 +34,7 @@ public interface VehicleTypeMapper extends BaseMapper<VehicleType> {
      * @param vehicleType 车型
      * @return 结果
      */
-    public int insertVehicleType(VehicleType vehicleType);
+    public int insertVehicleType(VehicleTypeEntity vehicleType);
 
     /**
      * 修改车型
@@ -42,7 +42,7 @@ public interface VehicleTypeMapper extends BaseMapper<VehicleType> {
      * @param vehicleType 车型
      * @return 结果
      */
-    public int updateVehicleType(VehicleType vehicleType);
+    public int updateVehicleType(VehicleTypeEntity vehicleType);
 
     /**
      * 删除车型

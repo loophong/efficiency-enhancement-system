@@ -1,24 +1,18 @@
 package com.heli.production.service.impl;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.excel.ExcelReader;
-import com.alibaba.excel.enums.CellExtraTypeEnum;
-import com.alibaba.excel.read.metadata.ReadSheet;
-import com.alibaba.excel.support.ExcelTypeEnum;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.production.Listener.VehicleTypeTableListener;
-import com.heli.production.domain.entity.VehicleType;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.heli.production.service.IVehicleTypeService;
 import com.heli.production.mapper.VehicleTypeMapper;
-import com.ruoyi.common.core.domain.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -28,7 +22,7 @@ import java.util.List;
  */
 @Service
 @Slf4j
-public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, VehicleType> implements IVehicleTypeService {
+public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, VehicleTypeEntity> implements IVehicleTypeService {
 
     @Autowired
     private VehicleTypeMapper vehicleTypeMapper;
@@ -40,7 +34,7 @@ public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, Vehic
      * @return 车型
      */
     @Override
-    public VehicleType selectVehicleTypeById(Long id) {
+    public VehicleTypeEntity selectVehicleTypeById(Long id) {
         return vehicleTypeMapper.selectVehicleTypeById(id);
     }
 
@@ -51,7 +45,7 @@ public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, Vehic
      * @return 车型
      */
     @Override
-    public List<VehicleType> selectVehicleTypeList(VehicleType vehicleType) {
+    public List<VehicleTypeEntity> selectVehicleTypeList(VehicleTypeEntity vehicleType) {
         return vehicleTypeMapper.selectVehicleTypeList(vehicleType);
     }
 
@@ -62,7 +56,7 @@ public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, Vehic
      * @return 结果
      */
     @Override
-    public int insertVehicleType(VehicleType vehicleType) {
+    public int insertVehicleType(VehicleTypeEntity vehicleType) {
         return vehicleTypeMapper.insertVehicleType(vehicleType);
     }
 
@@ -73,7 +67,7 @@ public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, Vehic
      * @return 结果
      */
     @Override
-    public int updateVehicleType(VehicleType vehicleType) {
+    public int updateVehicleType(VehicleTypeEntity vehicleType) {
         return vehicleTypeMapper.updateVehicleType(vehicleType);
     }
 
@@ -110,10 +104,10 @@ public class VehicleTypeServiceImpl extends ServiceImpl<VehicleTypeMapper, Vehic
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
             try {
-                EasyExcel.read(excelFile.getInputStream(), VehicleType.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 2-3.8t 内燃车").doRead();
-                EasyExcel.read(excelFile.getInputStream(), VehicleType.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 4-10t 内燃车").doRead();
-                EasyExcel.read(excelFile.getInputStream(), VehicleType.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 1-3.8t 电动车").doRead();
-                EasyExcel.read(excelFile.getInputStream(), VehicleType.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("外销车型 ").doRead();
+                EasyExcel.read(excelFile.getInputStream(), VehicleTypeEntity.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 2-3.8t 内燃车").doRead();
+                EasyExcel.read(excelFile.getInputStream(), VehicleTypeEntity.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 4-10t 内燃车").doRead();
+                EasyExcel.read(excelFile.getInputStream(), VehicleTypeEntity.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("内销 1-3.8t 电动车").doRead();
+                EasyExcel.read(excelFile.getInputStream(), VehicleTypeEntity.class, new VehicleTypeTableListener(vehicleTypeMapper)).headRowNumber(2).sheet("外销车型 ").doRead();
                 log.info("读取文件成功: {}", fileName);
 
             } catch (Exception e) {

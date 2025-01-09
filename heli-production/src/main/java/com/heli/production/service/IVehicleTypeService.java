@@ -1,10 +1,9 @@
 package com.heli.production.service;
 
-import com.heli.production.domain.entity.VehicleType;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -12,14 +11,14 @@ import java.util.List;
  * @description 针对表【production_vehicle_type】的数据库操作Service
  * @createDate 2025-01-08 14:09:05
  */
-public interface IVehicleTypeService extends IService<VehicleType> {
+public interface IVehicleTypeService extends IService<VehicleTypeEntity> {
     /**
      * 查询车型
      *
      * @param id 车型主键
      * @return 车型
      */
-    public VehicleType selectVehicleTypeById(Long id);
+    public VehicleTypeEntity selectVehicleTypeById(Long id);
 
     /**
      * 查询车型列表
@@ -27,7 +26,7 @@ public interface IVehicleTypeService extends IService<VehicleType> {
      * @param vehicleType 车型
      * @return 车型集合
      */
-    public List<VehicleType> selectVehicleTypeList(VehicleType vehicleType);
+    public List<VehicleTypeEntity> selectVehicleTypeList(VehicleTypeEntity vehicleType);
 
     /**
      * 新增车型
@@ -35,7 +34,7 @@ public interface IVehicleTypeService extends IService<VehicleType> {
      * @param vehicleType 车型
      * @return 结果
      */
-    public int insertVehicleType(VehicleType vehicleType);
+    public int insertVehicleType(VehicleTypeEntity vehicleType);
 
     /**
      * 修改车型
@@ -43,7 +42,7 @@ public interface IVehicleTypeService extends IService<VehicleType> {
      * @param vehicleType 车型
      * @return 结果
      */
-    public int updateVehicleType(VehicleType vehicleType);
+    public int updateVehicleType(VehicleTypeEntity vehicleType);
 
     /**
      * 批量删除车型
