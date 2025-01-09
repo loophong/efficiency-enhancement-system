@@ -16,7 +16,7 @@ import java.util.Date;
  */
 @Data
 @TableName(value ="production_main_plan_table")
-public class MainPlanTable implements Serializable {
+public class MainPlanTableEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

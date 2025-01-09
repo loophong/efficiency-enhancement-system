@@ -1,7 +1,8 @@
 package com.heli.production.service;
 
-import com.heli.production.domain.entity.MainPlanTable;
+import com.heli.production.domain.entity.MainPlanTableEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -10,14 +11,14 @@ import java.util.List;
  * @description 针对表【production_main_plan_table】的数据库操作Service
  * @createDate 2025-01-07 17:57:23
  */
-public interface IMainPlanTableService extends IService<MainPlanTable> {
+public interface IMainPlanTableService extends IService<MainPlanTableEntity> {
     /**
      * 查询主计划表
      *
      * @param id 主计划表主键
      * @return 主计划表
      */
-    public MainPlanTable selectMainPlanTableById(String id);
+    public MainPlanTableEntity selectMainPlanTableById(String id);
 
     /**
      * 查询主计划表列表
@@ -25,7 +26,7 @@ public interface IMainPlanTableService extends IService<MainPlanTable> {
      * @param mainPlanTable 主计划表
      * @return 主计划表集合
      */
-    public List<MainPlanTable> selectMainPlanTableList(MainPlanTable mainPlanTable);
+    public List<MainPlanTableEntity> selectMainPlanTableList(MainPlanTableEntity mainPlanTable);
 
     /**
      * 新增主计划表
@@ -33,7 +34,7 @@ public interface IMainPlanTableService extends IService<MainPlanTable> {
      * @param mainPlanTable 主计划表
      * @return 结果
      */
-    public int insertMainPlanTable(MainPlanTable mainPlanTable);
+    public int insertMainPlanTable(MainPlanTableEntity mainPlanTable);
 
     /**
      * 修改主计划表
@@ -41,7 +42,7 @@ public interface IMainPlanTableService extends IService<MainPlanTable> {
      * @param mainPlanTable 主计划表
      * @return 结果
      */
-    public int updateMainPlanTable(MainPlanTable mainPlanTable);
+    public int updateMainPlanTable(MainPlanTableEntity mainPlanTable);
 
     /**
      * 批量删除主计划表
@@ -58,4 +59,6 @@ public interface IMainPlanTableService extends IService<MainPlanTable> {
      * @return 结果
      */
     public int deleteMainPlanTableById(String id);
+
+    void readSalaryExcelToDB(String fileName, MultipartFile excelFile);
 }

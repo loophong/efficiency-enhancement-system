@@ -1,11 +1,15 @@
 package com.heli.production.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.heli.production.domain.entity.MainPlanTable;
+import com.heli.production.Listener.MainPlanTableListener;
+import com.heli.production.domain.entity.MainPlanTableEntity;
 import com.heli.production.service.IMainPlanTableService;
 import com.heli.production.mapper.MainPlanTableMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,8 +18,9 @@ import java.util.List;
  * @description 针对表【production_main_plan_table】的数据库操作Service实现
  * @createDate 2025-01-07 17:57:23
  */
+@Slf4j
 @Service
-public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, MainPlanTable> implements IMainPlanTableService {
+public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, MainPlanTableEntity> implements IMainPlanTableService {
     @Autowired
     private MainPlanTableMapper mainPlanTableMapper;
 
@@ -26,7 +31,7 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
      * @return 主计划表
      */
     @Override
-    public MainPlanTable selectMainPlanTableById(String id) {
+    public MainPlanTableEntity selectMainPlanTableById(String id) {
         return mainPlanTableMapper.selectMainPlanTableById(id);
     }
 
@@ -37,7 +42,7 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
      * @return 主计划表
      */
     @Override
-    public List<MainPlanTable> selectMainPlanTableList(MainPlanTable mainPlanTable) {
+    public List<MainPlanTableEntity> selectMainPlanTableList(MainPlanTableEntity mainPlanTable) {
         return mainPlanTableMapper.selectMainPlanTableList(mainPlanTable);
     }
 
@@ -48,7 +53,7 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
      * @return 结果
      */
     @Override
-    public int insertMainPlanTable(MainPlanTable mainPlanTable) {
+    public int insertMainPlanTable(MainPlanTableEntity mainPlanTable) {
         return mainPlanTableMapper.insertMainPlanTable(mainPlanTable);
     }
 
@@ -59,7 +64,7 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
      * @return 结果
      */
     @Override
-    public int updateMainPlanTable(MainPlanTable mainPlanTable) {
+    public int updateMainPlanTable(MainPlanTableEntity mainPlanTable) {
         return mainPlanTableMapper.updateMainPlanTable(mainPlanTable);
     }
 
@@ -83,6 +88,29 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
     @Override
     public int deleteMainPlanTableById(String id) {
         return mainPlanTableMapper.deleteMainPlanTableById(id);
+    }
+
+    @Override
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
+        try {
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+
+            try {
+
+                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper)).sheet().doRead();
+                log.info("读取文件成功: {}", fileName);
+
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+
+//            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+//            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
     }
 }
 

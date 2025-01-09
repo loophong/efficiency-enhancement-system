@@ -2,11 +2,14 @@ package com.heli.production.controller;
 
 import java.util.List;
 
-import com.heli.production.domain.entity.MainPlanTable;
+import com.heli.production.domain.entity.MainPlanTableEntity;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +24,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.heli.production.service.IMainPlanTableService;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 主计划表Controller
@@ -28,20 +32,37 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author hong
  * @date 2025-01-09
  */
+@Slf4j
 @RestController
 @RequestMapping("/production/mainPlanTable")
 public class MainPlanTableController extends BaseController {
     @Autowired
     private IMainPlanTableService mainPlanTableService;
 
+    @Log(title = "[主计划表]上传", businessType = BusinessType.INSERT)
+//    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
+    @PostMapping("/import")
+    @Transactional
+    public void importTable(MultipartFile excelFile) {
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+
+            mainPlanTableService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
+
     /**
      * 查询主计划表列表
      */
     @PreAuthorize("@ss.hasPermi('production:mainPlanTable:list')")
     @GetMapping("/list")
-    public TableDataInfo list(MainPlanTable mainPlanTable) {
+    public TableDataInfo list(MainPlanTableEntity mainPlanTable) {
         startPage();
-        List<MainPlanTable> list = mainPlanTableService.selectMainPlanTableList(mainPlanTable);
+        List<MainPlanTableEntity> list = mainPlanTableService.selectMainPlanTableList(mainPlanTable);
         return getDataTable(list);
     }
 
@@ -51,9 +72,9 @@ public class MainPlanTableController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:mainPlanTable:export')")
     @Log(title = "主计划表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, MainPlanTable mainPlanTable) {
-        List<MainPlanTable> list = mainPlanTableService.selectMainPlanTableList(mainPlanTable);
-        ExcelUtil<MainPlanTable> util = new ExcelUtil<MainPlanTable>(MainPlanTable.class);
+    public void export(HttpServletResponse response, MainPlanTableEntity mainPlanTable) {
+        List<MainPlanTableEntity> list = mainPlanTableService.selectMainPlanTableList(mainPlanTable);
+        ExcelUtil<MainPlanTableEntity> util = new ExcelUtil<MainPlanTableEntity>(MainPlanTableEntity.class);
         util.exportExcel(response, list, "主计划表数据");
     }
 
@@ -72,7 +93,7 @@ public class MainPlanTableController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:mainPlanTable:add')")
     @Log(title = "主计划表", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody MainPlanTable mainPlanTable) {
+    public AjaxResult add(@RequestBody MainPlanTableEntity mainPlanTable) {
         return toAjax(mainPlanTableService.insertMainPlanTable(mainPlanTable));
     }
 
@@ -82,7 +103,7 @@ public class MainPlanTableController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:mainPlanTable:edit')")
     @Log(title = "主计划表", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody MainPlanTable mainPlanTable) {
+    public AjaxResult edit(@RequestBody MainPlanTableEntity mainPlanTable) {
         return toAjax(mainPlanTableService.updateMainPlanTable(mainPlanTable));
     }
 
