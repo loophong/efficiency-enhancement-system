@@ -21,49 +21,49 @@ public class WorkdayServiceImpl extends ServiceImpl<WorkdayMapper, WorkdayEntity
     @Autowired
     private WorkdayMapper workdayMapper;
 
-    /**
-     * 查询工作日
-     *
-     * @param date 工作日主键
-     * @return 工作日
-     */
-    @Override
-    public WorkdayEntity selectWorkdayByDate(Date date) {
-        return workdayMapper.selectWorkdayByDate(date);
-    }
-
-    /**
-     * 查询工作日列表
-     *
-     * @param workday 工作日
-     * @return 工作日
-     */
-    @Override
-    public List<WorkdayEntity> selectWorkdayList(WorkdayEntity workday) {
-        return workdayMapper.selectWorkdayList(workday);
-    }
-
-    /**
-     * 新增工作日
-     *
-     * @param workday 工作日
-     * @return 结果
-     */
-    @Override
-    public int insertWorkday(WorkdayEntity workday) {
-        return workdayMapper.insertWorkday(workday);
-    }
-
-    /**
-     * 修改工作日
-     *
-     * @param workday 工作日
-     * @return 结果
-     */
-    @Override
-    public int updateWorkday(WorkdayEntity workday) {
-        return workdayMapper.updateWorkday(workday);
-    }
+//    /**
+//     * 查询工作日
+//     *
+//     * @param date 工作日主键
+//     * @return 工作日
+//     */
+//    @Override
+//    public WorkdayEntity selectWorkdayByDate(Date date) {
+//        return workdayMapper.selectWorkdayByDate(date);
+//    }
+//
+//    /**
+//     * 查询工作日列表
+//     *
+//     * @param workday 工作日
+//     * @return 工作日
+//     */
+//    @Override
+//    public List<WorkdayEntity> selectWorkdayList(WorkdayEntity workday) {
+//        return workdayMapper.selectWorkdayList(workday);
+//    }
+//
+//    /**
+//     * 新增工作日
+//     *
+//     * @param workday 工作日
+//     * @return 结果
+//     */
+//    @Override
+//    public int insertWorkday(WorkdayEntity workday) {
+//        return workdayMapper.insertWorkday(workday);
+//    }
+//
+//    /**
+//     * 修改工作日
+//     *
+//     * @param workday 工作日
+//     * @return 结果
+//     */
+//    @Override
+//    public int updateWorkday(WorkdayEntity workday) {
+//        return workdayMapper.updateWorkday(workday);
+//    }
 
 }
 

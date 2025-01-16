@@ -14,36 +14,36 @@ import java.util.List;
  * @createDate 2025-01-09 17:55:18
  */
 public interface IWorkdayService extends IService<WorkdayEntity> {
-    /**
-     * 查询工作日
-     *
-     * @param date 工作日主键
-     * @return 工作日
-     */
-    public WorkdayEntity selectWorkdayByDate(Date date);
-
-    /**
-     * 查询工作日列表
-     *
-     * @param workday 工作日
-     * @return 工作日集合
-     */
-    public List<WorkdayEntity> selectWorkdayList(WorkdayEntity workday);
-
-    /**
-     * 新增工作日
-     *
-     * @param workday 工作日
-     * @return 结果
-     */
-    public int insertWorkday(WorkdayEntity workday);
-
-    /**
-     * 修改工作日
-     *
-     * @param workday 工作日
-     * @return 结果
-     */
-    public int updateWorkday(WorkdayEntity workday);
+//    /**
+//     * 查询工作日
+//     *
+//     * @param date 工作日主键
+//     * @return 工作日
+//     */
+//    public WorkdayEntity selectWorkdayByDate(Date date);
+//
+//    /**
+//     * 查询工作日列表
+//     *
+//     * @param workday 工作日
+//     * @return 工作日集合
+//     */
+//    public List<WorkdayEntity> selectWorkdayList(WorkdayEntity workday);
+//
+//    /**
+//     * 新增工作日
+//     *
+//     * @param workday 工作日
+//     * @return 结果
+//     */
+//    public int insertWorkday(WorkdayEntity workday);
+//
+//    /**
+//     * 修改工作日
+//     *
+//     * @param workday 工作日
+//     * @return 结果
+//     */
+//    public int updateWorkday(WorkdayEntity workday);
 
 }

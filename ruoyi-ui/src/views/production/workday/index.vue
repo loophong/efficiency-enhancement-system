@@ -1,6 +1,8 @@
 <template>
+
   <div>
     <div>
+
       <el-calendar v-model="value" first-day-of-week="1">
         <template #date-cell="{ data }">
           <div @contextmenu="(event) => rightClick(data.day, event)">
@@ -9,7 +11,7 @@
               <span v-if="isRestDay(data.day)" class="rest">休</span>
             </div>
             <div style="display: flex; justify-content: center;">
-              <el-tag type="success">已排产</el-tag>
+              <el-tag  v-if="isProduction(data.day)"  type="success">已排产</el-tag>
             </div>
           </div>
         </template>
@@ -18,37 +20,36 @@
 
     <div id="contextmenu" v-show="menuVisible" class="menu">
       <div class="contextmenu__item" @click="orderScheduling">订单排产</div>
+      <div class="contextmenu__item" @click="cancelScheduling">取消排产</div>
       <div class="contextmenu__item" @click="workdayConvert">设置工作日/休息日</div>
     </div>
+
 
   </div>
 
 </template>
 
 <script setup name="Workday">
-import {listWorkday, setWorkday} from "@/api/production/workday";
+import {listWorkday, getWorkday, setWorkday} from "@/api/production/workday";
 
-
+// 日历的日期
 const value = ref(new Date())
-const dialogVisible = ref(false);
+// 右键菜单是否显示
 const menuVisible = ref(false);
 
 
 const {proxy} = getCurrentInstance();
 
-const workdayList = ref([]);
-const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
-const title = ref("");
 
-//休息日列表
+const loading = ref(true);
+
+// 休息日列表
 const restDays = ref([]);
-// 记忆右击的日期
+
+// 已排产日期
+const productionDays = ref([]);
+
+// 右键选择的日期
 let selectDate = ref("");
 
 const data = reactive({
@@ -74,20 +75,33 @@ const {queryParams, form, rules} = toRefs(data);
 /** 查询工作日列表 */
 function getList() {
   loading.value = true;
-  listWorkday().then(response => {
-    restDays.value = response.rows.map(row => row.date.split('T')[0]);
+  listWorkday(queryParams.value).then(response => {
+    restDays.value = response.rows
+        .filter(row => row.status === 0)
+        .map(row => row.date.split('T')[0]);
+
+    productionDays.value = response.rows
+        .filter(row => row.productStatus === 1)
+        .map(row => row.date.split('T')[0]);
     loading.value = false;
   });
 }
+
+
 
 /** 判断是否为休息日 */
 function isRestDay(date) {
   return restDays.value.includes(date);
 }
 
-/**
- * 右击日期
- */
+/** 判断是否为休息日 */
+function isProduction(date) {
+  return productionDays.value.includes(date);
+}
+
+
+
+
 function rightClick(date, event) {
 
   menuVisible.value = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
@@ -99,7 +113,8 @@ function rightClick(date, event) {
 
   // Set the position of the menu based on the mouse event coordinates
   const menu = document.getElementById('contextmenu');
-
+  // menu.style.top = `${event.clientY }px`;
+  // menu.style.left = `${event.clientX }px`;
   menu.style.top = `${event.clientY - 90}px`;
   menu.style.left = `${event.clientX - 200}px`;
 
@@ -107,7 +122,7 @@ function rightClick(date, event) {
 }
 
 /**
- * 左击关闭操作菜单
+ * 左键隐藏操作列表
  */
 onMounted(() => {
   document.addEventListener('click', handleDocumentClick);
@@ -150,6 +165,12 @@ getList();
 
 
 <style>
+
+.is-selected {
+  color: #1989fa;
+}
+
+
 .date-content {
   height: 40px;
   display: flex;

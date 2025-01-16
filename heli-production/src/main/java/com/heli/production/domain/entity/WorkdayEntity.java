@@ -29,6 +29,10 @@ public class WorkdayEntity implements Serializable {
      * 状态：1、工作日  0、休息日
      */
     private Integer status;
+    /**
+     * 状态：0、未排产 1、已排产
+     */
+    private Integer productStatus;
 }
 
 

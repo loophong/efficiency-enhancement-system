@@ -28,19 +28,11 @@ public class WorkdayController extends BaseController {
      */
     @GetMapping("/list")
     public TableDataInfo list() {
-        List<WorkdayEntity> list = workdayService.list(new LambdaQueryWrapper<WorkdayEntity>().eq(WorkdayEntity::getStatus, 0));
+        List<WorkdayEntity> list = workdayService.list();
         log.info("list: {}", list);
         return getDataTable(list);
     }
 
-
-    /**
-     * 获取工作日详细信息
-     */
-    @GetMapping(value = "/{date}")
-    public AjaxResult getInfo(@PathVariable("date") Date date) {
-        return success(workdayService.selectWorkdayByDate(date));
-    }
 
     /**
      * 新增/修改工作日
@@ -50,8 +42,5 @@ public class WorkdayController extends BaseController {
     public AjaxResult add(@RequestBody WorkdayEntity workday) {
         return toAjax(workdayService.saveOrUpdate(workday));
     }
-
-
-
 
 }
