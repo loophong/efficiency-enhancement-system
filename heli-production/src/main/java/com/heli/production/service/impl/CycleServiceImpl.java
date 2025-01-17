@@ -1,11 +1,21 @@
 package com.heli.production.service.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.heli.production.Listener.CycleTableListener;
+import com.heli.production.Listener.MainPlanTableListener;
+import com.heli.production.Listener.VehicleTypeTableListener;
 import com.heli.production.domain.entity.CycleEntity;
+import com.heli.production.domain.entity.MainPlanTableEntity;
+import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.heli.production.service.ICycleService;
 import com.heli.production.mapper.CycleMapper;
+import com.ruoyi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,10 +24,11 @@ import java.util.List;
  * @description 针对表【production_cycle(产能表)】的数据库操作Service实现
  * @createDate 2025-01-17 09:33:12
  */
+@Slf4j
 @Service
 public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> implements ICycleService {
     @Autowired
-    private CycleMapper productionCycleMapper;
+    private CycleMapper cycleMapper;
 
     /**
      * 查询产能
@@ -27,7 +38,7 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public CycleEntity selectProductionCycleById(Long id) {
-        return productionCycleMapper.selectProductionCycleById(id);
+        return cycleMapper.selectProductionCycleById(id);
     }
 
     /**
@@ -38,7 +49,7 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public List<CycleEntity> selectProductionCycleList(CycleEntity productionCycle) {
-        return productionCycleMapper.selectProductionCycleList(productionCycle);
+        return cycleMapper.selectProductionCycleList(productionCycle);
     }
 
     /**
@@ -49,7 +60,7 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public int insertProductionCycle(CycleEntity productionCycle) {
-        return productionCycleMapper.insertProductionCycle(productionCycle);
+        return cycleMapper.insertProductionCycle(productionCycle);
     }
 
     /**
@@ -60,7 +71,7 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public int updateProductionCycle(CycleEntity productionCycle) {
-        return productionCycleMapper.updateProductionCycle(productionCycle);
+        return cycleMapper.updateProductionCycle(productionCycle);
     }
 
     /**
@@ -71,7 +82,7 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public int deleteProductionCycleByIds(Long[] ids) {
-        return productionCycleMapper.deleteProductionCycleByIds(ids);
+        return cycleMapper.deleteProductionCycleByIds(ids);
     }
 
     /**
@@ -82,8 +93,33 @@ public class CycleServiceImpl extends ServiceImpl<CycleMapper, CycleEntity> impl
      */
     @Override
     public int deleteProductionCycleById(Long id) {
-        return productionCycleMapper.deleteProductionCycleById(id);
+        return cycleMapper.deleteProductionCycleById(id);
     }
+
+    @Override
+    public R readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
+        try {
+            // 清空表
+            log.info("清空数据库");
+            this.remove(new QueryWrapper<>());
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+
+            try {
+                EasyExcel.read(excelFile.getInputStream(), CycleEntity.class, new CycleTableListener(cycleMapper)).sheet("在产车型").doRead();
+                log.info("读取文件成功: {}", fileName);
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+
+            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
+
 }
 
 

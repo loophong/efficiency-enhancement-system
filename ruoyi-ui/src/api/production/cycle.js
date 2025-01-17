@@ -42,3 +42,16 @@ export function delCycle(id) {
         method: 'delete'
     })
 }
+
+
+// 上传生产周期表
+export function importFile(formData) {
+    return request({
+        url: '/production/cycle/import',
+        method: 'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}

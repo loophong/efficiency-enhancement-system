@@ -2,6 +2,8 @@ package com.heli.production.service;
 
 import com.heli.production.domain.entity.CycleEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.common.core.domain.R;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -58,4 +60,6 @@ public interface ICycleService extends IService<CycleEntity> {
      * @return 结果
      */
     public int deleteProductionCycleById(Long id);
+
+    R readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
 }
