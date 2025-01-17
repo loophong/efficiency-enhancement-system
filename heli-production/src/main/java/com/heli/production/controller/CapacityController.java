@@ -40,6 +40,7 @@ public class CapacityController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:capacity:list')")
     @GetMapping("/list")
     public TableDataInfo list(CapacityEntity capacityEntity) {
+        //test
         startPage();
         List<CapacityEntity> list = capacityService.selectCapacityList(capacityEntity);
         return getDataTable(list);
