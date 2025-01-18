@@ -14,6 +14,7 @@ import java.util.List;
  * @createDate 2025-01-09 17:55:18
  */
 public interface IWorkdayService extends IService<WorkdayEntity> {
+    Date getLatestOnlineDate(Date systemDeliveryDate, Integer productionCycle);
 //    /**
 //     * 查询工作日
 //     *

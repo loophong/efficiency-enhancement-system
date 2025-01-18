@@ -9,11 +9,13 @@ import com.heli.production.service.ICycleService;
 import com.heli.production.service.IMainPlanTableService;
 import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.mapper.OrderSchedulingMapper;
+import com.heli.production.service.IWorkdayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +36,9 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
 
     @Autowired
     private ICycleService cycleService;
+
+    @Autowired
+    private IWorkdayService workdayService;
 
     /**
      * 查询订单信息列表
@@ -70,6 +75,8 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
 
     @Override
     public void updateOrderData(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
         List<MainPlanTableEntity> list = mainPlanTableService.list(new LambdaQueryWrapper<MainPlanTableEntity>().eq(MainPlanTableEntity::getUploadDate, date));
 
         for (MainPlanTableEntity mainPlanTableEntity : list) {
@@ -89,11 +96,14 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
                 // 计算最晚上线时间
                 Date systemDeliveryDate = orderSchedulingEntity.getSystemDeliveryDate();
                 Integer productionCycle = cycle.getProductionCycle();
-                Date lastOnlineDate = new Date(systemDeliveryDate.getTime() - productionCycle * 24 * 60 * 60 * 1000);
+
+                // 计算最晚上线时间
+                Date lastOnlineDate = workdayService.getLatestOnlineDate(systemDeliveryDate, productionCycle);
                 orderSchedulingEntity.setLatestOnlineDate(lastOnlineDate);
-                log.info("系统交付日期: {}", systemDeliveryDate);
+
+                log.info("系统交付日期: {}", sdf.format(systemDeliveryDate));
                 log.info("生产周期: {}", productionCycle);
-                log.info("最晚上线时间: {}", lastOnlineDate);
+                log.info("最晚上线时间: {}", sdf.format(lastOnlineDate));
 
                 // 判断是否超期
 
@@ -101,7 +111,7 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
                 String remarks = orderSchedulingEntity.getRemarks();
                 if (remarks != null && (remarks.contains("加急") || remarks.contains("特急"))) {
                     orderSchedulingEntity.setIsUrgent(1);
-                }else {
+                } else {
                     orderSchedulingEntity.setIsUrgent(0);
                 }
                 // 设置产能类型
