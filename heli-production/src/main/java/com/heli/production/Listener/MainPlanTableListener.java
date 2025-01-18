@@ -8,6 +8,7 @@ import com.heli.production.mapper.MainPlanTableMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -19,10 +20,13 @@ public class MainPlanTableListener implements ReadListener<MainPlanTableEntity> 
     @Autowired
     private MainPlanTableMapper mainPlanTableMapper;
 
+    private Date uploadDate;
+
     private List<MainPlanTableEntity> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public MainPlanTableListener(MainPlanTableMapper mainPlanTableMapper) {
+    public MainPlanTableListener(MainPlanTableMapper mainPlanTableMapper, Date uploadDate) {
         this.mainPlanTableMapper = mainPlanTableMapper;
+        this.uploadDate = uploadDate;
     }
 
     /**
@@ -38,6 +42,7 @@ public class MainPlanTableListener implements ReadListener<MainPlanTableEntity> 
         log.info("当前读取的数据为:" + registerInfoExcel);
 
         if (registerInfoExcel.getOrderNumber() != null){
+            registerInfoExcel.setUploadDate(uploadDate);
             cacheDataList.add(registerInfoExcel);
         }
 

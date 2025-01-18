@@ -3,6 +3,7 @@ package com.heli.production.service;
 import com.heli.production.domain.entity.OrderSchedulingEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,4 +37,6 @@ public interface IOrderSchedulingService extends IService<OrderSchedulingEntity>
      * @return 结果
      */
     public int deleteOrderSchedulingById(Long id);
+
+    void updateOrderData(Date date);
 }

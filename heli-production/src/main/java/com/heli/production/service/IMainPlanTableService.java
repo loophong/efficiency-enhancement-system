@@ -4,6 +4,7 @@ import com.heli.production.domain.entity.MainPlanTableEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,5 +61,5 @@ public interface IMainPlanTableService extends IService<MainPlanTableEntity> {
      */
     public int deleteMainPlanTableById(String id);
 
-    void readSalaryExcelToDB(String fileName, MultipartFile excelFile);
+    void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadDate);
 }

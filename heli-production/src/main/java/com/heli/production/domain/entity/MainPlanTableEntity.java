@@ -159,4 +159,12 @@ public class MainPlanTableEntity implements Serializable {
     @ExcelProperty(value ="采购回复到货时间")
     private Date procurementArrivalDate;
 
+    /**
+     * 上传时间
+     */
+    @ExcelIgnore
+    private Date uploadDate;
+
+
+
 }

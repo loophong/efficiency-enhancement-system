@@ -1,6 +1,7 @@
 package com.heli.production.service.impl;
 
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.production.Listener.MainPlanTableListener;
 import com.heli.production.domain.entity.MainPlanTableEntity;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -91,14 +93,15 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
     }
 
     @Override
-    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadDate) {
         try {
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
+            this.remove(new LambdaQueryWrapper<MainPlanTableEntity>().eq(MainPlanTableEntity::getUploadDate, uploadDate));
 
             try {
 
-                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper)).sheet().doRead();
+                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper,uploadDate)).sheet().doRead();
                 log.info("读取文件成功: {}", fileName);
 
             } catch (Exception e) {

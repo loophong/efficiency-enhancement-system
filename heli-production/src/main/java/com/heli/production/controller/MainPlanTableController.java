@@ -1,8 +1,10 @@
 package com.heli.production.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import com.heli.production.domain.entity.MainPlanTableEntity;
+import com.heli.production.service.IOrderSchedulingService;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,16 +40,21 @@ import org.springframework.web.multipart.MultipartFile;
 public class MainPlanTableController extends BaseController {
     @Autowired
     private IMainPlanTableService mainPlanTableService;
+    @Autowired
+    private IOrderSchedulingService orderSchedulingService;
 
     @Log(title = "[主计划表]上传", businessType = BusinessType.INSERT)
 //    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
     @PostMapping("/import")
     @Transactional
-    public void importTable(MultipartFile excelFile) {
+    public void importTable(Date date, MultipartFile excelFile) {
+        log.info("传入的date为 " + date);
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {
 
-            mainPlanTableService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            mainPlanTableService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, date);
+
+            orderSchedulingService.updateOrderData(date);
 
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());

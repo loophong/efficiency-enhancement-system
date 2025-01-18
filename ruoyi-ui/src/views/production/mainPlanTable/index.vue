@@ -402,6 +402,16 @@
           <span style="color: rgb(68, 140, 39);">主计划表</span>
           <br>
         </el-form-item>
+        <el-form-item label="上传日期：">
+          <!--    时间选择器      -->
+          <el-date-picker clearable
+                          v-model="uploadDate"
+                          type="date"
+                          value-format="YYYY-MM-DD"
+                          placeholder="请选择上传日期">
+          </el-date-picker>
+          <br>
+        </el-form-item>
         <el-form-item label="上传文件：">
           <input type="file" ref="inputFile" @change="checkFile"/>
           <br>
@@ -446,6 +456,7 @@ const title = ref("");
 const uploadDialogVisible = ref(false);
 const isLoading = ref(false);
 const inputFile = ref(null);
+const uploadDate = ref('');
 
 const data = reactive({
   form: {},
@@ -616,6 +627,7 @@ function handleImport() {
 function resetUpload() {
   if (inputFile.value) {
     inputFile.value.value = "";
+    uploadDate.value.value = "";
   }
 }
 
@@ -631,8 +643,10 @@ function uploadFile() {
     isLoading.value = true;
     const file = inputFile.value.files[0];
     console.log(inputFile.value);
+    console.log("时间："+uploadDate.value);
     console.log(file);
     const formData = new FormData();
+    formData.append('date', uploadDate.value);
     formData.append('excelFile', file);
     importFile(formData).then(() => {
       proxy.$modal.msgSuccess("导入成功");
