@@ -1,5 +1,8 @@
 import request from '@/utils/request'
 
+
+
+
 // 查询订单信息列表
 export function listScheduling(query) {
     return request({
@@ -40,5 +43,12 @@ export function delScheduling(id) {
     return request({
         url: '/production/scheduling/' + id,
         method: 'delete'
+    })
+}
+
+export function getUrgentOrder() {
+    return request({
+        url: '/production/scheduling/getUrgentOrder',
+        method: 'get'
     })
 }

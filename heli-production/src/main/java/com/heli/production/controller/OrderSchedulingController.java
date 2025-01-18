@@ -1,5 +1,6 @@
 package com.heli.production.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.entity.OrderSchedulingEntity;
 import com.heli.production.service.IOrderSchedulingService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,6 +33,22 @@ import java.util.List;
 public class OrderSchedulingController extends BaseController {
     @Autowired
     private IOrderSchedulingService orderSchedulingService;
+
+    /**
+     * @description: 获取未排产的加急订单列表
+     * @author: hong
+     * @date: 2025/1/18 16:28
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
+    @GetMapping("/getUrgentOrder")
+    public AjaxResult getUrgentOrderList() {
+        List<OrderSchedulingEntity> list = orderSchedulingService.list(
+                new LambdaQueryWrapper<OrderSchedulingEntity>()
+                        .eq(OrderSchedulingEntity::getIsUrgent, 1)
+                        .eq(OrderSchedulingEntity::getIsScheduling, 0));
+        return success(list);
+    }
 
     /**
      * 查询订单信息列表
