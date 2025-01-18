@@ -42,3 +42,11 @@ export function delCapacity(id) {
         method: 'delete'
     })
 }
+
+// 获取全部产能
+export function all() {
+    return request({
+        url: '/production/capacity/all',
+        method: 'get'
+    })
+}

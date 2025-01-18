@@ -35,6 +35,18 @@ public class CapacityController extends BaseController {
     private ICapacityService capacityService;
 
     /**
+     * @description: 排产时，获取全部产能列表
+     * @author: hong
+     * @date: 2025/1/18 14:51
+     * @version: 1.0
+     */
+    @GetMapping("/all")
+    public AjaxResult getAllCapacity() {
+        List<CapacityEntity> list = capacityService.list();
+        return AjaxResult.success(list);
+    }
+
+    /**
      * 查询产能列表
      */
     @PreAuthorize("@ss.hasPermi('production:capacity:list')")
