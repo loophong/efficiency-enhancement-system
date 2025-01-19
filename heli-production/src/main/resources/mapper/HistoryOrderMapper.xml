@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.HistoryOrderMapper">
+
+    <resultMap type="HistoryOrderEntity" id="HistoryOrderResult">
+        <result property="id" column="id"/>
+        <result property="branch" column="branch"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="orderDate" column="order_date"/>
+        <result property="vehicleModel" column="vehicle_model"/>
+        <result property="quantity" column="quantity"/>
+        <result property="orderYear" column="order_year"/>
+    </resultMap>
+
+    <sql id="selectHistoryOrderVo">
+        select id, branch, order_number, order_date, vehicle_model, quantity, order_year
+        from production_history_order
+    </sql>
+
+    <select id="selectHistoryOrderList" parameterType="HistoryOrderEntity" resultMap="HistoryOrderResult">
+        <include refid="selectHistoryOrderVo"/>
+        <where>
+            <if test="branch != null  and branch != ''">and branch = #{branch}</if>
+            <if test="orderNumber != null  and orderNumber != ''">and order_number = #{orderNumber}</if>
+            <if test="orderDate != null ">and order_date = #{orderDate}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
+            <if test="quantity != null ">and quantity = #{quantity}</if>
+            <if test="orderYear != null ">and order_year = #{orderYear}</if>
+        </where>
+    </select>
+
+    <select id="selectHistoryOrderById" parameterType="String" resultMap="HistoryOrderResult">
+        <include refid="selectHistoryOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHistoryOrder" parameterType="HistoryOrderEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_history_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="branch != null">branch,</if>
+            <if test="orderNumber != null">order_number,</if>
+            <if test="orderDate != null">order_date,</if>
+            <if test="vehicleModel != null">vehicle_model,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="orderYear != null">order_year,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="branch != null">#{branch},</if>
+            <if test="orderNumber != null">#{orderNumber},</if>
+            <if test="orderDate != null">#{orderDate},</if>
+            <if test="vehicleModel != null">#{vehicleModel},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="orderYear != null">#{orderYear},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHistoryOrder" parameterType="HistoryOrderEntity">
+        update production_history_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="branch != null">branch = #{branch},</if>
+            <if test="orderNumber != null">order_number = #{orderNumber},</if>
+            <if test="orderDate != null">order_date = #{orderDate},</if>
+            <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="orderYear != null">order_year = #{orderYear},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHistoryOrderById" parameterType="String">
+        delete
+        from production_history_order
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteHistoryOrderByIds" parameterType="String">
+        delete from production_history_order where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
