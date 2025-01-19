@@ -8,11 +8,13 @@
         <result property="id"    column="id"    />
         <result property="vehicleModel"    column="vehicle_model"    />
         <result property="productionQuantity"    column="production_quantity"    />
+        <result property="productionStatus"    column="production_status"    />
         <result property="remarks"    column="remarks"    />
     </resultMap>
 
     <sql id="selectCapacityEntityVo">
-        select id, vehicle_model, production_quantity, remarks from production_capacity
+        select id, vehicle_model, production_quantity, production_status, remarks
+        from production_capacity
     </sql>
 
     <select id="selectCapacityList" parameterType="CapacityEntity" resultMap="CapacityEntityResult">
@@ -20,6 +22,7 @@
         <where>
             <if test="vehicleModel != null  and vehicleModel != ''"> and vehicle_model like concat('%', #{vehicleModel}, '%')</if>
             <if test="productionQuantity != null "> and production_quantity = #{productionQuantity}</if>
+            <if test="productionStatus != null "> and production_status = #{productionStatus}</if>
             <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
         </where>
     </select>
@@ -28,30 +31,6 @@
         <include refid="selectCapacityEntityVo"/>
         where id = #{id}
     </select>
-
-    <insert id="insertCapacity" parameterType="CapacityEntity" useGeneratedKeys="true" keyProperty="id">
-        insert into production_capacity
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="vehicleModel != null">vehicle_model,</if>
-            <if test="productionQuantity != null">production_quantity,</if>
-            <if test="remarks != null">remarks,</if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="vehicleModel != null">#{vehicleModel},</if>
-            <if test="productionQuantity != null">#{productionQuantity},</if>
-            <if test="remarks != null">#{remarks},</if>
-        </trim>
-    </insert>
-
-    <update id="updateCapacity" parameterType="CapacityEntity">
-        update production_capacity
-        <trim prefix="SET" suffixOverrides=",">
-            <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
-            <if test="productionQuantity != null">production_quantity = #{productionQuantity},</if>
-            <if test="remarks != null">remarks = #{remarks},</if>
-        </trim>
-        where id = #{id}
-    </update>
 
     <delete id="deleteCapacityById" parameterType="String">
         delete from production_capacity where id = #{id}

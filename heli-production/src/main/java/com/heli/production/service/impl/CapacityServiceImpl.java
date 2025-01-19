@@ -43,28 +43,6 @@ public class CapacityServiceImpl extends ServiceImpl<CapacityMapper, CapacityEnt
     }
 
     /**
-     * 新增产能
-     *
-     * @param capacityEntity 产能
-     * @return 结果
-     */
-    @Override
-    public int insertCapacity(CapacityEntity capacityEntity) {
-        return capacityMapper.insertCapacity(capacityEntity);
-    }
-
-    /**
-     * 修改产能
-     *
-     * @param capacityEntity 产能
-     * @return 结果
-     */
-    @Override
-    public int updateCapacity(CapacityEntity capacityEntity) {
-        return capacityMapper.updateCapacity(capacityEntity);
-    }
-
-    /**
      * 批量删除产能
      *
      * @param ids 需要删除的产能主键

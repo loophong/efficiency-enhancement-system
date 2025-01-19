@@ -34,6 +34,11 @@ public class CapacityEntity implements Serializable {
     private Integer productionQuantity;
 
     /**
+     * 状态（0:停产 1：在产）
+     */
+    private Integer productionStatus;
+
+    /**
      * 备注
      */
     private String remarks;

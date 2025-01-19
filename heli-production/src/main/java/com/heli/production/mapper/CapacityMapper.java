@@ -30,22 +30,6 @@ public interface CapacityMapper extends BaseMapper<CapacityEntity> {
     public List<CapacityEntity> selectCapacityList(CapacityEntity capacityEntity);
 
     /**
-     * 新增产能
-     *
-     * @param capacityEntity 产能
-     * @return 结果
-     */
-    public int insertCapacity(CapacityEntity capacityEntity);
-
-    /**
-     * 修改产能
-     *
-     * @param capacityEntity 产能
-     * @return 结果
-     */
-    public int updateCapacity(CapacityEntity capacityEntity);
-
-    /**
      * 删除产能
      *
      * @param id 产能主键

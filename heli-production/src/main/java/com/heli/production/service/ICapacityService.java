@@ -29,22 +29,6 @@ public interface ICapacityService extends IService<CapacityEntity> {
     public List<CapacityEntity> selectCapacityList(CapacityEntity capacity);
 
     /**
-     * 新增产能
-     *
-     * @param capacity 产能
-     * @return 结果
-     */
-    public int insertCapacity(CapacityEntity capacity);
-
-    /**
-     * 修改产能
-     *
-     * @param capacity 产能
-     * @return 结果
-     */
-    public int updateCapacity(CapacityEntity capacity);
-
-    /**
      * 批量删除产能
      *
      * @param ids 需要删除的产能主键集合

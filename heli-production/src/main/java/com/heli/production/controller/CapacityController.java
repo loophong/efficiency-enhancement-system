@@ -59,18 +59,6 @@ public class CapacityController extends BaseController {
     }
 
     /**
-     * 导出产能列表
-     */
-    @PreAuthorize("@ss.hasPermi('production:capacity:export')")
-    @Log(title = "产能", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, CapacityEntity capacityEntity) {
-        List<CapacityEntity> list = capacityService.selectCapacityList(capacityEntity);
-        ExcelUtil<CapacityEntity> util = new ExcelUtil<CapacityEntity>(CapacityEntity.class);
-        util.exportExcel(response, list, "产能数据");
-    }
-
-    /**
      * 获取产能详细信息
      */
     @PreAuthorize("@ss.hasPermi('production:capacity:query')")
@@ -86,7 +74,7 @@ public class CapacityController extends BaseController {
     @Log(title = "产能", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CapacityEntity capacityEntity) {
-        return toAjax(capacityService.insertCapacity(capacityEntity));
+        return toAjax(capacityService.saveOrUpdate(capacityEntity));
     }
 
     /**
@@ -96,7 +84,7 @@ public class CapacityController extends BaseController {
     @Log(title = "产能", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody CapacityEntity capacityEntity) {
-        return toAjax(capacityService.updateCapacity(capacityEntity));
+        return toAjax(capacityService.saveOrUpdate(capacityEntity));
     }
 
     /**

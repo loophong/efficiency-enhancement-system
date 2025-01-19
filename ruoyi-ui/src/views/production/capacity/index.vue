@@ -39,7 +39,8 @@
             icon="Plus"
             @click="handleAdd"
             v-hasPermi="['production:capacity:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -49,7 +50,8 @@
             :disabled="single"
             @click="handleUpdate"
             v-hasPermi="['production:capacity:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -59,7 +61,8 @@
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['production:capacity:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -68,21 +71,32 @@
             icon="Download"
             @click="handleExport"
             v-hasPermi="['production:capacity:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="capacityList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="主键" align="center" prop="id" />-->
-      <el-table-column label="车型" align="center" prop="vehicleModel" />
-      <el-table-column label="产量" align="center" prop="productionQuantity" />
-      <el-table-column label="备注" align="center" prop="remarks" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <!--      <el-table-column label="主键" align="center" prop="id" />-->
+      <el-table-column label="车型" align="center" prop="vehicleModel"/>
+      <el-table-column label="产量" align="center" prop="productionQuantity"/>
+      <el-table-column label="生产状态" align="center" prop="productionStatus">
+        <template #default="scope">
+          <el-switch v-model="scope.row.productionStatus" class="ml-2"
+                     style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remarks"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['production:capacity:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['production:capacity:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                     v-hasPermi="['production:capacity:edit']">修改
+          </el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                     v-hasPermi="['production:capacity:remove']">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,13 +113,13 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="capacityRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="车型" prop="vehicleModel">
-          <el-input v-model="form.vehicleModel" placeholder="请输入车型" />
+          <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="产量" prop="productionQuantity">
-          <el-input v-model="form.productionQuantity" placeholder="请输入产量" />
+          <el-input v-model="form.productionQuantity" placeholder="请输入产量"/>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="form.remarks" placeholder="请输入备注" />
+          <el-input v-model="form.remarks" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -119,9 +133,9 @@
 </template>
 
 <script setup name="Capacity">
-import { listCapacity, getCapacity, delCapacity, addCapacity, updateCapacity } from "@/api/production/capacity";
+import {listCapacity, getCapacity, delCapacity, addCapacity, updateCapacity} from "@/api/production/capacity";
 
-const { proxy } = getCurrentInstance();
+const {proxy} = getCurrentInstance();
 
 const capacityList = ref([]);
 const open = ref(false);
@@ -144,21 +158,26 @@ const data = reactive({
   },
   rules: {
     vehicleModel: [
-      { required: true, message: "车型不能为空", trigger: "blur" }
+      {required: true, message: "车型不能为空", trigger: "blur"}
     ],
     productionQuantity: [
-      { required: true, message: "产量不能为空", trigger: "blur" }
+      {required: true, message: "产量不能为空", trigger: "blur"}
     ],
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const {queryParams, form, rules} = toRefs(data);
 
 /** 查询产能列表 */
 function getList() {
   loading.value = true;
   listCapacity(queryParams.value).then(response => {
     capacityList.value = response.rows;
+    // productionStatus 为 number 类型，需要转换为 boolean 类型
+    capacityList.value.forEach(item => {
+      item.productionStatus = item.productionStatus === 1;
+    });
+
     total.value = response.total;
     loading.value = false;
   });
@@ -242,12 +261,13 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除产能编号为"' + _ids + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除产能编号为"' + _ids + '"的数据项？').then(function () {
     return delCapacity(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
+  }).catch(() => {
+  });
 }
 
 /** 导出按钮操作 */
