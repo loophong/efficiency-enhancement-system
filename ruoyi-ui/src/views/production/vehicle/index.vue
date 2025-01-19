@@ -2,28 +2,13 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="系列名称" prop="series">
-        <el-input
-            v-model="queryParams.series"
-            placeholder="请输入系列名称"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.series" placeholder="请输入系列名称" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="吨位" prop="tonnage">
-        <el-input
-            v-model="queryParams.tonnage"
-            placeholder="请输入吨位"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.tonnage" placeholder="请输入吨位" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="车型" prop="vehicleType">
-        <el-input
-            v-model="queryParams.vehicleType"
-            placeholder="请输入车型"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.vehicleType" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -33,51 +18,29 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['production:vehicle:add']"
-        >新增
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:vehicle:add']">
+          新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['production:vehicle:edit']"
-        >修改
+        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:vehicle:edit']">
+          修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['production:vehicle:remove']"
-        >删除
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:vehicle:remove']">
+          删除
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['production:vehicle:export']"
-        >导出
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:vehicle:export']">
+          导出
         </el-button>
       </el-col>
 
       <el-col :span="1.5">
-        <el-button @click="handleImport" type="success" plain icon="Upload"
-                   v-hasPermi="['production:vehicle:import']">导入
+        <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['production:vehicle:import']">
+          导入
         </el-button>
       </el-col>
 
@@ -185,6 +148,7 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
+// 上传文件
 const uploadDialogVisible = ref(false);
 const isLoading = ref(false);
 const inputFile = ref(null);

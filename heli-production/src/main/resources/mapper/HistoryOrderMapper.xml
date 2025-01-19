@@ -56,6 +56,40 @@
         </trim>
     </insert>
 
+
+    <insert id="batchInsert" parameterType="list">
+        insert into production_history_order(branch, order_number, order_date, vehicle_model, quantity, order_year)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.branch}, #{item.orderNumber}, #{item.orderDate}, #{item.vehicleModel}, #{item.quantity}, #{item.orderYear})
+        </foreach>
+    </insert>
+
+
+    <!--  批量插入数据库  -->
+<!--    <insert id="batchInsertProductionTable" parameterType="java.util.List">-->
+<!--        insert into Production_Table(CREATED_BY,CREATED_TIME,Acceptance_Date,Launch_Date,-->
+<!--        Order_Number,Contract_Number,Car_Number,Vehicle_Model,-->
+<!--        Door_Frame_Height,Amount,Accessory,Valve_Block,-->
+<!--        Car_Configuration,Planned_Completion_Period,Customer,-->
+<!--        Vehicle_Launch_Date,Completion_Period_Of_Door_Frame_Assembly,-->
+<!--        Trial_Completion_Period,Special_Operations,Precision_Completion_Period,-->
+<!--        Production_SiteIssues,Procurement_Of_On_site_Abnormal_Issues,-->
+<!--        Quality_Of_On_site_Abnormal_Issues,Go_Live,Warehousing,Production_Cycle)-->
+<!--        values-->
+<!--        <foreach collection="productionTableList" item="e" separator=",">-->
+<!--            (#{e.createdBy},#{e.createdTime},#{e.acceptanceDate},-->
+<!--            #{e.launchDate},#{e.orderNumber},#{e.contractNumber},-->
+<!--            #{e.carNumber},#{e.vehicleModel},#{e.doorFrameHeight},-->
+<!--            #{e.amount},#{e.accessory},#{e.valveBlock},#{e.carConfiguration},-->
+<!--            #{e.plannedCompletionPeriod},#{e.customer},#{e.vehicleLaunchDate},-->
+<!--            #{e.completionPeriodOfDoorFrameAssembly},#{e.trialCompletionPeriod},-->
+<!--            #{e.specialOperations},#{e.precisionCompletionPeriod},#{e.productionSiteIssues},-->
+<!--            #{e.procurementOfOnSiteAbnormalIssues},#{e.qualityOfOnSiteAbnormalIssues},-->
+<!--            #{e.goLive},#{e.warehousing},#{e.productionCycle})-->
+<!--        </foreach>-->
+<!--    </insert>-->
+
     <update id="updateHistoryOrder" parameterType="HistoryOrderEntity">
         update production_history_order
         <trim prefix="SET" suffixOverrides=",">

@@ -1,13 +1,17 @@
 package com.heli.production.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import com.heli.production.domain.entity.HistoryOrderEntity;
 import com.heli.production.service.IHistoryOrderService;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +25,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 历史订单Controller
@@ -28,11 +33,27 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author ruoyi
  * @date 2025-01-19
  */
+@Slf4j
 @RestController
 @RequestMapping("/production/historyOrder")
 public class HistoryOrderController extends BaseController {
     @Autowired
     private IHistoryOrderService historyOrderService;
+
+
+    @Log(title = "[历史订单表]上传", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PostMapping("/import")
+    public void importTable(Date date, MultipartFile excelFile) {
+        log.info("传入的date为 " + date);
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+            historyOrderService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, date);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
 
     /**
      * 查询历史订单列表

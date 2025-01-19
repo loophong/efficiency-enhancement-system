@@ -2,7 +2,9 @@ package com.heli.production.service;
 
 import com.heli.production.domain.entity.HistoryOrderEntity;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,4 +60,6 @@ public interface IHistoryOrderService extends IService<HistoryOrderEntity> {
      * @return 结果
      */
     public int deleteHistoryOrderById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date date);
 }

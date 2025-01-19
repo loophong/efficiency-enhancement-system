@@ -12,6 +12,9 @@ import java.util.List;
  * @Entity com.heli.production.domain.ProductionHistoryOrder
  */
 public interface HistoryOrderMapper extends BaseMapper<HistoryOrderEntity> {
+
+    public void batchInsert(List<HistoryOrderEntity> list);
+
     /**
      * 查询历史订单
      *

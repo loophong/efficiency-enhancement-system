@@ -404,10 +404,7 @@
         </el-form-item>
         <el-form-item label="上传日期：">
           <!--    时间选择器      -->
-          <el-date-picker clearable
-                          v-model="uploadDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="uploadDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择上传日期">
           </el-date-picker>
           <br>
@@ -643,7 +640,7 @@ function uploadFile() {
     isLoading.value = true;
     const file = inputFile.value.files[0];
     console.log(inputFile.value);
-    console.log("时间："+uploadDate.value);
+    console.log("时间：" + uploadDate.value);
     console.log(file);
     const formData = new FormData();
     formData.append('date', uploadDate.value);
@@ -659,7 +656,7 @@ function uploadFile() {
     }).finally(() => {
       resetUpload();
     });
-  }else {
+  } else {
     proxy.$modal.msgError("请选择文件");
   }
 }

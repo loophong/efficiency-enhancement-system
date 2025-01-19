@@ -42,3 +42,15 @@ export function delHistoryOrder(id) {
         method: 'delete'
     })
 }
+
+// 上传订单表
+export function importFile(formData) {
+    return request({
+        url: '/production/historyOrder/import',
+        method: 'post',
+        data: formData,
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+}
