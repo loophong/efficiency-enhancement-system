@@ -1,5 +1,6 @@
 package com.heli.production.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.entity.CapacityEntity;
 import com.heli.production.service.ICapacityService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -35,14 +36,14 @@ public class CapacityController extends BaseController {
     private ICapacityService capacityService;
 
     /**
-     * @description: 排产时，获取全部产能列表
+     * @description: 排产时，获取在产 产能列表
      * @author: hong
      * @date: 2025/1/18 14:51
      * @version: 1.0
      */
     @GetMapping("/all")
     public AjaxResult getAllCapacity() {
-        List<CapacityEntity> list = capacityService.list();
+        List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>().eq(CapacityEntity::getProductionStatus, 1));
         return AjaxResult.success(list);
     }
 

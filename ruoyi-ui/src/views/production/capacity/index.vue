@@ -84,7 +84,8 @@
       <el-table-column label="产量" align="center" prop="productionQuantity"/>
       <el-table-column label="生产状态" align="center" prop="productionStatus">
         <template #default="scope">
-          <el-switch v-model="scope.row.productionStatus" class="ml-2"
+          <el-switch v-model="scope.row.productionStatus" @change="changeStatus(scope.row)" class="ml-2" size="large"
+                     inline-prompt     active-text="在产" inactive-text="停产"
                      style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"/>
         </template>
       </el-table-column>
@@ -116,7 +117,7 @@
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="产量" prop="productionQuantity">
-          <el-input v-model="form.productionQuantity" placeholder="请输入产量"/>
+          <el-input-number v-model="form.productionQuantity" :min="0"/>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" placeholder="请输入备注"/>
@@ -278,4 +279,17 @@ function handleExport() {
 }
 
 getList();
+
+
+/** 修改生产状态 */
+function changeStatus(row) {
+  // // productionStatus 为 boolean 类型，需要转换为 number 类型
+  let newRow = {
+    'id': row.id,
+    'productionStatus': row.productionStatus === true ? 1 : 0
+  }
+  updateCapacity(newRow).then(response => {
+    proxy.$modal.msgSuccess("修改成功");
+  });
+}
 </script>
