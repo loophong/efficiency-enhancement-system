@@ -1,9 +1,9 @@
 <template>
 
   <div>
-    <div>
 
-      <el-calendar v-model="value" first-day-of-week="1">
+    <div>
+      <el-calendar v-model="calendarDate" first-day-of-week="1">
         <template #date-cell="{ data }">
           <div @contextmenu="(event) => rightClick(data.day, event)">
             <div class="date-content" style="display: flex;">
@@ -11,7 +11,7 @@
               <span v-if="isRestDay(data.day)" class="rest">休</span>
             </div>
             <div style="display: flex; justify-content: center;">
-              <el-tag  v-if="isProduction(data.day)"  type="success">已排产</el-tag>
+              <el-tag v-if="isProduction(data.day)" type="success">已排产</el-tag>
             </div>
           </div>
         </template>
@@ -30,10 +30,10 @@
 </template>
 
 <script setup name="Workday">
-import {listWorkday, getWorkday, setWorkday} from "@/api/production/workday";
+import {listWorkday, getWorkday, setWorkday, getLimitWorkdayList} from "@/api/production/workday";
 
 // 日历的日期
-const value = ref(new Date())
+const calendarDate = ref(new Date())
 // 右键菜单是否显示
 const menuVisible = ref(false);
 
@@ -73,20 +73,19 @@ const data = reactive({
 const {queryParams, form, rules} = toRefs(data);
 
 /** 查询工作日列表 */
-function getList() {
-  loading.value = true;
-  listWorkday(queryParams.value).then(response => {
-    restDays.value = response.rows
-        .filter(row => row.status === 0)
-        .map(row => row.date.split('T')[0]);
-
-    productionDays.value = response.rows
-        .filter(row => row.productStatus === 1)
-        .map(row => row.date.split('T')[0]);
-    loading.value = false;
-  });
-}
-
+// function getList() {
+//   loading.value = true;
+//   listWorkday(queryParams.value).then(response => {
+//     restDays.value = response.rows
+//         .filter(row => row.status === 0)
+//         .map(row => row.date.split('T')[0]);
+//
+//     productionDays.value = response.rows
+//         .filter(row => row.productStatus === 1)
+//         .map(row => row.date.split('T')[0]);
+//     loading.value = false;
+//   });
+// }
 
 
 /** 判断是否为休息日 */
@@ -100,14 +99,30 @@ function isProduction(date) {
 }
 
 
-
-
+// function rightClick(date, event) {
+//
+//   menuVisible.value = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
+//   menuVisible.value = true // 显示模态窗口，跳出自定义菜单栏
+//   selectDate = date
+//   console.log("selectDate", selectDate)
+//   console.log("event.clientY ", event.clientY)
+//   console.log("event.clientX ", event.clientX)
+//
+//   // Set the position of the menu based on the mouse event coordinates
+//   const menu = document.getElementById('contextmenu');
+//   // menu.style.top = `${event.clientY }px`;
+//   // menu.style.left = `${event.clientX }px`;
+//   menu.style.top = `${event.clientY - 90}px`;
+//   menu.style.left = `${event.clientX - 200}px`;
+//
+//   event.preventDefault() //关闭浏览器右键默认事件
+// }
 function rightClick(date, event) {
+  console.log("date", date)
 
   menuVisible.value = false // 先把模态框关死，目的是 第二次或者第n次右键鼠标的时候 它默认的是true
   menuVisible.value = true // 显示模态窗口，跳出自定义菜单栏
   selectDate = date
-  console.log("selectDate", selectDate)
   console.log("event.clientY ", event.clientY)
   console.log("event.clientX ", event.clientX)
 
@@ -126,6 +141,8 @@ function rightClick(date, event) {
  */
 onMounted(() => {
   document.addEventListener('click', handleDocumentClick);
+
+  handleCalendarDateChange(calendarDate.value);
 });
 
 function handleDocumentClick(event) {
@@ -154,13 +171,34 @@ function workdayConvert() {
   setWorkday(selectDate, status).then(response => {
     proxy.$modal.msgSuccess("设置成功");
     menuVisible.value = false;
-    getList();
+    // getList();
+    // getLimitWorkdayList()
+    handleCalendarDateChange(calendarDate.value);
   });
 
 }
 
+watch(calendarDate, handleCalendarDateChange);
 
-getList();
+function handleCalendarDateChange(val) {
+  if (val !== undefined && val !== null) {
+    const formattedDate = new Intl.DateTimeFormat('en-CA').format(new Date(val));
+    console.log(`当前值为：${formattedDate}`);
+    getLimitWorkdayList(formattedDate).then(response => {
+      console.log("response", response)
+      restDays.value = response.rows
+          .filter(row => row.status === 0)
+          .map(row => row.date.split('T')[0]);
+
+      productionDays.value = response.rows
+          .filter(row => row.productStatus === 1)
+          .map(row => row.date.split('T')[0]);
+    });
+  }
+}
+
+
+// getList();
 </script>
 
 
@@ -172,7 +210,7 @@ getList();
 
 
 .date-content {
-  height: 40px;
+  height: 70px;
   display: flex;
   align-items: center;
   font-size: 14px;
