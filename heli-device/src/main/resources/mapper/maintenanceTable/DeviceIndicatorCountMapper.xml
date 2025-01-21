@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceIndicatorCountMapper">
+    
+    <resultMap type="DeviceIndicatorCount" id="DeviceIndicatorCountResult">
+        <result property="indicatorId"    column="indicator_id"    />
+        <result property="indicatorName"    column="indicator_name"    />
+        <result property="indicatorTarget"    column="indicator_target"    />
+        <result property="indicatorTime"    column="indicator_time"    />
+        <result property="indicatorJan"    column="indicator_jan"    />
+        <result property="indicatorFeb"    column="indicator_feb"    />
+        <result property="indicatorMar"    column="indicator_mar"    />
+        <result property="indicatorApr"    column="indicator_apr"    />
+        <result property="indicatorMay"    column="indicator_may"    />
+        <result property="indicatorJun"    column="indicator_jun"    />
+        <result property="indicatorJul"    column="indicator_jul"    />
+        <result property="indicatorAug"    column="indicator_aug"    />
+        <result property="indicatorSep"    column="indicator_sep"    />
+        <result property="indicatorOct"    column="indicator_oct"    />
+        <result property="indicatorNov"    column="indicator_nov"    />
+        <result property="indicatorDec"    column="indicator_dec"    />
+    </resultMap>
+
+    <sql id="selectDeviceIndicatorCountVo">
+        select indicator_id, indicator_name, indicator_target, indicator_time, indicator_jan, indicator_feb, indicator_mar, indicator_apr, indicator_may, indicator_jun, indicator_jul, indicator_aug, indicator_sep, indicator_oct, indicator_nov, indicator_dec from device_indicator_count
+    </sql>
+
+    <select id="selectDeviceIndicatorCountList" parameterType="DeviceIndicatorCount" resultMap="DeviceIndicatorCountResult">
+        <include refid="selectDeviceIndicatorCountVo"/>
+        <where>  
+            <if test="indicatorName != null  and indicatorName != ''"> and indicator_name like concat('%', #{indicatorName}, '%')</if>
+            <if test="indicatorTarget != null  and indicatorTarget != ''"> and indicator_target = #{indicatorTarget}</if>
+            <if test="params.beginIndicatorTime != null and params.beginIndicatorTime != '' and params.endIndicatorTime != null and params.endIndicatorTime != ''"> and indicator_time between #{params.beginIndicatorTime} and #{params.endIndicatorTime}</if>
+            <if test="indicatorJan != null  and indicatorJan != ''"> and indicator_jan = #{indicatorJan}</if>
+            <if test="indicatorFeb != null  and indicatorFeb != ''"> and indicator_feb = #{indicatorFeb}</if>
+            <if test="indicatorMar != null  and indicatorMar != ''"> and indicator_mar = #{indicatorMar}</if>
+            <if test="indicatorApr != null  and indicatorApr != ''"> and indicator_apr = #{indicatorApr}</if>
+            <if test="indicatorMay != null  and indicatorMay != ''"> and indicator_may = #{indicatorMay}</if>
+            <if test="indicatorJun != null  and indicatorJun != ''"> and indicator_jun = #{indicatorJun}</if>
+            <if test="indicatorJul != null  and indicatorJul != ''"> and indicator_jul = #{indicatorJul}</if>
+            <if test="indicatorAug != null  and indicatorAug != ''"> and indicator_aug = #{indicatorAug}</if>
+            <if test="indicatorSep != null  and indicatorSep != ''"> and indicator_sep = #{indicatorSep}</if>
+            <if test="indicatorOct != null  and indicatorOct != ''"> and indicator_oct = #{indicatorOct}</if>
+            <if test="indicatorNov != null  and indicatorNov != ''"> and indicator_nov = #{indicatorNov}</if>
+            <if test="indicatorDec != null  and indicatorDec != ''"> and indicator_dec = #{indicatorDec}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceIndicatorCountByIndicatorId" parameterType="Long" resultMap="DeviceIndicatorCountResult">
+        <include refid="selectDeviceIndicatorCountVo"/>
+        where indicator_id = #{indicatorId}
+    </select>
+
+    <insert id="insertDeviceIndicatorCount" parameterType="DeviceIndicatorCount" useGeneratedKeys="true" keyProperty="indicatorId">
+        insert into device_indicator_count
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="indicatorName != null">indicator_name,</if>
+            <if test="indicatorTarget != null">indicator_target,</if>
+            <if test="indicatorTime != null">indicator_time,</if>
+            <if test="indicatorJan != null">indicator_jan,</if>
+            <if test="indicatorFeb != null">indicator_feb,</if>
+            <if test="indicatorMar != null">indicator_mar,</if>
+            <if test="indicatorApr != null">indicator_apr,</if>
+            <if test="indicatorMay != null">indicator_may,</if>
+            <if test="indicatorJun != null">indicator_jun,</if>
+            <if test="indicatorJul != null">indicator_jul,</if>
+            <if test="indicatorAug != null">indicator_aug,</if>
+            <if test="indicatorSep != null">indicator_sep,</if>
+            <if test="indicatorOct != null">indicator_oct,</if>
+            <if test="indicatorNov != null">indicator_nov,</if>
+            <if test="indicatorDec != null">indicator_dec,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="indicatorName != null">#{indicatorName},</if>
+            <if test="indicatorTarget != null">#{indicatorTarget},</if>
+            <if test="indicatorTime != null">#{indicatorTime},</if>
+            <if test="indicatorJan != null">#{indicatorJan},</if>
+            <if test="indicatorFeb != null">#{indicatorFeb},</if>
+            <if test="indicatorMar != null">#{indicatorMar},</if>
+            <if test="indicatorApr != null">#{indicatorApr},</if>
+            <if test="indicatorMay != null">#{indicatorMay},</if>
+            <if test="indicatorJun != null">#{indicatorJun},</if>
+            <if test="indicatorJul != null">#{indicatorJul},</if>
+            <if test="indicatorAug != null">#{indicatorAug},</if>
+            <if test="indicatorSep != null">#{indicatorSep},</if>
+            <if test="indicatorOct != null">#{indicatorOct},</if>
+            <if test="indicatorNov != null">#{indicatorNov},</if>
+            <if test="indicatorDec != null">#{indicatorDec},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceIndicatorCount" parameterType="DeviceIndicatorCount">
+        update device_indicator_count
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="indicatorName != null">indicator_name = #{indicatorName},</if>
+            <if test="indicatorTarget != null">indicator_target = #{indicatorTarget},</if>
+            <if test="indicatorTime != null">indicator_time = #{indicatorTime},</if>
+            <if test="indicatorJan != null">indicator_jan = #{indicatorJan},</if>
+            <if test="indicatorFeb != null">indicator_feb = #{indicatorFeb},</if>
+            <if test="indicatorMar != null">indicator_mar = #{indicatorMar},</if>
+            <if test="indicatorApr != null">indicator_apr = #{indicatorApr},</if>
+            <if test="indicatorMay != null">indicator_may = #{indicatorMay},</if>
+            <if test="indicatorJun != null">indicator_jun = #{indicatorJun},</if>
+            <if test="indicatorJul != null">indicator_jul = #{indicatorJul},</if>
+            <if test="indicatorAug != null">indicator_aug = #{indicatorAug},</if>
+            <if test="indicatorSep != null">indicator_sep = #{indicatorSep},</if>
+            <if test="indicatorOct != null">indicator_oct = #{indicatorOct},</if>
+            <if test="indicatorNov != null">indicator_nov = #{indicatorNov},</if>
+            <if test="indicatorDec != null">indicator_dec = #{indicatorDec},</if>
+        </trim>
+        where indicator_id = #{indicatorId}
+    </update>
+
+    <delete id="deleteDeviceIndicatorCountByIndicatorId" parameterType="Long">
+        delete from device_indicator_count where indicator_id = #{indicatorId}
+    </delete>
+
+    <delete id="deleteDeviceIndicatorCountByIndicatorIds" parameterType="String">
+        delete from device_indicator_count where indicator_id in 
+        <foreach item="indicatorId" collection="array" open="(" separator="," close=")">
+            #{indicatorId}
+        </foreach>
+    </delete>
+</mapper>

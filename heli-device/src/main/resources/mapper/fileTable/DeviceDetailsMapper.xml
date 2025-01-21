@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.fileTable.mapper.DeviceDetailsMapper">
+    
+    <resultMap type="DeviceDetails" id="DeviceDetailsResult">
+        <result property="detailsId"    column="details_id"    />
+        <result property="financialDate"    column="financial_date"    />
+        <result property="inventoryNum"    column="inventory_num"    />
+        <result property="fixedAssetName"    column="fixed_asset_name"    />
+        <result property="detailsGroup"    column="details_group"    />
+        <result property="deviceStatus"    column="device_status"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="ifKey"    column="if_key"    />
+        <result property="storageUnit"    column="storage_unit"    />
+        <result property="costCenter"    column="cost_center"    />
+        <result property="usedYear"    column="used_year"    />
+        <result property="assetOrigin"    column="asset_origin"    />
+        <result property="brand"    column="brand"    />
+        <result property="tonnage"    column="tonnage"    />
+    </resultMap>
+
+    <sql id="selectDeviceDetailsVo">
+        select details_id, financial_date, inventory_num, fixed_asset_name, details_group, device_status, device_type, if_key, storage_unit, cost_center, used_year, asset_origin, brand, tonnage from device_details
+    </sql>
+
+    <select id="selectDeviceDetailsList" parameterType="DeviceDetails" resultMap="DeviceDetailsResult">
+        <include refid="selectDeviceDetailsVo"/>
+        <where>  
+            <if test="params.beginFinancialDate != null and params.beginFinancialDate != '' and params.endFinancialDate != null and params.endFinancialDate != ''"> and financial_date between #{params.beginFinancialDate} and #{params.endFinancialDate}</if>
+            <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num = #{inventoryNum}</if>
+            <if test="fixedAssetName != null  and fixedAssetName != ''"> and fixed_asset_name like concat('%', #{fixedAssetName}, '%')</if>
+            <if test="detailsGroup != null  and detailsGroup != ''"> and details_group like concat('%', #{detailsGroup}, '%')</if>
+            <if test="deviceStatus != null  and deviceStatus != ''"> and device_status = #{deviceStatus}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="ifKey != null  and ifKey != ''"> and if_key = #{ifKey}</if>
+            <if test="storageUnit != null  and storageUnit != ''"> and storage_unit = #{storageUnit}</if>
+            <if test="costCenter != null  and costCenter != ''"> and cost_center = #{costCenter}</if>
+            <if test="usedYear != null  and usedYear != ''"> and used_year = #{usedYear}</if>
+            <if test="assetOrigin != null  and assetOrigin != ''"> and asset_origin = #{assetOrigin}</if>
+            <if test="brand != null  and brand != ''"> and brand like concat('%', #{brand}, '%')</if>
+            <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceDetailsByDetailsId" parameterType="String" resultMap="DeviceDetailsResult">
+        <include refid="selectDeviceDetailsVo"/>
+        where details_id = #{detailsId}
+    </select>
+
+    <insert id="insertDeviceDetails" parameterType="DeviceDetails" useGeneratedKeys="true" keyProperty="detailsId">
+        insert into device_details
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="financialDate != null">financial_date,</if>
+            <if test="inventoryNum != null">inventory_num,</if>
+            <if test="fixedAssetName != null">fixed_asset_name,</if>
+            <if test="detailsGroup != null">details_group,</if>
+            <if test="deviceStatus != null">device_status,</if>
+            <if test="deviceType != null">device_type,</if>
+            <if test="ifKey != null">if_key,</if>
+            <if test="storageUnit != null">storage_unit,</if>
+            <if test="costCenter != null">cost_center,</if>
+            <if test="usedYear != null">used_year,</if>
+            <if test="assetOrigin != null">asset_origin,</if>
+            <if test="brand != null">brand,</if>
+            <if test="tonnage != null">tonnage,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="financialDate != null">#{financialDate},</if>
+            <if test="inventoryNum != null">#{inventoryNum},</if>
+            <if test="fixedAssetName != null">#{fixedAssetName},</if>
+            <if test="detailsGroup != null">#{detailsGroup},</if>
+            <if test="deviceStatus != null">#{deviceStatus},</if>
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="ifKey != null">#{ifKey},</if>
+            <if test="storageUnit != null">#{storageUnit},</if>
+            <if test="costCenter != null">#{costCenter},</if>
+            <if test="usedYear != null">#{usedYear},</if>
+            <if test="assetOrigin != null">#{assetOrigin},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="tonnage != null">#{tonnage},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceDetails" parameterType="DeviceDetails">
+        update device_details
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="financialDate != null">financial_date = #{financialDate},</if>
+            <if test="inventoryNum != null">inventory_num = #{inventoryNum},</if>
+            <if test="fixedAssetName != null">fixed_asset_name = #{fixedAssetName},</if>
+            <if test="detailsGroup != null">details_group = #{detailsGroup},</if>
+            <if test="deviceStatus != null">device_status = #{deviceStatus},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="ifKey != null">if_key = #{ifKey},</if>
+            <if test="storageUnit != null">storage_unit = #{storageUnit},</if>
+            <if test="costCenter != null">cost_center = #{costCenter},</if>
+            <if test="usedYear != null">used_year = #{usedYear},</if>
+            <if test="assetOrigin != null">asset_origin = #{assetOrigin},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="tonnage != null">tonnage = #{tonnage},</if>
+        </trim>
+        where details_id = #{detailsId}
+    </update>
+
+    <delete id="deleteDeviceDetailsByDetailsId" parameterType="String">
+        delete from device_details where details_id = #{detailsId}
+    </delete>
+
+    <delete id="deleteDeviceDetailsByDetailsIds" parameterType="String">
+        delete from device_details where details_id in 
+        <foreach item="detailsId" collection="array" open="(" separator="," close=")">
+            #{detailsId}
+        </foreach>
+    </delete>
+</mapper>
