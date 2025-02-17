@@ -51,6 +51,21 @@ public class OrderSchedulingController extends BaseController {
     }
 
     /**
+     * @description: 获取未排产的订单列表
+     * @author: hong
+     * @date: 2025/2/17 15:47
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
+    @GetMapping("/getOrderList")
+    public AjaxResult getOrderList() {
+        List<OrderSchedulingEntity> list = orderSchedulingService.list(
+                new LambdaQueryWrapper<OrderSchedulingEntity>()
+                        .eq(OrderSchedulingEntity::getIsScheduling, 0));
+        return success(list);
+    }
+
+    /**
      * 查询订单信息列表
      */
     @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
