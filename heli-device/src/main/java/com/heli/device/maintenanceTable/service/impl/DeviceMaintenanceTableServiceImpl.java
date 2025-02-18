@@ -28,7 +28,7 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
     private DeviceMaintenanceTableMapper deviceMaintenanceTableMapper;
 
     /**
-     * 查询2.设备故障记录(导入)
+     * 查询设备故障记录(导入)
      *
      * @param
      * @return 2.设备故障记录(导入)

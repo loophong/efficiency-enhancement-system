@@ -105,6 +105,7 @@ public class DeviceMaintenanceTableController extends BaseController
         return toAjax(deviceMaintenanceTableService.deleteDeviceMaintenanceTableByMaintenanceTableIds(maintenanceTableIds));
     }
 
+
     @Log(title = "故障记录表上传", businessType = BusinessType.INSERT)
 //    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
     @PostMapping("/import")
@@ -115,7 +116,6 @@ public class DeviceMaintenanceTableController extends BaseController
 //        if (financialInterestsTableService.checkInterestsDataIsExisted(yearAndMonth)) {
 //            return AjaxResult.error("当月利润表已上传");
 //        }
-
         int status = 0;
 
         try (InputStream inputStream = excelFile.getInputStream()) {

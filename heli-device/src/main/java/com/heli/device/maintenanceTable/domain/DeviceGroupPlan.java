@@ -1,5 +1,8 @@
 package com.heli.device.maintenanceTable.domain;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -16,6 +19,8 @@ public class DeviceGroupPlan extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 主键id */
+    @TableId(type = IdType.AUTO)
+    @ExcelIgnore
     private String groupId;
 
     /** 序号 */

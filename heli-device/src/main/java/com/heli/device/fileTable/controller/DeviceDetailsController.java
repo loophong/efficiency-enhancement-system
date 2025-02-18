@@ -1,9 +1,14 @@
 package com.heli.device.fileTable.controller;
 
+import java.io.InputStream;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +25,7 @@ import com.heli.device.fileTable.domain.DeviceDetails;
 import com.heli.device.fileTable.service.IDeviceDetailsService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 设备台账Controller
@@ -29,6 +35,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/file/details")
+@Slf4j
 public class DeviceDetailsController extends BaseController
 {
     @Autowired
@@ -100,5 +107,34 @@ public class DeviceDetailsController extends BaseController
     public AjaxResult remove(@PathVariable String[] detailsIds)
     {
         return toAjax(deviceDetailsService.deleteDeviceDetailsByDetailsIds(detailsIds));
+    }
+
+    @Log(title = "设备台账上传", businessType = BusinessType.INSERT)
+//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PostMapping("/import")
+    @Transactional
+    public AjaxResult faultRecordsList(String yearAndMonth, MultipartFile excelFile) {
+        log.info("excelFile"+"="+excelFile);
+        log.info("date"+"="+yearAndMonth);
+//        if (financialInterestsTableService.checkInterestsDataIsExisted(yearAndMonth)) {
+//            return AjaxResult.error("当月利润表已上传");
+//        }
+        int status = 0;
+
+        try (InputStream inputStream = excelFile.getInputStream()) {
+            //清空数据库
+            log.info("开始读取 " + excelFile.getName() + " 文件");
+            deviceDetailsService.readDetailsToDB(excelFile.getOriginalFilename(), inputStream);
+//            financialTempTableService.tempTableToInterestsTable(yearAndMonth);
+            status = 1;
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        } finally {
+            log.info("清空数据库");
+//            financialTempTableService.clearTempTable();
+        }
+
+        return toAjax(status);
     }
 }

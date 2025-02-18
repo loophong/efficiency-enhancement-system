@@ -1,26 +1,29 @@
-package com.heli.device.maintenanceTable.listener;
+package com.heli.device.fileTable.listener;
+
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.heli.device.maintenanceTable.domain.MajorPlanExcel;
-import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
+import com.heli.device.fileTable.domain.DeviceDetails;
+import com.heli.device.fileTable.mapper.DeviceDetailsMapper;
 import lombok.extern.log4j.Log4j2;
+
 
 import java.util.List;
 
 @Log4j2
-public class MajorPlanExcelListener implements ReadListener<MajorPlanExcel> {
+public class DetailsExcelListener implements ReadListener<DeviceDetails> {
+
 
     private static final int BATCH_COUNT = 200;
 
-    private DeviceMajorPlanMapper deviceMajorPlanMapper;
+    private DeviceDetailsMapper deviceDetailsMapper;
 
 
-    private List<MajorPlanExcel> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<DeviceDetails> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public MajorPlanExcelListener(DeviceMajorPlanMapper deviceMajorPlanMapper) {
-        this.deviceMajorPlanMapper = deviceMajorPlanMapper;
+    public DetailsExcelListener(DeviceDetailsMapper deviceDetailsMapper) {
+        this.deviceDetailsMapper = deviceDetailsMapper;
     }
 
     /**
@@ -30,7 +33,7 @@ public class MajorPlanExcelListener implements ReadListener<MajorPlanExcel> {
      * @param analysisContext   读取到的Excel内容
      */
     @Override
-    public void invoke(MajorPlanExcel registerInfoExcel, AnalysisContext analysisContext) {
+    public void invoke(DeviceDetails registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
 //        if (registerInfoExcel.getRowName() != null) {
 //            // 处理数据

@@ -54,6 +54,25 @@
           v-hasPermi="['file:details:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <!--Excel 参数导入 -->
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
+        </el-button>
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+          <el-form :model="form" ref="formRef" label-width="90px">
+            <!-- 如果有表单内容，这里添加 -->
+          </el-form>
+          <div class="upload-area">
+            <i class="el-icon-upload"></i>
+            <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
+          </div>
+          <span class="dialog-footer">
+            <el-button @click="showDialog = false">取 消</el-button>
+            <el-button type="primary" @click="fileSend">确 定</el-button>
+            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
+          </span>
+        </el-dialog>
+      </el-col>
+      <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['file:details:export']">导出</el-button>
       </el-col>
@@ -149,7 +168,7 @@
 </template>
 
 <script setup name="Details">
-import { listDetails, getDetails, delDetails, addDetails, updateDetails } from "@/api/device/fileTable/details";
+import { listDetails, getDetails, delDetails, addDetails, updateDetails, uploadFile } from "@/api/device/fileTable/details";
 
 const { proxy } = getCurrentInstance();
 
@@ -162,7 +181,12 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const router = useRouter();
+const route = useRoute();
+const showDialog = ref(false);
 const daterangeFinancialDate = ref([]);
+
+const routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
@@ -181,13 +205,29 @@ const data = reactive({
     usedYear: null,
     assetOrigin: null,
     brand: null,
-    tonnage: null
+    tonnage: null,
   },
   rules: {
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+const handleRouteParams = () => {
+  if (routerDeviceNum) {
+    console.log('Received deviceNum:', routerDeviceNum);
+    data.queryParams.inventoryNum = routerDeviceNum;
+    getList(); // 假设需要根据路由参数重新获取列表数据
+  } else {
+    console.log('No specific route params received.');
+    // 可以选择性地在这里添加其他逻辑
+  }
+};
+
+// 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
+onMounted(() => {
+  handleRouteParams();
+});
 
 /** 查询设备台账列表 */
 function getList() {
@@ -300,6 +340,68 @@ function handleDelete(row) {
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => { });
 }
+
+// 导入excel，检查文件类型
+function checkFile() {
+  const file = proxy.$refs["fileInput"].files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    this.$message.error("只能上传 Excel 文件！");
+    // this.$refs.fileInput.value = ""; // 清空文件选择框
+  }
+}
+//导入excel，取消按钮绑定取消所选的xlsx
+// function resetFileInput() {
+//   this.$refs.fileInput.value = "";
+// }
+/** 导入按钮 */
+function fileSend() {
+  const fileInput = proxy.$refs["fileInput"];
+  // console.log(proxy.$refs["fileInput"])
+  // if (!fileInput || !fileInput.files.length) {
+  //   ElMessage.warning('请选择要上传的文件');
+  //   return;
+  // }
+
+  const file = fileInput.files[0];
+  console.log('Selected file:', file);
+  // console.log(file)
+  const formData = new FormData();
+  formData.append("excelFile", file);
+  formData.append("yearAndMonth", '2024-12-12');
+  console.log({ formData })
+  // 使用如下方法打印出 formData 的内容
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
+  // isLoading.value = true;
+  //TODO
+  uploadFile(formData, `/fault/maintenance/import`)
+    .then(data => {
+      // 处理上传成功的情况
+      ElMessage({
+        message: '上传成功',
+        type: 'success',
+      });
+      // this.getList();
+      // this.showDialog = false;
+      // this.isLoading = false;
+    })
+    .catch(error => {
+      // 处理上传失败的情况
+      ElMessage({
+        message: `上传失败:${error}`,
+        type: 'error',
+      });
+      // this.$message.error("上传失败，请重试");
+      // this.isLoading = false;
+    });
+}
+
+
 
 /** 导出按钮操作 */
 function handleExport() {

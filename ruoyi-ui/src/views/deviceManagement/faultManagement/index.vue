@@ -60,7 +60,7 @@
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
-        <el-button type="primary" icon="el-icon-share" @click="showDialog = true" size="mini" plain>导入
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
         </el-button>
         <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
           <el-form :model="form" ref="formRef" label-width="90px">
@@ -87,8 +87,10 @@
     <el-table v-loading="loading" :data="tableList" @selection-change="handleSelectionChange" border stripe>
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="maintenanceTableId" /> -->
+      <el-table-column label="设备编号" align="center" prop="deviceNum" />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
-      <el-table-column label="问题类型" align="center" prop="workStatus" />
+      <el-table-column label="工单状态" align="center" prop="workStatus" />
+      <el-table-column label="问题类型" align="center" prop="issueType" />
       <el-table-column label="故障类型" align="center" prop="faultType" />
       <el-table-column label="申请人" align="center" prop="applyBy" />
       <el-table-column label="申请部门" align="center" prop="applyDepartment" />
@@ -109,12 +111,14 @@
       <el-table-column label="故障时长" align="center" prop="faultDuration" />
       <el-table-column label="维修费用" align="center" prop="maintenanceCast" />
       <el-table-column label="是否停机" align="center" prop="ifDown" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
             v-hasPermi="['system:table:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['system:table:remove']">删除</el-button>
+          <el-button link type="primary" icon="Position" @click="handleToDetails(scope.row)"
+            v-hasPermi="['system:table:edit']">跳转台账</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -125,8 +129,20 @@
     <!-- 添加或修改2.设备故障记录(导入)对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="tableRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="设备编号" prop="deviceNum">
+          <el-input v-model="form.deviceNum" placeholder="请输入设备编号" />
+        </el-form-item>
         <el-form-item label="设备名称" prop="deviceName">
           <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
+        </el-form-item>
+        <el-form-item label="工单状态" prop="workStatus">
+          <el-input v-model="form.workStatus" placeholder="请输入工单状态" />
+        </el-form-item>
+        <el-form-item label="问题类型" prop="issueType">
+          <el-input v-model="form.issueType" placeholder="请输入问题类型" />
+        </el-form-item>
+        <el-form-item label="故障类型" prop="faultType">
+          <el-input v-model="form.faultType" placeholder="请输入故障类型" />
         </el-form-item>
         <el-form-item label="申请人" prop="applyBy">
           <el-input v-model="form.applyBy" placeholder="请输入申请人" />
@@ -194,6 +210,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const router = useRouter();
 const showDialog = ref(false);
 const daterangeReportedTime = ref([]);
 const daterangeResolutionTime = ref([]);
@@ -342,6 +359,12 @@ function handleDelete(row) {
   }).catch(() => { });
 }
 
+/** 台账跳转按钮操作 */
+function handleToDetails(row) {
+  // const tmpDeviceNum = row.deviceNum;
+  router.push({ path: "/file/details", query: { deviceNum: row.deviceNum, name: "若依" } });
+}
+
 // 导入excel，检查文件类型
 function checkFile() {
   const file = proxy.$refs["fileInput"].files[0];
@@ -349,7 +372,7 @@ function checkFile() {
   const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
 
   if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
-    this.$message.error("只能上传 Excel 文件！");
+    $.modal.msg("只能上传 Excel 文件！", error);
     // this.$refs.fileInput.value = ""; // 清空文件选择框
   }
 }

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper">
+    
+    <resultMap type="DeviceMajorPlan" id="DeviceMajorPlanResult">
+        <result property="majorId"    column="major_id"    />
+        <result property="majorOrder"    column="major_order"    />
+        <result property="majorName"    column="major_name"    />
+        <result property="majorPosition"    column="major_position"    />
+        <result property="majorProject"    column="major_project"    />
+        <result property="majorCycleNum"    column="major_cycle_num"    />
+        <result property="majorPeople"    column="major_people"    />
+        <result property="majorMonth"    column="major_month"    />
+        <result property="majorMonthWeek"    column="major_month_week"    />
+        <result property="majorContent"    column="major_content"    />
+    </resultMap>
+
+    <sql id="selectDeviceMajorPlanVo">
+        select major_id, major_order, major_name, major_position, major_project, major_cycle_num, major_people, major_month, major_month_week, major_content from device_major_plan
+    </sql>
+
+    <select id="selectDeviceMajorPlanList" parameterType="DeviceMajorPlan" resultMap="DeviceMajorPlanResult">
+        <include refid="selectDeviceMajorPlanVo"/>
+        <where>  
+            <if test="majorOrder != null  and majorOrder != ''"> and major_order = #{majorOrder}</if>
+            <if test="majorName != null  and majorName != ''"> and major_name like concat('%', #{majorName}, '%')</if>
+            <if test="majorPosition != null  and majorPosition != ''"> and major_position = #{majorPosition}</if>
+            <if test="majorProject != null  and majorProject != ''"> and major_project like concat('%', #{majorProject}, '%')</if>
+            <if test="majorCycleNum != null  and majorCycleNum != ''"> and major_cycle_num = #{majorCycleNum}</if>
+            <if test="majorPeople != null  and majorPeople != ''"> and major_people like concat('%', #{majorPeople}, '%')</if>
+            <if test="majorMonth != null  and majorMonth != ''"> and major_month = #{majorMonth}</if>
+            <if test="majorMonthWeek != null  and majorMonthWeek != ''"> and major_month_week = #{majorMonthWeek}</if>
+            <if test="majorContent != null  and majorContent != ''"> and major_content = #{majorContent}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceMajorPlanByMajorId" parameterType="String" resultMap="DeviceMajorPlanResult">
+        <include refid="selectDeviceMajorPlanVo"/>
+        where major_id = #{majorId}
+    </select>
+
+    <insert id="insertDeviceMajorPlan" parameterType="DeviceMajorPlan" useGeneratedKeys="true" keyProperty="majorId">
+        insert into device_major_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="majorOrder != null">major_order,</if>
+            <if test="majorName != null">major_name,</if>
+            <if test="majorPosition != null">major_position,</if>
+            <if test="majorProject != null">major_project,</if>
+            <if test="majorCycleNum != null">major_cycle_num,</if>
+            <if test="majorPeople != null">major_people,</if>
+            <if test="majorMonth != null">major_month,</if>
+            <if test="majorMonthWeek != null">major_month_week,</if>
+            <if test="majorContent != null">major_content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="majorOrder != null">#{majorOrder},</if>
+            <if test="majorName != null">#{majorName},</if>
+            <if test="majorPosition != null">#{majorPosition},</if>
+            <if test="majorProject != null">#{majorProject},</if>
+            <if test="majorCycleNum != null">#{majorCycleNum},</if>
+            <if test="majorPeople != null">#{majorPeople},</if>
+            <if test="majorMonth != null">#{majorMonth},</if>
+            <if test="majorMonthWeek != null">#{majorMonthWeek},</if>
+            <if test="majorContent != null">#{majorContent},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceMajorPlan" parameterType="DeviceMajorPlan">
+        update device_major_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="majorOrder != null">major_order = #{majorOrder},</if>
+            <if test="majorName != null">major_name = #{majorName},</if>
+            <if test="majorPosition != null">major_position = #{majorPosition},</if>
+            <if test="majorProject != null">major_project = #{majorProject},</if>
+            <if test="majorCycleNum != null">major_cycle_num = #{majorCycleNum},</if>
+            <if test="majorPeople != null">major_people = #{majorPeople},</if>
+            <if test="majorMonth != null">major_month = #{majorMonth},</if>
+            <if test="majorMonthWeek != null">major_month_week = #{majorMonthWeek},</if>
+            <if test="majorContent != null">major_content = #{majorContent},</if>
+        </trim>
+        where major_id = #{majorId}
+    </update>
+
+    <delete id="deleteDeviceMajorPlanByMajorId" parameterType="String">
+        delete from device_major_plan where major_id = #{majorId}
+    </delete>
+
+    <delete id="deleteDeviceMajorPlanByMajorIds" parameterType="String">
+        delete from device_major_plan where major_id in 
+        <foreach item="majorId" collection="array" open="(" separator="," close=")">
+            #{majorId}
+        </foreach>
+    </delete>
+</mapper>

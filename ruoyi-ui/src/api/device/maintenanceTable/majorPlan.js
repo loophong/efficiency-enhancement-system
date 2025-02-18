@@ -1,47 +1,48 @@
 import request from '@/utils/request'
 
-// 查询设备台账列表
-export function listDetails(query) {
+// 查询专业计划保养列表
+export function listPlan(query) {
   return request({
-    url: '/file/details/list',
+    url: '/fault/majorPlan/list',
     method: 'get',
     params: query
   })
 }
 
-// 查询设备台账详细
-export function getDetails(detailsId) {
+// 查询专业计划保养详细
+export function getPlan(majorId) {
   return request({
-    url: '/file/details/' + detailsId,
+    url: '/fault/majorPlan/' + majorId,
     method: 'get'
   })
 }
 
-// 新增设备台账
-export function addDetails(data) {
+// 新增专业计划保养
+export function addPlan(data) {
   return request({
-    url: '/file/details',
+    url: '/fault/majorPlan',
     method: 'post',
     data: data
   })
 }
 
-// 修改设备台账
-export function updateDetails(data) {
+// 修改专业计划保养
+export function updatePlan(data) {
   return request({
-    url: '/file/details',
+    url: '/fault/majorPlan',
     method: 'put',
     data: data
   })
 }
 
-// 删除设备台账
-export function delDetails(detailsId) {
+// 删除专业计划保养
+export function delPlan(majorId) {
   return request({
-    url: '/file/details/' + detailsId,
+    url: '/fault/majorPlan/' + majorId,
     method: 'delete'
   })
 }
+
 
 export function uploadFile(data, aimUrl) {
   return request({

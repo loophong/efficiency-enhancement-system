@@ -1,6 +1,14 @@
 package com.heli.device.fileTable.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
+
+import com.alibaba.excel.EasyExcel;
+import com.heli.device.fileTable.listener.DetailsExcelListener;
+import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
+import com.heli.device.maintenanceTable.listener.MaintenanceTableListener;
+import com.ruoyi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.device.fileTable.mapper.DeviceDetailsMapper;
@@ -14,6 +22,7 @@ import com.heli.device.fileTable.service.IDeviceDetailsService;
  * @date 2025-01-19
  */
 @Service
+@Slf4j
 public class DeviceDetailsServiceImpl implements IDeviceDetailsService 
 {
     @Autowired
@@ -30,7 +39,23 @@ public class DeviceDetailsServiceImpl implements IDeviceDetailsService
     {
         return deviceDetailsMapper.selectDeviceDetailsByDetailsId(detailsId);
     }
-
+    @Override
+    public R<String> readDetailsToDB(String fileName, InputStream inputStream) {
+        try {
+//            log.info("开始读取文件: {}", fileName);
+            // 读取文件前清空数据库
+//            log.info("开始清空数据库");
+//            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+            EasyExcel.read(inputStream, DeviceMaintenanceTable.class, new DetailsExcelListener(deviceDetailsMapper)).sheet().doRead();
+            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
     /**
      * 查询设备台账列表
      * 

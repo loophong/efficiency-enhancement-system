@@ -83,6 +83,20 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/file',
+    component: Layout,
+    hidden: true,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'details',
+        component: () => import('@/views/deviceManagement/fileManagement/deviceDetails'),
+        name: 'Details',
+        meta: { title: '设备台账'}
+      }
+    ]
   }
 ]
 
