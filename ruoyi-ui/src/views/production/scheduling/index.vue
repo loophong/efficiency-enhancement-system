@@ -6,8 +6,9 @@
       <el-step title="第一步" description="设置生产日期和产能"/>
       <el-step title="第二步" description="加急订单排产"/>
       <el-step title="第三步" description="系统排产"/>
-      <el-step title="第四步" description="订单预测"/>
-      <el-step title="第五步" description="生成日生产计划"/>
+      <el-step title="第四步" description="未排产订单列表"/>
+      <el-step title="第五步" description="预测订单生成"/>
+      <el-step title="第六步" description="生成日生产计划"/>
     </el-steps>
 
 
@@ -29,11 +30,38 @@
         <el-form-item label="排产日期">
           <el-date-picker v-model="productionDate" type="date" placeholder="选择日期"/>
         </el-form-item>
-        <div v-for="(item, index) in capacity" :key="index">
-          <el-form-item :label="item.capacityType">
-            <el-input-number v-model="item.productionQuantity" :min="0"></el-input-number>
-          </el-form-item>
+
+<!--        <div style="display: flex; align-items: center;">-->
+<!--          <el-row>-->
+<!--            <el-col>添加</el-col>-->
+<!--            <el-col>添加</el-col>-->
+<!--            <el-col>添加</el-col>-->
+<!--          </el-row>-->
+<!--        </div>-->
+
+        <div style="display: flex; align-items: center;">
+          <el-row :gutter="20">
+            <el-col :span="8">添加</el-col>
+            <el-col :span="8">添加</el-col>
+            <el-col :span="8">添加</el-col>
+          </el-row>
         </div>
+
+        <div v-for="(item, index) in capacity" :key="index">
+
+          <!--          <el-form-item :label="item.capacityType">-->
+          <!--            <el-input-number v-model="item.productionQuantity" :min="0"></el-input-number>-->
+          <!--            <el-input v-model="item.requiredQuantity" readonly syle="width: 150px;"></el-input>-->
+          <!--          </el-form-item>-->
+
+          <div style="display: flex; align-items: center;">
+            <el-form-item :label="item.capacityType" label-width="200px">
+              <el-input-number v-model="item.productionQuantity" :min="0"></el-input-number>
+              <el-input v-model="item.requiredQuantity" readonly style="width: 150px; margin-left: 10px;"></el-input>
+            </el-form-item>
+          </div>
+        </div>
+
       </el-form>
     </div>
 
@@ -63,7 +91,7 @@
         <!--   加急订单页面   -->
         <div style="flex: 4; border: #2d2d2d solid;">
 
-          <el-table ref="urgentTable" v-loading="loading" :data="urgentList" width="auto" height="500px"
+          <el-table ref="urgentTable" :data="urgentList" width="auto" height="500px"
                     @selection-change="handleUrgentSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column label="网点名称" align="center" prop="branch"/>
@@ -128,7 +156,7 @@
 
         <div style="flex: 4; border: #2d2d2d solid;">
           <!--   展示一般订单   -->
-          <el-table ref="standardTable" v-loading="loading" :data="standardList" height="500px" width="auto"
+          <el-table ref="standardTable" :data="standardList" height="500px" width="auto"
                     @selection-change="handleStandardSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
             <el-table-column label="网点名称" align="center" prop="branch"/>
@@ -165,14 +193,79 @@
         </div>
       </div>
     </div>
-    <div v-show="active === 4">444444444</div>
 
-    <!--    </el-form>-->
+    <div v-show="active === 4">
+      <div style="display: flex; margin: 20px; width:95%;">
+        <div style="flex: 1; border: #00afff solid;">
+          <!--   渲染产能总数和已使用产能数量   -->
+          <el-form label-width="120px">
+            <el-col style="margin: 20px">
+              <div v-for="(item, index) in usedCapacity" :key="index">
+                <el-form-item :label="item.capacityType">
+                  <el-input v-model="item.productionQuantity" readonly style="width: 150px;"
+                            input-style="font-size: large; font-weight: bold;" size="large" placeholder="Please input">
+                    <template #append>
+                      <span style="width: 30px; font-size: large; font-weight: bold;">
+                       {{ getCapacity(item.capacityType) }}
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-form>
+        </div>
+
+        <div style="flex: 4; border: #2d2d2d solid;">
+          <!--   展示一般订单   -->
+          <el-table ref="unscheduledTable" :data="unscheduledList" height="500px" width="auto"
+                    @selection-change="handleUnscheduledSelectionChange">
+            <el-table-column type="selection" width="55" align="center"/>
+            <el-table-column label="网点名称" align="center" prop="branch"/>
+            <el-table-column label="合同号" align="center" prop="contractNumber"/>
+            <el-table-column label="订单号" align="center" prop="orderNumber"/>
+            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
+            <el-table-column label="数量" align="center" prop="quantity"/>
+            <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
+            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
+            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
+            <el-table-column label="产能型号" align="center" prop="capacityType"/>
+            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="是否超期" align="center" prop="isOverdue"/>
+          </el-table>
+        </div>
+      </div>
+    </div>
+
+    <div v-show="active === 5">555555555</div>
+
+    <div v-show="active === 6">666666666</div>
+
 
     <!--    第五步:设置上一步和下一步的按钮-->
     <div style="  display: flex;  justify-content: center;">
       <el-button v-if="active > 1" type="primary" size="large" @click="pre">上一步</el-button>
-      <el-button v-if="active < 4" type="primary" size="large" @click="next">下一步</el-button>
+      <el-button v-if="active < 6" type="primary" size="large" @click="next">下一步</el-button>
+      <el-button v-if="active === 6" type="success" size="large" @click="next">完成</el-button>
     </div>
 
 
@@ -192,6 +285,9 @@ let active = ref(1);
 const capacity = ref([]);
 // 已使用产能列表
 const usedCapacity = ref([]);
+// 需要产能
+const requiredCapacity = ref([]);
+
 // 排产日期
 const productionDate = ref('')
 
@@ -201,18 +297,21 @@ const allOrders = ref([]);
 const urgentList = ref([]);
 // 一般订单列表
 const standardList = ref([]);
+// 未排产订单列表
+const unscheduledList = ref([]);
 
-// 加急排产列表
-const schedulingUrgentList = ref([]);
-// 临期排产列表
-const schedulingDeadlineList = ref([]);
-// 一般排产列表
-const schedulingStandardList = ref([]);
+
 
 // 步骤条下一步的方法
 function next() {
-  if (active.value < 4) {
+  if (active.value < 6) {
     active.value++
+  }
+  if(active.value === 3){
+    updateSelectionStatus()
+  }
+  if(active.value === 4){
+    getUnscheduledList()
   }
   console.log("当前active：" + active.value)
 }
@@ -222,19 +321,37 @@ function pre() {
   if (active.value > 1) {
     active.value--
   }
+  if(active.value === 3){
+    updateSelectionStatus()
+  }
+  if(active.value === 4){
+    getUnscheduledList()
+  }
   console.log("当前active：" + active.value)
+}
+
+function getUnscheduledList() {
+  unscheduledList.value = allOrders.value.filter(item => {
+    return item.isScheduling === 0
+  })
 }
 
 /** 初始化时，获取产能列表 */
 function getCapacityList() {
   all().then(response => {
-    // 从response.data中解析出车型 和 产量
+    // 从
+    //  response.data中解析出车型 和 产量
     response.data.forEach(item => {
       capacity.value.push({
         'capacityType': item.capacityType,
-        'productionQuantity': item.productionQuantity
+        'productionQuantity': item.productionQuantity,
+        'requiredQuantity': 0
       })
       usedCapacity.value.push({
+        'capacityType': item.capacityType,
+        'productionQuantity': 0
+      })
+      requiredCapacity.value.push({
         'capacityType': item.capacityType,
         'productionQuantity': 0
       })
@@ -273,6 +390,19 @@ function getOrderList() {
     allOrders.value = response.data
     urgentList.value = response.data.filter(item => item.isUrgent === 1);
     standardList.value = response.data.filter(item => item.isUrgent !== 1);
+
+    // 按车型分类统计未排产订单数
+    capacity.value.forEach(item => {
+      // 从allOrders订单中统计需要的产能
+      item.requiredQuantity = getRequiredCapacity(item.capacityType, allOrders);
+    })
+
+    console.log("需要的产能为：" + JSON.stringify(requiredCapacity))
+
+    usedCapacity.value.forEach(item => {
+      // 从allOrders订单中统计已使用产能
+      item.productionQuantity = getUsedCapacity(item.capacityType, allOrders);
+    })
   })
 }
 
@@ -386,6 +516,59 @@ function handleStandardSelectionChange(selection) {
 
 }
 
+function handleUnscheduledSelectionChange(selection){
+  console.log('selection', selection);
+  // 检查当前型号是否进行排产
+  selection.forEach((item, index) => {
+    if (!checkCapacityType(item.capacityType)) {
+      // 询问用户是否对当前车型进行排产
+      proxy.$confirm('当前车型未进行排产，是否对当前车型进行排产？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 跳转到排产页面
+        capacity.value.push({
+          'capacityType': item.capacityType,
+          'productionQuantity': 0
+        })
+        usedCapacity.value.push({
+          'capacityType': item.capacityType,
+          'productionQuantity': 0
+        })
+        countUsedCapacity()
+      }).catch(() => {
+        // 取消操作,将当前选中的数据取消选中
+        console.log('selection-before', selection);
+        selection.splice(index, 1);
+        proxy.$refs.unscheduledTable.toggleRowSelection(item, false);
+        console.log('selection-after', selection);
+
+      });
+    }
+  })
+  console.log("下一步操作：统计")
+  // 清空
+  unscheduledList.value.forEach(item => {
+    allOrders.value.forEach(order => {
+      if (item.id === order.id) {
+        order.isScheduling = 0;
+      }
+    })
+  })
+
+  // 修改allOrders，将选中的订单排产状态改为1
+  selection.forEach(item => {
+    // 从修改allOrders中修改排产状态
+    allOrders.value.forEach(order => {
+      if (item.id === order.id) {
+        order.isScheduling = 1;
+      }
+    })
+  })
+  countUsedCapacity()
+}
+
 // 检查当前型号是否在capacity中
 function checkCapacityType(capacityType) {
   return capacity.value.find(item => item.capacityType === capacityType);
@@ -413,6 +596,42 @@ function getUsedCapacity(capacityType, list) {
   ).reduce((sum, item) => sum + item.quantity, 0);
   console.log("车型已使用产能：" + used)
   return used ? used : 0;
+}
+
+// 根据车型和allOrders获取需要的产能
+function getRequiredCapacity(capacityType, list) {
+  console.log("当前统计的车型为：" + capacityType)
+  const used = list.value.filter(item =>
+      item.capacityType === capacityType
+  ).reduce((sum, item) => sum + item.quantity, 0);
+  console.log("车型已使用产能：" + used)
+  return used ? used : 0;
+}
+
+// 根据allOrders中排产状态，更新selection状态
+function updateSelectionStatus() {
+  console.log("更新selection状态")
+  allOrders.value.forEach(item => {
+    if (item.isScheduling === 1) {
+      // 检查属于哪个表
+      if (item.isUrgent === 1) {
+        // 紧急订单
+        urgentList.value.forEach(order => {
+          if (item.id === order.id) {
+            proxy.$refs.urgentTable.toggleRowSelection(order, true);
+
+          }
+        })
+      } else {
+        // 一般订单
+        standardList.value.forEach(order => {
+          if (item.id === order.id) {
+            proxy.$refs.standardTable.toggleRowSelection(order, true);
+          }
+        })
+      }
+    }
+  })
 }
 
 </script>

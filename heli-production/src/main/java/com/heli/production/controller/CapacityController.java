@@ -43,7 +43,7 @@ public class CapacityController extends BaseController {
      */
     @GetMapping("/all")
     public AjaxResult getAllCapacity() {
-        List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>().eq(CapacityEntity::getProductionStatus, 1));
+        List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>());
         return AjaxResult.success(list);
     }
 
