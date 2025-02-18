@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.fileTable.mapper.DeviceBasicFileMapper">
+
+    <resultMap type="DeviceBasicFile" id="DeviceBasicFileResult">
+        <result property="basicFileId"    column="basic_file_id"    />
+        <result property="basicCombineMaintenance"    column="basic_combine_maintenance"    />
+        <result property="basicCombineRepair"    column="basic_combine_repair"    />
+        <result property="deviceNum"    column="device_num"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="upTime"    column="up_time"    />
+        <result property="versionId"    column="version_id"    />
+        <result property="fileInfo"    column="file_info"    />
+        <result property="fileInfoRepair"    column="file_info_repair"    />
+        <result property="ifHistory"    column="if_history"    />
+    </resultMap>
+
+    <sql id="selectDeviceBasicFileVo">
+        select basic_file_id, basic_combine_maintenance, basic_combine_repair, device_num, device_name, file_type, up_time, version_id, file_info, file_info_repair, if_history from device_basic_file
+    </sql>
+
+    <select id="selectDeviceBasicFileList" parameterType="DeviceBasicFile" resultMap="DeviceBasicFileResult">
+        <include refid="selectDeviceBasicFileVo"/>
+        <where>
+            <if test="basicCombineMaintenance != null "> and basic_combine_maintenance = #{basicCombineMaintenance}</if>
+            <if test="basicCombineRepair != null  and basicCombineRepair != ''"> and basic_combine_repair = #{basicCombineRepair}</if>
+            <if test="deviceNum != null  and deviceNum != ''"> and device_num like concat('%', #{deviceNum}, '%')</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
+            <if test="upTime != null "> and up_time = #{upTime}</if>
+            <if test="versionId != null  and versionId != ''"> and version_id = #{versionId}</if>
+            <if test="fileInfo != null  and fileInfo != ''"> and file_info = #{fileInfo}</if>
+            <if test="fileInfoRepair != null  and fileInfoRepair != ''"> and file_info_repair = #{fileInfoRepair}</if>
+            <if test="ifHistory != null  and ifHistory != ''"> and if_history = #{ifHistory}</if>
+        </where>
+    </select>
+
+    <select id="selectDeviceBasicFileByBasicFileId" parameterType="String" resultMap="DeviceBasicFileResult">
+        <include refid="selectDeviceBasicFileVo"/>
+        where basic_file_id = #{basicFileId}
+    </select>
+
+    <insert id="insertDeviceBasicFile" parameterType="DeviceBasicFile" useGeneratedKeys="true" keyProperty="basicFileId">
+        insert into device_basic_file
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="basicCombineMaintenance != null">basic_combine_maintenance,</if>
+            <if test="basicCombineRepair != null">basic_combine_repair,</if>
+            <if test="deviceNum != null and deviceNum != ''">device_num,</if>
+            <if test="deviceName != null">device_name,</if>
+            <if test="fileType != null">file_type,</if>
+            <if test="upTime != null">up_time,</if>
+            <if test="versionId != null">version_id,</if>
+            <if test="fileInfo != null">file_info,</if>
+            <if test="fileInfoRepair != null">file_info_repair,</if>
+            <if test="ifHistory != null">if_history,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="basicCombineMaintenance != null">#{basicCombineMaintenance},</if>
+            <if test="basicCombineRepair != null">#{basicCombineRepair},</if>
+            <if test="deviceNum != null and deviceNum != ''">#{deviceNum},</if>
+            <if test="deviceName != null">#{deviceName},</if>
+            <if test="fileType != null">#{fileType},</if>
+            <if test="upTime != null">#{upTime},</if>
+            <if test="versionId != null">#{versionId},</if>
+            <if test="fileInfo != null">#{fileInfo},</if>
+            <if test="fileInfoRepair != null">#{fileInfoRepair},</if>
+            <if test="ifHistory != null">#{ifHistory},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDeviceBasicFile" parameterType="DeviceBasicFile">
+        update device_basic_file
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="basicCombineMaintenance != null">basic_combine_maintenance = #{basicCombineMaintenance},</if>
+            <if test="basicCombineRepair != null">basic_combine_repair = #{basicCombineRepair},</if>
+            <if test="deviceNum != null and deviceNum != ''">device_num = #{deviceNum},</if>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="upTime != null">up_time = #{upTime},</if>
+            <if test="versionId != null">version_id = #{versionId},</if>
+            <if test="fileInfo != null">file_info = #{fileInfo},</if>
+            <if test="fileInfoRepair != null">file_info_repair = #{fileInfoRepair},</if>
+            <if test="ifHistory != null">if_history = #{ifHistory},</if>
+        </trim>
+        where basic_file_id = #{basicFileId}
+    </update>
+
+    <delete id="deleteDeviceBasicFileByBasicFileId" parameterType="String">
+        delete from device_basic_file where basic_file_id = #{basicFileId}
+    </delete>
+
+    <delete id="deleteDeviceBasicFileByBasicFileIds" parameterType="String">
+        delete from device_basic_file where basic_file_id in
+        <foreach item="basicFileId" collection="array" open="(" separator="," close=")">
+            #{basicFileId}
+        </foreach>
+    </delete>
+</mapper>

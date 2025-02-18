@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper">
+    
+    <resultMap type="DeviceGroupPlan" id="DeviceGroupPlanResult">
+        <result property="groupId"    column="group_id"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="executeGroup"    column="execute_group"    />
+        <result property="maintenanceContent"    column="maintenance_content"    />
+        <result property="maintenanceCycle"    column="maintenance_cycle"    />
+        <result property="monthOne"    column="month_one"    />
+        <result property="monthTwo"    column="month_two"    />
+        <result property="monthThree"    column="month_three"    />
+        <result property="monthFour"    column="month_four"    />
+    </resultMap>
+
+    <sql id="selectDeviceGroupPlanVo">
+        select group_id, order_num, device_type, execute_group, maintenance_content, maintenance_cycle, month_one, month_two, month_three, month_four from device_group_plan
+    </sql>
+
+    <select id="selectDeviceGroupPlanList" parameterType="DeviceGroupPlan" resultMap="DeviceGroupPlanResult">
+        <include refid="selectDeviceGroupPlanVo"/>
+        <where>  
+            <if test="orderNum != null  and orderNum != ''"> and order_num = #{orderNum}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="executeGroup != null  and executeGroup != ''"> and execute_group = #{executeGroup}</if>
+            <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content like concat('%', #{maintenanceContent}, '%')</if>
+            <if test="maintenanceCycle != null  and maintenanceCycle != ''"> and maintenance_cycle = #{maintenanceCycle}</if>
+            <if test="monthOne != null  and monthOne != ''"> and month_one = #{monthOne}</if>
+            <if test="monthTwo != null  and monthTwo != ''"> and month_two = #{monthTwo}</if>
+            <if test="monthThree != null  and monthThree != ''"> and month_three = #{monthThree}</if>
+            <if test="monthFour != null  and monthFour != ''"> and month_four = #{monthFour}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceGroupPlanByGroupId" parameterType="String" resultMap="DeviceGroupPlanResult">
+        <include refid="selectDeviceGroupPlanVo"/>
+        where group_id = #{groupId}
+    </select>
+
+    <insert id="insertDeviceGroupPlan" parameterType="DeviceGroupPlan" useGeneratedKeys="true" keyProperty="groupId">
+        insert into device_group_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNum != null">order_num,</if>
+            <if test="deviceType != null">device_type,</if>
+            <if test="executeGroup != null">execute_group,</if>
+            <if test="maintenanceContent != null">maintenance_content,</if>
+            <if test="maintenanceCycle != null">maintenance_cycle,</if>
+            <if test="monthOne != null">month_one,</if>
+            <if test="monthTwo != null">month_two,</if>
+            <if test="monthThree != null">month_three,</if>
+            <if test="monthFour != null">month_four,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNum != null">#{orderNum},</if>
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="executeGroup != null">#{executeGroup},</if>
+            <if test="maintenanceContent != null">#{maintenanceContent},</if>
+            <if test="maintenanceCycle != null">#{maintenanceCycle},</if>
+            <if test="monthOne != null">#{monthOne},</if>
+            <if test="monthTwo != null">#{monthTwo},</if>
+            <if test="monthThree != null">#{monthThree},</if>
+            <if test="monthFour != null">#{monthFour},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceGroupPlan" parameterType="DeviceGroupPlan">
+        update device_group_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNum != null">order_num = #{orderNum},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="executeGroup != null">execute_group = #{executeGroup},</if>
+            <if test="maintenanceContent != null">maintenance_content = #{maintenanceContent},</if>
+            <if test="maintenanceCycle != null">maintenance_cycle = #{maintenanceCycle},</if>
+            <if test="monthOne != null">month_one = #{monthOne},</if>
+            <if test="monthTwo != null">month_two = #{monthTwo},</if>
+            <if test="monthThree != null">month_three = #{monthThree},</if>
+            <if test="monthFour != null">month_four = #{monthFour},</if>
+        </trim>
+        where group_id = #{groupId}
+    </update>
+
+    <delete id="deleteDeviceGroupPlanByGroupId" parameterType="String">
+        delete from device_group_plan where group_id = #{groupId}
+    </delete>
+
+    <delete id="deleteDeviceGroupPlanByGroupIds" parameterType="String">
+        delete from device_group_plan where group_id in 
+        <foreach item="groupId" collection="array" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </delete>
+</mapper>
