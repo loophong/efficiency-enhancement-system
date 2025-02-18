@@ -67,4 +67,10 @@ public class HistoryOrderEntity implements Serializable {
     @ExcelIgnore
     private Date orderYear;
 
+    /**
+     * 产能类型
+     */
+    @ExcelIgnore
+    private String capacityType;
+
 }

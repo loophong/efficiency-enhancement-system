@@ -12,10 +12,18 @@
         <result property="vehicleModel" column="vehicle_model"/>
         <result property="quantity" column="quantity"/>
         <result property="orderYear" column="order_year"/>
+        <result property="capacityType" column="capacity_type"/>
     </resultMap>
 
     <sql id="selectHistoryOrderVo">
-        select id, branch, order_number, order_date, vehicle_model, quantity, order_year
+        select id,
+               branch,
+               order_number,
+               order_date,
+               vehicle_model,
+               quantity,
+               order_year,
+               capacity_type
         from production_history_order
     </sql>
 
@@ -28,6 +36,7 @@
             <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
             <if test="quantity != null ">and quantity = #{quantity}</if>
             <if test="orderYear != null ">and order_year = #{orderYear}</if>
+            <if test="capacityType != null ">and capacity_type = #{capacityType}</if>
         </where>
     </select>
 
@@ -45,6 +54,7 @@
             <if test="vehicleModel != null">vehicle_model,</if>
             <if test="quantity != null">quantity,</if>
             <if test="orderYear != null">order_year,</if>
+            <if test="capacityType != null">capacity_type,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="branch != null">#{branch},</if>
@@ -53,6 +63,7 @@
             <if test="vehicleModel != null">#{vehicleModel},</if>
             <if test="quantity != null">#{quantity},</if>
             <if test="orderYear != null">#{orderYear},</if>
+            <if test="capacityType != null">#{capacityType},</if>
         </trim>
     </insert>
 
@@ -61,34 +72,35 @@
         insert into production_history_order(branch, order_number, order_date, vehicle_model, quantity, order_year)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.branch}, #{item.orderNumber}, #{item.orderDate}, #{item.vehicleModel}, #{item.quantity}, #{item.orderYear})
+            (#{item.branch}, #{item.orderNumber}, #{item.orderDate}, #{item.vehicleModel}, #{item.quantity},
+            #{item.orderYear})
         </foreach>
     </insert>
 
 
     <!--  批量插入数据库  -->
-<!--    <insert id="batchInsertProductionTable" parameterType="java.util.List">-->
-<!--        insert into Production_Table(CREATED_BY,CREATED_TIME,Acceptance_Date,Launch_Date,-->
-<!--        Order_Number,Contract_Number,Car_Number,Vehicle_Model,-->
-<!--        Door_Frame_Height,Amount,Accessory,Valve_Block,-->
-<!--        Car_Configuration,Planned_Completion_Period,Customer,-->
-<!--        Vehicle_Launch_Date,Completion_Period_Of_Door_Frame_Assembly,-->
-<!--        Trial_Completion_Period,Special_Operations,Precision_Completion_Period,-->
-<!--        Production_SiteIssues,Procurement_Of_On_site_Abnormal_Issues,-->
-<!--        Quality_Of_On_site_Abnormal_Issues,Go_Live,Warehousing,Production_Cycle)-->
-<!--        values-->
-<!--        <foreach collection="productionTableList" item="e" separator=",">-->
-<!--            (#{e.createdBy},#{e.createdTime},#{e.acceptanceDate},-->
-<!--            #{e.launchDate},#{e.orderNumber},#{e.contractNumber},-->
-<!--            #{e.carNumber},#{e.vehicleModel},#{e.doorFrameHeight},-->
-<!--            #{e.amount},#{e.accessory},#{e.valveBlock},#{e.carConfiguration},-->
-<!--            #{e.plannedCompletionPeriod},#{e.customer},#{e.vehicleLaunchDate},-->
-<!--            #{e.completionPeriodOfDoorFrameAssembly},#{e.trialCompletionPeriod},-->
-<!--            #{e.specialOperations},#{e.precisionCompletionPeriod},#{e.productionSiteIssues},-->
-<!--            #{e.procurementOfOnSiteAbnormalIssues},#{e.qualityOfOnSiteAbnormalIssues},-->
-<!--            #{e.goLive},#{e.warehousing},#{e.productionCycle})-->
-<!--        </foreach>-->
-<!--    </insert>-->
+    <!--    <insert id="batchInsertProductionTable" parameterType="java.util.List">-->
+    <!--        insert into Production_Table(CREATED_BY,CREATED_TIME,Acceptance_Date,Launch_Date,-->
+    <!--        Order_Number,Contract_Number,Car_Number,Vehicle_Model,-->
+    <!--        Door_Frame_Height,Amount,Accessory,Valve_Block,-->
+    <!--        Car_Configuration,Planned_Completion_Period,Customer,-->
+    <!--        Vehicle_Launch_Date,Completion_Period_Of_Door_Frame_Assembly,-->
+    <!--        Trial_Completion_Period,Special_Operations,Precision_Completion_Period,-->
+    <!--        Production_SiteIssues,Procurement_Of_On_site_Abnormal_Issues,-->
+    <!--        Quality_Of_On_site_Abnormal_Issues,Go_Live,Warehousing,Production_Cycle)-->
+    <!--        values-->
+    <!--        <foreach collection="productionTableList" item="e" separator=",">-->
+    <!--            (#{e.createdBy},#{e.createdTime},#{e.acceptanceDate},-->
+    <!--            #{e.launchDate},#{e.orderNumber},#{e.contractNumber},-->
+    <!--            #{e.carNumber},#{e.vehicleModel},#{e.doorFrameHeight},-->
+    <!--            #{e.amount},#{e.accessory},#{e.valveBlock},#{e.carConfiguration},-->
+    <!--            #{e.plannedCompletionPeriod},#{e.customer},#{e.vehicleLaunchDate},-->
+    <!--            #{e.completionPeriodOfDoorFrameAssembly},#{e.trialCompletionPeriod},-->
+    <!--            #{e.specialOperations},#{e.precisionCompletionPeriod},#{e.productionSiteIssues},-->
+    <!--            #{e.procurementOfOnSiteAbnormalIssues},#{e.qualityOfOnSiteAbnormalIssues},-->
+    <!--            #{e.goLive},#{e.warehousing},#{e.productionCycle})-->
+    <!--        </foreach>-->
+    <!--    </insert>-->
 
     <update id="updateHistoryOrder" parameterType="HistoryOrderEntity">
         update production_history_order
@@ -99,6 +111,7 @@
             <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
             <if test="quantity != null">quantity = #{quantity},</if>
             <if test="orderYear != null">order_year = #{orderYear},</if>
+            <if test="capacityType != null">capacity_type = #{capacityType},</if>
         </trim>
         where id = #{id}
     </update>
