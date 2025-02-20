@@ -2,7 +2,9 @@ package com.heli.production.mapper;
 
 import com.heli.production.domain.entity.HistoryOrderEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.heli.production.domain.entity.HistoryOrderStatisticsEntity;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,8 @@ public interface HistoryOrderMapper extends BaseMapper<HistoryOrderEntity> {
      * @return 结果
      */
     public int deleteHistoryOrderByIds(String[] ids);
+
+    List<HistoryOrderStatisticsEntity> statistics(Date date);
 }
 
 

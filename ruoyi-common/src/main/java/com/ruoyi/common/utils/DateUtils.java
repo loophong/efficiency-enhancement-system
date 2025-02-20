@@ -202,4 +202,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static String formatOutput(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
     }
+
+    /**
+     * @description: 获取当前月份的下一个月
+     * @author: hong
+     * @date: 2025/2/20 16:06
+     * @version: 1.0
+     */
+    public static Date getNextMonth(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH, 1);
+        return calendar.getTime();
+    }
+
+
 }

@@ -45,6 +45,24 @@
         where id = #{id}
     </select>
 
+
+    <!--  统计订单数据  -->
+    <select id="statistics" resultType="com.heli.production.domain.entity.HistoryOrderStatisticsEntity">
+        select vehicleModel, quantity, capacity_vehicle_model as capacityType
+        from (
+                 select vehicle_model as vehicleModel,
+                        sum(quantity) as quantity
+                 from production_history_order
+                 where YEAR(order_date) = YEAR(#{date})
+                   and MONTH(order_date) = MONTH(#{date})
+                 group by vehicle_model
+             ) as vMq
+        left join production_cycle as pc on vMq.vehicleModel = pc.vehicle_model
+    </select>
+
+
+
+
     <insert id="insertHistoryOrder" parameterType="HistoryOrderEntity" useGeneratedKeys="true" keyProperty="id">
         insert into production_history_order
         <trim prefix="(" suffix=")" suffixOverrides=",">

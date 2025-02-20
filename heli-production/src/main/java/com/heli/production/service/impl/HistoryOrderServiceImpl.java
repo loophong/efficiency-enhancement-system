@@ -6,9 +6,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.production.Listener.HistoryOrderListener;
 import com.heli.production.Listener.MainPlanTableListener;
 import com.heli.production.domain.entity.HistoryOrderEntity;
+import com.heli.production.domain.entity.HistoryOrderStatisticsEntity;
 import com.heli.production.domain.entity.MainPlanTableEntity;
 import com.heli.production.service.IHistoryOrderService;
 import com.heli.production.mapper.HistoryOrderMapper;
+import com.heli.production.service.IHistoryOrderStatisticsService;
+import com.ruoyi.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,8 @@ import java.util.List;
 public class HistoryOrderServiceImpl extends ServiceImpl<HistoryOrderMapper, HistoryOrderEntity> implements IHistoryOrderService {
     @Autowired
     private HistoryOrderMapper historyOrderMapper;
+    @Autowired
+    private IHistoryOrderStatisticsService orderStatisticsService;
 
     /**
      * 查询历史订单
@@ -105,7 +110,25 @@ public class HistoryOrderServiceImpl extends ServiceImpl<HistoryOrderMapper, His
 
             try {
 
-                EasyExcel.read(excelFile.getInputStream(), HistoryOrderEntity.class, new HistoryOrderListener(historyOrderMapper,date)).sheet().doRead();
+                EasyExcel.read(excelFile.getInputStream(), HistoryOrderEntity.class, new HistoryOrderListener(historyOrderMapper, date)).sheet().doRead();
+
+                log.info("开始统计处理数据");
+                for (int i = 0; i < 12; i++) {
+
+                    List<HistoryOrderStatisticsEntity> result = historyOrderMapper.statistics(date);
+                    log.info("统计结果"+result);
+                    orderStatisticsService.remove(
+                            new LambdaQueryWrapper<HistoryOrderStatisticsEntity>()
+                                    .eq(HistoryOrderStatisticsEntity::getYearAndMonth, date)
+                    );
+                    for (HistoryOrderStatisticsEntity entity : result) {
+                        entity.setYearAndMonth(date);
+                    }
+                    orderStatisticsService.saveBatch(result);
+
+                    date = DateUtils.getNextMonth(date);
+                }
+
                 log.info("读取文件成功: {}", fileName);
 
             } catch (Exception e) {
