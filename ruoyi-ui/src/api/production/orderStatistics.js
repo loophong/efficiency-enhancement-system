@@ -42,3 +42,28 @@ export function delOrderStatistics(id) {
         method: 'delete'
     })
 }
+
+// 获取车型列表
+// export function listVehicleModel() {
+//     return request({
+//         url: '/production/orderStatistics/vehicleModel',
+//         method: 'get'
+//     })
+// }
+
+// 获取产能类型列表
+// export function listCapacityType() {
+//     return request({
+//         url: '/production/orderStatistics/capacityType',
+//         method: 'list'
+//     })
+// }
+
+// 获取图标数据
+export function charData(charParams) {
+    return request({
+        url: '/production/orderStatistics/charData',
+        method: 'post',
+        data: charParams
+    })
+}

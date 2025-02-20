@@ -3,6 +3,8 @@ package com.heli.production.controller;
 import java.util.Arrays;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.heli.production.domain.dto.CharParamsDTO;
 import com.heli.production.domain.entity.HistoryOrderStatisticsEntity;
 import com.heli.production.service.IHistoryOrderStatisticsService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -83,4 +85,17 @@ public class HistoryOrderStatisticsController extends BaseController {
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(historyOrderStatisticsEntityService.removeByIds(Arrays.asList(ids)));
     }
+
+
+    @PostMapping("/charData")
+    public AjaxResult getCharData(@RequestBody CharParamsDTO charParamsDTO) {
+        LambdaQueryWrapper<HistoryOrderStatisticsEntity> queryWrapper = new LambdaQueryWrapper<HistoryOrderStatisticsEntity>()
+                .eq(charParamsDTO.getVehicleModel() != null, HistoryOrderStatisticsEntity::getVehicleModel, charParamsDTO.getVehicleModel())
+                .eq(charParamsDTO.getCapacityType() != null, HistoryOrderStatisticsEntity::getCapacityType, charParamsDTO.getCapacityType())
+                .between(charParamsDTO.getStartTime() != null, HistoryOrderStatisticsEntity::getYearAndMonth, charParamsDTO.getStartTime(), charParamsDTO.getEndTime());
+        List<HistoryOrderStatisticsEntity> list = historyOrderStatisticsEntityService.list(queryWrapper);
+        return success(list);
+    }
+
+
 }

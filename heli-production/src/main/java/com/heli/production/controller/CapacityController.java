@@ -36,7 +36,7 @@ public class CapacityController extends BaseController {
     private ICapacityService capacityService;
 
     /**
-     * @description: 排产时，获取在产 产能列表
+     * @description: 排产时，获取产能列表
      * @author: hong
      * @date: 2025/1/18 14:51
      * @version: 1.0
@@ -97,4 +97,5 @@ public class CapacityController extends BaseController {
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(capacityService.deleteCapacityByIds(ids));
     }
+
 }

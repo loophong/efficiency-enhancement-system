@@ -1,6 +1,7 @@
 package com.heli.production.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.entity.CycleEntity;
 import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.exception.ServiceException;
@@ -115,5 +116,21 @@ public class CycleController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids) {
         return toAjax(productionCycleService.deleteProductionCycleByIds(ids));
+    }
+
+
+
+    /**
+     * @description: 获取车型列表
+     * @author: hong
+     * @date: 2025/2/20 17:01
+     * @version: 1.0
+     */
+    @GetMapping("/vehicleModel")
+    public AjaxResult getVehicleModel() {
+        LambdaQueryWrapper<CycleEntity> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.select(CycleEntity::getVehicleModel);
+        List<CycleEntity> list = productionCycleService.list(queryWrapper);
+        return AjaxResult.success(list);
     }
 }
