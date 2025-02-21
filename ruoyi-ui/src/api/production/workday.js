@@ -26,13 +26,23 @@ export function addWorkday(data) {
 }
 
 
-export function setWorkday(selectDate,status) {
+export function setWorkday(selectDate, status) {
     return request({
         url: '/production/workday',
         method: 'post',
         data: {
             'date': selectDate,
             'status': status
+        }
+    })
+}
+
+export function getLimitWorkdayList(date) {
+    return request({
+        url: '/production/workday/limitList',
+        method: 'get',
+        params: {
+            'date': date
         }
     })
 }

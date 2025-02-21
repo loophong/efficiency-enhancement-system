@@ -55,3 +55,11 @@ export function importFile(formData) {
         }
     })
 }
+
+
+export function listVehicleModel() {
+    return request({
+        url: '/production/cycle/vehicleModel',
+        method: 'get'
+    })
+}

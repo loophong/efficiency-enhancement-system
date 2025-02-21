@@ -26,7 +26,7 @@ public class CapacityEntity implements Serializable {
     /**
      * 车型
      */
-    private String vehicleModel;
+    private String capacityType;
 
     /**
      * 产量

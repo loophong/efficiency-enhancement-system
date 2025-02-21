@@ -52,3 +52,10 @@ export function getUrgentOrder() {
         method: 'get'
     })
 }
+
+export function getOrders() {
+    return request({
+        url: '/production/scheduling/getOrderList',
+        method: 'get'
+    })
+}

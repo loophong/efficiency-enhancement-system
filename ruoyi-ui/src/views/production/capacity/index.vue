@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="车型" prop="vehicleModel">
+      <el-form-item label="车型" prop="capacityType">
         <el-input
-            v-model="queryParams.vehicleModel"
+            v-model="queryParams.capacityType"
             placeholder="请输入车型"
             clearable
             @keyup.enter="handleQuery"
@@ -80,12 +80,13 @@
     <el-table v-loading="loading" :data="capacityList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="主键" align="center" prop="id" />-->
-      <el-table-column label="车型" align="center" prop="vehicleModel"/>
+      <el-table-column label="车型" align="center" prop="capacityType"/>
       <el-table-column label="产量" align="center" prop="productionQuantity"/>
       <el-table-column label="生产状态" align="center" prop="productionStatus">
         <template #default="scope">
-          <el-switch v-model="scope.row.productionStatus" @change="changeStatus(scope.row)" class="ml-2" size="large"
-                     inline-prompt     active-text="在产" inactive-text="停产"
+          <el-switch v-model="scope.row.productionStatus"
+                     @change="changeStatus(scope.row)" class="ml-2" size="large"
+                     inline-prompt active-text="在产" inactive-text="停产"
                      style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"/>
         </template>
       </el-table-column>
@@ -113,8 +114,8 @@
     <!-- 添加或修改产能对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="capacityRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="车型" prop="vehicleModel">
-          <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
+        <el-form-item label="车型" prop="capacityType">
+          <el-input v-model="form.capacityType" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="产量" prop="productionQuantity">
           <el-input-number v-model="form.productionQuantity" :min="0"/>
@@ -153,12 +154,12 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    vehicleModel: null,
+    capacityType: null,
     productionQuantity: null,
     remarks: null
   },
   rules: {
-    vehicleModel: [
+    capacityType: [
       {required: true, message: "车型不能为空", trigger: "blur"}
     ],
     productionQuantity: [
@@ -194,7 +195,7 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    vehicleModel: null,
+    capacityType: null,
     productionQuantity: null,
     remarks: null
   };
@@ -292,4 +293,5 @@ function changeStatus(row) {
     proxy.$modal.msgSuccess("修改成功");
   });
 }
+
 </script>

@@ -36,14 +36,14 @@ public class CapacityController extends BaseController {
     private ICapacityService capacityService;
 
     /**
-     * @description: 排产时，获取在产 产能列表
+     * @description: 排产时，获取产能列表
      * @author: hong
      * @date: 2025/1/18 14:51
      * @version: 1.0
      */
     @GetMapping("/all")
     public AjaxResult getAllCapacity() {
-        List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>().eq(CapacityEntity::getProductionStatus, 1));
+        List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>());
         return AjaxResult.success(list);
     }
 
@@ -97,4 +97,5 @@ public class CapacityController extends BaseController {
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(capacityService.deleteCapacityByIds(ids));
     }
+
 }
