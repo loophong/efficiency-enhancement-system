@@ -31,13 +31,13 @@
           <el-date-picker v-model="productionDate" type="date" placeholder="选择日期"/>
         </el-form-item>
 
-<!--        <div style="display: flex; align-items: center;">-->
-<!--          <el-row>-->
-<!--            <el-col>添加</el-col>-->
-<!--            <el-col>添加</el-col>-->
-<!--            <el-col>添加</el-col>-->
-<!--          </el-row>-->
-<!--        </div>-->
+        <!--        <div style="display: flex; align-items: center;">-->
+        <!--          <el-row>-->
+        <!--            <el-col>添加</el-col>-->
+        <!--            <el-col>添加</el-col>-->
+        <!--            <el-col>添加</el-col>-->
+        <!--          </el-row>-->
+        <!--        </div>-->
 
         <div style="display: flex; align-items: center;">
           <el-row :gutter="20">
@@ -256,7 +256,88 @@
       </div>
     </div>
 
-    <div v-show="active === 5">555555555</div>
+    <div v-show="active === 5">
+
+      <div style="display: flex; margin: 20px; width:95%;">
+        <div style="flex: 1; border: #00afff solid;">
+          <!--   渲染产能总数和已使用产能数量   -->
+          <el-form label-width="120px">
+            <el-col style="margin: 20px">
+              <div v-for="(item, index) in usedCapacity" :key="index">
+                <el-form-item :label="item.capacityType">
+                  <el-input v-model="item.productionQuantity" readonly style="width: 150px;"
+                            input-style="font-size: large; font-weight: bold;" size="large" placeholder="Please input">
+                    <template #append>
+                      <span style="width: 30px; font-size: large; font-weight: bold;">
+                       {{ getCapacity(item.capacityType) }}
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-form>
+        </div>
+
+        <div style="flex: 4; border: #2d2d2d solid;">
+          <!--   展示预测订单   -->
+          <el-row :gutter="10" class="mb8">
+            <el-col :span="1.5">
+              <el-button type="primary" plain icon="Plus" v-hasPermi="['production:orderStatistics:add']">
+                新增
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button type="success" plain icon="Edit" :disabled="single"
+                         v-hasPermi="['production:orderStatistics:edit']">修改
+              </el-button>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button type="danger" plain icon="Delete" :disabled="multiple"
+                         v-hasPermi="['production:orderStatistics:remove']">删除
+              </el-button>
+            </el-col>
+          </el-row>
+
+          <el-table ref="unscheduledTable" :data="unscheduledList" height="500px" width="auto"
+                    @selection-change="handleUnscheduledSelectionChange">
+            <el-table-column type="selection" width="55" align="center"/>
+            <el-table-column label="网点名称" align="center" prop="branch"/>
+            <el-table-column label="合同号" align="center" prop="contractNumber"/>
+            <el-table-column label="订单号" align="center" prop="orderNumber"/>
+            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
+            <el-table-column label="数量" align="center" prop="quantity"/>
+            <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
+            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
+            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
+            <el-table-column label="产能型号" align="center" prop="capacityType"/>
+            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="是否超期" align="center" prop="isOverdue"/>
+          </el-table>
+        </div>
+      </div>
+
+
+    </div>
 
     <div v-show="active === 6">666666666</div>
 
@@ -301,16 +382,16 @@ const standardList = ref([]);
 const unscheduledList = ref([]);
 
 
-
 // 步骤条下一步的方法
 function next() {
   if (active.value < 6) {
     active.value++
   }
-  if(active.value === 3){
+  if (active.value === 3) {
+    autoScheduling()
     updateSelectionStatus()
   }
-  if(active.value === 4){
+  if (active.value === 4) {
     getUnscheduledList()
   }
   console.log("当前active：" + active.value)
@@ -321,10 +402,10 @@ function pre() {
   if (active.value > 1) {
     active.value--
   }
-  if(active.value === 3){
+  if (active.value === 3) {
     updateSelectionStatus()
   }
-  if(active.value === 4){
+  if (active.value === 4) {
     getUnscheduledList()
   }
   console.log("当前active：" + active.value)
@@ -390,6 +471,7 @@ function getOrderList() {
     allOrders.value = response.data
     urgentList.value = response.data.filter(item => item.isUrgent === 1);
     standardList.value = response.data.filter(item => item.isUrgent !== 1);
+    standardList.value.sort((a, b) => new Date(a.latestOnlineDate) - new Date(b.latestOnlineDate));
 
     // 按车型分类统计未排产订单数
     capacity.value.forEach(item => {
@@ -516,7 +598,7 @@ function handleStandardSelectionChange(selection) {
 
 }
 
-function handleUnscheduledSelectionChange(selection){
+function handleUnscheduledSelectionChange(selection) {
   console.log('selection', selection);
   // 检查当前型号是否进行排产
   selection.forEach((item, index) => {
@@ -634,6 +716,34 @@ function updateSelectionStatus() {
   })
 }
 
+/**
+ *  自动排产，遍历standardList，判断当前车型产能是否用尽，如果还有产能则进行排产，并更新selection状态
+ * */
+function autoScheduling() {
+  console.log("自动排产")
+  standardList.value.forEach(item => {
+    // 判断当前车型是否用尽
+    const capacityType = item.capacityType;
+    // 如果capacityType 为null，则跳过剩余操作
+    if(capacityType === null){
+      return;
+    }
+    let used = usedCapacity.value.find(item => item.capacityType === capacityType)
+    let required = capacity.value.find(item => item.capacityType === capacityType)
+    // console.log("capacityType排产车型" + capacityType + "已使用产能" + used + "需要产能" + required)
+    console.log("capacityType排产车型" + capacityType)
+    console.log("已使用产能" + JSON.stringify(used))
+    console.log("需要产能" + JSON.stringify(required))
+
+    if (used.productionQuantity < required.productionQuantity) {
+      // 进行排产
+      item.isScheduling = 1;
+    }
+    countUsedCapacity()
+    updateSelectionStatus()
+  })
+  console.log("自动排产完成" + JSON.stringify(usedCapacity.value))
+}
 </script>
 
 <style scoped>

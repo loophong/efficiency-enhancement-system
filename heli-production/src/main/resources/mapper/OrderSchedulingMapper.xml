@@ -34,6 +34,7 @@
         <result property="isOverdue" column="is_overdue"/>
         <result property="isUrgent" column="is_urgent"/>
         <result property="isScheduling" column="is_scheduling"/>
+        <result property="onlineDate" column="online_date"/>
     </resultMap>
 
     <sql id="selectOrderSchedulingVo">
@@ -65,7 +66,8 @@
                latest_online_date,
                is_overdue,
                is_urgent,
-               is_scheduling
+               is_scheduling,
+               online_date
         from production_order_scheduling
     </sql>
 
@@ -104,6 +106,7 @@
             <if test="isOverdue != null ">and is_overdue = #{isOverdue}</if>
             <if test="isUrgent != null ">and is_urgent = #{isUrgent}</if>
             <if test="isScheduling != null ">and is_scheduling = #{isScheduling}</if>
+            <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
         </where>
     </select>
 

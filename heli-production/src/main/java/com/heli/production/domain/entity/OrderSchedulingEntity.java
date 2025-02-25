@@ -51,4 +51,9 @@ public class OrderSchedulingEntity extends MainPlanTableEntity implements Serial
      */
     private Integer isScheduling;
 
+    /**
+     * 上线时间
+     */
+    private Date onlineDate;
+
 }

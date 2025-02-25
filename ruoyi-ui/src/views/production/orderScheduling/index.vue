@@ -18,70 +18,70 @@
       <el-form-item label="车型" prop="vehicleModel">
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="数量" prop="quantity">
-        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="阀片" prop="valvePlate">
-        <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="货叉" prop="forklift">
-        <el-input v-model="queryParams.forklift" placeholder="请输入货叉" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="门架" prop="mast">
-        <el-input v-model="queryParams.mast" placeholder="请输入门架" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="空滤" prop="airFilter">
-        <el-input v-model="queryParams.airFilter" placeholder="请输入空滤" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="属具" prop="attachments">
-        <el-input v-model="queryParams.attachments" placeholder="请输入属具" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="轮胎" prop="tires">
-        <el-input v-model="queryParams.tires" placeholder="请输入轮胎" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="配置" prop="configuration">
-        <el-input v-model="queryParams.configuration" placeholder="请输入配置" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
+      <!--      <el-form-item label="数量" prop="quantity">-->
+      <!--        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="阀片" prop="valvePlate">-->
+      <!--        <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="货叉" prop="forklift">-->
+      <!--        <el-input v-model="queryParams.forklift" placeholder="请输入货叉" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="门架" prop="mast">-->
+      <!--        <el-input v-model="queryParams.mast" placeholder="请输入门架" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="空滤" prop="airFilter">-->
+      <!--        <el-input v-model="queryParams.airFilter" placeholder="请输入空滤" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="属具" prop="attachments">-->
+      <!--        <el-input v-model="queryParams.attachments" placeholder="请输入属具" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="轮胎" prop="tires">-->
+      <!--        <el-input v-model="queryParams.tires" placeholder="请输入轮胎" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="配置" prop="configuration">-->
+      <!--        <el-input v-model="queryParams.configuration" placeholder="请输入配置" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
       <el-form-item label="车号" prop="vehicleNumber">
         <el-input v-model="queryParams.vehicleNumber" placeholder="请输入车号" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="备注信息" prop="remarks">
         <el-input v-model="queryParams.remarks" placeholder="请输入备注信息" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="交货形式" prop="deliveryForm">
-        <el-input v-model="queryParams.deliveryForm" placeholder="请输入交货形式" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="交货地点" prop="deliveryLocation">
-        <el-input v-model="queryParams.deliveryLocation" placeholder="请输入交货地点" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="联系人姓名" prop="contactPerson">
-        <el-input v-model="queryParams.contactPerson" placeholder="请输入联系人姓名" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="联系电话" prop="phoneNumber">
-        <el-input v-model="queryParams.phoneNumber" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
+      <!--      <el-form-item label="交货形式" prop="deliveryForm">-->
+      <!--        <el-input v-model="queryParams.deliveryForm" placeholder="请输入交货形式" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="交货地点" prop="deliveryLocation">-->
+      <!--        <el-input v-model="queryParams.deliveryLocation" placeholder="请输入交货地点" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="联系人姓名" prop="contactPerson">-->
+      <!--        <el-input v-model="queryParams.contactPerson" placeholder="请输入联系人姓名" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="联系电话" prop="phoneNumber">-->
+      <!--        <el-input v-model="queryParams.phoneNumber" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <el-form-item label="订单系统交货期" label-width="120px" prop="systemDeliveryDate">
         <el-date-picker clearable v-model="queryParams.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择订单系统交货期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="生产回复完工日期" prop="productionCompletionDate">
-        <el-date-picker clearable v-model="queryParams.productionCompletionDate" type="date" value-format="YYYY-MM-DD"
-                        placeholder="请选择生产回复完工日期">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
-        <el-date-picker clearable v-model="queryParams.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"
-                        placeholder="请选择采购回复到货时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="生产周期" prop="productionCycle">
-        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="最晚上线日期" prop="latestOnlineDate">
+      <!--      <el-form-item label="生产回复完工日期" prop="productionCompletionDate">-->
+      <!--        <el-date-picker clearable v-model="queryParams.productionCompletionDate" type="date" value-format="YYYY-MM-DD"-->
+      <!--                        placeholder="请选择生产回复完工日期">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">-->
+      <!--        <el-date-picker clearable v-model="queryParams.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"-->
+      <!--                        placeholder="请选择采购回复到货时间">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="生产周期" prop="productionCycle">-->
+      <!--        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <el-form-item label="最晚上线日期" label-width="100px" prop="latestOnlineDate">
         <el-date-picker clearable v-model="queryParams.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择最晚上线日期">
         </el-date-picker>
@@ -94,6 +94,11 @@
       </el-form-item>
       <el-form-item label="是否排产" prop="isScheduling">
         <el-input v-model="queryParams.isScheduling" placeholder="请输入是否排产" clearable @keyup.enter="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="上线时间" prop="onlineDate">
+        <el-date-picker clearable v-model="queryParams.onlineDate" type="date" value-format="YYYY-MM-DD"
+                        placeholder="请选择排产时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -188,13 +193,23 @@
           <el-tag v-else-if="scope.row.isScheduling === 1" type="success">已排产</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="上线日期" align="center" prop="latestOnlineDate" width="100">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.onlineDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['production:scheduling:edit']">修改
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:scheduling:remove']">删除
+          </el-button>
+          <!--    如果已经排产，则显示特殊情况上报按钮    -->
+          <el-button link type="primary" icon="Upload" @click="handleSpecialReport(scope.row)"
+                     v-if="scope.row.isScheduling === 1"
+                     v-hasPermi="['production:scheduling:report']">特殊情况上报
           </el-button>
         </template>
       </el-table-column>
@@ -320,6 +335,53 @@
         </div>
       </template>
     </el-dialog>
+
+
+    <!-- 添加或修改订单信息对话框 -->
+    <el-dialog title="特殊情况填报" v-model="specialVisible" width="500px" append-to-body>
+      <el-form ref="casesRef" :model="specialForm" :rules="rules" label-width="80px">
+        <el-form-item label="订单号" prop="orderNumber">
+          <el-input v-model="specialForm.orderNumber" placeholder="请输入订单号"/>
+        </el-form-item>
+        <el-form-item label="上线日期" prop="onlineDate">
+          <el-date-picker clearable v-model="specialForm.onlineDate" type="date"
+                          value-format="YYYY-MM-DD" placeholder="请选择上线日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="故障原因" prop="faultReason">
+          <el-select v-model="specialForm.faultReason" placeholder="请选择故障原因">
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input v-model="specialForm.faultDescription" placeholder="请输入故障说明"/>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-input v-model="specialForm.responsibleDepartment" placeholder="请输入责任科室"/>
+        </el-form-item>
+        <!--        <el-form-item label="是否为重大故障" prop="isMajorFault">-->
+        <!--          <el-select v-model="specialForm.isMajorFault" placeholder="请选择是否为重大故障">-->
+        <!--            <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="parseInt(dict.value)"-->
+        <!--            ></el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="处理状态" prop="approvalStatus">-->
+        <!--          <el-input v-model="specialForm.approvalStatus" placeholder="请输入处理状态"/>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="填报时间" prop="uploadDate">-->
+        <!--          <el-date-picker clearable v-model="specialForm.uploadDate" type="date"-->
+        <!--                          value-format="YYYY-MM-DD" placeholder="请选择填报时间">-->
+        <!--          </el-date-picker>-->
+        <!--        </el-form-item>-->
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitSpecial">确 定</el-button>
+          <el-button @click="cancelSpecial">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -331,8 +393,10 @@ import {
   addScheduling,
   updateScheduling
 } from "@/api/production/orderScheduling.js";
+import {addCases} from "@/api/production/special";
 
 const {proxy} = getCurrentInstance();
+const {production_fault_reason} = proxy.useDict('production_fault_reason');
 
 const schedulingList = ref([]);
 const open = ref(false);
@@ -376,7 +440,8 @@ const data = reactive({
     latestOnlineDate: null,
     isOverdue: null,
     isUrgent: null,
-    isScheduling: null
+    isScheduling: null,
+    onlineDate: null
   },
   rules: {}
 });
@@ -430,7 +495,8 @@ function reset() {
     latestOnlineDate: null,
     isOverdue: null,
     isUrgent: null,
-    isScheduling: null
+    isScheduling: null,
+    onlineDate: null
   };
   proxy.resetForm("schedulingRef");
 }
@@ -513,4 +579,29 @@ function handleExport() {
 }
 
 getList();
+
+const specialVisible = ref(false);
+const specialForm = ref({});
+
+function handleSpecialReport(row) {
+  console.log(row);
+  specialVisible.value = true;
+  specialForm.value.orderNumber = row.orderNumber;
+  specialForm.value.onlineDate = row.onlineDate;
+}
+
+// 取消按钮
+function cancelSpecial() {
+  specialVisible.value = false;
+  reset();
+}
+
+/** 提交按钮 */
+function submitSpecial() {
+  addCases(specialForm.value).then(response => {
+    proxy.$modal.msgSuccess("特殊情况上报成功");
+    specialVisible.value = false;
+    getList();
+  });
+}
 </script>
