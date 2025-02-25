@@ -79,7 +79,7 @@ public class SpecialCasesEntity implements Serializable {
      * 处理状态
      */
     @Excel(name = "处理状态")
-    private String approvalStatus;
+    private Integer approvalStatus;
 
     /**
      * 填报时间

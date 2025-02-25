@@ -10,54 +10,33 @@
         />
       </el-form-item>
       <el-form-item label="上线日期" prop="onlineDate">
-        <el-date-picker clearable
-                        v-model="queryParams.onlineDate"
-                        type="date"
-                        value-format="YYYY-MM-DD"
+        <el-date-picker clearable v-model="queryParams.onlineDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择上线日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="故障原因" prop="faultReason">
         <el-select v-model="queryParams.faultReason" placeholder="请选择故障原因" clearable>
-          <el-option
-              v-for="dict in production_fault_reason"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
+          <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="责任科室" prop="responsibleDepartment">
-        <el-input
-            v-model="queryParams.responsibleDepartment"
-            placeholder="请输入责任科室"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.responsibleDepartment" placeholder="请选择责任科室" clearable>
+          <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
       </el-form-item>
       <el-form-item label="是否为重大故障" prop="isMajorFault">
         <el-select v-model="queryParams.isMajorFault" placeholder="请选择是否为重大故障" clearable>
-          <el-option
-              v-for="dict in production_yes_no"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
+          <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="处理状态" prop="approvalStatus">
-        <el-input
-            v-model="queryParams.approvalStatus"
-            placeholder="请输入处理状态"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.approvalStatus" placeholder="请选择处理状态" clearable>
+          <el-option v-for="dict in production_special_statue" :key="dict.value" :label="dict.label"
+                     :value="dict.value"/>
+        </el-select>
       </el-form-item>
       <el-form-item label="填报时间" prop="uploadDate">
-        <el-date-picker clearable
-                        v-model="queryParams.uploadDate"
-                        type="date"
-                        value-format="YYYY-MM-DD"
+        <el-date-picker clearable v-model="queryParams.uploadDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择填报时间">
         </el-date-picker>
       </el-form-item>
@@ -69,47 +48,24 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['production:cases:add']"
-        >新增
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:cases:add']">新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['production:cases:edit']"
-        >修改
+        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+                   v-hasPermi="['production:cases:edit']">修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['production:cases:remove']"
-        >删除
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+                   v-hasPermi="['production:cases:remove']">删除
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['production:cases:export']"
-        >导出
-        </el-button>
-      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:cases:export']">-->
+      <!--          导出-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -128,14 +84,22 @@
         </template>
       </el-table-column>
       <el-table-column label="故障说明" align="center" prop="faultDescription"/>
-      <el-table-column label="责任科室" align="center" prop="responsibleDepartment"/>
-      <el-table-column label="解决方案" align="center" prop="solution"/>
+      <el-table-column label="责任科室" align="center" prop="responsibleDepartment">
+        <template #default="scope">
+          <dict-tag :options="system_dept" :value="scope.row.responsibleDepartment"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="处理状态" align="center" prop="approvalStatus">
+        <template #default="scope">
+          <dict-tag :options="production_special_statue" :value="scope.row.approvalStatus"/>
+        </template>
+      </el-table-column>
       <el-table-column label="是否为重大故障" align="center" prop="isMajorFault">
         <template #default="scope">
           <dict-tag :options="production_yes_no" :value="scope.row.isMajorFault"/>
         </template>
       </el-table-column>
-      <el-table-column label="处理状态" align="center" prop="approvalStatus"/>
+      <el-table-column label="解决方案" align="center" prop="solution"/>
       <el-table-column label="填报时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
@@ -143,8 +107,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                     v-hasPermi="['production:cases:edit']">修改
+<!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"-->
+<!--                     v-hasPermi="['production:cases:edit']">修改-->
+<!--          </el-button>-->
+          <el-button v-if="scope.row.approvalStatus === 0" link type="primary" icon="Edit"
+                     @click="handleSpecial(scope.row)"
+                     v-hasPermi="['production:cases:handle']">处理
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:cases:remove']">删除
@@ -153,65 +121,53 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
-    />
+    <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize"
+                @pagination="getList"/>
 
     <!-- 添加或修改特殊情况对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="casesRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="casesRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="订单号" prop="orderNumber">
           <el-input v-model="form.orderNumber" placeholder="请输入订单号"/>
         </el-form-item>
         <el-form-item label="上线日期" prop="onlineDate">
-          <el-date-picker clearable
-                          v-model="form.onlineDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.onlineDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择上线日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="故障原因" prop="faultReason">
           <el-select v-model="form.faultReason" placeholder="请选择故障原因">
-            <el-option
-                v-for="dict in production_fault_reason"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
-            ></el-option>
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-select v-model="form.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="故障说明" prop="faultDescription">
-          <el-input v-model="form.faultDescription" placeholder="请输入故障说明"/>
+          <el-input v-model="form.faultDescription" placeholder="请输入故障说明" type="textarea"/>
         </el-form-item>
-        <el-form-item label="责任科室" prop="responsibleDepartment">
-          <el-input v-model="form.responsibleDepartment" placeholder="请输入责任科室"/>
-        </el-form-item>
-        <el-form-item label="是否为重大故障" prop="isMajorFault">
-          <el-select v-model="form.isMajorFault" placeholder="请选择是否为重大故障">
-            <el-option
-                v-for="dict in production_yes_no"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="处理状态" prop="approvalStatus">
-          <el-input v-model="form.approvalStatus" placeholder="请输入处理状态"/>
-        </el-form-item>
-        <el-form-item label="填报时间" prop="uploadDate">
-          <el-date-picker clearable
-                          v-model="form.uploadDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
-                          placeholder="请选择填报时间">
-          </el-date-picker>
-        </el-form-item>
+
+        <!--        <el-form-item label="是否为重大故障" prop="isMajorFault">-->
+        <!--          <el-select v-model="form.isMajorFault" placeholder="请选择是否为重大故障">-->
+        <!--            <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label"-->
+        <!--                       :value="parseInt(dict.value)"></el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="处理状态" prop="approvalStatus">-->
+        <!--          <el-select v-model="form.approvalStatus" placeholder="请选择处理状态">-->
+        <!--            <el-option v-for="dict in production_special_statue" :key="dict.value" :label="dict.label"-->
+        <!--                       :value="parseInt(dict.value)"></el-option>-->
+        <!--          </el-select>-->
+        <!--        </el-form-item>-->
+        <!--        <el-form-item label="填报时间" prop="uploadDate">-->
+        <!--          <el-date-picker clearable v-model="form.uploadDate" type="date" value-format="YYYY-MM-DD"-->
+        <!--                          placeholder="请选择填报时间">-->
+        <!--          </el-date-picker>-->
+        <!--        </el-form-item>-->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -220,6 +176,52 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 处理特殊情况对话框 -->
+    <el-dialog title="特殊情况处理" v-model="handleVisible" width="500px" append-to-body>
+      <el-form ref="handleRef" :model="handleForm" :rules="handleRules" label-width="120px">
+        <el-form-item label="订单号" prop="orderNumber">
+          <el-input v-model="handleForm.orderNumber" placeholder="请输入订单号"/>
+        </el-form-item>
+        <el-form-item label="上线日期" prop="onlineDate">
+          <el-date-picker clearable v-model="handleForm.onlineDate" type="date" value-format="YYYY-MM-DD"
+                          placeholder="请选择上线日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="故障原因" prop="faultReason">
+          <el-select v-model="handleForm.faultReason" placeholder="请选择故障原因">
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input v-model="handleForm.faultDescription" placeholder="请输入故障说明"/>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-select v-model="handleForm.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否为重大故障" prop="isMajorFault">
+          <el-select v-model="handleForm.isMajorFault" placeholder="请选择是否为重大故障">
+            <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="解决方案" prop="solution">
+          <el-input v-model="handleForm.solution" placeholder="请输入解决方案" type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitHandleResult">确 定</el-button>
+          <el-button @click="handleCancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -227,7 +229,12 @@
 import {listCases, getCases, delCases, addCases, updateCases} from "@/api/production/special";
 
 const {proxy} = getCurrentInstance();
-const {production_fault_reason, production_yes_no} = proxy.useDict('production_fault_reason', 'production_yes_no');
+const {
+  production_fault_reason,
+  production_special_statue,
+  production_yes_no,
+  system_dept
+} = proxy.useDict('production_fault_reason', 'production_special_statue', 'production_yes_no', 'system_dept');
 
 const casesList = ref([]);
 const open = ref(false);
@@ -252,10 +259,51 @@ const data = reactive({
     approvalStatus: null,
     uploadDate: null
   },
-  rules: {}
+
+  rules: {
+    orderNumber: [
+      {required: true, message: "订单号不能为空", trigger: "blur"}
+    ],
+    onlineDate: [
+      {required: true, message: "上线日期不能为空", trigger: "blur"}
+    ],
+    faultReason: [
+      {required: true, message: "故障原因不能为空", trigger: "change"}
+    ],
+    faultDescription: [
+      {required: true, message: "故障说明不能为空", trigger: "blur"}
+    ],
+    responsibleDepartment: [
+      {required: true, message: "责任科室不能为空", trigger: "change"}
+    ],
+  },
+
+  handleRules: {
+    orderNumber: [
+      {required: true, message: "订单号不能为空", trigger: "blur"}
+    ],
+    onlineDate: [
+      {required: true, message: "上线日期不能为空", trigger: "blur"}
+    ],
+    faultReason: [
+      {required: true, message: "故障原因不能为空", trigger: "change"}
+    ],
+    faultDescription: [
+      {required: true, message: "故障说明不能为空", trigger: "blur"}
+    ],
+    responsibleDepartment: [
+      {required: true, message: "责任科室不能为空", trigger: "change"}
+    ],
+    solution: [
+      {required: true, message: "解决方案不能为空", trigger: "change"}
+    ],
+    isMajorFault: [
+      {required: true, message: "是否为重大故障不能为空", trigger: "change"}
+    ]
+  }
 });
 
-const {queryParams, form, rules} = toRefs(data);
+const {queryParams, form, rules, handleRules} = toRefs(data);
 
 /** 查询特殊情况列表 */
 function getList() {
@@ -338,6 +386,7 @@ function submitForm() {
           getList();
         });
       } else {
+        form.value.approvalStatus = 0;
         addCases(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
@@ -368,4 +417,71 @@ function handleExport() {
 }
 
 getList();
+
+
+const handleVisible = ref(false);
+const handleForm = ref({
+  id: null,
+  orderNumber: null,
+  onlineDate: null,
+  faultReason: null,
+  faultDescription: null,
+  responsibleDepartment: null,
+  solution: null,
+  isMajorFault: null,
+  approvalStatus: null,
+  uploadDate: null
+});
+
+// 取消按钮
+function handleCancel() {
+  handleVisible.value = false;
+  handleReset();
+}
+
+function handleReset() {
+  handleForm.value = {
+    id: null,
+    orderNumber: null,
+    onlineDate: null,
+    faultReason: null,
+    faultDescription: null,
+    responsibleDepartment: null,
+    solution: null,
+    isMajorFault: null,
+    approvalStatus: null,
+    uploadDate: null
+  };
+  proxy.resetForm("handleRef");
+}
+
+/**
+ * 特殊情况处理
+ */
+function handleSpecial(row) {
+  reset();
+  const _id = row.id || ids.value
+  getCases(_id).then(response => {
+    handleForm.value = response.data;
+    handleVisible.value = true;
+    title.value = "特殊情况处理";
+  });
+}
+
+
+/** 提交按钮 */
+function submitHandleResult() {
+  handleForm.value.approvalStatus = 1;
+  console.log("处理结果为：" + handleForm.value)
+  proxy.$refs["handleRef"].validate(valid => {
+    if (valid) {
+      updateCases(handleForm.value).then(response => {
+        proxy.$modal.msgSuccess("处理成功");
+        handleVisible.value = false;
+        getList();
+      });
+    }
+  })
+
+}
 </script>

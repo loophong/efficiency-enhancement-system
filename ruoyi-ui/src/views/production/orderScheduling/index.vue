@@ -339,7 +339,7 @@
 
     <!-- 添加或修改订单信息对话框 -->
     <el-dialog title="特殊情况填报" v-model="specialVisible" width="500px" append-to-body>
-      <el-form ref="casesRef" :model="specialForm" :rules="rules" label-width="80px">
+      <el-form ref="specialRef" :model="specialForm" :rules="specialRules" label-width="80px">
         <el-form-item label="订单号" prop="orderNumber">
           <el-input v-model="specialForm.orderNumber" placeholder="请输入订单号"/>
         </el-form-item>
@@ -354,26 +354,15 @@
                        :value="parseInt(dict.value)"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="故障说明" prop="faultDescription">
-          <el-input v-model="specialForm.faultDescription" placeholder="请输入故障说明"/>
-        </el-form-item>
         <el-form-item label="责任科室" prop="responsibleDepartment">
-          <el-input v-model="specialForm.responsibleDepartment" placeholder="请输入责任科室"/>
+          <el-select v-model="specialForm.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
         </el-form-item>
-        <!--        <el-form-item label="是否为重大故障" prop="isMajorFault">-->
-        <!--          <el-select v-model="specialForm.isMajorFault" placeholder="请选择是否为重大故障">-->
-        <!--            <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="parseInt(dict.value)"-->
-        <!--            ></el-option>-->
-        <!--          </el-select>-->
-        <!--        </el-form-item>-->
-        <!--        <el-form-item label="处理状态" prop="approvalStatus">-->
-        <!--          <el-input v-model="specialForm.approvalStatus" placeholder="请输入处理状态"/>-->
-        <!--        </el-form-item>-->
-        <!--        <el-form-item label="填报时间" prop="uploadDate">-->
-        <!--          <el-date-picker clearable v-model="specialForm.uploadDate" type="date"-->
-        <!--                          value-format="YYYY-MM-DD" placeholder="请选择填报时间">-->
-        <!--          </el-date-picker>-->
-        <!--        </el-form-item>-->
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input v-model="specialForm.faultDescription" placeholder="请输入故障说明" type="textarea"/>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -396,7 +385,11 @@ import {
 import {addCases} from "@/api/production/special";
 
 const {proxy} = getCurrentInstance();
-const {production_fault_reason} = proxy.useDict('production_fault_reason');
+
+const {
+  production_fault_reason,
+  system_dept
+} = proxy.useDict('production_fault_reason', 'system_dept');
 
 const schedulingList = ref([]);
 const open = ref(false);
@@ -443,10 +436,28 @@ const data = reactive({
     isScheduling: null,
     onlineDate: null
   },
-  rules: {}
+  rules: {},
+
+  specialRules: {
+    orderNumber: [
+      {required: true, message: "订单号不能为空", trigger: "blur"}
+    ],
+    onlineDate: [
+      {required: true, message: "上线日期不能为空", trigger: "blur"}
+    ],
+    faultReason: [
+      {required: true, message: "故障原因不能为空", trigger: "change"}
+    ],
+    faultDescription: [
+      {required: true, message: "故障说明不能为空", trigger: "blur"}
+    ],
+    responsibleDepartment: [
+      {required: true, message: "责任科室不能为空", trigger: "change"}
+    ],
+  }
 });
 
-const {queryParams, form, rules} = toRefs(data);
+const {queryParams, form, rules, specialRules} = toRefs(data);
 
 /** 查询订单信息列表 */
 function getList() {
@@ -585,6 +596,7 @@ const specialForm = ref({});
 
 function handleSpecialReport(row) {
   console.log(row);
+  resetSpecialForm();
   specialVisible.value = true;
   specialForm.value.orderNumber = row.orderNumber;
   specialForm.value.onlineDate = row.onlineDate;
@@ -593,15 +605,30 @@ function handleSpecialReport(row) {
 // 取消按钮
 function cancelSpecial() {
   specialVisible.value = false;
-  reset();
+  resetSpecialForm();
+}
+
+function resetSpecialForm() {
+  specialForm.value = {
+    orderNumber: null,
+    onlineDate: null,
+    faultReason: null,
+    faultDescription: null,
+    responsibleDepartment: null,
+  }
 }
 
 /** 提交按钮 */
 function submitSpecial() {
-  addCases(specialForm.value).then(response => {
-    proxy.$modal.msgSuccess("特殊情况上报成功");
-    specialVisible.value = false;
-    getList();
-  });
+  proxy.$refs["specialRef"].validate(valid => {
+    if (valid) {
+      specialForm.value.approvalStatus = 0;
+      addCases(specialForm.value).then(response => {
+        proxy.$modal.msgSuccess("特殊情况上报成功");
+        specialVisible.value = false;
+        getList();
+      });
+    }
+  })
 }
 </script>
