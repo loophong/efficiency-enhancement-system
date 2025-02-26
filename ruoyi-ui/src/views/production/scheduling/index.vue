@@ -357,6 +357,13 @@
 import {getCurrentInstance, ref} from "vue";
 import {all} from "@/api/production/capacity.js";
 import {getOrders, schedulingOrders} from "@/api/production/orderScheduling.js";
+import dayjs from 'dayjs';
+
+
+import useTagsViewStore from "@/store/modules/tagsView";
+
+const route  = useRoute(); // 获取路由实例
+const router = useRouter();
 
 const {proxy} = getCurrentInstance();
 
@@ -443,6 +450,13 @@ function getCapacityList() {
 
 // 使用 onMounted 钩子在组件挂载时调用 getCapacityList
 onMounted(() => {
+
+  const dateParam = route.query.date; // 假设 date 参数在 query 中
+  if (dateParam) {
+    productionDate.value = dateParam;
+  }
+
+
   getCapacityList();
   // getUrgentOrderList();
   getOrderList();
@@ -745,16 +759,23 @@ function autoScheduling() {
   console.log("自动排产完成" + JSON.stringify(usedCapacity.value))
 }
 
-
+// const useTagsStore = useTagsViewStore()
+// const currentTag = router.currentRoute.value;
 function submitForm() {
   // productionDate
+  // 格式化date
+  // date转入后端少了一天
+
+
+  let date = dayjs(productionDate.value).format("YYYY-MM-DD");
+  console.log("格式化之后的时间" + date)
   let orderSchedulingList = []
   allOrders.value.forEach(item => {
     if (item.isScheduling === 1) {
       orderSchedulingList.push({
         'id': item.id,
         'isScheduling': 1,
-        'onlineDate': productionDate.value
+        'onlineDate': date
       })
     }
   });
@@ -770,7 +791,7 @@ function submitForm() {
       if (item.capacityType === used.capacityType) {
         dailyUsedCapacityList.push({
           'capacityType': used.capacityType,
-          'productionDate': productionDate.value,
+          'productionDate': date,
           'productionQuantity': used.productionQuantity,
           'quantitySettings': item.productionQuantity
         })
@@ -781,6 +802,14 @@ function submitForm() {
 
   schedulingOrders(orderSchedulingList, dailyUsedCapacityList).then((response) => {
     console.log("排产结果" + response)
+    // 提示用户排产成功
+    // proxy.$message({
+    //   message: "排产成功"
+    // })
+
+    // 关闭当前标签页，并返回上一层路由
+    useTagsViewStore().delView(router.currentRoute.value);
+    proxy.$router.go(-1);
   })
 
 

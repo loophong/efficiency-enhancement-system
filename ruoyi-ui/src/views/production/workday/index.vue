@@ -19,8 +19,8 @@
     </div>
 
     <div id="contextmenu" v-show="menuVisible" class="menu">
-      <div class="contextmenu__item" @click="orderScheduling">订单排产</div>
-      <div class="contextmenu__item" @click="cancelScheduling">取消排产</div>
+      <div class="contextmenu__item" @click="funcOrderScheduling">订单排产</div>
+      <div class="contextmenu__item" @click="funcCancelScheduling">取消排产</div>
       <div class="contextmenu__item" @click="workdayConvert">设置工作日/休息日</div>
     </div>
 
@@ -31,6 +31,7 @@
 
 <script setup name="Workday">
 import {listWorkday, getWorkday, setWorkday, getLimitWorkdayList} from "@/api/production/workday";
+import {cancelScheduling} from "@/api/production/orderScheduling";
 
 // 日历的日期
 const calendarDate = ref(new Date())
@@ -198,7 +199,36 @@ function handleCalendarDateChange(val) {
 }
 
 
+/**
+ * 取消排产
+ */
+function funcCancelScheduling() {
+  console.log("date" + selectDate)
+  cancelScheduling(selectDate).then(response => {
+    proxy.$modal.msgSuccess("取消排产成功");
+    handleCalendarDateChange(calendarDate.value);
+  })
+}
+
+
+/**
+ * 订单排产
+ */
+function funcOrderScheduling() {
+  // 检查当前日期是否排产，如果排产则提示用户已排产
+  getWorkday(selectDate).then(response => {
+    console.log("response", response)
+    if (response.data.productStatus === 1) {
+      proxy.$modal.msgError("当前日期已排产，请勿重复排产");
+
+    }else {
+      // 跳转进入排产页面
+      proxy.$router.push({path: '/production/scheduling', query: {date: selectDate}})
+    }
+  });
+}
 // getList();
+
 </script>
 
 

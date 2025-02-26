@@ -74,3 +74,14 @@ export function schedulingOrders(orderSchedulingList, dailyUsedCapacityList) {
         data: schedulingDTO
     })
 }
+
+// 取消排产
+export function cancelScheduling(date) {
+    return request({
+        url: '/production/scheduling/cancel',
+        method: 'get',
+        params: {
+            'date': date
+        }
+    })
+}
