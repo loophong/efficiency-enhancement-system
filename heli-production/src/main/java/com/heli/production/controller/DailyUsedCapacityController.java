@@ -1,6 +1,6 @@
 package com.heli.production.controller;
 
-import com.heli.production.domain.entity.DailyUsedCapacity;
+import com.heli.production.domain.entity.DailyUsedCapacityEntity;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,9 +39,9 @@ public class DailyUsedCapacityController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('production:dailyCapacity:list')")
     @GetMapping("/list")
-    public TableDataInfo list(DailyUsedCapacity dailyUsedCapacity) {
+    public TableDataInfo list(DailyUsedCapacityEntity dailyUsedCapacity) {
         startPage();
-        List<DailyUsedCapacity> list = dailyUsedCapacityService.selectDailyUsedCapacityList(dailyUsedCapacity);
+        List<DailyUsedCapacityEntity> list = dailyUsedCapacityService.selectDailyUsedCapacityList(dailyUsedCapacity);
         return getDataTable(list);
     }
 
@@ -51,9 +51,9 @@ public class DailyUsedCapacityController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:dailyCapacity:export')")
     @Log(title = "每日使用的产能", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, DailyUsedCapacity dailyUsedCapacity) {
-        List<DailyUsedCapacity> list = dailyUsedCapacityService.selectDailyUsedCapacityList(dailyUsedCapacity);
-        ExcelUtil<DailyUsedCapacity> util = new ExcelUtil<DailyUsedCapacity>(DailyUsedCapacity.class);
+    public void export(HttpServletResponse response, DailyUsedCapacityEntity dailyUsedCapacity) {
+        List<DailyUsedCapacityEntity> list = dailyUsedCapacityService.selectDailyUsedCapacityList(dailyUsedCapacity);
+        ExcelUtil<DailyUsedCapacityEntity> util = new ExcelUtil<DailyUsedCapacityEntity>(DailyUsedCapacityEntity.class);
         util.exportExcel(response, list, "每日使用的产能数据");
     }
 
@@ -72,7 +72,7 @@ public class DailyUsedCapacityController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:dailyCapacity:add')")
     @Log(title = "每日使用的产能", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody DailyUsedCapacity dailyUsedCapacity) {
+    public AjaxResult add(@RequestBody DailyUsedCapacityEntity dailyUsedCapacity) {
         return toAjax(dailyUsedCapacityService.insertDailyUsedCapacity(dailyUsedCapacity));
     }
 
@@ -82,7 +82,7 @@ public class DailyUsedCapacityController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:dailyCapacity:edit')")
     @Log(title = "每日使用的产能", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody DailyUsedCapacity dailyUsedCapacity) {
+    public AjaxResult edit(@RequestBody DailyUsedCapacityEntity dailyUsedCapacity) {
         return toAjax(dailyUsedCapacityService.updateDailyUsedCapacity(dailyUsedCapacity));
     }
 

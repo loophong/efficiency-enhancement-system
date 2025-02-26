@@ -206,6 +206,11 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:scheduling:remove']">删除
           </el-button>
+          <!--     如果订单未排产，则显示插单按钮     -->
+          <el-button link type="primary" icon="Edit" @click="handleInsert(scope.row)"
+                     v-if="scope.row.isScheduling === 0"
+                     v-hasPermi="['production:scheduling:insert']">插单
+          </el-button>
           <!--    如果已经排产，则显示特殊情况上报按钮    -->
           <el-button link type="primary" icon="Upload" @click="handleSpecialReport(scope.row)"
                      v-if="scope.row.isScheduling === 1"
@@ -231,10 +236,7 @@
           <el-input v-model="form.orderNumber" placeholder="请输入订单号"/>
         </el-form-item>
         <el-form-item label="接单日期" prop="orderDate">
-          <el-date-picker clearable
-                          v-model="form.orderDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.orderDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择接单日期">
           </el-date-picker>
         </el-form-item>
@@ -284,26 +286,17 @@
           <el-input v-model="form.phoneNumber" placeholder="请输入联系电话"/>
         </el-form-item>
         <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
-          <el-date-picker clearable
-                          v-model="form.systemDeliveryDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择订单系统交货期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="生产回复完工日期" prop="productionCompletionDate">
-          <el-date-picker clearable
-                          v-model="form.productionCompletionDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.productionCompletionDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择生产回复完工日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
-          <el-date-picker clearable
-                          v-model="form.procurementArrivalDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择采购回复到货时间">
           </el-date-picker>
         </el-form-item>
@@ -311,10 +304,7 @@
           <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
         </el-form-item>
         <el-form-item label="最晚上线日期" prop="latestOnlineDate">
-          <el-date-picker clearable
-                          v-model="form.latestOnlineDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择最晚上线日期">
           </el-date-picker>
         </el-form-item>
@@ -337,7 +327,7 @@
     </el-dialog>
 
 
-    <!-- 添加或修改订单信息对话框 -->
+    <!-- 特殊情况上报对话框 -->
     <el-dialog title="特殊情况填报" v-model="specialVisible" width="500px" append-to-body>
       <el-form ref="specialRef" :model="specialForm" :rules="specialRules" label-width="80px">
         <el-form-item label="订单号" prop="orderNumber">
@@ -368,6 +358,41 @@
         <div class="dialog-footer">
           <el-button type="primary" @click="submitSpecial">确 定</el-button>
           <el-button @click="cancelSpecial">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 插单处理对话框 -->
+    <el-dialog title="插单处理窗口" v-model="insertDialogVisible" width="500px" append-to-body>
+      <el-form ref="specialRef" :model="specialForm" :rules="specialRules" label-width="80px">
+        <el-form-item label="订单号" prop="orderNumber">
+          <el-input v-model="specialForm.orderNumber" placeholder="请输入订单号"/>
+        </el-form-item>
+        <el-form-item label="上线日期" prop="onlineDate">
+          <el-date-picker clearable v-model="specialForm.onlineDate" type="date"
+                          value-format="YYYY-MM-DD" placeholder="请选择上线日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="故障原因" prop="faultReason">
+          <el-select v-model="specialForm.faultReason" placeholder="请选择故障原因">
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-select v-model="specialForm.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input v-model="specialForm.faultDescription" placeholder="请输入故障说明" type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitInsetOrder">确 定</el-button>
+          <el-button @click="cancelInsertOrder">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -591,6 +616,7 @@ function handleExport() {
 
 getList();
 
+
 const specialVisible = ref(false);
 const specialForm = ref({});
 
@@ -630,5 +656,26 @@ function submitSpecial() {
       });
     }
   })
+}
+
+
+const insertDialogVisible = ref(false);
+const schedulingOrderVisible = ref(false);
+
+function handleInsert(row) {
+  insertDialogVisible.value = true;
+}
+
+
+function submitInsetOrder() {
+  //  提问用户，是否需要从当日订单中移除订单
+  proxy.$modal.confirm('是否确认从当日订单中移除订单？').then(function () {
+  }).catch(() => {
+  });
+}
+
+
+function cancelInsertOrder(row) {
+  schedulingOrderVisible.value = false;
 }
 </script>

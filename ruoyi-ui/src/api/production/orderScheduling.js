@@ -59,3 +59,18 @@ export function getOrders() {
         method: 'get'
     })
 }
+
+export function schedulingOrders(orderSchedulingList, dailyUsedCapacityList) {
+
+    // 构建 schedulingDTO
+    const schedulingDTO = {
+        orderSchedulingList,
+        dailyUsedCapacityList
+    };
+
+    return request({
+        url: '/production/scheduling/orders',
+        method: 'post',
+        data: schedulingDTO
+    })
+}

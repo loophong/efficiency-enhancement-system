@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import com.ruoyi.common.annotation.Excel;
 
 /**
  * 每日使用的产能对象 production_daily_used_capacity
@@ -19,7 +18,7 @@ import com.ruoyi.common.annotation.Excel;
  */
 @TableName(value = "production_daily_used_capacity")
 @Data
-public class DailyUsedCapacity implements Serializable {
+public class DailyUsedCapacityEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 

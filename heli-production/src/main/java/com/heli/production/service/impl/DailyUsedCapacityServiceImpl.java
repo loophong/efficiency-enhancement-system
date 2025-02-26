@@ -1,7 +1,7 @@
 package com.heli.production.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.heli.production.domain.entity.DailyUsedCapacity;
+import com.heli.production.domain.entity.DailyUsedCapacityEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.production.mapper.DailyUsedCapacityMapper;
@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2025-02-26
  */
 @Service
-public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityMapper, DailyUsedCapacity> implements IDailyUsedCapacityService {
+public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityMapper, DailyUsedCapacityEntity> implements IDailyUsedCapacityService {
     @Autowired
     private DailyUsedCapacityMapper dailyUsedCapacityMapper;
 
@@ -27,7 +27,7 @@ public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityM
      * @return 每日使用的产能
      */
     @Override
-    public DailyUsedCapacity selectDailyUsedCapacityById(String id) {
+    public DailyUsedCapacityEntity selectDailyUsedCapacityById(String id) {
         return dailyUsedCapacityMapper.selectDailyUsedCapacityById(id);
     }
 
@@ -38,7 +38,7 @@ public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityM
      * @return 每日使用的产能
      */
     @Override
-    public List<DailyUsedCapacity> selectDailyUsedCapacityList(DailyUsedCapacity dailyUsedCapacity) {
+    public List<DailyUsedCapacityEntity> selectDailyUsedCapacityList(DailyUsedCapacityEntity dailyUsedCapacity) {
         return dailyUsedCapacityMapper.selectDailyUsedCapacityList(dailyUsedCapacity);
     }
 
@@ -49,7 +49,7 @@ public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityM
      * @return 结果
      */
     @Override
-    public int insertDailyUsedCapacity(DailyUsedCapacity dailyUsedCapacity) {
+    public int insertDailyUsedCapacity(DailyUsedCapacityEntity dailyUsedCapacity) {
         return dailyUsedCapacityMapper.insertDailyUsedCapacity(dailyUsedCapacity);
     }
 
@@ -60,7 +60,7 @@ public class DailyUsedCapacityServiceImpl extends ServiceImpl<DailyUsedCapacityM
      * @return 结果
      */
     @Override
-    public int updateDailyUsedCapacity(DailyUsedCapacity dailyUsedCapacity) {
+    public int updateDailyUsedCapacity(DailyUsedCapacityEntity dailyUsedCapacity) {
         return dailyUsedCapacityMapper.updateDailyUsedCapacity(dailyUsedCapacity);
     }
 

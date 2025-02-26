@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.production.mapper.DailyUsedCapacityMapper">
 
-    <resultMap type="DailyUsedCapacity" id="DailyUsedCapacityResult">
+    <resultMap type="DailyUsedCapacityEntity" id="DailyUsedCapacityResult">
         <result property="id" column="id"/>
         <result property="productionDate" column="production_date"/>
         <result property="capacityType" column="capacity_type"/>
@@ -17,7 +17,7 @@
         from production_daily_used_capacity
     </sql>
 
-    <select id="selectDailyUsedCapacityList" parameterType="DailyUsedCapacity" resultMap="DailyUsedCapacityResult">
+    <select id="selectDailyUsedCapacityList" parameterType="DailyUsedCapacityEntity" resultMap="DailyUsedCapacityResult">
         <include refid="selectDailyUsedCapacityVo"/>
         <where>
             <if test="productionDate != null ">and production_date = #{productionDate}</if>
@@ -32,7 +32,7 @@
         where id = #{id}
     </select>
 
-    <insert id="insertDailyUsedCapacity" parameterType="DailyUsedCapacity" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertDailyUsedCapacity" parameterType="DailyUsedCapacityEntity" useGeneratedKeys="true" keyProperty="id">
         insert into production_daily_used_capacity
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="productionDate != null">production_date,</if>
@@ -48,7 +48,7 @@
         </trim>
     </insert>
 
-    <update id="updateDailyUsedCapacity" parameterType="DailyUsedCapacity">
+    <update id="updateDailyUsedCapacity" parameterType="DailyUsedCapacityEntity">
         update production_daily_used_capacity
         <trim prefix="SET" suffixOverrides=",">
             <if test="productionDate != null">production_date = #{productionDate},</if>
