@@ -1,7 +1,11 @@
 package com.ruoyi.security.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import com.ruoyi.security.domain.SecurityHazardousChemicalInventory;
 import com.ruoyi.security.service.ISecurityHazardousChemicalInventoryService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 危险化学品台账Controller
@@ -27,12 +32,26 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author ruoyi
  * @date 2025-02-26
  */
+@Slf4j
 @RestController
 @RequestMapping("/security/inventory")
 public class SecurityHazardousChemicalInventoryController extends BaseController
 {
     @Autowired
     private ISecurityHazardousChemicalInventoryService securityHazardousChemicalInventoryService;
+
+    @Log(title = "[危险化学物品上传]上传", businessType = BusinessType.IMPORT)
+//    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PostMapping("/import")
+    public void importTable( MultipartFile excelFile) {
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+            securityHazardousChemicalInventoryService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
 
     /**
      * 查询危险化学品台账列表

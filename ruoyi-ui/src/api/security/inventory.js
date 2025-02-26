@@ -42,3 +42,15 @@ export function delInventory(id) {
     method: 'delete'
   })
 }
+
+// 上传订单表
+export function importFile(formData) {
+  return request({
+    url: '/security/inventory/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
