@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.CapacityMapper">
+
+    <resultMap type="CapacityEntity" id="CapacityEntityResult">
+        <result property="id"    column="id"    />
+        <result property="capacityType"    column="capacity_type"    />
+        <result property="productionQuantity"    column="production_quantity"    />
+        <result property="productionStatus"    column="production_status"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectCapacityEntityVo">
+        select id, capacity_type, production_quantity, production_status, remarks
+        from production_capacity
+    </sql>
+
+    <select id="selectCapacityList" parameterType="CapacityEntity" resultMap="CapacityEntityResult">
+        <include refid="selectCapacityEntityVo"/>
+        <where>
+            <if test="capacityType != null  and capacityType != ''"> and capacity_type like concat('%', #{capacityType}, '%')</if>
+            <if test="productionQuantity != null "> and production_quantity = #{productionQuantity}</if>
+            <if test="productionStatus != null "> and production_status = #{productionStatus}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectCapacityById" parameterType="String" resultMap="CapacityEntityResult">
+        <include refid="selectCapacityEntityVo"/>
+        where id = #{id}
+    </select>
+
+    <delete id="deleteCapacityById" parameterType="String">
+        delete from production_capacity where id = #{id}
+    </delete>
+
+    <delete id="deleteCapacityByIds" parameterType="String">
+        delete from production_capacity where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

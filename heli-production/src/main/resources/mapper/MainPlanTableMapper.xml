@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.MainPlanTableMapper">
+
+    <resultMap type="MainPlanTableEntity" id="MainPlanTableResult">
+        <result property="id"    column="id"    />
+        <result property="branch"    column="branch"    />
+        <result property="contractNumber"    column="contract_number"    />
+        <result property="orderNumber"    column="order_number"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="vehicleModel"    column="vehicle_model"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="valvePlate"    column="valve_plate"    />
+        <result property="forklift"    column="forklift"    />
+        <result property="mast"    column="mast"    />
+        <result property="airFilter"    column="air_filter"    />
+        <result property="attachments"    column="attachments"    />
+        <result property="tires"    column="tires"    />
+        <result property="configuration"    column="configuration"    />
+        <result property="vehicleNumber"    column="vehicle_number"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="deliveryForm"    column="delivery_form"    />
+        <result property="deliveryLocation"    column="delivery_location"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="systemDeliveryDate"    column="system_delivery_date"    />
+        <result property="productionCompletionDate"    column="production_completion_date"    />
+        <result property="procurementArrivalDate"    column="procurement_arrival_date"    />
+    </resultMap>
+
+    <sql id="selectMainPlanTableVo">
+        select id, branch, contract_number, order_number, order_date, vehicle_model, quantity, valve_plate, forklift, mast, air_filter, attachments, tires, configuration, vehicle_number, remarks, delivery_form, delivery_location, contact_person, phone_number, system_delivery_date, production_completion_date, procurement_arrival_date from production_main_plan_table
+    </sql>
+
+    <select id="selectMainPlanTableList" parameterType="MainPlanTableEntity" resultMap="MainPlanTableResult">
+        <include refid="selectMainPlanTableVo"/>
+        <where>
+            <if test="branch != null  and branch != ''"> and branch = #{branch}</if>
+            <if test="contractNumber != null  and contractNumber != ''"> and contract_number = #{contractNumber}</if>
+            <if test="orderNumber != null  and orderNumber != ''"> and order_number = #{orderNumber}</if>
+            <if test="orderDate != null "> and order_date = #{orderDate}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''"> and vehicle_model = #{vehicleModel}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="valvePlate != null  and valvePlate != ''"> and valve_plate = #{valvePlate}</if>
+            <if test="forklift != null  and forklift != ''"> and forklift = #{forklift}</if>
+            <if test="mast != null  and mast != ''"> and mast = #{mast}</if>
+            <if test="airFilter != null  and airFilter != ''"> and air_filter = #{airFilter}</if>
+            <if test="attachments != null  and attachments != ''"> and attachments = #{attachments}</if>
+            <if test="tires != null  and tires != ''"> and tires = #{tires}</if>
+            <if test="configuration != null  and configuration != ''"> and configuration = #{configuration}</if>
+            <if test="vehicleNumber != null  and vehicleNumber != ''"> and vehicle_number = #{vehicleNumber}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="deliveryForm != null  and deliveryForm != ''"> and delivery_form = #{deliveryForm}</if>
+            <if test="deliveryLocation != null  and deliveryLocation != ''"> and delivery_location = #{deliveryLocation}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="systemDeliveryDate != null "> and system_delivery_date = #{systemDeliveryDate}</if>
+            <if test="productionCompletionDate != null "> and production_completion_date = #{productionCompletionDate}</if>
+            <if test="procurementArrivalDate != null "> and procurement_arrival_date = #{procurementArrivalDate}</if>
+        </where>
+    </select>
+
+    <select id="selectMainPlanTableById" parameterType="String" resultMap="MainPlanTableResult">
+        <include refid="selectMainPlanTableVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertMainPlanTable" parameterType="MainPlanTableEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_main_plan_table
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="branch != null">branch,</if>
+            <if test="contractNumber != null">contract_number,</if>
+            <if test="orderNumber != null">order_number,</if>
+            <if test="orderDate != null">order_date,</if>
+            <if test="vehicleModel != null">vehicle_model,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="valvePlate != null">valve_plate,</if>
+            <if test="forklift != null">forklift,</if>
+            <if test="mast != null">mast,</if>
+            <if test="airFilter != null">air_filter,</if>
+            <if test="attachments != null">attachments,</if>
+            <if test="tires != null">tires,</if>
+            <if test="configuration != null">configuration,</if>
+            <if test="vehicleNumber != null">vehicle_number,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="deliveryForm != null">delivery_form,</if>
+            <if test="deliveryLocation != null">delivery_location,</if>
+            <if test="contactPerson != null">contact_person,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+            <if test="systemDeliveryDate != null">system_delivery_date,</if>
+            <if test="productionCompletionDate != null">production_completion_date,</if>
+            <if test="procurementArrivalDate != null">procurement_arrival_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="branch != null">#{branch},</if>
+            <if test="contractNumber != null">#{contractNumber},</if>
+            <if test="orderNumber != null">#{orderNumber},</if>
+            <if test="orderDate != null">#{orderDate},</if>
+            <if test="vehicleModel != null">#{vehicleModel},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="valvePlate != null">#{valvePlate},</if>
+            <if test="forklift != null">#{forklift},</if>
+            <if test="mast != null">#{mast},</if>
+            <if test="airFilter != null">#{airFilter},</if>
+            <if test="attachments != null">#{attachments},</if>
+            <if test="tires != null">#{tires},</if>
+            <if test="configuration != null">#{configuration},</if>
+            <if test="vehicleNumber != null">#{vehicleNumber},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="deliveryForm != null">#{deliveryForm},</if>
+            <if test="deliveryLocation != null">#{deliveryLocation},</if>
+            <if test="contactPerson != null">#{contactPerson},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="systemDeliveryDate != null">#{systemDeliveryDate},</if>
+            <if test="productionCompletionDate != null">#{productionCompletionDate},</if>
+            <if test="procurementArrivalDate != null">#{procurementArrivalDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateMainPlanTable" parameterType="MainPlanTableEntity">
+        update production_main_plan_table
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="branch != null">branch = #{branch},</if>
+            <if test="contractNumber != null">contract_number = #{contractNumber},</if>
+            <if test="orderNumber != null">order_number = #{orderNumber},</if>
+            <if test="orderDate != null">order_date = #{orderDate},</if>
+            <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="valvePlate != null">valve_plate = #{valvePlate},</if>
+            <if test="forklift != null">forklift = #{forklift},</if>
+            <if test="mast != null">mast = #{mast},</if>
+            <if test="airFilter != null">air_filter = #{airFilter},</if>
+            <if test="attachments != null">attachments = #{attachments},</if>
+            <if test="tires != null">tires = #{tires},</if>
+            <if test="configuration != null">configuration = #{configuration},</if>
+            <if test="vehicleNumber != null">vehicle_number = #{vehicleNumber},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="deliveryForm != null">delivery_form = #{deliveryForm},</if>
+            <if test="deliveryLocation != null">delivery_location = #{deliveryLocation},</if>
+            <if test="contactPerson != null">contact_person = #{contactPerson},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="systemDeliveryDate != null">system_delivery_date = #{systemDeliveryDate},</if>
+            <if test="productionCompletionDate != null">production_completion_date = #{productionCompletionDate},</if>
+            <if test="procurementArrivalDate != null">procurement_arrival_date = #{procurementArrivalDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMainPlanTableById" parameterType="String">
+        delete from production_main_plan_table where id = #{id}
+    </delete>
+
+    <delete id="deleteMainPlanTableByIds" parameterType="String">
+        delete from production_main_plan_table where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

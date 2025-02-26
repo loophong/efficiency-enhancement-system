@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.VehicleTypeMapper">
+
+    <resultMap id="VehicleTypeResult" type="com.heli.production.domain.entity.VehicleTypeEntity">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="series" column="series" jdbcType="VARCHAR"/>
+            <result property="tonnage" column="tonnage" jdbcType="VARCHAR"/>
+            <result property="vehicleType" column="vehicle_type" jdbcType="VARCHAR"/>
+            <result property="mainConfiguration" column="main_configuration" jdbcType="VARCHAR"/>
+            <result property="standardEquipment" column="standard_equipment" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="selectVehicleTypeVo">
+        select id, series, tonnage, vehicle_type, main_configuration, standard_equipment from production_vehicle_type
+    </sql>
+
+    <select id="selectVehicleTypeList" parameterType="VehicleTypeEntity" resultMap="VehicleTypeResult">
+        <include refid="selectVehicleTypeVo"/>
+        <where>
+            <if test="series != null  and series != ''"> and series = #{series}</if>
+            <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
+            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
+            <if test="mainConfiguration != null  and mainConfiguration != ''"> and main_configuration = #{mainConfiguration}</if>
+            <if test="standardEquipment != null  and standardEquipment != ''"> and standard_equipment = #{standardEquipment}</if>
+        </where>
+    </select>
+
+    <select id="selectVehicleTypeById" parameterType="Long" resultMap="VehicleTypeResult">
+        <include refid="selectVehicleTypeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVehicleType" parameterType="VehicleTypeEntity">
+        insert into production_vehicle_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="series != null">series,</if>
+            <if test="tonnage != null">tonnage,</if>
+            <if test="vehicleType != null">vehicle_type,</if>
+            <if test="mainConfiguration != null">main_configuration,</if>
+            <if test="standardEquipment != null">standard_equipment,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="series != null">#{series},</if>
+            <if test="tonnage != null">#{tonnage},</if>
+            <if test="vehicleType != null">#{vehicleType},</if>
+            <if test="mainConfiguration != null">#{mainConfiguration},</if>
+            <if test="standardEquipment != null">#{standardEquipment},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVehicleType" parameterType="VehicleTypeEntity">
+        update production_vehicle_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="series != null">series = #{series},</if>
+            <if test="tonnage != null">tonnage = #{tonnage},</if>
+            <if test="vehicleType != null">vehicle_type = #{vehicleType},</if>
+            <if test="mainConfiguration != null">main_configuration = #{mainConfiguration},</if>
+            <if test="standardEquipment != null">standard_equipment = #{standardEquipment},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVehicleTypeById" parameterType="Long">
+        delete from production_vehicle_type where id = #{id}
+    </delete>
+
+    <delete id="deleteVehicleTypeByIds" parameterType="String">
+        delete from production_vehicle_type where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

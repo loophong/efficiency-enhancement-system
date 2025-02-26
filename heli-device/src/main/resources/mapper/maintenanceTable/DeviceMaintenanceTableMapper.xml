@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper">
+
+    <resultMap type="DeviceMaintenanceTable" id="DeviceMaintenanceTableResult">
+        <result property="maintenanceTableId"    column="maintenance_table_id"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="workStatus"    column="work_status"    />
+        <result property="deviceNum"    column="device_num"    />
+        <result property="issueType"    column="issue_type"    />
+        <result property="faultType"    column="fault_type"    />
+        <result property="applyBy"    column="apply_by"    />
+        <result property="applyDepartment"    column="apply_department"    />
+        <result property="maintenancePeople"    column="maintenance_people"    />
+        <result property="faultPhenomenon"    column="fault_phenomenon"    />
+        <result property="maintenanceAnalysis"    column="maintenance_analysis"    />
+        <result property="maintenanceContent"    column="maintenance_content"    />
+        <result property="reportedTime"    column="reported_time"    />
+        <result property="resolutionTime"    column="resolution_time"    />
+        <result property="faultDuration"    column="fault_duration"    />
+        <result property="maintenanceCast"    column="maintenance_cast"    />
+        <result property="ifDown"    column="if_down"    />
+    </resultMap>
+
+    <sql id="selectDeviceMaintenanceTableVo">
+        select maintenance_table_id, device_name, work_status, device_num, issue_type, fault_type, apply_by, apply_department, maintenance_people, fault_phenomenon, maintenance_analysis, maintenance_content, reported_time, resolution_time, fault_duration, maintenance_cast, if_down from device_maintenance_table
+    </sql>
+
+    <select id="selectDeviceMaintenanceTableList" parameterType="DeviceMaintenanceTable" resultMap="DeviceMaintenanceTableResult">
+        <include refid="selectDeviceMaintenanceTableVo"/>
+        <where>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="workStatus != null  and workStatus != ''"> and work_status = #{workStatus}</if>
+            <if test="deviceNum != null  and deviceNum != ''"> and device_num = #{deviceNum}</if>
+            <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+            <if test="faultType != null  and faultType != ''"> and fault_type = #{faultType}</if>
+            <if test="applyBy != null  and applyBy != ''"> and apply_by = #{applyBy}</if>
+            <if test="applyDepartment != null  and applyDepartment != ''"> and apply_department = #{applyDepartment}</if>
+            <if test="maintenancePeople != null  and maintenancePeople != ''"> and maintenance_people = #{maintenancePeople}</if>
+            <if test="faultPhenomenon != null  and faultPhenomenon != ''"> and fault_phenomenon = #{faultPhenomenon}</if>
+            <if test="maintenanceAnalysis != null  and maintenanceAnalysis != ''"> and maintenance_analysis = #{maintenanceAnalysis}</if>
+            <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content = #{maintenanceContent}</if>
+            <if test="reportedTime != null "> and reported_time = #{reportedTime}</if>
+            <if test="resolutionTime != null "> and resolution_time = #{resolutionTime}</if>
+            <if test="faultDuration != null  and faultDuration != ''"> and fault_duration = #{faultDuration}</if>
+            <if test="maintenanceCast != null  and maintenanceCast != ''"> and maintenance_cast = #{maintenanceCast}</if>
+            <if test="ifDown != null  and ifDown != ''"> and if_down = #{ifDown}</if>
+        </where>
+    </select>
+
+    <select id="selectDeviceMaintenanceTableByMaintenanceTableId" parameterType="Long" resultMap="DeviceMaintenanceTableResult">
+        <include refid="selectDeviceMaintenanceTableVo"/>
+        where maintenance_table_id = #{maintenanceTableId}
+    </select>
+
+    <insert id="insertDeviceMaintenanceTable" parameterType="DeviceMaintenanceTable" useGeneratedKeys="true" keyProperty="maintenanceTableId">
+        insert into device_maintenance_table
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceName != null">device_name,</if>
+            <if test="workStatus != null">work_status,</if>
+            <if test="deviceNum != null">device_num,</if>
+            <if test="issueType != null">issue_type,</if>
+            <if test="faultType != null">fault_type,</if>
+            <if test="applyBy != null">apply_by,</if>
+            <if test="applyDepartment != null">apply_department,</if>
+            <if test="maintenancePeople != null">maintenance_people,</if>
+            <if test="faultPhenomenon != null">fault_phenomenon,</if>
+            <if test="maintenanceAnalysis != null">maintenance_analysis,</if>
+            <if test="maintenanceContent != null">maintenance_content,</if>
+            <if test="reportedTime != null">reported_time,</if>
+            <if test="resolutionTime != null">resolution_time,</if>
+            <if test="faultDuration != null">fault_duration,</if>
+            <if test="maintenanceCast != null">maintenance_cast,</if>
+            <if test="ifDown != null">if_down,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceName != null">#{deviceName},</if>
+            <if test="workStatus != null">#{workStatus},</if>
+            <if test="deviceNum != null">#{deviceNum},</if>
+            <if test="issueType != null">#{issueType},</if>
+            <if test="faultType != null">#{faultType},</if>
+            <if test="applyBy != null">#{applyBy},</if>
+            <if test="applyDepartment != null">#{applyDepartment},</if>
+            <if test="maintenancePeople != null">#{maintenancePeople},</if>
+            <if test="faultPhenomenon != null">#{faultPhenomenon},</if>
+            <if test="maintenanceAnalysis != null">#{maintenanceAnalysis},</if>
+            <if test="maintenanceContent != null">#{maintenanceContent},</if>
+            <if test="reportedTime != null">#{reportedTime},</if>
+            <if test="resolutionTime != null">#{resolutionTime},</if>
+            <if test="faultDuration != null">#{faultDuration},</if>
+            <if test="maintenanceCast != null">#{maintenanceCast},</if>
+            <if test="ifDown != null">#{ifDown},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDeviceMaintenanceTable" parameterType="DeviceMaintenanceTable">
+        update device_maintenance_table
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="workStatus != null">work_status = #{workStatus},</if>
+            <if test="deviceNum != null">device_num = #{deviceNum},</if>
+            <if test="issueType != null">issue_type = #{issueType},</if>
+            <if test="faultType != null">fault_type = #{faultType},</if>
+            <if test="applyBy != null">apply_by = #{applyBy},</if>
+            <if test="applyDepartment != null">apply_department = #{applyDepartment},</if>
+            <if test="maintenancePeople != null">maintenance_people = #{maintenancePeople},</if>
+            <if test="faultPhenomenon != null">fault_phenomenon = #{faultPhenomenon},</if>
+            <if test="maintenanceAnalysis != null">maintenance_analysis = #{maintenanceAnalysis},</if>
+            <if test="maintenanceContent != null">maintenance_content = #{maintenanceContent},</if>
+            <if test="reportedTime != null">reported_time = #{reportedTime},</if>
+            <if test="resolutionTime != null">resolution_time = #{resolutionTime},</if>
+            <if test="faultDuration != null">fault_duration = #{faultDuration},</if>
+            <if test="maintenanceCast != null">maintenance_cast = #{maintenanceCast},</if>
+            <if test="ifDown != null">if_down = #{ifDown},</if>
+        </trim>
+        where maintenance_table_id = #{maintenanceTableId}
+    </update>
+
+    <delete id="deleteDeviceMaintenanceTableByMaintenanceTableId" parameterType="Long">
+        delete from device_maintenance_table where maintenance_table_id = #{maintenanceTableId}
+    </delete>
+
+    <delete id="deleteDeviceMaintenanceTableByMaintenanceTableIds" parameterType="String">
+        delete from device_maintenance_table where maintenance_table_id in
+        <foreach item="maintenanceTableId" collection="array" open="(" separator="," close=")">
+            #{maintenanceTableId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.SpecialCasesMapper">
+
+    <resultMap type="SpecialCasesEntity" id="SpecialCasesResult">
+        <result property="id" column="id"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="onlineDate" column="online_date"/>
+        <result property="faultReason" column="fault_reason"/>
+        <result property="faultDescription" column="fault_description"/>
+        <result property="responsibleDepartment" column="responsible_department"/>
+        <result property="solution" column="solution"/>
+        <result property="isMajorFault" column="is_major_fault"/>
+        <result property="approvalStatus" column="approval_status"/>
+        <result property="uploadDate" column="upload_date"/>
+    </resultMap>
+
+    <sql id="selectSpecialCasesVo">
+        select id,
+               order_number,
+               online_date,
+               fault_reason,
+               fault_description,
+               responsible_department,
+               solution,
+               is_major_fault,
+               approval_status,
+               upload_date
+        from production_special_cases
+    </sql>
+
+    <select id="selectSpecialCasesList" parameterType="SpecialCasesEntity" resultMap="SpecialCasesResult">
+        <include refid="selectSpecialCasesVo"/>
+        <where>
+            <if test="orderNumber != null  and orderNumber != ''">and order_number like concat('%', #{orderNumber},
+                '%')
+            </if>
+            <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
+            <if test="faultReason != null ">and fault_reason = #{faultReason}</if>
+            <if test="responsibleDepartment != null ">and responsible_department = #{responsibleDepartment}</if>
+            <if test="isMajorFault != null ">and is_major_fault = #{isMajorFault}</if>
+            <if test="approvalStatus != null  and approvalStatus != ''">and approval_status = #{approvalStatus}</if>
+            <if test="uploadDate != null ">and upload_date = #{uploadDate}</if>
+        </where>
+    </select>
+
+    <select id="selectSpecialCasesById" parameterType="String" resultMap="SpecialCasesResult">
+        <include refid="selectSpecialCasesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSpecialCases" parameterType="SpecialCasesEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_special_cases
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNumber != null">order_number,</if>
+            <if test="onlineDate != null">online_date,</if>
+            <if test="faultReason != null">fault_reason,</if>
+            <if test="faultDescription != null">fault_description,</if>
+            <if test="responsibleDepartment != null">responsible_department,</if>
+            <if test="solution != null">solution,</if>
+            <if test="isMajorFault != null">is_major_fault,</if>
+            <if test="approvalStatus != null">approval_status,</if>
+            <if test="uploadDate != null">upload_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNumber != null">#{orderNumber},</if>
+            <if test="onlineDate != null">#{onlineDate},</if>
+            <if test="faultReason != null">#{faultReason},</if>
+            <if test="faultDescription != null">#{faultDescription},</if>
+            <if test="responsibleDepartment != null">#{responsibleDepartment},</if>
+            <if test="solution != null">#{solution},</if>
+            <if test="isMajorFault != null">#{isMajorFault},</if>
+            <if test="approvalStatus != null">#{approvalStatus},</if>
+            <if test="uploadDate != null">#{uploadDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSpecialCases" parameterType="SpecialCasesEntity">
+        update production_special_cases
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNumber != null">order_number = #{orderNumber},</if>
+            <if test="onlineDate != null">online_date = #{onlineDate},</if>
+            <if test="faultReason != null">fault_reason = #{faultReason},</if>
+            <if test="faultDescription != null">fault_description = #{faultDescription},</if>
+            <if test="responsibleDepartment != null">responsible_department = #{responsibleDepartment},</if>
+            <if test="solution != null">solution = #{solution},</if>
+            <if test="isMajorFault != null">is_major_fault = #{isMajorFault},</if>
+            <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
+            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSpecialCasesById" parameterType="String">
+        delete
+        from production_special_cases
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteSpecialCasesByIds" parameterType="String">
+        delete from production_special_cases where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

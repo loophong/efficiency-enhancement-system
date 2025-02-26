@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.CycleMapper">
+
+    <resultMap type="CycleEntity" id="ProductionCycleResult">
+        <result property="id" column="id"/>
+        <result property="series" column="series"/>
+        <result property="tonnage" column="tonnage"/>
+        <result property="vehicleModel" column="vehicle_model"/>
+        <result property="capacityVehicleModel" column="capacity_vehicle_model"/>
+        <result property="productionCycle" column="production_cycle"/>
+    </resultMap>
+
+    <sql id="selectProductionCycleVo">
+        select id, series, tonnage, vehicle_model, capacity_vehicle_model, production_cycle
+        from production_cycle
+    </sql>
+
+    <select id="selectProductionCycleList" parameterType="CycleEntity" resultMap="ProductionCycleResult">
+        <include refid="selectProductionCycleVo"/>
+        <where>
+            <if test="series != null  and series != ''">and series = #{series}</if>
+            <if test="tonnage != null  and tonnage != ''">and tonnage = #{tonnage}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
+            <if test="capacityVehicleModel != null  and capacityVehicleModel != ''">and capacity_vehicle_model =
+                #{capacityVehicleModel}
+            </if>
+            <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
+        </where>
+    </select>
+
+    <select id="selectProductionCycleById" parameterType="Long" resultMap="ProductionCycleResult">
+        <include refid="selectProductionCycleVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProductionCycle" parameterType="CycleEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_cycle
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="series != null and series != ''">series,</if>
+            <if test="tonnage != null and tonnage != ''">tonnage,</if>
+            <if test="vehicleModel != null and vehicleModel != ''">vehicle_model,</if>
+            <if test="capacityVehicleModel != null and capacityVehicleModel != ''">capacity_vehicle_model,</if>
+            <if test="productionCycle != null">production_cycle,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="series != null and series != ''">#{series},</if>
+            <if test="tonnage != null and tonnage != ''">#{tonnage},</if>
+            <if test="vehicleModel != null and vehicleModel != ''">#{vehicleModel},</if>
+            <if test="capacityVehicleModel != null and capacityVehicleModel != ''">#{capacityVehicleModel},</if>
+            <if test="productionCycle != null">#{productionCycle},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProductionCycle" parameterType="CycleEntity">
+        update production_cycle
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="series != null and series != ''">series = #{series},</if>
+            <if test="tonnage != null and tonnage != ''">tonnage = #{tonnage},</if>
+            <if test="vehicleModel != null and vehicleModel != ''">vehicle_model = #{vehicleModel},</if>
+            <if test="capacityVehicleModel != null and capacityVehicleModel != ''">capacity_vehicle_model =
+                #{capacityVehicleModel},
+            </if>
+            <if test="productionCycle != null">production_cycle = #{productionCycle},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductionCycleById" parameterType="Long">
+        delete
+        from production_cycle
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteProductionCycleByIds" parameterType="String">
+        delete from production_cycle where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
