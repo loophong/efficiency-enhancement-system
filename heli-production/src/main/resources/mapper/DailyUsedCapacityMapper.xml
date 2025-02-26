@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.DailyUsedCapacityMapper">
+
+    <resultMap type="DailyUsedCapacity" id="DailyUsedCapacityResult">
+        <result property="id" column="id"/>
+        <result property="productionDate" column="production_date"/>
+        <result property="capacityType" column="capacity_type"/>
+        <result property="productionQuantity" column="production_quantity"/>
+        <result property="quantitySettings" column="quantity_settings"/>
+    </resultMap>
+
+    <sql id="selectDailyUsedCapacityVo">
+        select id, production_date, capacity_type, production_quantity, quantity_settings
+        from production_daily_used_capacity
+    </sql>
+
+    <select id="selectDailyUsedCapacityList" parameterType="DailyUsedCapacity" resultMap="DailyUsedCapacityResult">
+        <include refid="selectDailyUsedCapacityVo"/>
+        <where>
+            <if test="productionDate != null ">and production_date = #{productionDate}</if>
+            <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>
+            <if test="productionQuantity != null ">and production_quantity = #{productionQuantity}</if>
+            <if test="quantitySettings != null ">and quantity_settings = #{quantitySettings}</if>
+        </where>
+    </select>
+
+    <select id="selectDailyUsedCapacityById" parameterType="String" resultMap="DailyUsedCapacityResult">
+        <include refid="selectDailyUsedCapacityVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDailyUsedCapacity" parameterType="DailyUsedCapacity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_daily_used_capacity
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productionDate != null">production_date,</if>
+            <if test="capacityType != null">capacity_type,</if>
+            <if test="productionQuantity != null">production_quantity,</if>
+            <if test="quantitySettings != null">quantity_settings,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productionDate != null">#{productionDate},</if>
+            <if test="capacityType != null">#{capacityType},</if>
+            <if test="productionQuantity != null">#{productionQuantity},</if>
+            <if test="quantitySettings != null">#{quantitySettings},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDailyUsedCapacity" parameterType="DailyUsedCapacity">
+        update production_daily_used_capacity
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productionDate != null">production_date = #{productionDate},</if>
+            <if test="capacityType != null">capacity_type = #{capacityType},</if>
+            <if test="productionQuantity != null">production_quantity = #{productionQuantity},</if>
+            <if test="quantitySettings != null">quantity_settings = #{quantitySettings},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDailyUsedCapacityById" parameterType="String">
+        delete
+        from production_daily_used_capacity
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteDailyUsedCapacityByIds" parameterType="String">
+        delete from production_daily_used_capacity where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
