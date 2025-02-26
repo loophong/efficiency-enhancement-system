@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEnvironmentalOrganizationDescriptionMapper">
+    
+    <resultMap type="SecurityEnvironmentalOrganizationDescription" id="SecurityEnvironmentalOrganizationDescriptionResult">
+        <result property="id"    column="id"    />
+        <result property="environment"    column="environment"    />
+        <result property="features"    column="features"    />
+        <result property="description"    column="description"    />
+        <result property="beiyongziduan1"    column="beiyongziduan1"    />
+        <result property="beiyongziduan2"    column="beiyongziduan2"    />
+        <result property="beiyongdiduan3"    column="beiyongdiduan3"    />
+        <result property="beiyongziduan4"    column="beiyongziduan4"    />
+    </resultMap>
+
+    <sql id="selectSecurityEnvironmentalOrganizationDescriptionVo">
+        select id, environment, features, description, beiyongziduan1, beiyongziduan2, beiyongdiduan3, beiyongziduan4 from Security_environmental_organization_description
+    </sql>
+
+    <select id="selectSecurityEnvironmentalOrganizationDescriptionList" parameterType="SecurityEnvironmentalOrganizationDescription" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
+        <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
+        <where>  
+            <if test="environment != null  and environment != ''"> and environment = #{environment}</if>
+            <if test="features != null  and features != ''"> and features = #{features}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="beiyongziduan1 != null  and beiyongziduan1 != ''"> and beiyongziduan1 = #{beiyongziduan1}</if>
+            <if test="beiyongziduan2 != null "> and beiyongziduan2 = #{beiyongziduan2}</if>
+            <if test="beiyongdiduan3 != null "> and beiyongdiduan3 = #{beiyongdiduan3}</if>
+            <if test="beiyongziduan4 != null "> and beiyongziduan4 = #{beiyongziduan4}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEnvironmentalOrganizationDescriptionById" parameterType="Long" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
+        <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription">
+        insert into Security_environmental_organization_description
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="environment != null">environment,</if>
+            <if test="features != null">features,</if>
+            <if test="description != null">description,</if>
+            <if test="beiyongziduan1 != null">beiyongziduan1,</if>
+            <if test="beiyongziduan2 != null">beiyongziduan2,</if>
+            <if test="beiyongdiduan3 != null">beiyongdiduan3,</if>
+            <if test="beiyongziduan4 != null">beiyongziduan4,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="environment != null">#{environment},</if>
+            <if test="features != null">#{features},</if>
+            <if test="description != null">#{description},</if>
+            <if test="beiyongziduan1 != null">#{beiyongziduan1},</if>
+            <if test="beiyongziduan2 != null">#{beiyongziduan2},</if>
+            <if test="beiyongdiduan3 != null">#{beiyongdiduan3},</if>
+            <if test="beiyongziduan4 != null">#{beiyongziduan4},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription">
+        update Security_environmental_organization_description
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="environment != null">environment = #{environment},</if>
+            <if test="features != null">features = #{features},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="beiyongziduan1 != null">beiyongziduan1 = #{beiyongziduan1},</if>
+            <if test="beiyongziduan2 != null">beiyongziduan2 = #{beiyongziduan2},</if>
+            <if test="beiyongdiduan3 != null">beiyongdiduan3 = #{beiyongdiduan3},</if>
+            <if test="beiyongziduan4 != null">beiyongziduan4 = #{beiyongziduan4},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEnvironmentalOrganizationDescriptionById" parameterType="Long">
+        delete from Security_environmental_organization_description where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEnvironmentalOrganizationDescriptionByIds" parameterType="String">
+        delete from Security_environmental_organization_description where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

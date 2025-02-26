@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityRequireExpectPartyMapper">
+    
+    <resultMap type="SecurityRequireExpectParty" id="SecurityRequireExpectPartyResult">
+        <result property="id"    column="id"    />
+        <result property="partyInvolved"    column="party_involved"    />
+        <result property="demand"    column="demand_"    />
+        <result property="monitoringIndicators"    column="monitoring_indicators"    />
+        <result property="monitoringFrequency"    column="monitoring_frequency"    />
+        <result property="monitoringDepartment"    column="monitoring_department"    />
+        <result property="beiyongziduan1"    column="beiyongziduan1"    />
+        <result property="beiyongziduan2"    column="beiyongziduan2"    />
+        <result property="beiyongziduan3"    column="beiyongziduan3"    />
+    </resultMap>
+
+    <sql id="selectSecurityRequireExpectPartyVo">
+        select id, party_involved, demand_, monitoring_indicators, monitoring_frequency, monitoring_department, beiyongziduan1, beiyongziduan2, beiyongziduan3 from security_require_expect_party
+    </sql>
+
+    <select id="selectSecurityRequireExpectPartyList" parameterType="SecurityRequireExpectParty" resultMap="SecurityRequireExpectPartyResult">
+        <include refid="selectSecurityRequireExpectPartyVo"/>
+        <where>  
+            <if test="partyInvolved != null  and partyInvolved != ''"> and party_involved = #{partyInvolved}</if>
+            <if test="demand != null  and demand != ''"> and demand_ = #{demand}</if>
+            <if test="monitoringIndicators != null  and monitoringIndicators != ''"> and monitoring_indicators = #{monitoringIndicators}</if>
+            <if test="monitoringFrequency != null  and monitoringFrequency != ''"> and monitoring_frequency = #{monitoringFrequency}</if>
+            <if test="monitoringDepartment != null  and monitoringDepartment != ''"> and monitoring_department = #{monitoringDepartment}</if>
+            <if test="beiyongziduan1 != null "> and beiyongziduan1 = #{beiyongziduan1}</if>
+            <if test="beiyongziduan2 != null  and beiyongziduan2 != ''"> and beiyongziduan2 = #{beiyongziduan2}</if>
+            <if test="beiyongziduan3 != null "> and beiyongziduan3 = #{beiyongziduan3}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityRequireExpectPartyById" parameterType="Long" resultMap="SecurityRequireExpectPartyResult">
+        <include refid="selectSecurityRequireExpectPartyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityRequireExpectParty" parameterType="SecurityRequireExpectParty" useGeneratedKeys="true" keyProperty="id">
+        insert into security_require_expect_party
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="partyInvolved != null">party_involved,</if>
+            <if test="demand != null">demand_,</if>
+            <if test="monitoringIndicators != null">monitoring_indicators,</if>
+            <if test="monitoringFrequency != null">monitoring_frequency,</if>
+            <if test="monitoringDepartment != null">monitoring_department,</if>
+            <if test="beiyongziduan1 != null">beiyongziduan1,</if>
+            <if test="beiyongziduan2 != null">beiyongziduan2,</if>
+            <if test="beiyongziduan3 != null">beiyongziduan3,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="partyInvolved != null">#{partyInvolved},</if>
+            <if test="demand != null">#{demand},</if>
+            <if test="monitoringIndicators != null">#{monitoringIndicators},</if>
+            <if test="monitoringFrequency != null">#{monitoringFrequency},</if>
+            <if test="monitoringDepartment != null">#{monitoringDepartment},</if>
+            <if test="beiyongziduan1 != null">#{beiyongziduan1},</if>
+            <if test="beiyongziduan2 != null">#{beiyongziduan2},</if>
+            <if test="beiyongziduan3 != null">#{beiyongziduan3},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityRequireExpectParty" parameterType="SecurityRequireExpectParty">
+        update security_require_expect_party
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="partyInvolved != null">party_involved = #{partyInvolved},</if>
+            <if test="demand != null">demand_ = #{demand},</if>
+            <if test="monitoringIndicators != null">monitoring_indicators = #{monitoringIndicators},</if>
+            <if test="monitoringFrequency != null">monitoring_frequency = #{monitoringFrequency},</if>
+            <if test="monitoringDepartment != null">monitoring_department = #{monitoringDepartment},</if>
+            <if test="beiyongziduan1 != null">beiyongziduan1 = #{beiyongziduan1},</if>
+            <if test="beiyongziduan2 != null">beiyongziduan2 = #{beiyongziduan2},</if>
+            <if test="beiyongziduan3 != null">beiyongziduan3 = #{beiyongziduan3},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityRequireExpectPartyById" parameterType="Long">
+        delete from security_require_expect_party where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityRequireExpectPartyByIds" parameterType="String">
+        delete from security_require_expect_party where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

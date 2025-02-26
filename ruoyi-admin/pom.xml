@@ -66,6 +66,14 @@
             <artifactId>heli-production</artifactId>
         </dependency>
 
+        <!-- 安全模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>security-conm</artifactId>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>
