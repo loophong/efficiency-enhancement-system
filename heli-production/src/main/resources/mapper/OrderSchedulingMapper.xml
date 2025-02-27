@@ -28,6 +28,7 @@
         <result property="systemDeliveryDate" column="system_delivery_date"/>
         <result property="productionCompletionDate" column="production_completion_date"/>
         <result property="procurementArrivalDate" column="procurement_arrival_date"/>
+        <result property="missingPartRecords" column="missing_part_records"/>
         <result property="productionCycle" column="production_cycle"/>
         <result property="capacityType" column="capacity_type"/>
         <result property="latestOnlineDate" column="latest_online_date"/>
@@ -61,6 +62,7 @@
                system_delivery_date,
                production_completion_date,
                procurement_arrival_date,
+               missing_part_records,
                production_cycle,
                capacity_type,
                latest_online_date,
@@ -99,6 +101,7 @@
             <if test="productionCompletionDate != null ">and production_completion_date = #{productionCompletionDate}
             </if>
             <if test="procurementArrivalDate != null ">and procurement_arrival_date = #{procurementArrivalDate}</if>
+            <if test="missingPartRecords != null ">and missing_part_records = #{missingPartRecords}</if>
             <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
             <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>
             <if test="latestOnlineDate != null ">and latest_online_date = #{latestOnlineDate}</if>
@@ -141,6 +144,7 @@
 
             <if test="procurementArrivalDate != null ">and procurement_arrival_date = #{procurementArrivalDate}</if>
             <if test="procurementArrivalDate == null ">and procurement_arrival_date is not null</if>
+            <if test="missingPartRecords != null ">and missing_part_records = #{missingPartRecords}</if>
 
             <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
             <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>

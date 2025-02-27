@@ -160,11 +160,15 @@ public class MainPlanTableEntity implements Serializable {
     private Date procurementArrivalDate;
 
     /**
+     * 缺件记录
+     */
+    @ExcelProperty(index = 22)
+    private String missingPartRecords;
+
+    /**
      * 上传时间
      */
     @ExcelIgnore
     private Date uploadDate;
-
-
 
 }
