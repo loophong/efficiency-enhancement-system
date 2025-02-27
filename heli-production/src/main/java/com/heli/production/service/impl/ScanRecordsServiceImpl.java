@@ -1,11 +1,17 @@
 package com.heli.production.service.impl;
 
 
-import com.heli.production.domain.entity.ScanRecords;
+import com.alibaba.excel.EasyExcel;
+import com.heli.production.Listener.HistoryOrderListener;
+import com.heli.production.Listener.ScanRecordsListener;
+import com.heli.production.domain.entity.HistoryOrderEntity;
+import com.heli.production.domain.entity.ScanRecordsEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.production.mapper.ScanRecordsMapper;
 import com.heli.production.service.IScanRecordsService;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,6 +21,7 @@ import java.util.List;
  * @author ruoyi
  * @date 2025-02-27
  */
+@Slf4j
 @Service
 public class ScanRecordsServiceImpl implements IScanRecordsService {
     @Autowired
@@ -27,7 +34,7 @@ public class ScanRecordsServiceImpl implements IScanRecordsService {
      * @return 整机扫码记录
      */
     @Override
-    public ScanRecords selectScanRecordsById(String id) {
+    public ScanRecordsEntity selectScanRecordsById(String id) {
         return scanRecordsMapper.selectScanRecordsById(id);
     }
 
@@ -38,7 +45,7 @@ public class ScanRecordsServiceImpl implements IScanRecordsService {
      * @return 整机扫码记录
      */
     @Override
-    public List<ScanRecords> selectScanRecordsList(ScanRecords scanRecords) {
+    public List<ScanRecordsEntity> selectScanRecordsList(ScanRecordsEntity scanRecords) {
         return scanRecordsMapper.selectScanRecordsList(scanRecords);
     }
 
@@ -49,7 +56,7 @@ public class ScanRecordsServiceImpl implements IScanRecordsService {
      * @return 结果
      */
     @Override
-    public int insertScanRecords(ScanRecords scanRecords) {
+    public int insertScanRecords(ScanRecordsEntity scanRecords) {
         return scanRecordsMapper.insertScanRecords(scanRecords);
     }
 
@@ -60,7 +67,7 @@ public class ScanRecordsServiceImpl implements IScanRecordsService {
      * @return 结果
      */
     @Override
-    public int updateScanRecords(ScanRecords scanRecords) {
+    public int updateScanRecords(ScanRecordsEntity scanRecords) {
         return scanRecordsMapper.updateScanRecords(scanRecords);
     }
 
@@ -84,5 +91,19 @@ public class ScanRecordsServiceImpl implements IScanRecordsService {
     @Override
     public int deleteScanRecordsById(String id) {
         return scanRecordsMapper.deleteScanRecordsById(id);
+    }
+
+    @Override
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
+        // 读取文件内容
+        log.info("开始读取文件: {}", fileName);
+
+        try {
+            EasyExcel.read(excelFile.getInputStream(), ScanRecordsEntity.class, new ScanRecordsListener(scanRecordsMapper)).sheet().doRead();
+            log.info("读取文件成功: {}", fileName);
+
+        } catch (Exception e) {
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+        }
     }
 }

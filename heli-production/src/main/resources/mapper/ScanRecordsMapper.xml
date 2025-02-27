@@ -4,7 +4,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.production.mapper.ScanRecordsMapper">
     
-    <resultMap type="ScanRecords" id="ScanRecordsResult">
+    <resultMap type="ScanRecordsEntity" id="ScanRecordsResult">
         <result property="id"    column="id"    />
         <result property="lineNumber"    column="line_number"    />
         <result property="machineId"    column="machine_id"    />
@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select id, line_number, machine_id, planned_date, model, gantry_model, tonnage, production_order_number, ok_quantity, send_flag, creation_time, auto_rework_time, operator, sap_return_flag, sap_workorder_return_info, resend_receipt_time, sap_receipt_return_message, sap_receipt_status, sap_receipt_return_status from production_scan_records
     </sql>
 
-    <select id="selectScanRecordsList" parameterType="ScanRecords" resultMap="ScanRecordsResult">
+    <select id="selectScanRecordsList" parameterType="ScanRecordsEntity" resultMap="ScanRecordsResult">
         <include refid="selectScanRecordsVo"/>
         <where>  
             <if test="lineNumber != null  and lineNumber != ''"> and line_number = #{lineNumber}</if>
@@ -59,7 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertScanRecords" parameterType="ScanRecords" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertScanRecords" parameterType="ScanRecordsEntity" useGeneratedKeys="true" keyProperty="id">
         insert into production_scan_records
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="lineNumber != null">line_number,</if>
@@ -103,7 +103,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateScanRecords" parameterType="ScanRecords">
+    <insert id="batchInsert" parameterType="list">
+        insert into production_scan_records(line_number, machine_id, planned_date, model, gantry_model, tonnage,
+        production_order_number, ok_quantity, send_flag, creation_time, auto_rework_time, operator, sap_return_flag,
+        sap_workorder_return_info, resend_receipt_time, sap_receipt_return_message, sap_receipt_status,
+        sap_receipt_return_status)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lineNumber}, #{item.machineId}, #{item.plannedDate}, #{item.model}, #{item.gantryModel}, #{item.tonnage},
+             #{item.productionOrderNumber}, #{item.okQuantity}, #{item.sendFlag}, #{item.creationTime}, #{item.autoReworkTime},
+             #{item.operator}, #{item.sapReturnFlag}, #{item.sapWorkorderReturnInfo}, #{item.resendReceiptTime},
+             #{item.sapReceiptReturnMessage}, #{item.sapReceiptStatus}, #{item.sapReceiptReturnStatus})
+        </foreach>
+    </insert>
+
+    <update id="updateScanRecords" parameterType="ScanRecordsEntity">
         update production_scan_records
         <trim prefix="SET" suffixOverrides=",">
             <if test="lineNumber != null">line_number = #{lineNumber},</if>

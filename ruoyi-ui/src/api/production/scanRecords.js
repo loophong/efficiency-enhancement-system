@@ -42,3 +42,16 @@ export function delScanRecords(id) {
     method: 'delete'
   })
 }
+
+
+// 上传整机扫码记录表
+export function importFile(formData) {
+  return request({
+    url: '/production/scanRecords/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

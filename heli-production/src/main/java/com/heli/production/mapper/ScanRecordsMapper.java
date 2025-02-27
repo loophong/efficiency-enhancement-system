@@ -1,6 +1,6 @@
 package com.heli.production.mapper;
 
-import com.heli.production.domain.entity.ScanRecords;
+import com.heli.production.domain.entity.ScanRecordsEntity;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public interface ScanRecordsMapper {
      * @param id 整机扫码记录主键
      * @return 整机扫码记录
      */
-    public ScanRecords selectScanRecordsById(String id);
+    public ScanRecordsEntity selectScanRecordsById(String id);
 
     /**
      * 查询整机扫码记录列表
@@ -26,7 +26,7 @@ public interface ScanRecordsMapper {
      * @param scanRecords 整机扫码记录
      * @return 整机扫码记录集合
      */
-    public List<ScanRecords> selectScanRecordsList(ScanRecords scanRecords);
+    public List<ScanRecordsEntity> selectScanRecordsList(ScanRecordsEntity scanRecords);
 
     /**
      * 新增整机扫码记录
@@ -34,7 +34,7 @@ public interface ScanRecordsMapper {
      * @param scanRecords 整机扫码记录
      * @return 结果
      */
-    public int insertScanRecords(ScanRecords scanRecords);
+    public int insertScanRecords(ScanRecordsEntity scanRecords);
 
     /**
      * 修改整机扫码记录
@@ -42,7 +42,7 @@ public interface ScanRecordsMapper {
      * @param scanRecords 整机扫码记录
      * @return 结果
      */
-    public int updateScanRecords(ScanRecords scanRecords);
+    public int updateScanRecords(ScanRecordsEntity scanRecords);
 
     /**
      * 删除整机扫码记录
@@ -59,4 +59,6 @@ public interface ScanRecordsMapper {
      * @return 结果
      */
     public int deleteScanRecordsByIds(String[] ids);
+
+    void batchInsert(List<ScanRecordsEntity> cacheDataList);
 }
