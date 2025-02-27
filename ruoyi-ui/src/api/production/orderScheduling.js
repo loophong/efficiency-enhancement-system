@@ -12,6 +12,7 @@ export function listScheduling(query) {
     })
 }
 
+
 // 查询订单信息详细
 export function getScheduling(id) {
     return request({
@@ -83,5 +84,14 @@ export function cancelScheduling(date) {
         params: {
             'date': date
         }
+    })
+}
+
+// 查询缺件信息列表
+export function listMissingParts(query) {
+    return request({
+        url: '/production/scheduling/listMissingParts',
+        method: 'get',
+        params: query
     })
 }

@@ -132,6 +132,20 @@ public class OrderSchedulingController extends BaseController {
         return getDataTable(list);
     }
 
+    /**
+     * @description: 查询缺件订单列表
+     * @author: hong
+     * @date: 2025/2/27 15:43
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
+    @GetMapping("/listMissingParts")
+    public TableDataInfo listMissingParts(OrderSchedulingEntity orderSchedulingEntity) {
+        startPage();
+        List<OrderSchedulingEntity> list = orderSchedulingService.selectMissingPartsList(orderSchedulingEntity);
+        return getDataTable(list);
+    }
+
 
     /**
      * 获取订单信息详细信息

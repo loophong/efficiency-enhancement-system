@@ -131,6 +131,17 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
             this.saveOrUpdate(orderSchedulingEntity);
         }
     }
+
+    /**
+     * @description: 查询缺件订单列表
+     * @author: hong
+     * @date: 2025/2/27 15:43
+     * @version: 1.0
+     */
+    @Override
+    public List<OrderSchedulingEntity> selectMissingPartsList(OrderSchedulingEntity orderSchedulingEntity) {
+        return orderSchedulingMapper.selectMissingPartsList(orderSchedulingEntity);
+    }
 }
 
 
