@@ -1,10 +1,18 @@
 package com.heli.device.maintenanceTable.listener;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.SyncReadListener;
+import com.alibaba.excel.metadata.CellExtra;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
 
@@ -14,7 +22,15 @@ import lombok.extern.log4j.Log4j2;
 public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
     private static final int BATCH_COUNT = 200;
 
+    private int currentRow = 0;
     private DeviceIndicatorCountMapper deviceIndicatorCountMapper;
+
+    /**
+     * 核心合并单元格的缓存
+     * 可以把map当成一个二位excel表格，里面记录每个存储的被合并单元格的内容。
+     * key 为 [行号-列号]
+     */
+    private Map<String, Object> mergedCellsIndexMap = new HashMap<>();
 
 
     private List<DeviceIndicatorCount> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
@@ -32,20 +48,20 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
     @Override
     public void invoke(DeviceIndicatorCount registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
-//        if (registerInfoExcel.getRowName() != null) {
-//            // 处理数据
-//            if (registerInfoExcel.getColumnNum() != null) {
-//                registerInfoExcel.setColumnNum(registerInfoExcel.getColumnNum().replaceAll(",", ""));
-//            }else {
-//                registerInfoExcel.setColumnNum("0");
+        if (registerInfoExcel.getIndicatorName() != null) {
+            // 处理数据
+//            if (registerInfoExcel.getSeries() == null) {
+//                registerInfoExcel.setSeries(cacheDataList.get(currentRow - 1).getSeries());
 //            }
-//            if (registerInfoExcel.getRowName() != null) {
-//                registerInfoExcel.setRowName(registerInfoExcel.getRowName().replaceAll(" ", ""));
+//            if (registerInfoExcel.getTonnage() == null) {
+//                registerInfoExcel.setTonnage(cacheDataList.get(currentRow - 1).getTonnage());
 //            }
-//            cacheDataList.add(registerInfoExcel);
-//        }
+            log.info("当前读取的数据为" + registerInfoExcel);
+            cacheDataList.add(registerInfoExcel);
+//            currentRow++;
+        }
 
-        log.info("当前读取的数据为:" + registerInfoExcel);
+//        log.info("当前读取的数据为:" + registerInfoExcel);
 
         // 批量处理缓存的数据
         if (cacheDataList.size() >= BATCH_COUNT) {
@@ -71,7 +87,8 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-//        financialTempTableMapper.batchInsertTempTable(cacheDataList);
+        log.info("cacheDataList"+cacheDataList);
+        deviceIndicatorCountMapper.insert(cacheDataList);
 //        financialTempTableMapper.batchInsertSalaryTable(cacheDataList);
     }
 }

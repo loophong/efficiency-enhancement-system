@@ -48,7 +48,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 //            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
-            EasyExcel.read(inputStream, DeviceGroupPlan.class, new DeviceGroupPlanListener(deviceGroupPlanMapper)).sheet(1).doRead();
+            EasyExcel.read(inputStream, DeviceGroupPlan.class, new DeviceGroupPlanListener(deviceGroupPlanMapper)).sheet().headRowNumber(3).doRead();
             return R.ok("读取" + fileName + "文件成功");
         } catch (Exception e) {
             e.printStackTrace();

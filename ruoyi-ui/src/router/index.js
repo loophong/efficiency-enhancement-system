@@ -84,20 +84,6 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/file',
-    component: Layout,
-    hidden: true,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'details',
-        component: () => import('@/views/deviceManagement/fileManagement/deviceDetails'),
-        name: 'Details',
-        meta: { title: '设备台账'}
-      }
-    ]
-  }
 ]
 
 // 动态路由，基于用户权限动态去加载

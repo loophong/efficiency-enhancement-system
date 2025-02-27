@@ -7,6 +7,7 @@ import com.alibaba.excel.util.ListUtils;
 import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
 
     private static final int BATCH_COUNT = 200;
 
+    @Autowired
     private DeviceMaintenanceTableMapper deviceMaintenanceTableMapper;
 
 
@@ -35,8 +37,8 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
     @Override
     public void invoke(DeviceMaintenanceTable registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
-//        if (registerInfoExcel.getRowName() != null) {
-//            // 处理数据
+        if (registerInfoExcel.getDeviceNum() != null) {
+            // 处理数据
 //            if (registerInfoExcel.getColumnNum() != null) {
 //                registerInfoExcel.setColumnNum(registerInfoExcel.getColumnNum().replaceAll(",", ""));
 //            }else {
@@ -45,10 +47,11 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
 //            if (registerInfoExcel.getRowName() != null) {
 //                registerInfoExcel.setRowName(registerInfoExcel.getRowName().replaceAll(" ", ""));
 //            }
-//            cacheDataList.add(registerInfoExcel);
-//        }
+            cacheDataList.add(registerInfoExcel);
+        }
 
-        log.info("当前读取的数据为:" + registerInfoExcel);
+//        log.info("当前读取的数据为:" + registerInfoExcel);
+
 
         // 批量处理缓存的数据
         if (cacheDataList.size() >= BATCH_COUNT) {
@@ -66,6 +69,7 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         saveToDB();
         log.info("所有数据解析完成");
+        log.info("cacheDataList:" + cacheDataList);
     }
 
 
@@ -74,7 +78,18 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-//        financialTempTableMapper.batchInsertTempTable(cacheDataList);
-//        financialTempTableMapper.batchInsertSalaryTable(cacheDataList);
+//        deviceMaintenanceTableMapper.insert(cacheDataList);
+        for (DeviceMaintenanceTable data : cacheDataList) {
+            DeviceMaintenanceTable existing = deviceMaintenanceTableMapper.selectExist(data.getDeviceNum(),data.getFaultPhenomenon(),data.getReportedTime());
+            if (existing != null) {
+                // 如果存在重复记录，执行更新操作
+                data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
+                deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
+            } else {
+                // 否则，执行插入操作
+                deviceMaintenanceTableMapper.insertDeviceMaintenanceTable(data);
+            }
+        }
+
     }
 }

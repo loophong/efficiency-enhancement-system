@@ -49,7 +49,7 @@
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
-        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
         <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
           <el-form :model="form" ref="formRef" label-width="90px">
@@ -70,21 +70,269 @@
           v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
       </el-col>
 
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="View" @click="showFullYear = true"
+          v-hasPermi="['maintenanceTable:plan:add']">全年数据</el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" plain icon="Hide" @click="showFullYear = false"
+          v-hasPermi="['maintenanceTable:plan:add']">当月及上月数据</el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border>
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键id" align="center" prop="majorId" />
-      <el-table-column label="序号" align="center" prop="majorOrder" />
-      <el-table-column label="设备名称" align="center" prop="majorName" />
+      <!-- <el-table-column label="主键id" align="center" prop="majorId" /> -->
+      <!-- <el-table-column label="序号" align="center" prop="majorOrder" /> -->
+      <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
       <el-table-column label="部位" align="center" prop="majorPosition" />
-      <el-table-column label="保养维修项目" align="center" prop="majorProject" />
+      <el-table-column label="保养维修项目" align="center" prop="majorProject" width="280" />
       <el-table-column label="周期" align="center" prop="majorCycleNum" />
       <el-table-column label="人员" align="center" prop="majorPeople" />
-      <el-table-column label="月份" align="center" prop="majorMonth" />
-      <el-table-column label="第几周" align="center" prop="majorMonthWeek" />
-      <el-table-column label="内容" align="center" prop="majorContent" />
+      <!-- <el-table-column label="月份" align="center" prop="majorMonth" /> -->
+      <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="showFullYear || ifCurrentMonth(1)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="一月2W" align="center" prop="weekJanTwo" v-if="showFullYear || ifCurrentMonth(1)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="一月3W" align="center" prop="weekJanThree" v-if="showFullYear || ifCurrentMonth(1)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="一月4W" align="center" prop="weekJanFour" v-if="showFullYear || ifCurrentMonth(1)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="二月1W" align="center" prop="weekFebOne" v-if="showFullYear || ifCurrentMonth(2)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="二月2W" align="center" prop="weekFebTwo" v-if="showFullYear || ifCurrentMonth(2)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="二月3W" align="center" prop="weekFebThree" v-if="showFullYear || ifCurrentMonth(2)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="二月4W" align="center" prop="weekFebFour" v-if="showFullYear || ifCurrentMonth(2)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="三月1W" align="center" prop="weekMarOne" v-if="showFullYear || ifCurrentMonth(3)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="三月2W" align="center" prop="weekMarTwo" v-if="showFullYear || ifCurrentMonth(3)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="三月3W" align="center" prop="weekMarThree" v-if="showFullYear || ifCurrentMonth(3)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="三月4W" align="center" prop="weekMarFour" v-if="showFullYear || ifCurrentMonth(3)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="四月1W" align="center" prop="weekAprOne" v-if="showFullYear || ifCurrentMonth(4)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="四月2W" align="center" prop="weekAprTwo" v-if="showFullYear || ifCurrentMonth(4)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="四月3W" align="center" prop="weekAprThree" v-if="showFullYear || ifCurrentMonth(4)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="四月4W" align="center" prop="weekAprFour" v-if="showFullYear || ifCurrentMonth(4)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="五月1W" align="center" prop="weekMayOne" v-if="showFullYear || ifCurrentMonth(5)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="五月2W" align="center" prop="weekMayTwo" v-if="showFullYear || ifCurrentMonth(5)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="五月3W" align="center" prop="weekMayThree" v-if="showFullYear || ifCurrentMonth(5)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="五月4W" align="center" prop="weekMayFour" v-if="showFullYear || ifCurrentMonth(5)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="六月1W" align="center" prop="weekJunOne" v-if="showFullYear || ifCurrentMonth(6)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="六月2W" align="center" prop="weekJunTwo" v-if="showFullYear || ifCurrentMonth(6)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="六月3W" align="center" prop="weekJunThree" v-if="showFullYear || ifCurrentMonth(6)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="六月4W" align="center" prop="weekJunFour" v-if="showFullYear || ifCurrentMonth(6)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="七月1W" align="center" prop="weekJulOne" v-if="showFullYear || ifCurrentMonth(7)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="七月2W" align="center" prop="weekJulTwo" v-if="showFullYear || ifCurrentMonth(7)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="七月3W" align="center" prop="weekJulThree" v-if="showFullYear || ifCurrentMonth(7)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="七月4W" align="center" prop="weekJulFour" v-if="showFullYear || ifCurrentMonth(7)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="八月1W" align="center" prop="weekAugOne" v-if="showFullYear || ifCurrentMonth(8)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="八月2W" align="center" prop="weekAugTwo" v-if="showFullYear || ifCurrentMonth(8)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="八月3W" align="center" prop="weekAugThree" v-if="showFullYear || ifCurrentMonth(8)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="八月4W" align="center" prop="weekAugFour" v-if="showFullYear || ifCurrentMonth(8)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="九月1W" align="center" prop="weekSepOne" v-if="showFullYear || ifCurrentMonth(9)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="九月2W" align="center" prop="weekSepTwo" v-if="showFullYear || ifCurrentMonth(9)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="九月3W" align="center" prop="weekSepThree" v-if="showFullYear || ifCurrentMonth(9)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="九月4W" align="center" prop="weekSepFour" v-if="showFullYear || ifCurrentMonth(9)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十月1W" align="center" prop="weekOctOne" v-if="showFullYear || ifCurrentMonth(10)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十月2W" align="center" prop="weekOctTwo" v-if="showFullYear || ifCurrentMonth(10)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十月3W" align="center" prop="weekOctThree" v-if="showFullYear || ifCurrentMonth(10)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十月4W" align="center" prop="weekOctFour" v-if="showFullYear || ifCurrentMonth(10)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十一月1W" align="center" prop="weekNovOne" v-if="showFullYear || ifCurrentMonth(11)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十一月2W" align="center" prop="weekNovTwo" v-if="showFullYear || ifCurrentMonth(11)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十一月3W" align="center" prop="weekNovThree" v-if="showFullYear || ifCurrentMonth(11)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十一月4W" align="center" prop="weekNovFour" v-if="showFullYear || ifCurrentMonth(11)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovFour }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十二月1W" align="center" prop="weekDecOne" v-if="showFullYear || ifCurrentMonth(12)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecOne }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十二月2W" align="center" prop="weekDecTwo" v-if="showFullYear || ifCurrentMonth(12)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecTwo }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十二月3W" align="center" prop="weekDecThree" v-if="showFullYear || ifCurrentMonth(12)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecThree }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="十二月4W" align="center" prop="weekDecFour" v-if="showFullYear || ifCurrentMonth(12)">
+        <template #default="scope">
+          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecFour }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -139,8 +387,10 @@
   </div>
 </template>
 
-<script setup name="Plan">
+<script setup name="majorPlan">
 import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile } from "@/api/device/maintenanceTable/majorPlan";
+import { ElMessage } from 'element-plus'
+import { format } from 'date-fns';
 
 const { proxy } = getCurrentInstance();
 
@@ -148,6 +398,7 @@ const planList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
+const showFullYear = ref(false);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
@@ -175,6 +426,13 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+
+function ifCurrentMonth(num) {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1; // 加1以转换为实际的月份
+  return currentMonth === num || currentMonth - 1 === num;
+}
 
 /** 查询专业计划保养列表 */
 function getList() {

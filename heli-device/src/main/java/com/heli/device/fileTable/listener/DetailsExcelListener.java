@@ -6,6 +6,7 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.heli.device.fileTable.domain.DeviceDetails;
 import com.heli.device.fileTable.mapper.DeviceDetailsMapper;
+import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import lombok.extern.log4j.Log4j2;
 
 
@@ -35,7 +36,7 @@ public class DetailsExcelListener implements ReadListener<DeviceDetails> {
     @Override
     public void invoke(DeviceDetails registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
-//        if (registerInfoExcel.getRowName() != null) {
+        if (registerInfoExcel.getInventoryNum() != null && registerInfoExcel.getFinancialDate() != null) {
 //            // 处理数据
 //            if (registerInfoExcel.getColumnNum() != null) {
 //                registerInfoExcel.setColumnNum(registerInfoExcel.getColumnNum().replaceAll(",", ""));
@@ -45,10 +46,11 @@ public class DetailsExcelListener implements ReadListener<DeviceDetails> {
 //            if (registerInfoExcel.getRowName() != null) {
 //                registerInfoExcel.setRowName(registerInfoExcel.getRowName().replaceAll(" ", ""));
 //            }
-//            cacheDataList.add(registerInfoExcel);
-//        }
+            cacheDataList.add(registerInfoExcel);
+            log.info("当前读取的数据为:" + registerInfoExcel);
+        }
 
-        log.info("当前读取的数据为:" + registerInfoExcel);
+
 
         // 批量处理缓存的数据
         if (cacheDataList.size() >= BATCH_COUNT) {
@@ -74,7 +76,17 @@ public class DetailsExcelListener implements ReadListener<DeviceDetails> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-//        financialTempTableMapper.batchInsertTempTable(cacheDataList);
-//        financialTempTableMapper.batchInsertSalaryTable(cacheDataList);
+//        deviceDetailsMapper.insert(cacheDataList);
+        for (DeviceDetails data : cacheDataList) {
+            DeviceDetails existing = deviceDetailsMapper.selectExistByNum(data.getInventoryNum());
+            if (existing != null) {
+                // 如果存在重复记录，执行更新操作
+                data.setDetailsId(existing.getDetailsId()); // 确保设置了ID以便更新正确的记录
+                deviceDetailsMapper.updateDeviceDetails(data);
+            } else {
+                // 否则，执行插入操作
+                deviceDetailsMapper.insertDeviceDetails(data);
+            }
+        }
     }
 }

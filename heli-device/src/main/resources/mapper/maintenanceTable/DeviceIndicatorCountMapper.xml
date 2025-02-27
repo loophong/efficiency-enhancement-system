@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorTarget != null  and indicatorTarget != ''"> and indicator_target = #{indicatorTarget}</if>
             <if test="indicatorUp != null  and indicatorUp != ''"> and indicator_up = #{indicatorUp}</if>
             <if test="indicatorDown != null  and indicatorDown != ''"> and indicator_down = #{indicatorDown}</if>
-            <if test="params.beginIndicatorTime != null and params.beginIndicatorTime != '' and params.endIndicatorTime != null and params.endIndicatorTime != ''"> and indicator_time between #{params.beginIndicatorTime} and #{params.endIndicatorTime}</if>
+            <if test="indicatorTime != null  and indicatorTime != ''"> and indicator_time = #{indicatorTime}</if>
             <if test="indicatorJan != null  and indicatorJan != ''"> and indicator_jan = #{indicatorJan}</if>
             <if test="indicatorFeb != null  and indicatorFeb != ''"> and indicator_feb = #{indicatorFeb}</if>
             <if test="indicatorMar != null  and indicatorMar != ''"> and indicator_mar = #{indicatorMar}</if>

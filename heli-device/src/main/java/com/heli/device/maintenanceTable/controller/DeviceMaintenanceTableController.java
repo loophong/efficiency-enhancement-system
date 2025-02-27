@@ -1,15 +1,24 @@
 package com.heli.device.maintenanceTable.controller;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +31,8 @@ import com.heli.device.maintenanceTable.service.IDeviceMaintenanceTableService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 2.设备故障记录(导入)Controller
@@ -36,9 +47,13 @@ public class DeviceMaintenanceTableController extends BaseController
 {
     @Autowired
     private IDeviceMaintenanceTableService deviceMaintenanceTableService;
+    @Autowired
+    private DeviceMaintenanceTableMapper deviceMaintenanceTableMapper;
+
+
 
     /**
-     * 查询2.设备故障记录(导入)列表
+     * 查询设备故障记录列表
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
     @GetMapping("/list")
@@ -50,20 +65,52 @@ public class DeviceMaintenanceTableController extends BaseController
     }
 
     /**
-     * 导出2.设备故障记录(导入)列表
+     * 查询设备故障记录列表
+     */
+//    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
+    @GetMapping("/listByDate")
+    public TableDataInfo listByDate(@DateTimeFormat(pattern = "yyyy-MM")Date yearAndMonth)
+    {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
+        // 将Date对象格式化为"yyyy-MM"格式的字符串
+        String formattedDate = sdf.format(yearAndMonth);
+
+        // 打印格式化后的日期字符串
+        log.info("Formatted date: {}", formattedDate);
+//        startPage();
+
+        List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询设备故障记录列表故障树
+     */
+//    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
+    @GetMapping("/treeList")
+    public TableDataInfo treeList(DeviceMaintenanceTable deviceMaintenanceTable)
+    {
+//        startPage();
+        List<Map<String, Object>> list = deviceMaintenanceTableService.handleTreeList();
+        return getDataTable(list);
+    }
+
+    /**
+     * 导出设备故障记录列表
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:export')")
-    @Log(title = "2.设备故障记录(导入)", businessType = BusinessType.EXPORT)
+    @Log(title = "设备故障记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DeviceMaintenanceTable deviceMaintenanceTable)
     {
         List<DeviceMaintenanceTable> list = deviceMaintenanceTableService.selectDeviceMaintenanceTableList(deviceMaintenanceTable);
         ExcelUtil<DeviceMaintenanceTable> util = new ExcelUtil<DeviceMaintenanceTable>(DeviceMaintenanceTable.class);
-        util.exportExcel(response, list, "2.设备故障记录(导入)数据");
+        util.exportExcel(response, list, "设备故障记录数据");
     }
 
     /**
-     * 获取2.设备故障记录(导入)详细信息
+     * 获取设备故障记录详细信息
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:query')")
     @GetMapping(value = "/{maintenanceTableId}")
@@ -73,7 +120,7 @@ public class DeviceMaintenanceTableController extends BaseController
     }
 
     /**
-     * 新增2.设备故障记录(导入)
+     * 新增设备故障记录
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:add')")
     @Log(title = "2.设备故障记录(导入)", businessType = BusinessType.INSERT)
@@ -84,7 +131,7 @@ public class DeviceMaintenanceTableController extends BaseController
     }
 
     /**
-     * 修改2.设备故障记录(导入)
+     * 修改设备故障记录(导入)
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:edit')")
     @Log(title = "2.设备故障记录(导入)", businessType = BusinessType.UPDATE)

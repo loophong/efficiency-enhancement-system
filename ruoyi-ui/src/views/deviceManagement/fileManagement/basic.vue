@@ -11,11 +11,11 @@
       <el-form-item label="设备名称" prop="deviceName">
         <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="上传日期" prop="upTime">
+      <!-- <el-form-item label="上传日期" prop="upTime">
         <el-date-picker clearable v-model="queryParams.upTime" type="date" value-format="YYYY-MM-DD"
           placeholder="请选择上传日期">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="版本号" prop="versionId">
         <el-input v-model="queryParams.versionId" placeholder="请输入版本号" clearable @keyup.enter="handleQuery" />
       </el-form-item> -->
@@ -54,18 +54,8 @@
       <!-- <el-table-column label="关联维修id" align="center" prop="basicCombineRepair" /> -->
       <el-table-column label="设备编号" align="center" prop="deviceNum" width="180" />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
-      <!-- <el-table-column label="档案类型" align="center" prop="fileType" /> -->
-      <!-- <el-table-column label="上传日期" align="center" prop="upTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.upTime, '{y}-{m}-{d}') }}</span>
-        </template>
-</el-table-column> -->
-      <el-table-column label="保养文件信息" align="center" prop="fileInfo" width="500">
-        <template #default="scope">
-          <span v-html="formatFileInfo(scope.row.fileInfo)"></span>
-        </template>
-      </el-table-column>
-      <el-table-column label="维修文件信息" align="center" prop="fileInfoRepair" width="500">
+      <el-table-column label="档案类型" align="center" prop="fileType" />
+      <el-table-column label="文件信息" align="center" prop="fileInfoRepair" width="500">
         <template #default="scope">
           <span v-html="formatFileInfo(scope.row.fileInfoRepair)"></span>
         </template>
@@ -97,6 +87,9 @@
         <el-form-item label="设备名称" prop="deviceName">
           <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
         </el-form-item>
+        <el-form-item label="档案类型" prop="fileType">
+          <el-input v-model="form.fileType" placeholder="请输入档案类型" />
+        </el-form-item>
         <!-- <el-form-item label="上传日期" prop="upTime">
           <el-date-picker clearable v-model="form.upTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择上传日期">
           </el-date-picker>
@@ -104,10 +97,10 @@
         <!-- <el-form-item label="版本号" prop="versionId">
           <el-input v-model="form.versionId" placeholder="请输入版本号" />
         </el-form-item> -->
-        <el-form-item label="保养文件信息" prop="fileInfo">
+        <!-- <el-form-item label="保养文件信息" prop="fileInfo">
           <file-upload :limit="1" v-model="form.fileInfo" />
-        </el-form-item>
-        <el-form-item label="维修文件信息" prop="fileInfoRepair">
+        </el-form-item> -->
+        <el-form-item label="文件信息" prop="fileInfoRepair">
           <file-upload v-model="form.fileInfoRepair" />
         </el-form-item>
         <!-- <el-form-item label="是否是历史版本" prop="ifHistory">
@@ -124,9 +117,9 @@
   </div>
 </template>
 
-<script setup name="File">
+<script setup name="Basic">
 import { listFile, getFile, delFile, addFile, updateFile } from "@/api/device/fileTable/basic";
-
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
@@ -164,45 +157,6 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-
-// 格式化文件信息为指定格式的方法
-// function formatFileInfo(filePath) {
-//   if (!filePath) return '';
-//   // 如果包含逗号，则表示有多个文件路径
-//   const filePaths = filePath.includes(',') ? filePath.split(',') : [filePath];
-//   // 处理每个文件路径并收集格式化后的信息
-//   const formattedFileInfos = filePaths.map(singleFilePath => {
-//     singleFilePath = singleFilePath.trim(); // 去除可能存在的多余空格
-//     // 提取文件名（包括扩展名）
-//     const fileNameWithExt = singleFilePath.split('/').pop();
-//     // 定义一个更严格的正则表达式来去掉时间戳和随机字符部分，同时保留扩展名
-//     const match = fileNameWithExt.match(/^(.*?)(?:_\d{14}[A-Z]{4})?(\.\w+)?$/);
-//     let cleanFileName = '';
-//     let fileExtension = '';
-//     if (match) {
-//       cleanFileName = match[1] || ''; // 文件名部分
-//       fileExtension = match[2] || ''; // 扩展名部分
-//       // 确保文件名不为空字符串
-//       cleanFileName = cleanFileName.trim() || '未知文件名';
-//     } else {
-//       // 如果正则表达式没有匹配成功，直接使用原始文件名
-//       cleanFileName = fileNameWithExt.replace(/\.\w+$/, ''); // 移除扩展名
-//       fileExtension = ''; // 不附加扩展名
-//     }
-//     // 提取上传日期
-//     const uploadDateMatch = singleFilePath.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
-//     let formattedDate = '';
-//     if (uploadDateMatch) {
-//       // 组合上传日期
-//       formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
-//     }
-//     // 返回单个文件的格式化字符串
-//     return `上传日期：${formattedDate}，文件名：${cleanFileName}${fileExtension}`;
-//   });
-
-//   // 将所有格式化后的信息用换行符连接起来返回
-//   return formattedFileInfos.join('\n');
-// }
 function formatFileInfo(fileInfo) {
   if (fileInfo == '' || fileInfo == null) {
     return fileInfo;
@@ -300,7 +254,6 @@ function handleUpdate(row) {
   const _basicFileId = row.basicFileId || ids.value
   getFile(_basicFileId).then(response => {
     form.value = response.data;
-    form.value.basicCombineRepair = form.value.basicCombineRepair.split(",");
     open.value = true;
     title.value = "修改设备基础档案";
   });

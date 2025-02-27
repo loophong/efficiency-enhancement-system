@@ -1,7 +1,10 @@
 package com.heli.device.maintenanceTable.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
+
 
 /**
  * 设备指标分析Mapper接口
@@ -9,7 +12,7 @@ import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
  * @author YYY
  * @date 2025-01-18
  */
-public interface DeviceIndicatorCountMapper 
+public interface DeviceIndicatorCountMapper extends BaseMapper<DeviceIndicatorCount>
 {
     /**
      * 查询设备指标分析

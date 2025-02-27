@@ -1,13 +1,17 @@
 package com.heli.device.maintenanceTable.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
@@ -17,84 +21,87 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author YYY
  * @date 2025-01-18
  */
-public class DeviceIndicatorCount extends BaseEntity
+@TableName(value ="device_indicator_count")
+@Data
+public class DeviceIndicatorCount implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键id */
+    @TableId(type = IdType.AUTO)
     @ExcelIgnore
     private Long indicatorId;
 
     /** 项目名 */
-    @Excel(name = "项目名")
+    @ExcelProperty(value = "项目")
     private String indicatorName;
 
     /** 目标值 */
-    @Excel(name = "目标值")
+    @ExcelProperty(value = "目标值")
     private String indicatorTarget;
 
     /** 上限 */
-    @Excel(name = "上限")
+    @ExcelProperty(value = "上限")
     @ExcelIgnore
     private String indicatorUp;
 
     /** 下限 */
-    @Excel(name = "下限")
+    @ExcelProperty(value = "下限")
     @ExcelIgnore
     private String indicatorDown;
 
     /** 日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "日期", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelIgnore
     private Date indicatorTime;
 
     /** 一月数据 */
-    @Excel(name = "1月")
+    @ExcelProperty(value = "1月")
     private String indicatorJan;
 
     /** 二月数据 */
-    @Excel(name = "2月")
+    @ExcelProperty(value = "2月")
     private String indicatorFeb;
 
     /** 三月数据 */
-    @Excel(name = "3月")
+    @ExcelProperty(value = "3月")
     private String indicatorMar;
 
     /** 四月数据 */
-    @Excel(name = "4月")
+    @ExcelProperty(value = "4月")
     private String indicatorApr;
 
     /** 五月数据 */
-    @Excel(name = "5月")
+    @ExcelProperty(value = "5月")
     private String indicatorMay;
 
     /** 六月数据 */
-    @Excel(name = "6月")
+    @ExcelProperty(value = "6月")
     private String indicatorJun;
 
     /** 七月数据 */
-    @Excel(name = "7月")
+    @ExcelProperty(value = "7月")
     private String indicatorJul;
 
     /** 八月数据 */
-    @Excel(name = "8月")
+    @ExcelProperty(value = "8月")
     private String indicatorAug;
 
     /** 九月数据 */
-    @Excel(name = "9月")
+    @ExcelProperty(value = "9月")
     private String indicatorSep;
 
     /** 十月数据 */
-    @Excel(name = "10月")
+    @ExcelProperty(value = "10月")
     private String indicatorOct;
 
     /** 十一月数据 */
-    @Excel(name = "11月")
+    @ExcelProperty(value = "11月")
     private String indicatorNov;
 
     /** 十二月数据 */
-    @Excel(name = "12月")
+    @ExcelProperty(value = "12月")
     private String indicatorDec;
 
     public void setIndicatorId(Long indicatorId)

@@ -55,20 +55,22 @@
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
-        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
           <el-form :model="form" ref="formRef" label-width="90px">
             <!-- 如果有表单内容，这里添加 -->
           </el-form>
+
           <div class="upload-area">
             <i class="el-icon-upload"></i>
             <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
           </div>
           <span class="dialog-footer">
+            <br />
             <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend">确 定</el-button>
-            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
           </span>
         </el-dialog>
       </el-col>
@@ -105,6 +107,8 @@
             v-hasPermi="['file:details:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['file:details:remove']">删除</el-button>
+          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'fault', 'maintenance')"
+            v-hasPermi="['file:details:remove']">故障记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -169,12 +173,13 @@
 
 <script setup name="Details">
 import { listDetails, getDetails, delDetails, addDetails, updateDetails, uploadFile } from "@/api/device/fileTable/details";
-
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const detailsList = ref([]);
 const open = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
@@ -219,6 +224,7 @@ const handleRouteParams = () => {
     data.queryParams.inventoryNum = routerDeviceNum;
     getList(); // 假设需要根据路由参数重新获取列表数据
   } else {
+    getList();
     console.log('No specific route params received.');
     // 可以选择性地在这里添加其他逻辑
   }
@@ -248,6 +254,11 @@ function getList() {
 function cancel() {
   open.value = false;
   reset();
+}
+
+/** 跳转按钮操作 */
+function handleToRoute(row, module, destination) {
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.inventoryNum } });
 }
 
 // 表单重置
@@ -364,7 +375,7 @@ function fileSend() {
   //   ElMessage.warning('请选择要上传的文件');
   //   return;
   // }
-
+  buttonLoading.value = true;
   const file = fileInput.files[0];
   console.log('Selected file:', file);
   // console.log(file)
@@ -378,14 +389,16 @@ function fileSend() {
   }
 
   // isLoading.value = true;
-  //TODO
-  uploadFile(formData, `/fault/maintenance/import`)
+  uploadFile(formData, `/file/details/import`)
     .then(data => {
       // 处理上传成功的情况
       ElMessage({
         message: '上传成功',
         type: 'success',
       });
+      showDialog.value = false
+      getList();
+      buttonLoading.value = false;
       // this.getList();
       // this.showDialog = false;
       // this.isLoading = false;
@@ -410,5 +423,5 @@ function handleExport() {
   }, `details_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+// getList();
 </script>

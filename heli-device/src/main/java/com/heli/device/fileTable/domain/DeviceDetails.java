@@ -1,10 +1,15 @@
 package com.heli.device.fileTable.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -13,65 +18,71 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author YYY
  * @date 2025-01-19
  */
-public class DeviceDetails extends BaseEntity
+@TableName(value ="device_details")
+@Data
+public class DeviceDetails implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键id */
+    @ExcelIgnore
     private String detailsId;
 
     /** 资本化日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "资本化日期", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date financialDate;
+
+    @ExcelProperty(value = "资本化日期")
+    private String financialDate;
 
     /** 存货号 */
-    @Excel(name = "存货号")
+    @ExcelProperty(value = "存货号")
     private String inventoryNum;
 
     /** 固定资产名称 */
-    @Excel(name = "固定资产名称")
+    @ExcelProperty(value = "固定资产名称")
     private String fixedAssetName;
 
     /** 班组 */
-    @Excel(name = "班组")
+    @ExcelProperty(value = "班组")
     private String detailsGroup;
 
     /** 设备状态 */
-    @Excel(name = "设备状态")
+    @ExcelProperty(value = "设备状态")
     private String deviceStatus;
 
     /** 设备类别 */
-    @Excel(name = "设备类别")
+    @ExcelProperty(value = "设备类别")
     private String deviceType;
 
     /** 重点设备标注 */
-    @Excel(name = "重点设备标注")
+    @ExcelProperty(value = "重点设备标注")
     private String ifKey;
 
     /** 保管使用单位 */
-    @Excel(name = "保管使用单位")
+    @ExcelProperty(value = "保管使用单位")
     private String storageUnit;
 
     /** 责任成本中心 */
-    @Excel(name = "责任成本中心")
+    @ExcelProperty(value = "责任成本中心")
     private String costCenter;
 
     /** 使用年限 */
-    @Excel(name = "使用年限")
+    @ExcelProperty(value = "使用年限(月)")
     private String usedYear;
 
     /** 资产原值 */
-    @Excel(name = "资产原值")
+    @ExcelProperty(value = "资产原值")
     private String assetOrigin;
 
+    /** 吨位 */
+    @ExcelProperty(value = "吨位")
+    private String tonnage;
+
     /** 品牌 */
-    @Excel(name = "品牌")
+    @ExcelProperty(value = "品牌")
     private String brand;
 
-    /** 吨位 */
-    @Excel(name = "吨位")
-    private String tonnage;
+
 
     public void setDetailsId(String detailsId)
     {
@@ -82,12 +93,12 @@ public class DeviceDetails extends BaseEntity
     {
         return detailsId;
     }
-    public void setFinancialDate(Date financialDate)
+    public void setFinancialDate(String financialDate)
     {
         this.financialDate = financialDate;
     }
 
-    public Date getFinancialDate()
+    public String getFinancialDate()
     {
         return financialDate;
     }

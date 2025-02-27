@@ -67,9 +67,9 @@
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
-        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
           <el-form :model="form" ref="formRef" label-width="90px">
           </el-form>
           <div class="upload-area">
@@ -188,7 +188,7 @@
 
 <script setup name="Count">
 import { listCount, getCount, delCount, addCount, updateCount, uploadFile } from "@/api/device/maintenanceTable/count";
-
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const countList = ref([]);

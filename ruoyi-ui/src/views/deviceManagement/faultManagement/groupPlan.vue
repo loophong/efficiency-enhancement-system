@@ -46,9 +46,9 @@
           </el-col>
           <el-col :span="1.5">
             <!--Excel 参数导入 -->
-            <el-button type="primary" icon="UploadFilled" @click="showDialog = true" size="mini" plain>导入
+            <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
             </el-button>
-            <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+            <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
               <el-form :model="form" ref="formRef" label-width="90px">
               </el-form>
               <div class="upload-area">
@@ -70,21 +70,37 @@
         </el-row>
 
         <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border stripe>
-          <el-table-column type="selection" width="55" align="center" />
+          <!-- <el-table-column type="selection" width="55" align="center" /> -->
           <!-- <el-table-column label="主键id" align="center" prop="groupId" /> -->
-          <el-table-column label="序号" align="center" prop="orderNum" />
-          <el-table-column label="设备类别" align="center" prop="deviceType" />
-          <el-table-column label="执行班组" align="center" prop="executeGroup" />
-          <el-table-column label="保养内容" align="center" prop="maintenanceContent">
+          <el-table-column label="序号" align="center" prop="orderNum" width="80" />
+          <el-table-column label="设备类别" align="center" prop="deviceType" width="180" />
+          <el-table-column label="执行班组" align="center" prop="executeGroup" width="160" />
+          <el-table-column label="保养内容" align="center" prop="maintenanceContent" width="800">
             <template #default="scope">
               <span v-html="scope.row.maintenanceContent"></span>
             </template>
           </el-table-column>
-          <el-table-column label="保养周期" align="center" prop="maintenanceCycle" />
-          <el-table-column label="月度(1W)" align="center" prop="monthOne" />
-          <el-table-column label="月度(2W)" align="center" prop="monthTwo" />
-          <el-table-column label="月度(3W)" align="center" prop="monthThree" />
-          <el-table-column label="月度(4W)" align="center" prop="monthFour" />
+          <el-table-column label="保养周期" align="center" prop="maintenanceCycle" width="80" />
+          <el-table-column label="月度(1W)" align="center" prop="monthOne" width="120">
+            <template #default="scope">
+              <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.monthOne }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="月度(2W)" align="center" prop="monthTwo" width="120">
+            <template #default="scope">
+              <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.monthTwo }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="月度(3W)" align="center" prop="monthThree" width="120">
+            <template #default="scope">
+              <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.monthThree }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="月度(4W)" align="center" prop="monthFour" width="120">
+            <template #default="scope">
+              <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.monthFour }}</span>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -117,16 +133,36 @@
               <el-input v-model="form.maintenanceCycle" placeholder="请输入保养周期" />
             </el-form-item>
             <el-form-item label="月度(1W)" prop="monthOne">
-              <el-input v-model="form.monthOne" placeholder="请输入月度(1W)" />
+              <el-select v-model="form.monthOne" placeholder="请选择">
+                <el-option label="◎(检查保养项目)" value="◎"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
+                <el-option label="空" value=""></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="月度(2W)" prop="monthTwo">
-              <el-input v-model="form.monthTwo" placeholder="请输入月度(2W)" />
+              <el-select v-model="form.monthTwo" placeholder="请选择">
+                <el-option label="◎(检查保养项目)" value="◎"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
+                <el-option label="空" value=""></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="月度(3W)" prop="monthThree">
-              <el-input v-model="form.monthThree" placeholder="请输入月度(3W)" />
+              <el-select v-model="form.monthThree" placeholder="请选择">
+                <el-option label="◎(检查保养项目)" value="◎"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
+                <el-option label="空" value=""></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="月度(4W)" prop="monthFour">
-              <el-input v-model="form.monthFour" placeholder="请输入月度(4W)" />
+              <el-select v-model="form.monthFour" placeholder="请选择">
+                <el-option label="◎(检查保养项目)" value="◎"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
+                <el-option label="空" value=""></el-option>
+              </el-select>
             </el-form-item>
           </el-form>
           <template #footer>
@@ -148,6 +184,7 @@
 <script setup name="Plan">
 import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile } from "@/api/device/maintenanceTable/groupPlan";
 import majorPlan from "./majorPlan.vue"
+import { ElMessage } from 'element-plus'
 
 const { proxy } = getCurrentInstance();
 

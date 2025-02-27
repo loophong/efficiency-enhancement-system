@@ -43,7 +43,7 @@ public class DeviceMajorPlanServiceImpl implements IDeviceMajorPlanService
 //            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
-            EasyExcel.read(inputStream, MajorPlanExcel.class, new MajorPlanExcelListener(deviceMajorPlanMapper)).sheet().doRead();
+            EasyExcel.read(inputStream, DeviceMajorPlan.class, new MajorPlanExcelListener(deviceMajorPlanMapper)).sheet().headRowNumber(3).doRead();
             return R.ok("读取" + fileName + "文件成功");
         } catch (Exception e) {
             e.printStackTrace();

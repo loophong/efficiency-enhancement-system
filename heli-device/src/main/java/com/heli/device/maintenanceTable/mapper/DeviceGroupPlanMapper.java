@@ -1,7 +1,10 @@
 package com.heli.device.maintenanceTable.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
+import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
 
 /**
  * 班组计划保养Mapper接口
@@ -9,7 +12,7 @@ import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
  * @author YYY
  * @date 2025-01-19
  */
-public interface DeviceGroupPlanMapper 
+public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
 {
     /**
      * 查询班组计划保养

@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectDeviceDetailsList" parameterType="DeviceDetails" resultMap="DeviceDetailsResult">
         <include refid="selectDeviceDetailsVo"/>
         <where>  
-            <if test="params.beginFinancialDate != null and params.beginFinancialDate != '' and params.endFinancialDate != null and params.endFinancialDate != ''"> and financial_date between #{params.beginFinancialDate} and #{params.endFinancialDate}</if>
+            <if test="financialDate != null and financialDate != ''"> and financial_date = #{financialDate}</if>
             <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num = #{inventoryNum}</if>
             <if test="fixedAssetName != null  and fixedAssetName != ''"> and fixed_asset_name like concat('%', #{fixedAssetName}, '%')</if>
             <if test="detailsGroup != null  and detailsGroup != ''"> and details_group like concat('%', #{detailsGroup}, '%')</if>

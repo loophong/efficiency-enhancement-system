@@ -33,7 +33,7 @@
         <where>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="workStatus != null  and workStatus != ''"> and work_status = #{workStatus}</if>
-            <if test="deviceNum != null  and deviceNum != ''"> and device_num = #{deviceNum}</if>
+            <if test="deviceNum != null  and deviceNum != ''"> and device_num like concat('%', #{deviceNum}, '%')</if>
             <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
             <if test="faultType != null  and faultType != ''"> and fault_type = #{faultType}</if>
             <if test="applyBy != null  and applyBy != ''"> and apply_by = #{applyBy}</if>
