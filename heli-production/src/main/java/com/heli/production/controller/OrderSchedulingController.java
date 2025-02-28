@@ -6,6 +6,7 @@ import com.heli.production.domain.dto.SchedulingDTO;
 import com.heli.production.domain.entity.DailyUsedCapacityEntity;
 import com.heli.production.domain.entity.OrderSchedulingEntity;
 import com.heli.production.domain.entity.WorkdayEntity;
+import com.heli.production.domain.vo.OrdersAndCapacityVO;
 import com.heli.production.service.IDailyUsedCapacityService;
 import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.service.IWorkdayService;
@@ -41,6 +42,29 @@ public class OrderSchedulingController extends BaseController {
     private IWorkdayService workdayService;
 
 
+    /**
+     * @description: 通过日期 获取订单和排产信息
+     * @author: hong
+     * @date: 2025/2/28 14:59
+     * @version: 1.0
+     */
+    @GetMapping("/getOrdersAndCapacityInfoByDate")
+    public AjaxResult list(@RequestParam Date date) {
+        OrdersAndCapacityVO ordersAndCapacityVO = new OrdersAndCapacityVO();
+        List<DailyUsedCapacityEntity> dailyUsedCapacityEntities = dailyUsedCapacityService.list(new LambdaQueryWrapper<DailyUsedCapacityEntity>().eq(DailyUsedCapacityEntity::getProductionDate, date));
+        List<OrderSchedulingEntity> list = orderSchedulingService.list(new LambdaQueryWrapper<OrderSchedulingEntity>().eq(OrderSchedulingEntity::getOnlineDate, date));
+        ordersAndCapacityVO.setDailyUsedCapacityEntities(dailyUsedCapacityEntities);
+        ordersAndCapacityVO.setOrderSchedulingEntities(list);
+        return success(ordersAndCapacityVO);
+    }
+
+
+    /**
+     * @description: 取消排产
+     * @author: hong
+     * @date: 2025/2/28 14:59
+     * @version: 1.0
+     */
     @GetMapping("/cancel")
     public AjaxResult cancelSchedulingOrders(@RequestParam Date date) {
         log.info("取消订单排产，时间：" + date);

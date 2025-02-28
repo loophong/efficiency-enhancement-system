@@ -104,3 +104,14 @@ export function dataAnalysis(query) {
         params: query
     })
 }
+
+// 延期数据分析
+export function getOrdersAndCapacityInfoByDate(date) {
+    return request({
+        url: '/production/scheduling/getOrdersAndCapacityInfoByDate',
+        method: 'get',
+        params: {
+            'date': date
+        }
+    })
+}
