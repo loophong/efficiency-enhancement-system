@@ -146,6 +146,20 @@ public class OrderSchedulingController extends BaseController {
         return getDataTable(list);
     }
 
+    /**
+     * @description: 延期订单数据分析
+     * @author: hong
+     * @date: 2025/2/27 17:29
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
+    @GetMapping("/dataAnalysis")
+    public TableDataInfo dataAnalysis(OrderSchedulingEntity orderSchedulingEntity) {
+        startPage();
+        List<OrderSchedulingEntity> list = orderSchedulingService.selectDataAnalysis(orderSchedulingEntity);
+        return getDataTable(list);
+    }
+
 
     /**
      * 获取订单信息详细信息

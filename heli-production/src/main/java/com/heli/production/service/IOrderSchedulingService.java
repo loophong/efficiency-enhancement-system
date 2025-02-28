@@ -47,4 +47,12 @@ public interface IOrderSchedulingService extends IService<OrderSchedulingEntity>
      * @version: 1.0
      */
     List<OrderSchedulingEntity> selectMissingPartsList(OrderSchedulingEntity orderSchedulingEntity);
+
+    /**
+     * @description: 延期订单数据分析
+     * @author: hong
+     * @date: 2025/2/27 17:29
+     * @version: 1.0
+     */
+    List<OrderSchedulingEntity> selectDataAnalysis(OrderSchedulingEntity orderSchedulingEntity);
 }

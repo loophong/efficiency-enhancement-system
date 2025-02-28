@@ -95,3 +95,12 @@ export function listMissingParts(query) {
         params: query
     })
 }
+
+// 延期数据分析
+export function dataAnalysis(query) {
+    return request({
+        url: '/production/scheduling/dataAnalysis',
+        method: 'get',
+        params: query
+    })
+}

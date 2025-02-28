@@ -142,6 +142,17 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
     public List<OrderSchedulingEntity> selectMissingPartsList(OrderSchedulingEntity orderSchedulingEntity) {
         return orderSchedulingMapper.selectMissingPartsList(orderSchedulingEntity);
     }
+
+    /**
+     * @description: 延期订单数据分析
+     * @author: hong
+     * @date: 2025/2/27 17:29
+     * @version: 1.0
+     */
+    @Override
+    public List<OrderSchedulingEntity> selectDataAnalysis(OrderSchedulingEntity orderSchedulingEntity) {
+        return orderSchedulingMapper.selectDataAnalysis(orderSchedulingEntity);
+    }
 }
 
 
