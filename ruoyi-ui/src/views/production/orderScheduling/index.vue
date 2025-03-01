@@ -18,70 +18,70 @@
       <el-form-item label="车型" prop="vehicleModel">
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="数量" prop="quantity">
-        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="阀片" prop="valvePlate">
-        <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="货叉" prop="forklift">
-        <el-input v-model="queryParams.forklift" placeholder="请输入货叉" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="门架" prop="mast">
-        <el-input v-model="queryParams.mast" placeholder="请输入门架" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="空滤" prop="airFilter">
-        <el-input v-model="queryParams.airFilter" placeholder="请输入空滤" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="属具" prop="attachments">
-        <el-input v-model="queryParams.attachments" placeholder="请输入属具" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="轮胎" prop="tires">
-        <el-input v-model="queryParams.tires" placeholder="请输入轮胎" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="配置" prop="configuration">
-        <el-input v-model="queryParams.configuration" placeholder="请输入配置" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
+      <!--      <el-form-item label="数量" prop="quantity">-->
+      <!--        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="阀片" prop="valvePlate">-->
+      <!--        <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="货叉" prop="forklift">-->
+      <!--        <el-input v-model="queryParams.forklift" placeholder="请输入货叉" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="门架" prop="mast">-->
+      <!--        <el-input v-model="queryParams.mast" placeholder="请输入门架" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="空滤" prop="airFilter">-->
+      <!--        <el-input v-model="queryParams.airFilter" placeholder="请输入空滤" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="属具" prop="attachments">-->
+      <!--        <el-input v-model="queryParams.attachments" placeholder="请输入属具" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="轮胎" prop="tires">-->
+      <!--        <el-input v-model="queryParams.tires" placeholder="请输入轮胎" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="配置" prop="configuration">-->
+      <!--        <el-input v-model="queryParams.configuration" placeholder="请输入配置" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
       <el-form-item label="车号" prop="vehicleNumber">
         <el-input v-model="queryParams.vehicleNumber" placeholder="请输入车号" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="备注信息" prop="remarks">
         <el-input v-model="queryParams.remarks" placeholder="请输入备注信息" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="交货形式" prop="deliveryForm">
-        <el-input v-model="queryParams.deliveryForm" placeholder="请输入交货形式" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="交货地点" prop="deliveryLocation">
-        <el-input v-model="queryParams.deliveryLocation" placeholder="请输入交货地点" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="联系人姓名" prop="contactPerson">
-        <el-input v-model="queryParams.contactPerson" placeholder="请输入联系人姓名" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="联系电话" prop="phoneNumber">
-        <el-input v-model="queryParams.phoneNumber" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
+      <!--      <el-form-item label="交货形式" prop="deliveryForm">-->
+      <!--        <el-input v-model="queryParams.deliveryForm" placeholder="请输入交货形式" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="交货地点" prop="deliveryLocation">-->
+      <!--        <el-input v-model="queryParams.deliveryLocation" placeholder="请输入交货地点" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="联系人姓名" prop="contactPerson">-->
+      <!--        <el-input v-model="queryParams.contactPerson" placeholder="请输入联系人姓名" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="联系电话" prop="phoneNumber">-->
+      <!--        <el-input v-model="queryParams.phoneNumber" placeholder="请输入联系电话" clearable @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <el-form-item label="订单系统交货期" label-width="120px" prop="systemDeliveryDate">
         <el-date-picker clearable v-model="queryParams.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择订单系统交货期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="生产回复完工日期" prop="productionCompletionDate">
-        <el-date-picker clearable v-model="queryParams.productionCompletionDate" type="date" value-format="YYYY-MM-DD"
-                        placeholder="请选择生产回复完工日期">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
-        <el-date-picker clearable v-model="queryParams.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"
-                        placeholder="请选择采购回复到货时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="生产周期" prop="productionCycle">
-        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable
-                  @keyup.enter="handleQuery"/>
-      </el-form-item>
-      <el-form-item label="最晚上线日期" prop="latestOnlineDate">
+      <!--      <el-form-item label="生产回复完工日期" prop="productionCompletionDate">-->
+      <!--        <el-date-picker clearable v-model="queryParams.productionCompletionDate" type="date" value-format="YYYY-MM-DD"-->
+      <!--                        placeholder="请选择生产回复完工日期">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">-->
+      <!--        <el-date-picker clearable v-model="queryParams.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"-->
+      <!--                        placeholder="请选择采购回复到货时间">-->
+      <!--        </el-date-picker>-->
+      <!--      </el-form-item>-->
+      <!--      <el-form-item label="生产周期" prop="productionCycle">-->
+      <!--        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable-->
+      <!--                  @keyup.enter="handleQuery"/>-->
+      <!--      </el-form-item>-->
+      <el-form-item label="最晚上线日期" label-width="100px" prop="latestOnlineDate">
         <el-date-picker clearable v-model="queryParams.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择最晚上线日期">
         </el-date-picker>
@@ -94,6 +94,11 @@
       </el-form-item>
       <el-form-item label="是否排产" prop="isScheduling">
         <el-input v-model="queryParams.isScheduling" placeholder="请输入是否排产" clearable @keyup.enter="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="上线时间" prop="onlineDate">
+        <el-date-picker clearable v-model="queryParams.onlineDate" type="date" value-format="YYYY-MM-DD"
+                        placeholder="请选择排产时间">
+        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -188,13 +193,28 @@
           <el-tag v-else-if="scope.row.isScheduling === 1" type="success">已排产</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="上线日期" align="center" prop="latestOnlineDate" width="100">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.onlineDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="150" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['production:scheduling:edit']">修改
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:scheduling:remove']">删除
+          </el-button>
+          <!--     如果订单未排产，则显示插单按钮     -->
+          <el-button link type="primary" icon="Edit" @click="handleInsert(scope.row)"
+                     v-if="scope.row.isScheduling === 0"
+                     v-hasPermi="['production:scheduling:insert']">插单
+          </el-button>
+          <!--    如果已经排产，则显示特殊情况上报按钮    -->
+          <el-button link type="primary" icon="Upload" @click="handleSpecialReport(scope.row)"
+                     v-if="scope.row.isScheduling === 1"
+                     v-hasPermi="['production:scheduling:report']">特殊情况上报
           </el-button>
         </template>
       </el-table-column>
@@ -216,10 +236,7 @@
           <el-input v-model="form.orderNumber" placeholder="请输入订单号"/>
         </el-form-item>
         <el-form-item label="接单日期" prop="orderDate">
-          <el-date-picker clearable
-                          v-model="form.orderDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.orderDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择接单日期">
           </el-date-picker>
         </el-form-item>
@@ -269,26 +286,17 @@
           <el-input v-model="form.phoneNumber" placeholder="请输入联系电话"/>
         </el-form-item>
         <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
-          <el-date-picker clearable
-                          v-model="form.systemDeliveryDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择订单系统交货期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="生产回复完工日期" prop="productionCompletionDate">
-          <el-date-picker clearable
-                          v-model="form.productionCompletionDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.productionCompletionDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择生产回复完工日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
-          <el-date-picker clearable
-                          v-model="form.procurementArrivalDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择采购回复到货时间">
           </el-date-picker>
         </el-form-item>
@@ -296,10 +304,7 @@
           <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
         </el-form-item>
         <el-form-item label="最晚上线日期" prop="latestOnlineDate">
-          <el-date-picker clearable
-                          v-model="form.latestOnlineDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择最晚上线日期">
           </el-date-picker>
         </el-form-item>
@@ -320,6 +325,117 @@
         </div>
       </template>
     </el-dialog>
+
+
+    <!-- 特殊情况上报对话框 -->
+    <el-dialog title="特殊情况填报" v-model="specialVisible" width="500px" append-to-body>
+      <el-form ref="specialRef" :model="specialForm" :rules="specialRules" label-width="80px">
+        <el-form-item label="订单号" prop="orderNumber">
+          <el-input v-model="specialForm.orderNumber" placeholder="请输入订单号"/>
+        </el-form-item>
+        <el-form-item label="上线日期" prop="onlineDate">
+          <el-date-picker clearable v-model="specialForm.onlineDate" type="date"
+                          value-format="YYYY-MM-DD" placeholder="请选择上线日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="故障原因" prop="faultReason">
+          <el-select v-model="specialForm.faultReason" placeholder="请选择故障原因">
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-select v-model="specialForm.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input v-model="specialForm.faultDescription" placeholder="请输入故障说明" type="textarea"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitSpecial">确 定</el-button>
+          <el-button @click="cancelSpecial">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- 插单处理对话框 -->
+    <el-dialog title="插单处理窗口" v-model="insertDialogVisible" width="95%" append-to-body>
+
+      <el-date-picker v-model="insertOrderDate" type="date" value-format="YYYY-MM-DD"
+                      placeholder="请选择插单日期"></el-date-picker>
+      <el-button type="primary" @click="getOrdersAndCapacityByDate">查 询</el-button>
+
+      <div style="display: flex; margin: 20px; width:95%;">
+        <div style="flex: 1; border: #00afff solid;">
+          <!--   渲染产能总数和已使用产能数量   -->
+          <el-form label-width="120px">
+            <el-col style="margin: 20px">
+              <div v-for="(item, index) in usedCapacity" :key="index">
+                <el-form-item :label="item.capacityType">
+                  <el-input v-model="item.productionQuantity" readonly style="width: 150px;"
+                            input-style="font-size: large; font-weight: bold;" size="large" placeholder="Please input">
+                    <template #append>
+                      <span style="width: 30px; font-size: large; font-weight: bold;">
+                       {{ item.quantitySettings }}
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-form>
+        </div>
+
+        <div style="flex: 4; border: #2d2d2d solid;">
+          <!--   展示一般订单   -->
+          <el-table ref="scheduledTable" :data="scheduledList" height="500px" width="auto"
+                    @selection-change="handleStandardSelectionChange">
+            <el-table-column type="selection" width="55" align="center"/>
+            <el-table-column label="网点名称" align="center" prop="branch"/>
+            <el-table-column label="合同号" align="center" prop="contractNumber"/>
+            <el-table-column label="订单号" align="center" prop="orderNumber"/>
+            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
+            <el-table-column label="数量" align="center" prop="quantity"/>
+            <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
+            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
+            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
+            <el-table-column label="产能型号" align="center" prop="capacityType"/>
+            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="是否超期" align="center" prop="isOverdue"/>
+          </el-table>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitInsetOrder">确 定</el-button>
+          <el-button @click="cancelInsertOrder">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -329,10 +445,21 @@ import {
   getScheduling,
   delScheduling,
   addScheduling,
-  updateScheduling
+  updateScheduling,
+  getOrdersAndCapacityInfoByDate, schedulingOrders
 } from "@/api/production/orderScheduling.js";
+import {addCases} from "@/api/production/special";
+import dayjs from "dayjs";
+import useTagsViewStore from "@/store/modules/tagsView.js";
+// import {getCapacity} from "@/api/production/capacity";
+// import {handleStandardSelectionChange} from "../scheduling/index.vue";
 
 const {proxy} = getCurrentInstance();
+
+const {
+  production_fault_reason,
+  system_dept
+} = proxy.useDict('production_fault_reason', 'system_dept');
 
 const schedulingList = ref([]);
 const open = ref(false);
@@ -376,12 +503,31 @@ const data = reactive({
     latestOnlineDate: null,
     isOverdue: null,
     isUrgent: null,
-    isScheduling: null
+    isScheduling: null,
+    onlineDate: null
   },
-  rules: {}
+  rules: {},
+
+  specialRules: {
+    orderNumber: [
+      {required: true, message: "订单号不能为空", trigger: "blur"}
+    ],
+    onlineDate: [
+      {required: true, message: "上线日期不能为空", trigger: "blur"}
+    ],
+    faultReason: [
+      {required: true, message: "故障原因不能为空", trigger: "change"}
+    ],
+    faultDescription: [
+      {required: true, message: "故障说明不能为空", trigger: "blur"}
+    ],
+    responsibleDepartment: [
+      {required: true, message: "责任科室不能为空", trigger: "change"}
+    ],
+  }
 });
 
-const {queryParams, form, rules} = toRefs(data);
+const {queryParams, form, rules, specialRules} = toRefs(data);
 
 /** 查询订单信息列表 */
 function getList() {
@@ -430,7 +576,8 @@ function reset() {
     latestOnlineDate: null,
     isOverdue: null,
     isUrgent: null,
-    isScheduling: null
+    isScheduling: null,
+    onlineDate: null
   };
   proxy.resetForm("schedulingRef");
 }
@@ -513,4 +660,176 @@ function handleExport() {
 }
 
 getList();
+
+
+const specialVisible = ref(false);
+const specialForm = ref({});
+
+function handleSpecialReport(row) {
+  console.log(row);
+  resetSpecialForm();
+  specialVisible.value = true;
+  specialForm.value.orderNumber = row.orderNumber;
+  specialForm.value.onlineDate = row.onlineDate;
+}
+
+// 取消按钮
+function cancelSpecial() {
+  specialVisible.value = false;
+  resetSpecialForm();
+}
+
+function resetSpecialForm() {
+  specialForm.value = {
+    orderNumber: null,
+    onlineDate: null,
+    faultReason: null,
+    faultDescription: null,
+    responsibleDepartment: null,
+  }
+}
+
+/** 提交按钮 */
+function submitSpecial() {
+  proxy.$refs["specialRef"].validate(valid => {
+    if (valid) {
+      specialForm.value.approvalStatus = 0;
+      addCases(specialForm.value).then(response => {
+        proxy.$modal.msgSuccess("特殊情况上报成功");
+        specialVisible.value = false;
+        getList();
+      });
+    }
+  })
+}
+
+
+const insertDialogVisible = ref(false);
+const schedulingOrderVisible = ref(false);
+const insertOrderDate = ref("");
+
+/**
+ *  插单处理
+ *  1、打开对话框
+ *  2、用户选择插单时间
+ *  3、从后台获取当日产能信息 和 当日排产信息
+ */
+const insertDialogRow = ref({});
+
+function handleInsert(row) {
+  insertDialogVisible.value = true;
+  insertDialogRow.value = row;
+}
+
+// 已使用产能列表
+const usedCapacity = ref([]);
+// 未排产订单列表
+const scheduledList = ref([]);
+
+function getOrdersAndCapacityByDate() {
+  if (insertOrderDate.value === null || insertOrderDate.value === "") {
+    proxy.$modal.msgError("请选择插单日期");
+  } else {
+    console.log("插单日期：" + insertOrderDate.value);
+    getOrdersAndCapacityInfoByDate(insertOrderDate.value).then(response => {
+      console.log("查询结果为" + response);
+      usedCapacity.value = response.data.dailyUsedCapacityEntities;
+      scheduledList.value = response.data.orderSchedulingEntities;
+
+      scheduledList.value.unshift(insertDialogRow.value);
+      console.log("待排产订单：" + JSON.stringify(insertDialogRow.value));
+
+      // 将 scheduledList 的selection全部勾选上
+      nextTick(() => {
+        scheduledList.value.forEach(item => {
+          proxy.$refs.scheduledTable.toggleRowSelection(item, true);
+        });
+      });
+    })
+  }
+}
+
+function submitInsetOrder() {
+
+  // insertOrderDate.value();
+  // usedCapacity.value
+  // scheduledList.value
+  let date = dayjs(insertOrderDate.value).format("YYYY-MM-DD");
+  console.log("格式化之后的时间" + date)
+  let orderSchedulingList = []
+  scheduledList.value.forEach(item => {
+    orderSchedulingList.push({
+      'id': item.id,
+      'isScheduling': item.isScheduling,
+      'onlineDate': item.isScheduling === 1 ? date : ''
+    })
+  });
+
+  schedulingOrders(orderSchedulingList, usedCapacity.value).then((response) => {
+    console.log("排产结果" + response)
+    // 提示用户排产成功
+    // proxy.$message({
+    //   message: "排产成功"
+    // })
+    cancelInsertOrder()
+  })
+}
+
+
+function cancelInsertOrder() {
+  insertDialogVisible.value = false;
+  // 清空
+  usedCapacity.value = [];
+  scheduledList.value = [];
+  insertOrderDate.value = "";
+}
+
+/**
+ * 下面三个方法是插单统计，不要修改
+ *
+ */
+// 多选框选中一般排产数据
+function handleStandardSelectionChange(selection) {
+  console.log('selection', selection);
+  console.log("统计")
+  // 清空
+  scheduledList.value.forEach(order => {
+    order.isScheduling = 0;
+  })
+
+  // 修改allOrders，将选中的订单排产状态改为1
+  selection.forEach(item => {
+    // 从修改allOrders中修改排产状态
+    scheduledList.value.forEach(order => {
+      if (item.id === order.id) {
+        order.isScheduling = 1;
+      }
+    })
+  })
+  countUsedCapacity()
+}
+
+// 统计已使用产能
+function countUsedCapacity() {
+  console.log("开始统计已使用产能")
+
+  usedCapacity.value.forEach(item => {
+    item.productionQuantity = 0;
+  })
+  usedCapacity.value.forEach(item => {
+    // 从allOrders订单中统计已使用产能
+    item.productionQuantity = getUsedCapacity(item.capacityType, scheduledList);
+  })
+  console.log("已使用产能列表：" + JSON.stringify(usedCapacity.value))
+}
+
+// 根据车型获取已使用产能
+function getUsedCapacity(capacityType, list) {
+  console.log("当前统计的车型为：" + capacityType)
+  const used = list.value.filter(item =>
+      item.capacityType === capacityType && item.isScheduling === 1
+  ).reduce((sum, item) => sum + item.quantity, 0);
+  console.log("车型已使用产能：" + used)
+  return used ? used : 0;
+}
 </script>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.ScanRecordsMapper">
+    
+    <resultMap type="ScanRecordsEntity" id="ScanRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="lineNumber"    column="line_number"    />
+        <result property="machineId"    column="machine_id"    />
+        <result property="plannedDate"    column="planned_date"    />
+        <result property="model"    column="model"    />
+        <result property="gantryModel"    column="gantry_model"    />
+        <result property="tonnage"    column="tonnage"    />
+        <result property="productionOrderNumber"    column="production_order_number"    />
+        <result property="okQuantity"    column="ok_quantity"    />
+        <result property="sendFlag"    column="send_flag"    />
+        <result property="creationTime"    column="creation_time"    />
+        <result property="autoReworkTime"    column="auto_rework_time"    />
+        <result property="operator"    column="operator"    />
+        <result property="sapReturnFlag"    column="sap_return_flag"    />
+        <result property="sapWorkorderReturnInfo"    column="sap_workorder_return_info"    />
+        <result property="resendReceiptTime"    column="resend_receipt_time"    />
+        <result property="sapReceiptReturnMessage"    column="sap_receipt_return_message"    />
+        <result property="sapReceiptStatus"    column="sap_receipt_status"    />
+        <result property="sapReceiptReturnStatus"    column="sap_receipt_return_status"    />
+    </resultMap>
+
+    <sql id="selectScanRecordsVo">
+        select id, line_number, machine_id, planned_date, model, gantry_model, tonnage, production_order_number, ok_quantity, send_flag, creation_time, auto_rework_time, operator, sap_return_flag, sap_workorder_return_info, resend_receipt_time, sap_receipt_return_message, sap_receipt_status, sap_receipt_return_status from production_scan_records
+    </sql>
+
+    <select id="selectScanRecordsList" parameterType="ScanRecordsEntity" resultMap="ScanRecordsResult">
+        <include refid="selectScanRecordsVo"/>
+        <where>  
+            <if test="lineNumber != null  and lineNumber != ''"> and line_number = #{lineNumber}</if>
+            <if test="machineId != null  and machineId != ''"> and machine_id = #{machineId}</if>
+            <if test="plannedDate != null "> and planned_date = #{plannedDate}</if>
+            <if test="model != null  and model != ''"> and model = #{model}</if>
+            <if test="gantryModel != null  and gantryModel != ''"> and gantry_model = #{gantryModel}</if>
+            <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
+            <if test="productionOrderNumber != null  and productionOrderNumber != ''"> and production_order_number = #{productionOrderNumber}</if>
+            <if test="okQuantity != null "> and ok_quantity = #{okQuantity}</if>
+            <if test="sendFlag != null  and sendFlag != ''"> and send_flag = #{sendFlag}</if>
+            <if test="creationTime != null "> and creation_time = #{creationTime}</if>
+            <if test="autoReworkTime != null "> and auto_rework_time = #{autoReworkTime}</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+            <if test="sapReturnFlag != null  and sapReturnFlag != ''"> and sap_return_flag = #{sapReturnFlag}</if>
+            <if test="sapWorkorderReturnInfo != null  and sapWorkorderReturnInfo != ''"> and sap_workorder_return_info = #{sapWorkorderReturnInfo}</if>
+            <if test="resendReceiptTime != null "> and resend_receipt_time = #{resendReceiptTime}</if>
+            <if test="sapReceiptReturnMessage != null  and sapReceiptReturnMessage != ''"> and sap_receipt_return_message = #{sapReceiptReturnMessage}</if>
+            <if test="sapReceiptStatus != null  and sapReceiptStatus != ''"> and sap_receipt_status = #{sapReceiptStatus}</if>
+            <if test="sapReceiptReturnStatus != null  and sapReceiptReturnStatus != ''"> and sap_receipt_return_status = #{sapReceiptReturnStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectScanRecordsById" parameterType="String" resultMap="ScanRecordsResult">
+        <include refid="selectScanRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertScanRecords" parameterType="ScanRecordsEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_scan_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lineNumber != null">line_number,</if>
+            <if test="machineId != null">machine_id,</if>
+            <if test="plannedDate != null">planned_date,</if>
+            <if test="model != null">model,</if>
+            <if test="gantryModel != null">gantry_model,</if>
+            <if test="tonnage != null">tonnage,</if>
+            <if test="productionOrderNumber != null">production_order_number,</if>
+            <if test="okQuantity != null">ok_quantity,</if>
+            <if test="sendFlag != null">send_flag,</if>
+            <if test="creationTime != null">creation_time,</if>
+            <if test="autoReworkTime != null">auto_rework_time,</if>
+            <if test="operator != null">operator,</if>
+            <if test="sapReturnFlag != null">sap_return_flag,</if>
+            <if test="sapWorkorderReturnInfo != null">sap_workorder_return_info,</if>
+            <if test="resendReceiptTime != null">resend_receipt_time,</if>
+            <if test="sapReceiptReturnMessage != null">sap_receipt_return_message,</if>
+            <if test="sapReceiptStatus != null">sap_receipt_status,</if>
+            <if test="sapReceiptReturnStatus != null">sap_receipt_return_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lineNumber != null">#{lineNumber},</if>
+            <if test="machineId != null">#{machineId},</if>
+            <if test="plannedDate != null">#{plannedDate},</if>
+            <if test="model != null">#{model},</if>
+            <if test="gantryModel != null">#{gantryModel},</if>
+            <if test="tonnage != null">#{tonnage},</if>
+            <if test="productionOrderNumber != null">#{productionOrderNumber},</if>
+            <if test="okQuantity != null">#{okQuantity},</if>
+            <if test="sendFlag != null">#{sendFlag},</if>
+            <if test="creationTime != null">#{creationTime},</if>
+            <if test="autoReworkTime != null">#{autoReworkTime},</if>
+            <if test="operator != null">#{operator},</if>
+            <if test="sapReturnFlag != null">#{sapReturnFlag},</if>
+            <if test="sapWorkorderReturnInfo != null">#{sapWorkorderReturnInfo},</if>
+            <if test="resendReceiptTime != null">#{resendReceiptTime},</if>
+            <if test="sapReceiptReturnMessage != null">#{sapReceiptReturnMessage},</if>
+            <if test="sapReceiptStatus != null">#{sapReceiptStatus},</if>
+            <if test="sapReceiptReturnStatus != null">#{sapReceiptReturnStatus},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsert" parameterType="list">
+        insert into production_scan_records(line_number, machine_id, planned_date, model, gantry_model, tonnage,
+        production_order_number, ok_quantity, send_flag, creation_time, auto_rework_time, operator, sap_return_flag,
+        sap_workorder_return_info, resend_receipt_time, sap_receipt_return_message, sap_receipt_status,
+        sap_receipt_return_status)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.lineNumber}, #{item.machineId}, #{item.plannedDate}, #{item.model}, #{item.gantryModel}, #{item.tonnage},
+             #{item.productionOrderNumber}, #{item.okQuantity}, #{item.sendFlag}, #{item.creationTime}, #{item.autoReworkTime},
+             #{item.operator}, #{item.sapReturnFlag}, #{item.sapWorkorderReturnInfo}, #{item.resendReceiptTime},
+             #{item.sapReceiptReturnMessage}, #{item.sapReceiptStatus}, #{item.sapReceiptReturnStatus})
+        </foreach>
+    </insert>
+
+    <update id="updateScanRecords" parameterType="ScanRecordsEntity">
+        update production_scan_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lineNumber != null">line_number = #{lineNumber},</if>
+            <if test="machineId != null">machine_id = #{machineId},</if>
+            <if test="plannedDate != null">planned_date = #{plannedDate},</if>
+            <if test="model != null">model = #{model},</if>
+            <if test="gantryModel != null">gantry_model = #{gantryModel},</if>
+            <if test="tonnage != null">tonnage = #{tonnage},</if>
+            <if test="productionOrderNumber != null">production_order_number = #{productionOrderNumber},</if>
+            <if test="okQuantity != null">ok_quantity = #{okQuantity},</if>
+            <if test="sendFlag != null">send_flag = #{sendFlag},</if>
+            <if test="creationTime != null">creation_time = #{creationTime},</if>
+            <if test="autoReworkTime != null">auto_rework_time = #{autoReworkTime},</if>
+            <if test="operator != null">operator = #{operator},</if>
+            <if test="sapReturnFlag != null">sap_return_flag = #{sapReturnFlag},</if>
+            <if test="sapWorkorderReturnInfo != null">sap_workorder_return_info = #{sapWorkorderReturnInfo},</if>
+            <if test="resendReceiptTime != null">resend_receipt_time = #{resendReceiptTime},</if>
+            <if test="sapReceiptReturnMessage != null">sap_receipt_return_message = #{sapReceiptReturnMessage},</if>
+            <if test="sapReceiptStatus != null">sap_receipt_status = #{sapReceiptStatus},</if>
+            <if test="sapReceiptReturnStatus != null">sap_receipt_return_status = #{sapReceiptReturnStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteScanRecordsById" parameterType="String">
+        delete from production_scan_records where id = #{id}
+    </delete>
+
+    <delete id="deleteScanRecordsByIds" parameterType="String">
+        delete from production_scan_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

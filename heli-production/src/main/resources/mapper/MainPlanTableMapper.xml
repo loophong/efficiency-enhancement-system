@@ -28,10 +28,35 @@
         <result property="systemDeliveryDate"    column="system_delivery_date"    />
         <result property="productionCompletionDate"    column="production_completion_date"    />
         <result property="procurementArrivalDate"    column="procurement_arrival_date"    />
+        <result property="missingPartRecords"    column="missing_part_records"    />
     </resultMap>
 
     <sql id="selectMainPlanTableVo">
-        select id, branch, contract_number, order_number, order_date, vehicle_model, quantity, valve_plate, forklift, mast, air_filter, attachments, tires, configuration, vehicle_number, remarks, delivery_form, delivery_location, contact_person, phone_number, system_delivery_date, production_completion_date, procurement_arrival_date from production_main_plan_table
+        select id,
+               branch,
+               contract_number,
+               order_number,
+               order_date,
+               vehicle_model,
+               quantity,
+               valve_plate,
+               forklift,
+               mast,
+               air_filter,
+               attachments,
+               tires,
+               configuration,
+               vehicle_number,
+               remarks,
+               delivery_form,
+               delivery_location,
+               contact_person,
+               phone_number,
+               system_delivery_date,
+               production_completion_date,
+               procurement_arrival_date,
+               missing_part_records
+        from production_main_plan_table
     </sql>
 
     <select id="selectMainPlanTableList" parameterType="MainPlanTableEntity" resultMap="MainPlanTableResult">
@@ -59,6 +84,7 @@
             <if test="systemDeliveryDate != null "> and system_delivery_date = #{systemDeliveryDate}</if>
             <if test="productionCompletionDate != null "> and production_completion_date = #{productionCompletionDate}</if>
             <if test="procurementArrivalDate != null "> and procurement_arrival_date = #{procurementArrivalDate}</if>
+            <if test="missingPartRecords != null "> and missing_part_records = #{missingPartRecords}</if>
         </where>
     </select>
 
@@ -92,6 +118,7 @@
             <if test="systemDeliveryDate != null">system_delivery_date,</if>
             <if test="productionCompletionDate != null">production_completion_date,</if>
             <if test="procurementArrivalDate != null">procurement_arrival_date,</if>
+            <if test="missingPartRecords != null">missing_part_records,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="branch != null">#{branch},</if>
@@ -116,6 +143,7 @@
             <if test="systemDeliveryDate != null">#{systemDeliveryDate},</if>
             <if test="productionCompletionDate != null">#{productionCompletionDate},</if>
             <if test="procurementArrivalDate != null">#{procurementArrivalDate},</if>
+            <if test="missingPartRecords != null">#{missingPartRecords},</if>
         </trim>
     </insert>
 
@@ -144,6 +172,7 @@
             <if test="systemDeliveryDate != null">system_delivery_date = #{systemDeliveryDate},</if>
             <if test="productionCompletionDate != null">production_completion_date = #{productionCompletionDate},</if>
             <if test="procurementArrivalDate != null">procurement_arrival_date = #{procurementArrivalDate},</if>
+            <if test="missingPartRecords != null">missing_part_records = #{missingPartRecords},</if>
         </trim>
         where id = #{id}
     </update>

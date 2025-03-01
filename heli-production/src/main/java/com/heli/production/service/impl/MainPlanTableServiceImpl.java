@@ -101,7 +101,7 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
 
             try {
 
-                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper,uploadDate)).sheet().doRead();
+                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper, uploadDate)).sheet().doRead();
                 log.info("读取文件成功: {}", fileName);
 
             } catch (Exception e) {

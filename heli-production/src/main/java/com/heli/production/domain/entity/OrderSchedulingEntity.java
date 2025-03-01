@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -50,5 +52,11 @@ public class OrderSchedulingEntity extends MainPlanTableEntity implements Serial
      * 是否排产
      */
     private Integer isScheduling;
+
+    /**
+     * 上线时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date onlineDate;
 
 }
