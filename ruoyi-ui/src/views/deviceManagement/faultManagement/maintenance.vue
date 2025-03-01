@@ -461,5 +461,5 @@ function handleExport() {
   }, `table_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+// getList();
 </script>

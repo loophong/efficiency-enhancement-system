@@ -6,15 +6,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.ruoyi.common.core.domain.BaseEntity;
 
-import java.io.Serializable;
-
 /**
  * 专业计划保养对象 device_major_plan
  *
  * @author YYY
  * @date 2025-02-26
  */
-public class DeviceMajorPlan implements Serializable
+public class DeviceMajorPlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

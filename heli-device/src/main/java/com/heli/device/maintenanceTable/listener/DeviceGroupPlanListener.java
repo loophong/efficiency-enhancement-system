@@ -7,7 +7,6 @@ import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 
 import java.util.List;
 
-import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper;
 import lombok.extern.log4j.Log4j2;
 @Log4j2

@@ -3,7 +3,6 @@ package com.heli.device.maintenanceTable.mapper;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
 
 /**

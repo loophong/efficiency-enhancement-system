@@ -1,6 +1,5 @@
 package com.heli.device.maintenanceTable.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
@@ -8,12 +7,12 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
 
 /**
  * 设备指标分析对象 device_indicator_count
@@ -23,7 +22,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @TableName(value ="device_indicator_count")
 @Data
-public class DeviceIndicatorCount implements Serializable
+public class DeviceIndicatorCount extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

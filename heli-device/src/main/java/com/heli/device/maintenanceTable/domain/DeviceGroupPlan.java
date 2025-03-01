@@ -11,7 +11,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import com.ruoyi.common.core.domain.BaseEntity;
 
-import java.io.Serializable;
 
 /**
  * 班组计划保养对象 device_group_plan
@@ -21,7 +20,7 @@ import java.io.Serializable;
  */
 @TableName(value ="device_group_plan")
 @Data
-public class DeviceGroupPlan implements Serializable
+public class DeviceGroupPlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

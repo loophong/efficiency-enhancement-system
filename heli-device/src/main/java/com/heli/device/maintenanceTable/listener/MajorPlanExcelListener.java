@@ -4,7 +4,6 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
-import com.heli.device.maintenanceTable.domain.MajorPlanExcel;
 import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
 import lombok.extern.log4j.Log4j2;
 

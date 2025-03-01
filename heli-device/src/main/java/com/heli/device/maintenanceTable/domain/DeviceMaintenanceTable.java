@@ -1,20 +1,18 @@
 package com.heli.device.maintenanceTable.domain;
 
-import java.io.Serializable;
-import java.util.Date;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
 
 /**
  * 2.设备故障记录(导入)对象 device_maintenance_table
@@ -24,7 +22,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @TableName(value ="device_maintenance_table")
 @Data
-public class DeviceMaintenanceTable implements Serializable
+public class DeviceMaintenanceTable extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
-import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
+
 
 /**
  * 班组计划保养Mapper接口

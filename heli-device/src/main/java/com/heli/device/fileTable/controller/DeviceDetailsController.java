@@ -48,6 +48,7 @@ public class DeviceDetailsController extends BaseController
     @GetMapping("/list")
     public TableDataInfo list(DeviceDetails deviceDetails)
     {
+        log.info("deviceDetails:"+deviceDetails.toString());
         startPage();
         List<DeviceDetails> list = deviceDetailsService.selectDeviceDetailsList(deviceDetails);
         return getDataTable(list);

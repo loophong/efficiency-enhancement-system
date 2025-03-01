@@ -3,23 +3,16 @@ package com.heli.device.maintenanceTable.controller;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.DateUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
@@ -31,8 +24,7 @@ import com.heli.device.maintenanceTable.service.IDeviceMaintenanceTableService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.stream.Collectors;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 /**
  * 2.设备故障记录(导入)Controller
@@ -72,14 +64,8 @@ public class DeviceMaintenanceTableController extends BaseController
     public TableDataInfo listByDate(@DateTimeFormat(pattern = "yyyy-MM")Date yearAndMonth)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-
-        // 将Date对象格式化为"yyyy-MM"格式的字符串
         String formattedDate = sdf.format(yearAndMonth);
-
-        // 打印格式化后的日期字符串
-        log.info("Formatted date: {}", formattedDate);
 //        startPage();
-
         List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate);
         return getDataTable(list);
     }

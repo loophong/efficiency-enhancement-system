@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.fileTable.domain.DeviceDetails;
-import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
-import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Select;
 

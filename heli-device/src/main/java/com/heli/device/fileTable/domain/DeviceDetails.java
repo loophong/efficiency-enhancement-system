@@ -1,16 +1,17 @@
 package com.heli.device.fileTable.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.ruoyi.common.core.domain.BaseEntity;
+
 
 /**
  * 设备台账对象 device_details
@@ -20,7 +21,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @TableName(value ="device_details")
 @Data
-public class DeviceDetails implements Serializable
+public class DeviceDetails extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 

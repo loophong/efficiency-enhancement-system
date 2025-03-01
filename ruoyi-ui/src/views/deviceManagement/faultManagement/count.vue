@@ -78,8 +78,8 @@
           </div>
           <span class="dialog-footer">
             <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend">确 定</el-button>
-            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
           </span>
         </el-dialog>
       </el-col>
@@ -95,7 +95,7 @@
       <!-- <el-table-column label="主键id" align="center" prop="indicatorId" /> -->
       <el-table-column label="项目名" align="center" prop="indicatorName" />
       <el-table-column label="目标值" align="center" prop="indicatorTarget" />
-      <el-table-column label="日期" align="center" prop="indicatorTime" width="180">
+      <el-table-column label="年份" align="center" prop="indicatorTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.indicatorTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -134,8 +134,8 @@
         <el-form-item label="目标值" prop="indicatorTarget">
           <el-input v-model="form.indicatorTarget" placeholder="请输入目标值" />
         </el-form-item>
-        <el-form-item label="日期" prop="indicatorTime">
-          <el-date-picker clearable v-model="form.indicatorTime" type="date" value-format="YYYY-MM-DD"
+        <el-form-item label="年份" prop="indicatorTime">
+          <el-date-picker clearable v-model="form.indicatorTime" type="year" value-format="YYYY-MM-DD"
             placeholder="请选择日期">
           </el-date-picker>
         </el-form-item>
@@ -195,6 +195,7 @@ const countList = ref([]);
 const open = ref(false);
 const showDialog = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
@@ -368,7 +369,7 @@ function fileSend() {
   //   ElMessage.warning('请选择要上传的文件');
   //   return;
   // }
-
+  buttonLoading.value = true
   const file = fileInput.files[0];
   console.log('Selected file:', file);
   // console.log(file)
@@ -389,9 +390,9 @@ function fileSend() {
         message: '上传成功',
         type: 'success',
       });
-      // this.getList();
-      // this.showDialog = false;
-      // this.isLoading = false;
+      getList();
+      buttonLoading.value = false
+      showDialog.value = false;
     })
     .catch(error => {
       // 处理上传失败的情况
@@ -399,8 +400,8 @@ function fileSend() {
         message: `上传失败:${error}`,
         type: 'error',
       });
-      // this.$message.error("上传失败，请重试");
-      // this.isLoading = false;
+      buttonLoading.value = false
+      showDialog.value = false;
     });
 }
 

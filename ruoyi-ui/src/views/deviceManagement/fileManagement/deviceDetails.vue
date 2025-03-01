@@ -94,7 +94,11 @@
       <el-table-column label="班组" align="center" prop="detailsGroup" />
       <el-table-column label="设备状态" align="center" prop="deviceStatus" />
       <el-table-column label="设备类别" align="center" prop="deviceType" />
-      <el-table-column label="重点设备标注" align="center" prop="ifKey" />
+      <el-table-column label="重点设备标注" align="center" prop="ifKey">
+        <template #default="scope">
+          <span :style="{ fontSize: '28px' }">{{ scope.row.ifKey }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="保管使用单位" align="center" prop="storageUnit" />
       <el-table-column label="责任成本中心" align="center" prop="costCenter" />
       <el-table-column label="使用年限" align="center" prop="usedYear" />
@@ -239,7 +243,8 @@ onMounted(() => {
 function getList() {
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeFinancialDate && '' != daterangeFinancialDate) {
+  if (null != daterangeFinancialDate && '' != daterangeFinancialDate && Array.isArray(daterangeFinancialDate.value)) {
+    console.log('进入')
     queryParams.value.params["beginFinancialDate"] = daterangeFinancialDate.value[0];
     queryParams.value.params["endFinancialDate"] = daterangeFinancialDate.value[1];
   }

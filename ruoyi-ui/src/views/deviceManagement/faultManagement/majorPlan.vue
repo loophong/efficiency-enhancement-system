@@ -60,8 +60,8 @@
           </div>
           <span class="dialog-footer">
             <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend">确 定</el-button>
-            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
           </span>
         </el-dialog>
       </el-col>
@@ -397,6 +397,7 @@ const { proxy } = getCurrentInstance();
 const planList = ref([]);
 const open = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const showFullYear = ref(false);
 const ids = ref([]);
@@ -559,7 +560,7 @@ function fileSend() {
   //   ElMessage.warning('请选择要上传的文件');
   //   return;
   // }
-
+  buttonLoading.value = true
   const file = fileInput.files[0];
   console.log('Selected file:', file);
   // console.log(file)
@@ -580,8 +581,9 @@ function fileSend() {
         message: '上传成功',
         type: 'success',
       });
-      // this.getList();
-      // this.showDialog = false;
+      getList();
+      buttonLoading.value = false
+      showDialog.value = false;
       // this.isLoading = false;
     })
     .catch(error => {
@@ -590,8 +592,8 @@ function fileSend() {
         message: `上传失败:${error}`,
         type: 'error',
       });
-      // this.$message.error("上传失败，请重试");
-      // this.isLoading = false;
+      buttonLoading.value = false
+      showDialog.value = false;
     });
 }
 

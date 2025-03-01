@@ -169,10 +169,11 @@ function getList() {
   console.log('------------>', queryParams.value.test)
   loading.value = true;
   queryParams.value.params = {};
-  // if (null != daterangeAnalysisRecordTime && '' != daterangeAnalysisRecordTime) {
-  //   queryParams.value.params["beginAnalysisRecordTime"] = daterangeAnalysisRecordTime.value[0];
-  //   queryParams.value.params["endAnalysisRecordTime"] = daterangeAnalysisRecordTime.value[1];
-  // }
+
+  if (queryParams.value.yearAndMonth == null) {
+    queryParams.value.yearAndMonth = format(new Date(), 'yyyy-MM')
+  }
+
   listAnalysis(queryParams.value).then(response => {
     analysisList.value = response.rows;
 
@@ -278,6 +279,8 @@ function reset() {
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
+
+
   getList();
 }
 
