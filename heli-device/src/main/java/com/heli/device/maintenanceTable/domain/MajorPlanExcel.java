@@ -1,76 +1,67 @@
 package com.heli.device.maintenanceTable.domain;
 
-import java.util.Date;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
+
 import com.ruoyi.common.core.domain.BaseEntity;
 
 @Data
-public class MajorPlanExcel {
+public class MajorPlanExcel extends BaseEntity{
     private static final long serialVersionUID = 1L;
-
-
     @ExcelProperty(index = 0)
-    @ExcelIgnore
-    private String A;
+    private String A1;
     @ExcelProperty(index = 1)
-    private String B;
+    private String B2;
     @ExcelProperty(index = 2)
-    private String C;
+    private String C3;
     @ExcelProperty(index = 3)
-    private String D;
+    private String D4;
     @ExcelProperty(index = 4)
-    private String E;
+    private String E5;
     @ExcelProperty(index = 5)
-    private String F;
+    private String F6;
     @ExcelProperty(index = 6)
-    private String G;
+    private String G7;
     @ExcelProperty(index = 7)
-    private String H;
+    private String H8;
     @ExcelProperty(index = 8)
-    private String I;
+    private String I9;
     @ExcelProperty(index = 9)
-    private String J;
+    private String J10;
     @ExcelProperty(index = 10)
-    private String K;
+    private String K11;
     @ExcelProperty(index = 11)
-    private String L;
+    private String L12;
     @ExcelProperty(index = 12)
-    private String M;
+    private String M13;
     @ExcelProperty(index = 13)
-    private String N;
+    private String N14;
     @ExcelProperty(index = 14)
-    private String O;
+    private String O15;
     @ExcelProperty(index = 15)
-    private String P;
+    private String P16;
     @ExcelProperty(index = 16)
-    private String Q;
+    private String Q17;
     @ExcelProperty(index = 17)
-    private String R;
+    private String R18;
     @ExcelProperty(index = 18)
-    private String S;
+    private String S19;
     @ExcelProperty(index = 19)
-    private String T;
+    private String T20;
     @ExcelProperty(index = 20)
-    private String U;
+    private String U21;
     @ExcelProperty(index = 21)
-    private String V;
+    private String V22;
     @ExcelProperty(index = 22)
-    private String W;
+    private String W23;
     @ExcelProperty(index = 23)
-    private String X;
+    private String X24;
     @ExcelProperty(index = 24)
-    private String Y;
+    private String Y25;
     @ExcelProperty(index = 25)
-    private String Z;
+    private String Z26;
     @ExcelProperty(index = 26)
     private String AA;
     @ExcelProperty(index = 27)

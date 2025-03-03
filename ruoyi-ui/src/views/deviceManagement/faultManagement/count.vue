@@ -66,6 +66,24 @@
           v-hasPermi="['device:count:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <!--Excel 参数导入 -->
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
+        </el-button>
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
+          <el-form :model="form" ref="formRef" label-width="90px">
+          </el-form>
+          <div class="upload-area">
+            <i class="el-icon-upload"></i>
+            <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
+          </div>
+          <span class="dialog-footer">
+            <el-button @click="showDialog = false">取 消</el-button>
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
+          </span>
+        </el-dialog>
+      </el-col>
+      <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['device:count:export']">导出</el-button>
       </el-col>
@@ -77,7 +95,7 @@
       <!-- <el-table-column label="主键id" align="center" prop="indicatorId" /> -->
       <el-table-column label="项目名" align="center" prop="indicatorName" />
       <el-table-column label="目标值" align="center" prop="indicatorTarget" />
-      <el-table-column label="日期" align="center" prop="indicatorTime" width="180">
+      <el-table-column label="年份" align="center" prop="indicatorTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.indicatorTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -116,8 +134,8 @@
         <el-form-item label="目标值" prop="indicatorTarget">
           <el-input v-model="form.indicatorTarget" placeholder="请输入目标值" />
         </el-form-item>
-        <el-form-item label="日期" prop="indicatorTime">
-          <el-date-picker clearable v-model="form.indicatorTime" type="date" value-format="YYYY-MM-DD"
+        <el-form-item label="年份" prop="indicatorTime">
+          <el-date-picker clearable v-model="form.indicatorTime" type="year" value-format="YYYY-MM-DD"
             placeholder="请选择日期">
           </el-date-picker>
         </el-form-item>
@@ -169,13 +187,15 @@
 </template>
 
 <script setup name="Count">
-import { listCount, getCount, delCount, addCount, updateCount } from "@/api/device/maintenanceTable/count";
-
+import { listCount, getCount, delCount, addCount, updateCount, uploadFile } from "@/api/device/maintenanceTable/count";
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const countList = ref([]);
 const open = ref(false);
+const showDialog = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
@@ -323,6 +343,66 @@ function handleDelete(row) {
     getList();
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => { });
+}
+
+
+// 导入excel，检查文件类型
+function checkFile() {
+  const file = proxy.$refs["fileInput"].files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    this.$message.error("只能上传 Excel 文件！");
+    // this.$refs.fileInput.value = ""; // 清空文件选择框
+  }
+}
+//导入excel，取消按钮绑定取消所选的xlsx
+// function resetFileInput() {
+//   this.$refs.fileInput.value = "";
+// }
+/** 导入按钮 */
+function fileSend() {
+  const fileInput = proxy.$refs["fileInput"];
+  // console.log(proxy.$refs["fileInput"])
+  // if (!fileInput || !fileInput.files.length) {
+  //   ElMessage.warning('请选择要上传的文件');
+  //   return;
+  // }
+  buttonLoading.value = true
+  const file = fileInput.files[0];
+  console.log('Selected file:', file);
+  // console.log(file)
+  const formData = new FormData();
+  formData.append("excelFile", file);
+  formData.append("yearAndMonth", '2024-12-12');
+  console.log({ formData })
+  // 使用如下方法打印出 formData 的内容
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
+  // isLoading.value = true;
+  uploadFile(formData, `/fault/indicator/import`)
+    .then(data => {
+      // 处理上传成功的情况
+      ElMessage({
+        message: '上传成功',
+        type: 'success',
+      });
+      getList();
+      buttonLoading.value = false
+      showDialog.value = false;
+    })
+    .catch(error => {
+      // 处理上传失败的情况
+      ElMessage({
+        message: `上传失败:${error}`,
+        type: 'error',
+      });
+      buttonLoading.value = false
+      showDialog.value = false;
+    });
 }
 
 /** 导出按钮操作 */

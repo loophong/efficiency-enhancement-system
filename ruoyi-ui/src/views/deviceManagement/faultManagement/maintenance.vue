@@ -4,6 +4,9 @@
       <el-form-item label="设备名称" prop="deviceName">
         <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <el-form-item label="设备编号" prop="deviceNum">
+        <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
       <el-form-item label="申请人" prop="applyBy">
         <el-input v-model="queryParams.applyBy" placeholder="请输入申请人" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -60,9 +63,9 @@
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
-        <el-button type="primary" icon="el-icon-share" @click="showDialog = true" size="mini" plain>导入
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
           <el-form :model="form" ref="formRef" label-width="90px">
             <!-- 如果有表单内容，这里添加 -->
           </el-form>
@@ -71,9 +74,10 @@
             <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
           </div>
           <span class="dialog-footer">
+            <br />
             <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend">确 定</el-button>
-            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中(重复数据检查)</el-button>
           </span>
         </el-dialog>
       </el-col>
@@ -87,8 +91,10 @@
     <el-table v-loading="loading" :data="tableList" @selection-change="handleSelectionChange" border stripe>
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="maintenanceTableId" /> -->
+      <el-table-column label="设备编号" align="center" prop="deviceNum" />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
-      <el-table-column label="问题类型" align="center" prop="workStatus" />
+      <el-table-column label="工单状态" align="center" prop="workStatus" />
+      <el-table-column label="问题类型" align="center" prop="issueType" />
       <el-table-column label="故障类型" align="center" prop="faultType" />
       <el-table-column label="申请人" align="center" prop="applyBy" />
       <el-table-column label="申请部门" align="center" prop="applyDepartment" />
@@ -97,24 +103,22 @@
       <el-table-column label="维修分析" align="center" prop="maintenanceAnalysis" />
       <el-table-column label="维修内容" align="center" prop="maintenanceContent" />
       <el-table-column label="报修时间" align="center" prop="reportedTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.reportedTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
       <el-table-column label="处理时间" align="center" prop="resolutionTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.resolutionTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
       <el-table-column label="故障时长" align="center" prop="faultDuration" />
       <el-table-column label="维修费用" align="center" prop="maintenanceCast" />
       <el-table-column label="是否停机" align="center" prop="ifDown" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
             v-hasPermi="['system:table:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['system:table:remove']">删除</el-button>
+          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'details')"
+            v-hasPermi="['system:table:edit']">台账</el-button>
+          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'sop')"
+            v-hasPermi="['system:table:edit']">SOP文件</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -125,8 +129,23 @@
     <!-- 添加或修改2.设备故障记录(导入)对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="tableRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="设备编号" prop="deviceNum">
+          <el-input v-model="form.deviceNum" placeholder="请输入设备编号" />
+        </el-form-item>
         <el-form-item label="设备名称" prop="deviceName">
           <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
+        </el-form-item>
+        <el-form-item label="工单状态" prop="workStatus">
+          <el-input v-model="form.workStatus" placeholder="请输入工单状态" />
+        </el-form-item>
+        <el-form-item label="问题类型" prop="issueType">
+          <el-input v-model="form.issueType" placeholder="请输入问题类型" />
+        </el-form-item>
+        <el-form-item label="故障类型" prop="faultType">
+          <el-select v-model="form.faultType" placeholder="请选择故障类型">
+            <el-option v-for="dict in device_fault_analysis" :key="dict.value" :label="dict.label"
+              :value="dict.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="申请人" prop="applyBy">
           <el-input v-model="form.applyBy" placeholder="请输入申请人" />
@@ -147,14 +166,10 @@
           <el-input v-model="form.maintenanceContent" placeholder="请输入维修内容" />
         </el-form-item>
         <el-form-item label="报修时间" prop="reportedTime">
-          <el-date-picker clearable v-model="form.reportedTime" type="date" value-format="YYYY-MM-DD"
-            placeholder="请选择报修时间">
-          </el-date-picker>
+          <el-input v-model="form.reportedTime" placeholder="请输入报修时间" />
         </el-form-item>
         <el-form-item label="处理时间" prop="resolutionTime">
-          <el-date-picker clearable v-model="form.resolutionTime" type="date" value-format="YYYY-MM-DD"
-            placeholder="请选择处理时间">
-          </el-date-picker>
+          <el-input v-model="form.resolutionTime" placeholder="请输入处理时间" />
         </el-form-item>
         <el-form-item label="故障时长" prop="faultDuration">
           <el-input v-model="form.faultDuration" placeholder="请输入故障时长" />
@@ -178,25 +193,33 @@
 </template>
 
 
-<script setup name="Table">
+<script setup name="Maintenance">
 import { listTable, getTable, delTable, addTable, updateTable, uploadFile } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
 
 
+
+
 const { proxy } = getCurrentInstance();
+const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
+
 
 const tableList = ref([]);
 const open = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const router = useRouter();
+const route = useRoute();
 const showDialog = ref(false);
 const daterangeReportedTime = ref([]);
 const daterangeResolutionTime = ref([]);
+
 
 const data = reactive({
   form: {},
@@ -204,6 +227,7 @@ const data = reactive({
     pageNum: 1,
     pageSize: 10,
     deviceName: null,
+    deviceNum: null,
     workStatus: null,
     faultType: null,
     applyBy: null,
@@ -223,6 +247,24 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+const routerDeviceNum = route.query.deviceNum;
+const handleRouteParams = () => {
+  if (routerDeviceNum) {
+    console.log('Received deviceNum:', routerDeviceNum);
+    data.queryParams.deviceNum = routerDeviceNum;
+    getList(); // 假设需要根据路由参数重新获取列表数据
+  } else {
+    getList();
+    console.log('No specific route params received.');
+    // 可以选择性地在这里添加其他逻辑
+  }
+};
+
+// 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
+onMounted(() => {
+  handleRouteParams();
+});
 
 /** 查询2.设备故障记录(导入)列表 */
 function getList() {
@@ -296,7 +338,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加2.设备故障记录(导入)";
+  title.value = "新增";
 }
 
 /** 修改按钮操作 */
@@ -306,7 +348,7 @@ function handleUpdate(row) {
   getTable(_maintenanceTableId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改2.设备故障记录(导入)";
+    title.value = "修改";
   });
 }
 
@@ -334,13 +376,20 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _maintenanceTableIds = row.maintenanceTableId || ids.value;
-  proxy.$modal.confirm('是否确认删除2.设备故障记录(导入)编号为"' + _maintenanceTableIds + '"的数据项？').then(function () {
+  proxy.$modal.confirm('是否确认删除设备故障记录编号为"' + _maintenanceTableIds + '"的数据项？').then(function () {
     return delTable(_maintenanceTableIds);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => { });
 }
+
+
+/** 跳转按钮操作 */
+function handleToRoute(row, module, destination) {
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum } });
+}
+
 
 // 导入excel，检查文件类型
 function checkFile() {
@@ -349,7 +398,7 @@ function checkFile() {
   const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
 
   if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
-    this.$message.error("只能上传 Excel 文件！");
+    $.modal.msg("只能上传 Excel 文件！", error);
     // this.$refs.fileInput.value = ""; // 清空文件选择框
   }
 }
@@ -365,6 +414,7 @@ function fileSend() {
   //   ElMessage.warning('请选择要上传的文件');
   //   return;
   // }
+  buttonLoading.value = true
 
   const file = fileInput.files[0];
   console.log('Selected file:', file);
@@ -386,12 +436,15 @@ function fileSend() {
         message: '上传成功',
         type: 'success',
       });
-      // this.getList();
-      // this.showDialog = false;
+      buttonLoading.value = false;
+      showDialog.value = false;
+      getList();
       // this.isLoading = false;
     })
     .catch(error => {
       // 处理上传失败的情况
+      buttonLoading.value = false;
+      showDialog.value = false;
       ElMessage({
         message: `上传失败:${error}`,
         type: 'error',
@@ -408,5 +461,5 @@ function handleExport() {
   }, `table_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+// getList();
 </script>

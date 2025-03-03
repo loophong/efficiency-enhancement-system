@@ -3,11 +3,13 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceIndicatorCountMapper">
-    
+
     <resultMap type="DeviceIndicatorCount" id="DeviceIndicatorCountResult">
         <result property="indicatorId"    column="indicator_id"    />
         <result property="indicatorName"    column="indicator_name"    />
         <result property="indicatorTarget"    column="indicator_target"    />
+        <result property="indicatorUp"    column="indicator_up"    />
+        <result property="indicatorDown"    column="indicator_down"    />
         <result property="indicatorTime"    column="indicator_time"    />
         <result property="indicatorJan"    column="indicator_jan"    />
         <result property="indicatorFeb"    column="indicator_feb"    />
@@ -24,15 +26,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeviceIndicatorCountVo">
-        select indicator_id, indicator_name, indicator_target, indicator_time, indicator_jan, indicator_feb, indicator_mar, indicator_apr, indicator_may, indicator_jun, indicator_jul, indicator_aug, indicator_sep, indicator_oct, indicator_nov, indicator_dec from device_indicator_count
+        select indicator_id, indicator_name, indicator_target, indicator_up, indicator_down, indicator_time, indicator_jan, indicator_feb, indicator_mar, indicator_apr, indicator_may, indicator_jun, indicator_jul, indicator_aug, indicator_sep, indicator_oct, indicator_nov, indicator_dec from device_indicator_count
     </sql>
 
     <select id="selectDeviceIndicatorCountList" parameterType="DeviceIndicatorCount" resultMap="DeviceIndicatorCountResult">
         <include refid="selectDeviceIndicatorCountVo"/>
-        <where>  
+        <where>
             <if test="indicatorName != null  and indicatorName != ''"> and indicator_name like concat('%', #{indicatorName}, '%')</if>
             <if test="indicatorTarget != null  and indicatorTarget != ''"> and indicator_target = #{indicatorTarget}</if>
-            <if test="params.beginIndicatorTime != null and params.beginIndicatorTime != '' and params.endIndicatorTime != null and params.endIndicatorTime != ''"> and indicator_time between #{params.beginIndicatorTime} and #{params.endIndicatorTime}</if>
+            <if test="indicatorUp != null  and indicatorUp != ''"> and indicator_up = #{indicatorUp}</if>
+            <if test="indicatorDown != null  and indicatorDown != ''"> and indicator_down = #{indicatorDown}</if>
+            <if test="indicatorTime != null  and indicatorTime != ''"> and indicator_time = #{indicatorTime}</if>
             <if test="indicatorJan != null  and indicatorJan != ''"> and indicator_jan = #{indicatorJan}</if>
             <if test="indicatorFeb != null  and indicatorFeb != ''"> and indicator_feb = #{indicatorFeb}</if>
             <if test="indicatorMar != null  and indicatorMar != ''"> and indicator_mar = #{indicatorMar}</if>
@@ -47,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorDec != null  and indicatorDec != ''"> and indicator_dec = #{indicatorDec}</if>
         </where>
     </select>
-    
+
     <select id="selectDeviceIndicatorCountByIndicatorId" parameterType="Long" resultMap="DeviceIndicatorCountResult">
         <include refid="selectDeviceIndicatorCountVo"/>
         where indicator_id = #{indicatorId}
@@ -58,6 +62,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="indicatorName != null">indicator_name,</if>
             <if test="indicatorTarget != null">indicator_target,</if>
+            <if test="indicatorUp != null">indicator_up,</if>
+            <if test="indicatorDown != null">indicator_down,</if>
             <if test="indicatorTime != null">indicator_time,</if>
             <if test="indicatorJan != null">indicator_jan,</if>
             <if test="indicatorFeb != null">indicator_feb,</if>
@@ -71,10 +77,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null">indicator_oct,</if>
             <if test="indicatorNov != null">indicator_nov,</if>
             <if test="indicatorDec != null">indicator_dec,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="indicatorName != null">#{indicatorName},</if>
             <if test="indicatorTarget != null">#{indicatorTarget},</if>
+            <if test="indicatorUp != null">#{indicatorUp},</if>
+            <if test="indicatorDown != null">#{indicatorDown},</if>
             <if test="indicatorTime != null">#{indicatorTime},</if>
             <if test="indicatorJan != null">#{indicatorJan},</if>
             <if test="indicatorFeb != null">#{indicatorFeb},</if>
@@ -88,7 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null">#{indicatorOct},</if>
             <if test="indicatorNov != null">#{indicatorNov},</if>
             <if test="indicatorDec != null">#{indicatorDec},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateDeviceIndicatorCount" parameterType="DeviceIndicatorCount">
@@ -96,6 +104,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="indicatorName != null">indicator_name = #{indicatorName},</if>
             <if test="indicatorTarget != null">indicator_target = #{indicatorTarget},</if>
+            <if test="indicatorUp != null">indicator_up = #{indicatorUp},</if>
+            <if test="indicatorDown != null">indicator_down = #{indicatorDown},</if>
             <if test="indicatorTime != null">indicator_time = #{indicatorTime},</if>
             <if test="indicatorJan != null">indicator_jan = #{indicatorJan},</if>
             <if test="indicatorFeb != null">indicator_feb = #{indicatorFeb},</if>
@@ -118,7 +128,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteDeviceIndicatorCountByIndicatorIds" parameterType="String">
-        delete from device_indicator_count where indicator_id in 
+        delete from device_indicator_count where indicator_id in
         <foreach item="indicatorId" collection="array" open="(" separator="," close=")">
             #{indicatorId}
         </foreach>

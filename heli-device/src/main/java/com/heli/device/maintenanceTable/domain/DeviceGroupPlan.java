@@ -1,9 +1,16 @@
 package com.heli.device.maintenanceTable.domain;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.alibaba.excel.annotation.ExcelProperty;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
+
 import com.ruoyi.common.core.domain.BaseEntity;
+
 
 /**
  * 班组计划保养对象 device_group_plan
@@ -11,47 +18,51 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author YYY
  * @date 2025-01-19
  */
+@TableName(value ="device_group_plan")
+@Data
 public class DeviceGroupPlan extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键id */
+    @TableId(type = IdType.AUTO)
+    @ExcelIgnore
     private String groupId;
 
     /** 序号 */
-    @Excel(name = "序号")
+    @ExcelProperty(index = 0)
     private String orderNum;
 
     /** 设备类别 */
-    @Excel(name = "设备类别")
+    @ExcelProperty(index = 1)
     private String deviceType;
 
     /** 执行班组 */
-    @Excel(name = "执行班组")
+    @ExcelProperty(index = 2)
     private String executeGroup;
 
     /** 保养内容 */
-    @Excel(name = "保养内容")
+    @ExcelProperty(index = 3)
     private String maintenanceContent;
 
     /** 保养周期 */
-    @Excel(name = "保养周期")
+    @ExcelProperty(index = 4)
     private String maintenanceCycle;
 
     /** 月度(1W) */
-    @Excel(name = "月度(1W)")
+    @ExcelProperty(index = 5)
     private String monthOne;
 
     /** 月度(2W) */
-    @Excel(name = "月度(2W)")
+    @ExcelProperty(index = 6)
     private String monthTwo;
 
     /** 月度(3W) */
-    @Excel(name = "月度(3W)")
+    @ExcelProperty(index = 7)
     private String monthThree;
 
     /** 月度(4W) */
-    @Excel(name = "月度(4W)")
+    @ExcelProperty(index = 8)
     private String monthFour;
 
     public void setGroupId(String groupId) 

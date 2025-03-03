@@ -9,26 +9,26 @@
         <result property="sopCombineId"    column="sop_combine_id"    />
         <result property="sopNum"    column="sop_num"    />
         <result property="sopName"    column="sop_name"    />
-        <result property="sopType"    column="sop_type"    />
+        <result property="sopMaintenance"    column="sop_maintenance"    />
+        <result property="sopRepair"    column="sop_repair"    />
         <result property="upTime"    column="up_time"    />
         <result property="ifHistory"    column="if_history"    />
-        <result property="sopInfo"    column="sop_info"    />
     </resultMap>
 
     <sql id="selectDeviceSopFileVo">
-        select sop_file_id, sop_combine_id, sop_num, sop_name, sop_type, up_time, if_history, sop_info from device_sop_file
+        select sop_file_id, sop_combine_id, sop_num, sop_name, sop_maintenance, sop_repair, up_time, if_history from device_sop_file
     </sql>
 
     <select id="selectDeviceSopFileList" parameterType="DeviceSopFile" resultMap="DeviceSopFileResult">
         <include refid="selectDeviceSopFileVo"/>
         <where>
             <if test="sopCombineId != null "> and sop_combine_id = #{sopCombineId}</if>
-            <if test="sopNum != null  and sopNum != ''"> and sop_num like concat('%', #{sopNum}, '%')</if>
+            <if test="sopNum != null  and sopNum != ''"> and sop_num = #{sopNum}</if>
             <if test="sopName != null  and sopName != ''"> and sop_name like concat('%', #{sopName}, '%')</if>
-            <if test="sopType != null  and sopType != ''"> and sop_type = #{sopType}</if>
+            <if test="sopMaintenance != null  and sopMaintenance != ''"> and sop_maintenance = #{sopMaintenance}</if>
+            <if test="sopRepair != null  and sopRepair != ''"> and sop_repair = #{sopRepair}</if>
             <if test="params.beginUpTime != null and params.beginUpTime != '' and params.endUpTime != null and params.endUpTime != ''"> and up_time between #{params.beginUpTime} and #{params.endUpTime}</if>
             <if test="ifHistory != null  and ifHistory != ''"> and if_history = #{ifHistory}</if>
-            <if test="sopInfo != null  and sopInfo != ''"> and sop_info = #{sopInfo}</if>
         </where>
     </select>
 
@@ -43,19 +43,19 @@
             <if test="sopCombineId != null">sop_combine_id,</if>
             <if test="sopNum != null">sop_num,</if>
             <if test="sopName != null">sop_name,</if>
-            <if test="sopType != null">sop_type,</if>
+            <if test="sopMaintenance != null">sop_maintenance,</if>
+            <if test="sopRepair != null">sop_repair,</if>
             <if test="upTime != null">up_time,</if>
             <if test="ifHistory != null">if_history,</if>
-            <if test="sopInfo != null">sop_info,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sopCombineId != null">#{sopCombineId},</if>
             <if test="sopNum != null">#{sopNum},</if>
             <if test="sopName != null">#{sopName},</if>
-            <if test="sopType != null">#{sopType},</if>
+            <if test="sopMaintenance != null">#{sopMaintenance},</if>
+            <if test="sopRepair != null">#{sopRepair},</if>
             <if test="upTime != null">#{upTime},</if>
             <if test="ifHistory != null">#{ifHistory},</if>
-            <if test="sopInfo != null">#{sopInfo},</if>
         </trim>
     </insert>
 
@@ -65,10 +65,10 @@
             <if test="sopCombineId != null">sop_combine_id = #{sopCombineId},</if>
             <if test="sopNum != null">sop_num = #{sopNum},</if>
             <if test="sopName != null">sop_name = #{sopName},</if>
-            <if test="sopType != null">sop_type = #{sopType},</if>
+            <if test="sopMaintenance != null">sop_maintenance = #{sopMaintenance},</if>
+            <if test="sopRepair != null">sop_repair = #{sopRepair},</if>
             <if test="upTime != null">up_time = #{upTime},</if>
             <if test="ifHistory != null">if_history = #{ifHistory},</if>
-            <if test="sopInfo != null">sop_info = #{sopInfo},</if>
         </trim>
         where sop_file_id = #{sopFileId}
     </update>

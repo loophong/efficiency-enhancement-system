@@ -1,7 +1,9 @@
 package com.heli.device.maintenanceTable.service;
 
+import java.io.InputStream;
 import java.util.List;
 import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
+import com.ruoyi.common.core.domain.R;
 
 /**
  * 设备指标分析Service接口
@@ -58,4 +60,13 @@ public interface IDeviceIndicatorCountService
      * @return 结果
      */
     public int deleteDeviceIndicatorCountByIndicatorId(Long indicatorId);
+
+    /**
+     * 读取指标数据
+     *
+     * @param fileName    文件名
+     * @param inputStream 输入流
+     * @return {@link R }<{@link String }>
+     */
+    public R<String> readIndicatorToDB(String fileName, InputStream inputStream);
 }

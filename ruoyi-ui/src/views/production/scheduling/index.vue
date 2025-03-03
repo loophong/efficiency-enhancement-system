@@ -28,7 +28,7 @@
       <!-- 根据后台传入的各个型号产能，动态生成计数器个数    -->
       <el-form :model="capacity" label-width="120px">
         <el-form-item label="排产日期">
-          <el-date-picker v-model="productionDate" type="date" placeholder="选择日期"/>
+          <el-date-picker v-model="productionDate" type="date" date-format="yyyy-MM-dd" placeholder="选择日期"/>
         </el-form-item>
 
         <!--        <div style="display: flex; align-items: center;">-->
@@ -346,7 +346,7 @@
     <div style="  display: flex;  justify-content: center;">
       <el-button v-if="active > 1" type="primary" size="large" @click="pre">上一步</el-button>
       <el-button v-if="active < 6" type="primary" size="large" @click="next">下一步</el-button>
-      <el-button v-if="active === 6" type="success" size="large" @click="next">完成</el-button>
+      <el-button v-if="active === 6" type="success" size="large" @click="submitForm">完成</el-button>
     </div>
 
 
@@ -356,7 +356,14 @@
 <script setup name="Scheduling">
 import {getCurrentInstance, ref} from "vue";
 import {all} from "@/api/production/capacity.js";
-import {getOrders} from "@/api/production/orderScheduling.js";
+import {getOrders, schedulingOrders} from "@/api/production/orderScheduling.js";
+import dayjs from 'dayjs';
+
+
+import useTagsViewStore from "@/store/modules/tagsView";
+
+const route  = useRoute(); // 获取路由实例
+const router = useRouter();
 
 const {proxy} = getCurrentInstance();
 
@@ -443,6 +450,13 @@ function getCapacityList() {
 
 // 使用 onMounted 钩子在组件挂载时调用 getCapacityList
 onMounted(() => {
+
+  const dateParam = route.query.date; // 假设 date 参数在 query 中
+  if (dateParam) {
+    productionDate.value = dateParam;
+  }
+
+
   getCapacityList();
   // getUrgentOrderList();
   getOrderList();
@@ -725,7 +739,7 @@ function autoScheduling() {
     // 判断当前车型是否用尽
     const capacityType = item.capacityType;
     // 如果capacityType 为null，则跳过剩余操作
-    if(capacityType === null){
+    if (capacityType === null) {
       return;
     }
     let used = usedCapacity.value.find(item => item.capacityType === capacityType)
@@ -743,6 +757,62 @@ function autoScheduling() {
     updateSelectionStatus()
   })
   console.log("自动排产完成" + JSON.stringify(usedCapacity.value))
+}
+
+// const useTagsStore = useTagsViewStore()
+// const currentTag = router.currentRoute.value;
+function submitForm() {
+  // productionDate
+  // 格式化date
+  // date转入后端少了一天
+
+
+  let date = dayjs(productionDate.value).format("YYYY-MM-DD");
+  console.log("格式化之后的时间" + date)
+  let orderSchedulingList = []
+  allOrders.value.forEach(item => {
+    if (item.isScheduling === 1) {
+      orderSchedulingList.push({
+        'id': item.id,
+        'isScheduling': 1,
+        'onlineDate': date
+      })
+    }
+  });
+  console.log("排产订单列表" + JSON.stringify(orderSchedulingList))
+  // console.log("提交表单" + JSON.stringify(ids))
+  // console.log("排产日期" + productionDate.value)
+  // console.log("使用的产能为" + JSON.stringify(usedCapacity.value))
+  // console.log("使用的产能为" + JSON.stringify(capacity.value))
+
+  let dailyUsedCapacityList = [];
+  usedCapacity.value.forEach(used => {
+    capacity.value.find(item => {
+      if (item.capacityType === used.capacityType) {
+        dailyUsedCapacityList.push({
+          'capacityType': used.capacityType,
+          'productionDate': date,
+          'productionQuantity': used.productionQuantity,
+          'quantitySettings': item.productionQuantity
+        })
+      }
+    })
+  })
+  console.log("使用的产能为" + JSON.stringify(dailyUsedCapacityList))
+
+  schedulingOrders(orderSchedulingList, dailyUsedCapacityList).then((response) => {
+    console.log("排产结果" + response)
+    // 提示用户排产成功
+    // proxy.$message({
+    //   message: "排产成功"
+    // })
+
+    // 关闭当前标签页，并返回上一层路由
+    useTagsViewStore().delView(router.currentRoute.value);
+    proxy.$router.go(-1);
+  })
+
+
 }
 </script>
 

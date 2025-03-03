@@ -28,6 +28,7 @@
         <result property="systemDeliveryDate" column="system_delivery_date"/>
         <result property="productionCompletionDate" column="production_completion_date"/>
         <result property="procurementArrivalDate" column="procurement_arrival_date"/>
+        <result property="missingPartRecords" column="missing_part_records"/>
         <result property="productionCycle" column="production_cycle"/>
         <result property="capacityType" column="capacity_type"/>
         <result property="latestOnlineDate" column="latest_online_date"/>
@@ -61,6 +62,7 @@
                system_delivery_date,
                production_completion_date,
                procurement_arrival_date,
+               missing_part_records,
                production_cycle,
                capacity_type,
                latest_online_date,
@@ -71,8 +73,7 @@
         from production_order_scheduling
     </sql>
 
-    <select id="selectOrderSchedulingList" parameterType="OrderSchedulingEntity"
-            resultMap="OrderSchedulingResult">
+    <select id="selectOrderSchedulingList" parameterType="OrderSchedulingEntity" resultMap="OrderSchedulingResult">
         <include refid="selectOrderSchedulingVo"/>
         <where>
             <if test="branch != null  and branch != ''">and branch = #{branch}</if>
@@ -100,6 +101,7 @@
             <if test="productionCompletionDate != null ">and production_completion_date = #{productionCompletionDate}
             </if>
             <if test="procurementArrivalDate != null ">and procurement_arrival_date = #{procurementArrivalDate}</if>
+            <if test="missingPartRecords != null ">and missing_part_records = #{missingPartRecords}</if>
             <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
             <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>
             <if test="latestOnlineDate != null ">and latest_online_date = #{latestOnlineDate}</if>
@@ -107,6 +109,91 @@
             <if test="isUrgent != null ">and is_urgent = #{isUrgent}</if>
             <if test="isScheduling != null ">and is_scheduling = #{isScheduling}</if>
             <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
+        </where>
+    </select>
+
+
+    <!-- 查询缺件订单列表   -->
+    <select id="selectMissingPartsList" parameterType="OrderSchedulingEntity" resultMap="OrderSchedulingResult">
+        <include refid="selectOrderSchedulingVo"/>
+        <where>
+            <if test="branch != null  and branch != ''">and branch = #{branch}</if>
+            <if test="contractNumber != null  and contractNumber != ''">and contract_number = #{contractNumber}</if>
+            <if test="orderNumber != null  and orderNumber != ''">and order_number = #{orderNumber}</if>
+            <if test="orderDate != null ">and order_date = #{orderDate}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
+            <if test="quantity != null ">and quantity = #{quantity}</if>
+            <if test="valvePlate != null  and valvePlate != ''">and valve_plate = #{valvePlate}</if>
+            <if test="forklift != null  and forklift != ''">and forklift = #{forklift}</if>
+            <if test="mast != null  and mast != ''">and mast = #{mast}</if>
+            <if test="airFilter != null  and airFilter != ''">and air_filter = #{airFilter}</if>
+            <if test="attachments != null  and attachments != ''">and attachments = #{attachments}</if>
+            <if test="tires != null  and tires != ''">and tires = #{tires}</if>
+            <if test="configuration != null  and configuration != ''">and configuration = #{configuration}</if>
+            <if test="vehicleNumber != null  and vehicleNumber != ''">and vehicle_number = #{vehicleNumber}</if>
+            <if test="remarks != null  and remarks != ''">and remarks = #{remarks}</if>
+            <if test="deliveryForm != null  and deliveryForm != ''">and delivery_form = #{deliveryForm}</if>
+            <if test="deliveryLocation != null  and deliveryLocation != ''">and delivery_location =
+                #{deliveryLocation}
+            </if>
+            <if test="contactPerson != null  and contactPerson != ''">and contact_person = #{contactPerson}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">and phone_number = #{phoneNumber}</if>
+            <if test="systemDeliveryDate != null ">and system_delivery_date = #{systemDeliveryDate}</if>
+            <if test="productionCompletionDate != null ">and production_completion_date = #{productionCompletionDate}
+            </if>
+
+            <if test="procurementArrivalDate != null ">and procurement_arrival_date = #{procurementArrivalDate}</if>
+            <if test="procurementArrivalDate == null ">and procurement_arrival_date is not null</if>
+            <if test="missingPartRecords != null ">and missing_part_records = #{missingPartRecords}</if>
+
+            <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
+            <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>
+            <if test="latestOnlineDate != null ">and latest_online_date = #{latestOnlineDate}</if>
+            <if test="isOverdue != null ">and is_overdue = #{isOverdue}</if>
+            <if test="isUrgent != null ">and is_urgent = #{isUrgent}</if>
+            <if test="isScheduling != null ">and is_scheduling = #{isScheduling}</if>
+            <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
+        </where>
+    </select>
+
+    <!-- 查询延期订单数据分析   -->
+    <select id="selectDataAnalysis" resultType="com.heli.production.domain.entity.OrderSchedulingEntity">
+        <include refid="selectOrderSchedulingVo"/>
+        <where>
+            <if test="branch != null  and branch != ''">and branch = #{branch}</if>
+            <if test="contractNumber != null  and contractNumber != ''">and contract_number = #{contractNumber}</if>
+            <if test="orderNumber != null  and orderNumber != ''">and order_number = #{orderNumber}</if>
+            <if test="orderDate != null ">and order_date = #{orderDate}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
+            <if test="quantity != null ">and quantity = #{quantity}</if>
+            <if test="valvePlate != null  and valvePlate != ''">and valve_plate = #{valvePlate}</if>
+            <if test="forklift != null  and forklift != ''">and forklift = #{forklift}</if>
+            <if test="mast != null  and mast != ''">and mast = #{mast}</if>
+            <if test="airFilter != null  and airFilter != ''">and air_filter = #{airFilter}</if>
+            <if test="attachments != null  and attachments != ''">and attachments = #{attachments}</if>
+            <if test="tires != null  and tires != ''">and tires = #{tires}</if>
+            <if test="configuration != null  and configuration != ''">and configuration = #{configuration}</if>
+            <if test="vehicleNumber != null  and vehicleNumber != ''">and vehicle_number = #{vehicleNumber}</if>
+            <if test="remarks != null  and remarks != ''">and remarks = #{remarks}</if>
+            <if test="deliveryForm != null  and deliveryForm != ''">and delivery_form = #{deliveryForm}</if>
+            <if test="deliveryLocation != null  and deliveryLocation != ''">and delivery_location =
+                #{deliveryLocation}
+            </if>
+            <if test="contactPerson != null  and contactPerson != ''">and contact_person = #{contactPerson}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">and phone_number = #{phoneNumber}</if>
+            <if test="systemDeliveryDate != null ">and system_delivery_date = #{systemDeliveryDate}</if>
+            <if test="productionCompletionDate != null ">and production_completion_date = #{productionCompletionDate}
+            </if>
+            <if test="procurementArrivalDate != null ">and procurement_arrival_date = #{procurementArrivalDate}</if>
+            <if test="missingPartRecords != null ">and missing_part_records = #{missingPartRecords}</if>
+            <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
+            <if test="capacityType != null  and capacityType != ''">and capacity_type = #{capacityType}</if>
+            <if test="latestOnlineDate != null ">and latest_online_date = #{latestOnlineDate}</if>
+            <if test="isOverdue != null ">and is_overdue = #{isOverdue}</if>
+            <if test="isUrgent != null ">and is_urgent = #{isUrgent}</if>
+            <if test="isScheduling != null ">and is_scheduling = #{isScheduling}</if>
+            <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
+            and online_date &gt; latest_online_date
         </where>
     </select>
 

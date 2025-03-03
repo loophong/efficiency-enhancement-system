@@ -70,4 +70,16 @@ public class WorkdayController extends BaseController {
         return toAjax(workdayService.saveOrUpdate(workday));
     }
 
+
+    @GetMapping(value = "/{date}")
+    public AjaxResult getWorkday(@PathVariable("date") Date date) {
+        log.info("date: {}", DateUtils.formatOutput(date));
+        WorkdayEntity workday = workdayService.getOne(
+                new LambdaQueryWrapper<WorkdayEntity>()
+                        .eq(WorkdayEntity::getDate, date)
+        );
+        log.info("workday: {}", workday);
+        return AjaxResult.success(workday);
+    }
+
 }

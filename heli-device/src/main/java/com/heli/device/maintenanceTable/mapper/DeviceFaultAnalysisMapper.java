@@ -1,7 +1,10 @@
 package com.heli.device.maintenanceTable.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceFaultAnalysis;
+
 
 /**
  * 设备故障分析Mapper接口
@@ -9,7 +12,7 @@ import com.heli.device.maintenanceTable.domain.DeviceFaultAnalysis;
  * @author YYY
  * @date 2025-01-17
  */
-public interface DeviceFaultAnalysisMapper 
+public interface DeviceFaultAnalysisMapper extends BaseMapper<DeviceFaultAnalysis>
 {
     /**
      * 查询设备故障分析

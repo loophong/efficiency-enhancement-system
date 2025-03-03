@@ -36,6 +36,22 @@ public interface OrderSchedulingMapper extends BaseMapper<OrderSchedulingEntity>
      * @return 结果
      */
     public int deleteOrderSchedulingByIds(Long[] ids);
+
+    /**
+     * @description: 查询缺件订单列表
+     * @author: hong
+     * @date: 2025/2/27 15:43
+     * @version: 1.0
+     */
+    List<OrderSchedulingEntity> selectMissingPartsList(OrderSchedulingEntity orderSchedulingEntity);
+
+    /**
+     * @description: 延期订单数据分析
+     * @author: hong
+     * @date: 2025/2/27 17:29
+     * @version: 1.0
+     */
+    List<OrderSchedulingEntity> selectDataAnalysis(OrderSchedulingEntity orderSchedulingEntity);
 }
 
 

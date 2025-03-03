@@ -54,6 +54,27 @@
           v-hasPermi="['file:details:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <!--Excel 参数导入 -->
+        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
+        </el-button>
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
+          <el-form :model="form" ref="formRef" label-width="90px">
+            <!-- 如果有表单内容，这里添加 -->
+          </el-form>
+
+          <div class="upload-area">
+            <i class="el-icon-upload"></i>
+            <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
+          </div>
+          <span class="dialog-footer">
+            <br />
+            <el-button @click="showDialog = false">取 消</el-button>
+            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
+          </span>
+        </el-dialog>
+      </el-col>
+      <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['file:details:export']">导出</el-button>
       </el-col>
@@ -73,7 +94,11 @@
       <el-table-column label="班组" align="center" prop="detailsGroup" />
       <el-table-column label="设备状态" align="center" prop="deviceStatus" />
       <el-table-column label="设备类别" align="center" prop="deviceType" />
-      <el-table-column label="重点设备标注" align="center" prop="ifKey" />
+      <el-table-column label="重点设备标注" align="center" prop="ifKey">
+        <template #default="scope">
+          <span :style="{ fontSize: '28px' }">{{ scope.row.ifKey }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="保管使用单位" align="center" prop="storageUnit" />
       <el-table-column label="责任成本中心" align="center" prop="costCenter" />
       <el-table-column label="使用年限" align="center" prop="usedYear" />
@@ -86,6 +111,8 @@
             v-hasPermi="['file:details:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['file:details:remove']">删除</el-button>
+          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'fault', 'maintenance')"
+            v-hasPermi="['file:details:remove']">故障记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -149,20 +176,26 @@
 </template>
 
 <script setup name="Details">
-import { listDetails, getDetails, delDetails, addDetails, updateDetails } from "@/api/device/fileTable/details";
-
+import { listDetails, getDetails, delDetails, addDetails, updateDetails, uploadFile } from "@/api/device/fileTable/details";
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const detailsList = ref([]);
 const open = ref(false);
 const loading = ref(true);
+const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const router = useRouter();
+const route = useRoute();
+const showDialog = ref(false);
 const daterangeFinancialDate = ref([]);
+
+const routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
@@ -181,7 +214,7 @@ const data = reactive({
     usedYear: null,
     assetOrigin: null,
     brand: null,
-    tonnage: null
+    tonnage: null,
   },
   rules: {
   }
@@ -189,11 +222,29 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
+const handleRouteParams = () => {
+  if (routerDeviceNum) {
+    console.log('Received deviceNum:', routerDeviceNum);
+    data.queryParams.inventoryNum = routerDeviceNum;
+    getList(); // 假设需要根据路由参数重新获取列表数据
+  } else {
+    getList();
+    console.log('No specific route params received.');
+    // 可以选择性地在这里添加其他逻辑
+  }
+};
+
+// 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
+onMounted(() => {
+  handleRouteParams();
+});
+
 /** 查询设备台账列表 */
 function getList() {
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeFinancialDate && '' != daterangeFinancialDate) {
+  if (null != daterangeFinancialDate && '' != daterangeFinancialDate && Array.isArray(daterangeFinancialDate.value)) {
+    console.log('进入')
     queryParams.value.params["beginFinancialDate"] = daterangeFinancialDate.value[0];
     queryParams.value.params["endFinancialDate"] = daterangeFinancialDate.value[1];
   }
@@ -208,6 +259,11 @@ function getList() {
 function cancel() {
   open.value = false;
   reset();
+}
+
+/** 跳转按钮操作 */
+function handleToRoute(row, module, destination) {
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.inventoryNum } });
 }
 
 // 表单重置
@@ -301,6 +357,70 @@ function handleDelete(row) {
   }).catch(() => { });
 }
 
+// 导入excel，检查文件类型
+function checkFile() {
+  const file = proxy.$refs["fileInput"].files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    this.$message.error("只能上传 Excel 文件！");
+    // this.$refs.fileInput.value = ""; // 清空文件选择框
+  }
+}
+//导入excel，取消按钮绑定取消所选的xlsx
+// function resetFileInput() {
+//   this.$refs.fileInput.value = "";
+// }
+/** 导入按钮 */
+function fileSend() {
+  const fileInput = proxy.$refs["fileInput"];
+  // console.log(proxy.$refs["fileInput"])
+  // if (!fileInput || !fileInput.files.length) {
+  //   ElMessage.warning('请选择要上传的文件');
+  //   return;
+  // }
+  buttonLoading.value = true;
+  const file = fileInput.files[0];
+  console.log('Selected file:', file);
+  // console.log(file)
+  const formData = new FormData();
+  formData.append("excelFile", file);
+  formData.append("yearAndMonth", '2024-12-12');
+  console.log({ formData })
+  // 使用如下方法打印出 formData 的内容
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
+
+  // isLoading.value = true;
+  uploadFile(formData, `/file/details/import`)
+    .then(data => {
+      // 处理上传成功的情况
+      ElMessage({
+        message: '上传成功',
+        type: 'success',
+      });
+      showDialog.value = false
+      getList();
+      buttonLoading.value = false;
+      // this.getList();
+      // this.showDialog = false;
+      // this.isLoading = false;
+    })
+    .catch(error => {
+      // 处理上传失败的情况
+      ElMessage({
+        message: `上传失败:${error}`,
+        type: 'error',
+      });
+      // this.$message.error("上传失败，请重试");
+      // this.isLoading = false;
+    });
+}
+
+
+
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download('file/details/export', {
@@ -308,5 +428,5 @@ function handleExport() {
   }, `details_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+// getList();
 </script>

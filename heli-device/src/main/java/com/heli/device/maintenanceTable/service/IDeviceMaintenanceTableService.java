@@ -2,6 +2,8 @@ package com.heli.device.maintenanceTable.service;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+
 import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import com.ruoyi.common.core.domain.R;
 
@@ -61,4 +63,6 @@ public interface IDeviceMaintenanceTableService
      * @return 结果
      */
     public int deleteDeviceMaintenanceTableByMaintenanceTableId(Long maintenanceTableId);
+
+    public List<Map<String, Object>> handleTreeList();
 }

@@ -12,6 +12,9 @@
       <el-form-item label="原因分析" prop="analysisReason">
         <el-input v-model="queryParams.analysisReason" placeholder="请输入原因分析" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <el-form-item label="日期选择" prop="yearAndMonth">
+        <el-date-picker v-model="queryParams.yearAndMonth" value-format="YYYY-MM" type="month"></el-date-picker>
+      </el-form-item>
       <el-form-item label="记录日期" style="width: 308px">
         <el-date-picker v-model="daterangeAnalysisRecordTime" value-format="YYYY-MM-DD" type="daterange"
           range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -42,17 +45,14 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="analysisList" @selection-change="handleSelectionChange" border stripe>
-      <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="分析主键id" align="center" prop="analysisId" /> -->
-      <el-table-column label="故障类型名称" align="center" prop="analysisName">
-        <template #default="scope">
-          <dict-tag :options="device_fault_analysis" :value="scope.row.analysisName" />
-        </template>
-      </el-table-column>
-      <el-table-column label="次数" align="center" prop="analysisCount" />
-      <el-table-column label="维修时间" align="center" prop="analysisTime" />
-      <el-table-column label="原因分析" align="center" prop="analysisReason" />
+    <el-table v-loading="loading" :data="tableList" row-key="maintenanceId" @selection-change="handleSelectionChange"
+      border stripe>
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="故障类型名称" align="center" prop="faultTypeName" width="180" />
+      <el-table-column label="次数" align="center" prop="count" width="140" />
+      <el-table-column label="维修时间" align="center" prop="faultDuration" width="140" />
+      <el-table-column label="故障现象" align="center" prop="faultPhenomenon" />
+      <el-table-column label="原因分析" align="center" prop="maintenanceAnalysis" />
       <el-table-column label="记录日期" align="center" prop="analysisRecordTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.analysisRecordTime, '{y}-{m}-{d}') }}</span>
@@ -68,8 +68,8 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="getList" />
+    <!-- <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize" @pagination="getList" /> -->
 
     <!-- 添加或修改设备故障分析对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -80,9 +80,9 @@
               :value="dict.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="维修时间" prop="analysisTime">
+        <!-- <el-form-item label="维修时间" prop="analysisTime">
           <el-input v-model="form.analysisTime" placeholder="请输入维修时间" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="原因分析" prop="analysisReason">
           <el-input v-model="form.analysisReason" placeholder="请输入原因分析" />
         </el-form-item>
@@ -104,6 +104,8 @@
 
 <script setup name="Analysis">
 import { listAnalysis, getAnalysis, delAnalysis, addAnalysis, updateAnalysis } from "@/api/device/maintenanceTable/analysis";
+import { ElMessage } from 'element-plus'
+import { format } from 'date-fns';
 
 const { proxy } = getCurrentInstance();
 const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
@@ -118,24 +120,45 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const daterangeAnalysisRecordTime = ref([]);
+const tableList = ref([]);
 
 const data = reactive({
   form: {},
+  // queryParams: {
+  //   pageNum: 1,
+  //   pageSize: 10,
+  //   analysisName: null,
+  //   analysisTime: null,
+  //   analysisReason: null,
+  //   analysisRecordTime: null
+  // },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    analysisName: null,
-    analysisTime: null,
-    analysisReason: null,
-    analysisRecordTime: null
+    deviceName: null,
+    deviceNum: null,
+    workStatus: null,
+    faultType: null,
+    applyBy: null,
+    applyDepartment: null,
+    maintenancePeople: null,
+    faultPhenomenon: null,
+    maintenanceAnalysis: null,
+    maintenanceContent: null,
+    reportedTime: null,
+    resolutionTime: null,
+    faultDuration: null,
+    maintenanceCast: null,
+    yearAndMonth: format(new Date(), 'yyyy-MM'),
+    ifDown: null
   },
   rules: {
     analysisName: [
       { required: true, message: "故障类型名称不能为空", trigger: "change" }
     ],
-    analysisTime: [
-      { required: true, message: "维修时间不能为空", trigger: "blur" }
-    ],
+    // analysisTime: [
+    //   { required: true, message: "维修时间不能为空", trigger: "blur" }
+    // ],
   }
 });
 
@@ -143,14 +166,93 @@ const { queryParams, form, rules } = toRefs(data);
 
 /** 查询设备故障分析列表 */
 function getList() {
+  console.log('------------>', queryParams.value.test)
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeAnalysisRecordTime && '' != daterangeAnalysisRecordTime) {
-    queryParams.value.params["beginAnalysisRecordTime"] = daterangeAnalysisRecordTime.value[0];
-    queryParams.value.params["endAnalysisRecordTime"] = daterangeAnalysisRecordTime.value[1];
+
+  if (queryParams.value.yearAndMonth == null) {
+    queryParams.value.yearAndMonth = format(new Date(), 'yyyy-MM')
   }
+
   listAnalysis(queryParams.value).then(response => {
     analysisList.value = response.rows;
+
+    const chineseToEnglishMap = {
+      '润滑不良': 'poorLubrication',
+      '自然磨损': 'naturalWear',
+      '操作保养不良': 'poorOperationMaintenance',
+      '操作者精力不集中': 'operatorDistraction',
+      '修理质量不良': 'poorRepairQuality',
+      '操作不熟练': 'unskilledOperation',
+      '不合理超载使用': 'unreasonableOverload',
+      '原制造问题': 'originalManufacturingIssues',
+      '违章操作': 'violationOperation',
+      '原设计不良': 'poorDesign',
+      '原因不明': 'unknownReason'
+    };
+    // 初始化一个对象用于保存每种 faultType 的数据，使用 label 作为键
+    const faultTypeCategories = device_fault_analysis.value.reduce((acc, analysis) => {
+      acc[analysis.value] = { label: analysis.label, items: [] };
+      return acc;
+    }, {});
+
+    response.rows.forEach(item => {
+      // 检查 item.faultType 是否不是 null，并且存在于 deviceFaultAnalysis 的 value 中
+      if (item.faultType !== null) {
+        const faultTypeInfo = device_fault_analysis.value.find(fa => fa.value === item.faultType);
+        if (faultTypeInfo) {
+          // 根据 faultType 将 item 添加到相应的类别中
+          faultTypeCategories[faultTypeInfo.value].items.push(item);
+        }
+      }
+      // 如果 faultType 是 null，则跳过
+    });
+
+    let resultArrayFormat = [];
+
+    for (let key in faultTypeCategories) {
+      let timeSum = 0;
+
+      for (const item of faultTypeCategories[key].items) {
+        const faultDurationStr = item.faultDuration;
+        if (faultDurationStr) {
+          try {
+            timeSum += parseFloat(faultDurationStr.trim());
+          } catch (e) {
+            console.error(`Failed to parse faultDuration: ${faultDurationStr}`, e);
+          }
+        }
+      }
+
+      if (chineseToEnglishMap[key]) {
+        const labelEn = chineseToEnglishMap[key];
+        const labelOriginal = faultTypeCategories[key].label;
+        const children = [...faultTypeCategories[key].items];
+        const count = children.length;
+        resultArrayFormat.push({
+          faultTypeName: labelOriginal,
+          children: children,
+          count: count,
+          maintenanceId: `${labelEn}-${count}`,
+          faultDuration: timeSum.toFixed(2)
+        });
+      } else {
+        // 如果存在未在映射中定义的键，则保留原样或另行处理
+        const children = [...faultTypeCategories[key].items];
+        const count = children.length;
+        resultArrayFormat.push({
+          faultTypeName: key,
+          children: children,
+          count: count,
+          maintenanceId: `${key}-${count}`,
+          faultDuration: timeSum.toFixed(2)
+        });
+      }
+    }
+    tableList.value = resultArrayFormat
+    console.log({ resultArrayFormat });
+
+    console.log({ faultTypeCategories });
     total.value = response.total;
     loading.value = false;
   });
@@ -177,6 +279,8 @@ function reset() {
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
+
+
   getList();
 }
 

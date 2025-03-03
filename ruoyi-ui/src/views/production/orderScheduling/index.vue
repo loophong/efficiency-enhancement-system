@@ -206,6 +206,11 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:scheduling:remove']">删除
           </el-button>
+          <!--     如果订单未排产，则显示插单按钮     -->
+          <el-button link type="primary" icon="Edit" @click="handleInsert(scope.row)"
+                     v-if="scope.row.isScheduling === 0"
+                     v-hasPermi="['production:scheduling:insert']">插单
+          </el-button>
           <!--    如果已经排产，则显示特殊情况上报按钮    -->
           <el-button link type="primary" icon="Upload" @click="handleSpecialReport(scope.row)"
                      v-if="scope.row.isScheduling === 1"
@@ -231,10 +236,7 @@
           <el-input v-model="form.orderNumber" placeholder="请输入订单号"/>
         </el-form-item>
         <el-form-item label="接单日期" prop="orderDate">
-          <el-date-picker clearable
-                          v-model="form.orderDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.orderDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择接单日期">
           </el-date-picker>
         </el-form-item>
@@ -284,26 +286,17 @@
           <el-input v-model="form.phoneNumber" placeholder="请输入联系电话"/>
         </el-form-item>
         <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
-          <el-date-picker clearable
-                          v-model="form.systemDeliveryDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择订单系统交货期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="生产回复完工日期" prop="productionCompletionDate">
-          <el-date-picker clearable
-                          v-model="form.productionCompletionDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.productionCompletionDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择生产回复完工日期">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
-          <el-date-picker clearable
-                          v-model="form.procurementArrivalDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.procurementArrivalDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择采购回复到货时间">
           </el-date-picker>
         </el-form-item>
@@ -311,10 +304,7 @@
           <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
         </el-form-item>
         <el-form-item label="最晚上线日期" prop="latestOnlineDate">
-          <el-date-picker clearable
-                          v-model="form.latestOnlineDate"
-                          type="date"
-                          value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择最晚上线日期">
           </el-date-picker>
         </el-form-item>
@@ -337,7 +327,7 @@
     </el-dialog>
 
 
-    <!-- 添加或修改订单信息对话框 -->
+    <!-- 特殊情况上报对话框 -->
     <el-dialog title="特殊情况填报" v-model="specialVisible" width="500px" append-to-body>
       <el-form ref="specialRef" :model="specialForm" :rules="specialRules" label-width="80px">
         <el-form-item label="订单号" prop="orderNumber">
@@ -371,6 +361,81 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 插单处理对话框 -->
+    <el-dialog title="插单处理窗口" v-model="insertDialogVisible" width="95%" append-to-body>
+
+      <el-date-picker v-model="insertOrderDate" type="date" value-format="YYYY-MM-DD"
+                      placeholder="请选择插单日期"></el-date-picker>
+      <el-button type="primary" @click="getOrdersAndCapacityByDate">查 询</el-button>
+
+      <div style="display: flex; margin: 20px; width:95%;">
+        <div style="flex: 1; border: #00afff solid;">
+          <!--   渲染产能总数和已使用产能数量   -->
+          <el-form label-width="120px">
+            <el-col style="margin: 20px">
+              <div v-for="(item, index) in usedCapacity" :key="index">
+                <el-form-item :label="item.capacityType">
+                  <el-input v-model="item.productionQuantity" readonly style="width: 150px;"
+                            input-style="font-size: large; font-weight: bold;" size="large" placeholder="Please input">
+                    <template #append>
+                      <span style="width: 30px; font-size: large; font-weight: bold;">
+                       {{ item.quantitySettings }}
+                      </span>
+                    </template>
+                  </el-input>
+                </el-form-item>
+              </div>
+            </el-col>
+          </el-form>
+        </div>
+
+        <div style="flex: 4; border: #2d2d2d solid;">
+          <!--   展示一般订单   -->
+          <el-table ref="scheduledTable" :data="scheduledList" height="500px" width="auto"
+                    @selection-change="handleStandardSelectionChange">
+            <el-table-column type="selection" width="55" align="center"/>
+            <el-table-column label="网点名称" align="center" prop="branch"/>
+            <el-table-column label="合同号" align="center" prop="contractNumber"/>
+            <el-table-column label="订单号" align="center" prop="orderNumber"/>
+            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
+            <el-table-column label="数量" align="center" prop="quantity"/>
+            <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
+            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
+            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
+            <el-table-column label="产能型号" align="center" prop="capacityType"/>
+            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="是否超期" align="center" prop="isOverdue"/>
+          </el-table>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitInsetOrder">确 定</el-button>
+          <el-button @click="cancelInsertOrder">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -380,9 +445,14 @@ import {
   getScheduling,
   delScheduling,
   addScheduling,
-  updateScheduling
+  updateScheduling,
+  getOrdersAndCapacityInfoByDate, schedulingOrders
 } from "@/api/production/orderScheduling.js";
 import {addCases} from "@/api/production/special";
+import dayjs from "dayjs";
+import useTagsViewStore from "@/store/modules/tagsView.js";
+// import {getCapacity} from "@/api/production/capacity";
+// import {handleStandardSelectionChange} from "../scheduling/index.vue";
 
 const {proxy} = getCurrentInstance();
 
@@ -591,6 +661,7 @@ function handleExport() {
 
 getList();
 
+
 const specialVisible = ref(false);
 const specialForm = ref({});
 
@@ -630,5 +701,135 @@ function submitSpecial() {
       });
     }
   })
+}
+
+
+const insertDialogVisible = ref(false);
+const schedulingOrderVisible = ref(false);
+const insertOrderDate = ref("");
+
+/**
+ *  插单处理
+ *  1、打开对话框
+ *  2、用户选择插单时间
+ *  3、从后台获取当日产能信息 和 当日排产信息
+ */
+const insertDialogRow = ref({});
+
+function handleInsert(row) {
+  insertDialogVisible.value = true;
+  insertDialogRow.value = row;
+}
+
+// 已使用产能列表
+const usedCapacity = ref([]);
+// 未排产订单列表
+const scheduledList = ref([]);
+
+function getOrdersAndCapacityByDate() {
+  if (insertOrderDate.value === null || insertOrderDate.value === "") {
+    proxy.$modal.msgError("请选择插单日期");
+  } else {
+    console.log("插单日期：" + insertOrderDate.value);
+    getOrdersAndCapacityInfoByDate(insertOrderDate.value).then(response => {
+      console.log("查询结果为" + response);
+      usedCapacity.value = response.data.dailyUsedCapacityEntities;
+      scheduledList.value = response.data.orderSchedulingEntities;
+
+      scheduledList.value.unshift(insertDialogRow.value);
+      console.log("待排产订单：" + JSON.stringify(insertDialogRow.value));
+
+      // 将 scheduledList 的selection全部勾选上
+      nextTick(() => {
+        scheduledList.value.forEach(item => {
+          proxy.$refs.scheduledTable.toggleRowSelection(item, true);
+        });
+      });
+    })
+  }
+}
+
+function submitInsetOrder() {
+
+  // insertOrderDate.value();
+  // usedCapacity.value
+  // scheduledList.value
+  let date = dayjs(insertOrderDate.value).format("YYYY-MM-DD");
+  console.log("格式化之后的时间" + date)
+  let orderSchedulingList = []
+  scheduledList.value.forEach(item => {
+    orderSchedulingList.push({
+      'id': item.id,
+      'isScheduling': item.isScheduling,
+      'onlineDate': item.isScheduling === 1 ? date : ''
+    })
+  });
+
+  schedulingOrders(orderSchedulingList, usedCapacity.value).then((response) => {
+    console.log("排产结果" + response)
+    // 提示用户排产成功
+    // proxy.$message({
+    //   message: "排产成功"
+    // })
+    cancelInsertOrder()
+  })
+}
+
+
+function cancelInsertOrder() {
+  insertDialogVisible.value = false;
+  // 清空
+  usedCapacity.value = [];
+  scheduledList.value = [];
+  insertOrderDate.value = "";
+}
+
+/**
+ * 下面三个方法是插单统计，不要修改
+ *
+ */
+// 多选框选中一般排产数据
+function handleStandardSelectionChange(selection) {
+  console.log('selection', selection);
+  console.log("统计")
+  // 清空
+  scheduledList.value.forEach(order => {
+    order.isScheduling = 0;
+  })
+
+  // 修改allOrders，将选中的订单排产状态改为1
+  selection.forEach(item => {
+    // 从修改allOrders中修改排产状态
+    scheduledList.value.forEach(order => {
+      if (item.id === order.id) {
+        order.isScheduling = 1;
+      }
+    })
+  })
+  countUsedCapacity()
+}
+
+// 统计已使用产能
+function countUsedCapacity() {
+  console.log("开始统计已使用产能")
+
+  usedCapacity.value.forEach(item => {
+    item.productionQuantity = 0;
+  })
+  usedCapacity.value.forEach(item => {
+    // 从allOrders订单中统计已使用产能
+    item.productionQuantity = getUsedCapacity(item.capacityType, scheduledList);
+  })
+  console.log("已使用产能列表：" + JSON.stringify(usedCapacity.value))
+}
+
+// 根据车型获取已使用产能
+function getUsedCapacity(capacityType, list) {
+  console.log("当前统计的车型为：" + capacityType)
+  const used = list.value.filter(item =>
+      item.capacityType === capacityType && item.isScheduling === 1
+  ).reduce((sum, item) => sum + item.quantity, 0);
+  console.log("车型已使用产能：" + used)
+  return used ? used : 0;
 }
 </script>
