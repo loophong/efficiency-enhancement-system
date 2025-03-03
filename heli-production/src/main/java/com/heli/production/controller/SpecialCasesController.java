@@ -3,6 +3,8 @@ package com.heli.production.controller;
 import com.heli.production.domain.entity.SpecialCasesEntity;
 import com.heli.production.service.ISpecialCasesService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+
+import com.ruoyi.framework.websocket.WebSocketServer;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,8 @@ import java.util.List;
 public class SpecialCasesController extends BaseController {
     @Autowired
     private ISpecialCasesService specialCasesService;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     /**
      * 查询特殊情况列表
@@ -73,6 +77,8 @@ public class SpecialCasesController extends BaseController {
     @Log(title = "特殊情况", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SpecialCasesEntity specialCases) {
+        webSocketServer.sendMessage(1L, "您有新的特殊情况，请及时处理");
+
         return toAjax(specialCasesService.insertSpecialCases(specialCases));
     }
 
@@ -83,6 +89,7 @@ public class SpecialCasesController extends BaseController {
     @Log(title = "特殊情况", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SpecialCasesEntity specialCases) {
+        webSocketServer.sendMessage(1L, "特殊情况，已处理");
         return toAjax(specialCasesService.updateSpecialCases(specialCases));
     }
 
