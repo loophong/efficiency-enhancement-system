@@ -1,0 +1,135 @@
+package com.ruoyi.security.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+
+/**
+ * 作废受控文件收回销毁登记对象 security_obsolete_controlled_document_disposal_register
+ * 
+ * @author wang
+ * @date 2025-03-02
+ */
+public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** 序号 */
+    private Long id;
+
+    /** 文件名称 */
+    @Excel(name = "文件名称")
+    private String fileName;
+
+    /** 编号 */
+    @Excel(name = "编号")
+    private String documentNumber;
+
+    /** 回收部门 */
+    @Excel(name = "回收部门")
+    private String recyclingDepartment;
+
+    /** 是否销毁 */
+    @Excel(name = "是否销毁")
+    private Integer isDestroyed;
+
+    /** 备注 */
+    @Excel(name = "备注")
+    private String remarks;
+
+    /** 年份 */
+    @Excel(name = "年份")
+    private String year;
+
+    /** 确认人 */
+    @Excel(name = "确认人")
+    private String reviewer;
+
+    public void setId(Long id) 
+    {
+        this.id = id;
+    }
+
+    public Long getId() 
+    {
+        return id;
+    }
+    public void setFileName(String fileName) 
+    {
+        this.fileName = fileName;
+    }
+
+    public String getFileName() 
+    {
+        return fileName;
+    }
+    public void setDocumentNumber(String documentNumber) 
+    {
+        this.documentNumber = documentNumber;
+    }
+
+    public String getDocumentNumber() 
+    {
+        return documentNumber;
+    }
+    public void setRecyclingDepartment(String recyclingDepartment) 
+    {
+        this.recyclingDepartment = recyclingDepartment;
+    }
+
+    public String getRecyclingDepartment() 
+    {
+        return recyclingDepartment;
+    }
+    public void setIsDestroyed(Integer isDestroyed) 
+    {
+        this.isDestroyed = isDestroyed;
+    }
+
+    public Integer getIsDestroyed() 
+    {
+        return isDestroyed;
+    }
+    public void setRemarks(String remarks) 
+    {
+        this.remarks = remarks;
+    }
+
+    public String getRemarks() 
+    {
+        return remarks;
+    }
+    public void setYear(String year) 
+    {
+        this.year = year;
+    }
+
+    public String getYear() 
+    {
+        return year;
+    }
+    public void setReviewer(String reviewer) 
+    {
+        this.reviewer = reviewer;
+    }
+
+    public String getReviewer() 
+    {
+        return reviewer;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("id", getId())
+            .append("fileName", getFileName())
+            .append("documentNumber", getDocumentNumber())
+            .append("recyclingDepartment", getRecyclingDepartment())
+            .append("isDestroyed", getIsDestroyed())
+            .append("remarks", getRemarks())
+            .append("year", getYear())
+            .append("reviewer", getReviewer())
+            .toString();
+    }
+}

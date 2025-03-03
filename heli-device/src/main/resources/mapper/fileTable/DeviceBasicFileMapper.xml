@@ -27,7 +27,7 @@
         <where>
             <if test="basicCombineMaintenance != null "> and basic_combine_maintenance = #{basicCombineMaintenance}</if>
             <if test="basicCombineRepair != null  and basicCombineRepair != ''"> and basic_combine_repair = #{basicCombineRepair}</if>
-            <if test="deviceNum != null  and deviceNum != ''"> and device_num like concat('%', #{deviceNum}, '%')</if>
+            <if test="deviceNum != null  and deviceNum != ''"> and device_num = #{deviceNum}</if>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
             <if test="upTime != null "> and up_time = #{upTime}</if>

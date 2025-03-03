@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询2.设备故障记录(导入)列表
+// 查询设备故障记录列表
 export function listTable(query) {
   return request({
     url: '/fault/maintenance/list',
@@ -9,7 +9,7 @@ export function listTable(query) {
   })
 }
 
-// 查询2.设备故障记录(导入)详细
+// 查询设备故障记录详细
 export function getTable(maintenanceTableId) {
   return request({
     url: '/fault/maintenance/' + maintenanceTableId,
@@ -17,7 +17,7 @@ export function getTable(maintenanceTableId) {
   })
 }
 
-// 新增2.设备故障记录(导入)
+// 新增设备故障记录
 export function addTable(data) {
   return request({
     url: '/fault/maintenance',
@@ -26,7 +26,7 @@ export function addTable(data) {
   })
 }
 
-// 修改2.设备故障记录(导入)
+// 修改设备故障记录
 export function updateTable(data) {
   return request({
     url: '/fault/maintenance',
@@ -35,11 +35,21 @@ export function updateTable(data) {
   })
 }
 
-// 删除2.设备故障记录(导入)
+// 删除设备故障记录
 export function delTable(maintenanceTableId) {
   return request({
     url: '/fault/maintenance/' + maintenanceTableId,
     method: 'delete'
+  })
+}
+
+
+
+export function getTreeList(query) {
+  return request({
+    url: '/fault/maintenance/treeList',
+    method: 'get',
+    params: query,
   })
 }
 

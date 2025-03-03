@@ -1,6 +1,12 @@
 package com.heli.device.maintenanceTable.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
+
+import com.alibaba.excel.EasyExcel;
+import com.heli.device.maintenanceTable.listener.DeviceGroupPlanListener;
+import com.ruoyi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper;
@@ -14,10 +20,38 @@ import com.heli.device.maintenanceTable.service.IDeviceGroupPlanService;
  * @date 2025-01-19
  */
 @Service
+@Slf4j
 public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService 
 {
     @Autowired
     private DeviceGroupPlanMapper deviceGroupPlanMapper;
+
+
+
+    /**
+     * 班组计划表读取
+     *
+     * @param fileName    文件名
+     * @param inputStream 输入流
+     * @return {@link R }<{@link String }>
+     */
+    @Override
+    public R<String> readPlanGroupToDB(String fileName, InputStream inputStream) {
+        try {
+//            log.info("开始读取文件: {}", fileName);
+            // 读取文件前清空数据库
+//            log.info("开始清空数据库");
+//            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+            EasyExcel.read(inputStream, DeviceGroupPlan.class, new DeviceGroupPlanListener(deviceGroupPlanMapper)).sheet().headRowNumber(3).doRead();
+            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
 
     /**
      * 查询班组计划保养

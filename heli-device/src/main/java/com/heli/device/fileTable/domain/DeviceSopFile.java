@@ -32,9 +32,13 @@ public class DeviceSopFile extends BaseEntity
     @Excel(name = "设备名称")
     private String sopName;
 
-    /** SOP类型（保养/维修） */
-    @Excel(name = "SOP类型", readConverterExp = "保=养/维修")
-    private String sopType;
+    /** 保养文件 */
+    @Excel(name = "保养文件")
+    private String sopMaintenance;
+
+    /** 维修文件 */
+    @Excel(name = "维修文件")
+    private String sopRepair;
 
     /** 上传时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -45,75 +49,75 @@ public class DeviceSopFile extends BaseEntity
     @Excel(name = "是否是历史版本")
     private String ifHistory;
 
-
-
-    /** 文件信息 */
-//    @Excel(name = "是否是历史版本")
-    private String sopInfo;
-
-    public void setSopFileId(String sopFileId) 
+    public void setSopFileId(String sopFileId)
     {
         this.sopFileId = sopFileId;
     }
 
-    public String getSopFileId() 
+    public String getSopFileId()
     {
         return sopFileId;
     }
-    public String getSopInfo() {return sopInfo;}
-
-    public void setSopInfo(String sopInfo) {this.sopInfo = sopInfo;}
-    public void setSopCombineId(Long sopCombineId) 
+    public void setSopCombineId(Long sopCombineId)
     {
         this.sopCombineId = sopCombineId;
     }
 
-    public Long getSopCombineId() 
+    public Long getSopCombineId()
     {
         return sopCombineId;
     }
-    public void setSopNum(String sopNum) 
+    public void setSopNum(String sopNum)
     {
         this.sopNum = sopNum;
     }
 
-    public String getSopNum() 
+    public String getSopNum()
     {
         return sopNum;
     }
-    public void setSopName(String sopName) 
+    public void setSopName(String sopName)
     {
         this.sopName = sopName;
     }
 
-    public String getSopName() 
+    public String getSopName()
     {
         return sopName;
     }
-    public void setSopType(String sopType) 
+    public void setSopMaintenance(String sopMaintenance)
     {
-        this.sopType = sopType;
+        this.sopMaintenance = sopMaintenance;
     }
 
-    public String getSopType() 
+    public String getSopMaintenance()
     {
-        return sopType;
+        return sopMaintenance;
     }
-    public void setUpTime(Date upTime) 
+    public void setSopRepair(String sopRepair)
+    {
+        this.sopRepair = sopRepair;
+    }
+
+    public String getSopRepair()
+    {
+        return sopRepair;
+    }
+    public void setUpTime(Date upTime)
     {
         this.upTime = upTime;
     }
 
-    public Date getUpTime() 
+    public Date getUpTime()
     {
         return upTime;
     }
-    public void setIfHistory(String ifHistory) 
+    public void setIfHistory(String ifHistory)
     {
         this.ifHistory = ifHistory;
     }
 
-    public String getIfHistory() 
+    public String getIfHistory()
     {
         return ifHistory;
     }
@@ -121,14 +125,14 @@ public class DeviceSopFile extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("sopFileId", getSopFileId())
-            .append("sopCombineId", getSopCombineId())
-            .append("sopNum", getSopNum())
-            .append("sopName", getSopName())
-            .append("sopType", getSopType())
-            .append("upTime", getUpTime())
-            .append("ifHistory", getIfHistory())
-            .append("sopInfo", getSopInfo())
-            .toString();
+                .append("sopFileId", getSopFileId())
+                .append("sopCombineId", getSopCombineId())
+                .append("sopNum", getSopNum())
+                .append("sopName", getSopName())
+                .append("sopMaintenance", getSopMaintenance())
+                .append("sopRepair", getSopRepair())
+                .append("upTime", getUpTime())
+                .append("ifHistory", getIfHistory())
+                .toString();
     }
 }

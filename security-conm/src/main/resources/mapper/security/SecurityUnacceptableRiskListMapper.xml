@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityUnacceptableRiskListMapper">
+    
+    <resultMap type="SecurityUnacceptableRiskList" id="SecurityUnacceptableRiskListResult">
+        <result property="id"    column="id"    />
+        <result property="hazardSource"    column="hazard_source"    />
+        <result property="significantHazard"    column="significant_hazard"    />
+        <result property="accidentHealthHazards"    column="accident_health_hazards"    />
+        <result property="processEquipmentPersonnel"    column="process_equipment_personnel"    />
+        <result property="controlMethods"    column="control_methods"    />
+        <result property="departmentProcess"    column="department_process"    />
+    </resultMap>
+
+    <sql id="selectSecurityUnacceptableRiskListVo">
+        select id, hazard_source, significant_hazard, accident_health_hazards, process_equipment_personnel, control_methods, department_process from security_unacceptable_risk_list
+    </sql>
+
+    <select id="selectSecurityUnacceptableRiskListList" parameterType="SecurityUnacceptableRiskList" resultMap="SecurityUnacceptableRiskListResult">
+        <include refid="selectSecurityUnacceptableRiskListVo"/>
+        <where>  
+            <if test="hazardSource != null  and hazardSource != ''"> and hazard_source like concat('%', #{hazardSource}, '%')</if>
+            <if test="significantHazard != null  and significantHazard != ''"> and significant_hazard like concat('%', #{significantHazard}, '%')</if>
+            <if test="accidentHealthHazards != null  and accidentHealthHazards != ''"> and accident_health_hazards like concat('%', #{accidentHealthHazards}, '%')</if>
+            <if test="processEquipmentPersonnel != null  and processEquipmentPersonnel != ''"> and process_equipment_personnel like concat('%', #{processEquipmentPersonnel}, '%')</if>
+            <if test="controlMethods != null  and controlMethods != ''"> and control_methods like concat('%', #{controlMethods}, '%')</if>
+            <if test="departmentProcess != null  and departmentProcess != ''"> and department_process like concat('%', #{departmentProcess}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityUnacceptableRiskListById" parameterType="Long" resultMap="SecurityUnacceptableRiskListResult">
+        <include refid="selectSecurityUnacceptableRiskListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityUnacceptableRiskList" parameterType="SecurityUnacceptableRiskList" useGeneratedKeys="true" keyProperty="id">
+        insert into security_unacceptable_risk_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hazardSource != null and hazardSource != ''">hazard_source,</if>
+            <if test="significantHazard != null and significantHazard != ''">significant_hazard,</if>
+            <if test="accidentHealthHazards != null and accidentHealthHazards != ''">accident_health_hazards,</if>
+            <if test="processEquipmentPersonnel != null">process_equipment_personnel,</if>
+            <if test="controlMethods != null">control_methods,</if>
+            <if test="departmentProcess != null">department_process,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hazardSource != null and hazardSource != ''">#{hazardSource},</if>
+            <if test="significantHazard != null and significantHazard != ''">#{significantHazard},</if>
+            <if test="accidentHealthHazards != null and accidentHealthHazards != ''">#{accidentHealthHazards},</if>
+            <if test="processEquipmentPersonnel != null">#{processEquipmentPersonnel},</if>
+            <if test="controlMethods != null">#{controlMethods},</if>
+            <if test="departmentProcess != null">#{departmentProcess},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityUnacceptableRiskList" parameterType="SecurityUnacceptableRiskList">
+        update security_unacceptable_risk_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hazardSource != null and hazardSource != ''">hazard_source = #{hazardSource},</if>
+            <if test="significantHazard != null and significantHazard != ''">significant_hazard = #{significantHazard},</if>
+            <if test="accidentHealthHazards != null and accidentHealthHazards != ''">accident_health_hazards = #{accidentHealthHazards},</if>
+            <if test="processEquipmentPersonnel != null">process_equipment_personnel = #{processEquipmentPersonnel},</if>
+            <if test="controlMethods != null">control_methods = #{controlMethods},</if>
+            <if test="departmentProcess != null">department_process = #{departmentProcess},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityUnacceptableRiskListById" parameterType="Long">
+        delete from security_unacceptable_risk_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityUnacceptableRiskListByIds" parameterType="String">
+        delete from security_unacceptable_risk_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

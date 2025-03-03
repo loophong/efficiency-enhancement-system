@@ -1,15 +1,18 @@
 package com.heli.device.maintenanceTable.domain;
 
-import java.util.Date;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
+
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.baomidou.mybatisplus.annotation.TableName;
+
+import com.ruoyi.common.core.domain.BaseEntity;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
+
 
 /**
  * 2.设备故障记录(导入)对象 device_maintenance_table
@@ -17,6 +20,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author YYY
  * @date 2025-01-20
  */
+@TableName(value ="device_maintenance_table")
+@Data
 public class DeviceMaintenanceTable extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -26,70 +31,68 @@ public class DeviceMaintenanceTable extends BaseEntity
     @ExcelIgnore
     private Long maintenanceTableId;
 
+    /** 设备编号 */
+    @ExcelProperty(value = "设备编号")
+    private String deviceNum;
+
     /** 设备名称 */
-    @Excel(name = "设备名称")
+    @ExcelProperty(value = "设备名称")
     private String deviceName;
 
     /** 工单状态 */
-    @Excel(name = "工单状态")
+    @ExcelProperty(value = "工单状态")
     private String workStatus;
 
-    /** 设备编号 */
-    @Excel(name = "设备编号")
-    private String deviceNum;
-
     /** 问题类型 */
-    @Excel(name = "问题类型")
+    @ExcelProperty(value = "问题类型")
     private String issueType;
 
     /** 故障类型 */
-    @Excel(name = "故障类型")
+    @ExcelProperty(value = "故障类型")
     private String faultType;
 
     /** 申请人 */
-    @Excel(name = "申请人")
+    @ExcelProperty(value = "申请人")
     private String applyBy;
 
     /** 申请部门 */
-    @Excel(name = "申请部门")
+    @ExcelProperty(value = "申请部门")
     private String applyDepartment;
 
     /** 维修人员 */
-    @Excel(name = "维修人员")
+    @ExcelProperty(value = "维修人员")
     private String maintenancePeople;
 
     /** 故障现象 */
-    @Excel(name = "故障现象")
+    @ExcelProperty(value = "故障现象")
     private String faultPhenomenon;
 
     /** 维修分析 */
-    @Excel(name = "维修分析")
+    @ExcelProperty(value = "维修分析")
     private String maintenanceAnalysis;
 
     /** 维修内容 */
-    @Excel(name = "维修内容")
+    @ExcelProperty(value = "维修内容")
     private String maintenanceContent;
 
     /** 报修时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "报修时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date reportedTime;
+    @ExcelProperty(value = "报修时间")
+    private String reportedTime;
 
     /** 处理时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "处理时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date resolutionTime;
+    @ExcelProperty(value = "处理时间")
+    private String resolutionTime;
 
     /** 故障时长 */
-    @Excel(name = "故障时长")
+    @ExcelProperty(value = "故障时长")
     private String faultDuration;
 
     /** 维修费用 */
-    @Excel(name = "维修费用")
+    @ExcelProperty(value = "维修费用")
     private String maintenanceCast;
 
     /** 是否停机 */
-    @Excel(name = "是否停机")
+    @ExcelProperty(value = "是否停机")
     private String ifDown;
 
     public void setMaintenanceTableId(Long maintenanceTableId)
@@ -200,21 +203,21 @@ public class DeviceMaintenanceTable extends BaseEntity
     {
         return maintenanceContent;
     }
-    public void setReportedTime(Date reportedTime)
+    public void setReportedTime(String reportedTime)
     {
         this.reportedTime = reportedTime;
     }
 
-    public Date getReportedTime()
+    public String getReportedTime()
     {
         return reportedTime;
     }
-    public void setResolutionTime(Date resolutionTime)
+    public void setResolutionTime(String resolutionTime)
     {
         this.resolutionTime = resolutionTime;
     }
 
-    public Date getResolutionTime()
+    public String getResolutionTime()
     {
         return resolutionTime;
     }

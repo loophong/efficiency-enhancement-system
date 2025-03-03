@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityHazardousChemicalInventoryMapper">
+
+    <resultMap type="SecurityHazardousChemicalInventory" id="SecurityHazardousChemicalInventoryResult">
+        <result property="id"    column="id"    />
+        <result property="substanceName"    column="substance_name"    />
+        <result property="hazardousMaterialsNumber"    column="hazardous_materials_number"    />
+        <result property="casNumber"    column="cas_number"    />
+        <result property="fireDangerClass"    column="fire_danger_class"    />
+        <result property="appearance"    column="appearance"    />
+        <result property="maxDesignStock"    column="max_design_stock"    />
+        <result property="annualUsage"    column="annual_usage"    />
+        <result property="dailyStock"    column="daily_stock"    />
+        <result property="storageLocation"    column="storage_location"    />
+        <result property="managementResponsiblePerson"    column="management_responsible_person"    />
+        <result property="contactNumber"    column="contact_number"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityHazardousChemicalInventoryVo">
+        select id, substance_name, hazardous_materials_number, cas_number, fire_danger_class, appearance, max_design_stock, annual_usage, daily_stock, storage_location, management_responsible_person, contact_number, remarks from security_hazardous_chemical_inventory
+    </sql>
+
+    <select id="selectSecurityHazardousChemicalInventoryList" parameterType="SecurityHazardousChemicalInventory" resultMap="SecurityHazardousChemicalInventoryResult">
+        <include refid="selectSecurityHazardousChemicalInventoryVo"/>
+        <where>
+            <if test="substanceName != null  and substanceName != ''"> and substance_name like concat('%', #{substanceName}, '%')</if>
+            <if test="hazardousMaterialsNumber != null  and hazardousMaterialsNumber != ''"> and hazardous_materials_number like concat('%', #{hazardousMaterialsNumber}, '%')</if>
+            <if test="casNumber != null  and casNumber != ''"> and cas_number like concat('%', #{casNumber}, '%')</if>
+            <if test="fireDangerClass != null  and fireDangerClass != ''"> and fire_danger_class like concat('%', #{fireDangerClass}, '%')</if>
+            <if test="appearance != null  and appearance != ''"> and appearance like concat('%', #{appearance}, '%')</if>
+            <if test="maxDesignStock != null  and maxDesignStock != ''"> and max_design_stock like concat('%', #{maxDesignStock}, '%')</if>
+            <if test="annualUsage != null  and annualUsage != ''"> and annual_usage like concat('%', #{annualUsage}, '%')</if>
+            <if test="dailyStock != null  and dailyStock != ''"> and daily_stock like concat('%', #{dailyStock}, '%')</if>
+            <if test="storageLocation != null  and storageLocation != ''"> and storage_location like concat('%', #{storageLocation}, '%')</if>
+            <if test="managementResponsiblePerson != null  and managementResponsiblePerson != ''"> and management_responsible_person like concat('%', #{managementResponsiblePerson}, '%')</if>
+            <if test="contactNumber != null  and contactNumber != ''"> and contact_number like concat('%', #{contactNumber}, '%')</if>
+            <if test="remarks != null  and remarks != ''"> and remarks like concat('%', #{remarks}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectSecurityHazardousChemicalInventoryById" parameterType="String" resultMap="SecurityHazardousChemicalInventoryResult">
+        <include refid="selectSecurityHazardousChemicalInventoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityHazardousChemicalInventory" parameterType="SecurityHazardousChemicalInventory" useGeneratedKeys="true" keyProperty="id">
+        insert into security_hazardous_chemical_inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="substanceName != null">substance_name,</if>
+            <if test="hazardousMaterialsNumber != null">hazardous_materials_number,</if>
+            <if test="casNumber != null">cas_number,</if>
+            <if test="fireDangerClass != null">fire_danger_class,</if>
+            <if test="appearance != null">appearance,</if>
+            <if test="maxDesignStock != null">max_design_stock,</if>
+            <if test="annualUsage != null">annual_usage,</if>
+            <if test="dailyStock != null">daily_stock,</if>
+            <if test="storageLocation != null">storage_location,</if>
+            <if test="managementResponsiblePerson != null">management_responsible_person,</if>
+            <if test="contactNumber != null">contact_number,</if>
+            <if test="remarks != null">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="substanceName != null">#{substanceName},</if>
+            <if test="hazardousMaterialsNumber != null">#{hazardousMaterialsNumber},</if>
+            <if test="casNumber != null">#{casNumber},</if>
+            <if test="fireDangerClass != null">#{fireDangerClass},</if>
+            <if test="appearance != null">#{appearance},</if>
+            <if test="maxDesignStock != null">#{maxDesignStock},</if>
+            <if test="annualUsage != null">#{annualUsage},</if>
+            <if test="dailyStock != null">#{dailyStock},</if>
+            <if test="storageLocation != null">#{storageLocation},</if>
+            <if test="managementResponsiblePerson != null">#{managementResponsiblePerson},</if>
+            <if test="contactNumber != null">#{contactNumber},</if>
+            <if test="remarks != null">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSecurityHazardousChemicalInventory" parameterType="SecurityHazardousChemicalInventory">
+        update security_hazardous_chemical_inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="substanceName != null">substance_name = #{substanceName},</if>
+            <if test="hazardousMaterialsNumber != null">hazardous_materials_number = #{hazardousMaterialsNumber},</if>
+            <if test="casNumber != null">cas_number = #{casNumber},</if>
+            <if test="fireDangerClass != null">fire_danger_class = #{fireDangerClass},</if>
+            <if test="appearance != null">appearance = #{appearance},</if>
+            <if test="maxDesignStock != null">max_design_stock = #{maxDesignStock},</if>
+            <if test="annualUsage != null">annual_usage = #{annualUsage},</if>
+            <if test="dailyStock != null">daily_stock = #{dailyStock},</if>
+            <if test="storageLocation != null">storage_location = #{storageLocation},</if>
+            <if test="managementResponsiblePerson != null">management_responsible_person = #{managementResponsiblePerson},</if>
+            <if test="contactNumber != null">contact_number = #{contactNumber},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityHazardousChemicalInventoryById" parameterType="String">
+        delete from security_hazardous_chemical_inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityHazardousChemicalInventoryByIds" parameterType="String">
+        delete from security_hazardous_chemical_inventory where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

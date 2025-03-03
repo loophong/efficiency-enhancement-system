@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityCompanyKeyWorksMapper">
+    
+    <resultMap type="SecurityCompanyKeyWorks" id="SecurityCompanyKeyWorksResult">
+        <result property="id"    column="id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="keyWorkName"    column="key_work_name"    />
+        <result property="currentStatusAndCauses"    column="current_status_and_causes"    />
+        <result property="target"    column="target"    />
+        <result property="weight1"    column="weight_1"    />
+        <result property="weight2"    column="weight_2"    />
+        <result property="q1FocusImplementation"    column="q1_focus_implementation"    />
+        <result property="q1CompletionResults"    column="q1_completion_results"    />
+        <result property="q1Score"    column="q1_score"    />
+        <result property="q2FocusImplementation"    column="q2_focus_implementation"    />
+        <result property="q2CompletionResults"    column="q2_completion_results"    />
+        <result property="q2Score"    column="q2_score"    />
+        <result property="q3FocusImplementation"    column="q3_focus_implementation"    />
+        <result property="q3CompletionResults"    column="q3_completion_results"    />
+        <result property="q3Score"    column="q3_score"    />
+    </resultMap>
+
+    <sql id="selectSecurityCompanyKeyWorksVo">
+        select id, unit_name, key_work_name, current_status_and_causes, target, weight_1, weight_2, q1_focus_implementation, q1_completion_results, q1_score, q2_focus_implementation, q2_completion_results, q2_score, q3_focus_implementation, q3_completion_results, q3_score from security_company_key_works
+    </sql>
+
+    <select id="selectSecurityCompanyKeyWorksList" parameterType="SecurityCompanyKeyWorks" resultMap="SecurityCompanyKeyWorksResult">
+        <include refid="selectSecurityCompanyKeyWorksVo"/>
+        <where>  
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="keyWorkName != null  and keyWorkName != ''"> and key_work_name like concat('%', #{keyWorkName}, '%')</if>
+            <if test="currentStatusAndCauses != null  and currentStatusAndCauses != ''"> and current_status_and_causes like concat('%', #{currentStatusAndCauses}, '%')</if>
+            <if test="target != null  and target != ''"> and target like concat('%', #{target}, '%')</if>
+            <if test="weight1 != null  and weight1 != ''"> and weight_1 = #{weight1}</if>
+            <if test="weight2 != null  and weight2 != ''"> and weight_2 = #{weight2}</if>
+            <if test="q1FocusImplementation != null  and q1FocusImplementation != ''"> and q1_focus_implementation like concat('%', #{q1FocusImplementation}, '%')</if>
+            <if test="q1CompletionResults != null  and q1CompletionResults != ''"> and q1_completion_results like concat('%', #{q1CompletionResults}, '%')</if>
+            <if test="q1Score != null  and q1Score != ''"> and q1_score = #{q1Score}</if>
+            <if test="q2FocusImplementation != null  and q2FocusImplementation != ''"> and q2_focus_implementation like concat('%', #{q2FocusImplementation}, '%')</if>
+            <if test="q2CompletionResults != null  and q2CompletionResults != ''"> and q2_completion_results like concat('%', #{q2CompletionResults}, '%')</if>
+            <if test="q2Score != null  and q2Score != ''"> and q2_score = #{q2Score}</if>
+            <if test="q3FocusImplementation != null  and q3FocusImplementation != ''"> and q3_focus_implementation like concat('%', #{q3FocusImplementation}, '%')</if>
+            <if test="q3CompletionResults != null  and q3CompletionResults != ''"> and q3_completion_results like concat('%', #{q3CompletionResults}, '%')</if>
+            <if test="q3Score != null  and q3Score != ''"> and q3_score = #{q3Score}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityCompanyKeyWorksById" parameterType="Long" resultMap="SecurityCompanyKeyWorksResult">
+        <include refid="selectSecurityCompanyKeyWorksVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityCompanyKeyWorks" parameterType="SecurityCompanyKeyWorks" useGeneratedKeys="true" keyProperty="id">
+        insert into security_company_key_works
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="keyWorkName != null and keyWorkName != ''">key_work_name,</if>
+            <if test="currentStatusAndCauses != null and currentStatusAndCauses != ''">current_status_and_causes,</if>
+            <if test="target != null and target != ''">target,</if>
+            <if test="weight1 != null">weight_1,</if>
+            <if test="weight2 != null">weight_2,</if>
+            <if test="q1FocusImplementation != null">q1_focus_implementation,</if>
+            <if test="q1CompletionResults != null">q1_completion_results,</if>
+            <if test="q1Score != null">q1_score,</if>
+            <if test="q2FocusImplementation != null">q2_focus_implementation,</if>
+            <if test="q2CompletionResults != null">q2_completion_results,</if>
+            <if test="q2Score != null">q2_score,</if>
+            <if test="q3FocusImplementation != null">q3_focus_implementation,</if>
+            <if test="q3CompletionResults != null">q3_completion_results,</if>
+            <if test="q3Score != null">q3_score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="keyWorkName != null and keyWorkName != ''">#{keyWorkName},</if>
+            <if test="currentStatusAndCauses != null and currentStatusAndCauses != ''">#{currentStatusAndCauses},</if>
+            <if test="target != null and target != ''">#{target},</if>
+            <if test="weight1 != null">#{weight1},</if>
+            <if test="weight2 != null">#{weight2},</if>
+            <if test="q1FocusImplementation != null">#{q1FocusImplementation},</if>
+            <if test="q1CompletionResults != null">#{q1CompletionResults},</if>
+            <if test="q1Score != null">#{q1Score},</if>
+            <if test="q2FocusImplementation != null">#{q2FocusImplementation},</if>
+            <if test="q2CompletionResults != null">#{q2CompletionResults},</if>
+            <if test="q2Score != null">#{q2Score},</if>
+            <if test="q3FocusImplementation != null">#{q3FocusImplementation},</if>
+            <if test="q3CompletionResults != null">#{q3CompletionResults},</if>
+            <if test="q3Score != null">#{q3Score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityCompanyKeyWorks" parameterType="SecurityCompanyKeyWorks">
+        update security_company_key_works
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="keyWorkName != null and keyWorkName != ''">key_work_name = #{keyWorkName},</if>
+            <if test="currentStatusAndCauses != null and currentStatusAndCauses != ''">current_status_and_causes = #{currentStatusAndCauses},</if>
+            <if test="target != null and target != ''">target = #{target},</if>
+            <if test="weight1 != null">weight_1 = #{weight1},</if>
+            <if test="weight2 != null">weight_2 = #{weight2},</if>
+            <if test="q1FocusImplementation != null">q1_focus_implementation = #{q1FocusImplementation},</if>
+            <if test="q1CompletionResults != null">q1_completion_results = #{q1CompletionResults},</if>
+            <if test="q1Score != null">q1_score = #{q1Score},</if>
+            <if test="q2FocusImplementation != null">q2_focus_implementation = #{q2FocusImplementation},</if>
+            <if test="q2CompletionResults != null">q2_completion_results = #{q2CompletionResults},</if>
+            <if test="q2Score != null">q2_score = #{q2Score},</if>
+            <if test="q3FocusImplementation != null">q3_focus_implementation = #{q3FocusImplementation},</if>
+            <if test="q3CompletionResults != null">q3_completion_results = #{q3CompletionResults},</if>
+            <if test="q3Score != null">q3_score = #{q3Score},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityCompanyKeyWorksById" parameterType="Long">
+        delete from security_company_key_works where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityCompanyKeyWorksByIds" parameterType="String">
+        delete from security_company_key_works where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecueityCompanyKpiMapper">
+    
+    <resultMap type="SecueityCompanyKpi" id="SecueityCompanyKpiResult">
+        <result property="id"    column="id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="category"    column="category"    />
+        <result property="indicatorName"    column="indicator_name"    />
+        <result property="unitOfMeasurement"    column="unit_of_measurement"    />
+        <result property="year"    column="year"    />
+        <result property="annualTargetValue"    column="annual_target_value"    />
+        <result property="evaluationFrequency"    column="evaluation_frequency"    />
+        <result property="weight"    column="weight"    />
+        <result property="q1TargetValue"    column="q1_target_value"    />
+        <result property="q1Result"    column="q1_result"    />
+        <result property="q1VerifiedValue"    column="q1_verified_value"    />
+        <result property="q2TargetValue"    column="q2_target_value"    />
+        <result property="q2Result"    column="q2_result"    />
+        <result property="q2VerifiedValue"    column="q2_verified_value"    />
+        <result property="q3TargetValue"    column="q3_target_value"    />
+        <result property="q3Result"    column="q3_result"    />
+        <result property="q3VerifiedValue"    column="q3_verified_value"    />
+        <result property="q4TargetValue"    column="q4_target_value"    />
+        <result property="q4Result"    column="q4_result"    />
+        <result property="q4VerifiedValue"    column="q4_verified_value"    />
+        <result property="beizhu"    column="beizhu"    />
+    </resultMap>
+
+    <sql id="selectSecueityCompanyKpiVo">
+        select id, unit_name, category, indicator_name, unit_of_measurement, year, annual_target_value, evaluation_frequency, weight, q1_target_value, q1_result, q1_verified_value, q2_target_value, q2_result, q2_verified_value, q3_target_value, q3_result, q3_verified_value, q4_target_value, q4_result, q4_verified_value, beizhu from secueity_company_kpi
+    </sql>
+
+    <select id="selectSecueityCompanyKpiList" parameterType="SecueityCompanyKpi" resultMap="SecueityCompanyKpiResult">
+        <include refid="selectSecueityCompanyKpiVo"/>
+        <where>  
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="indicatorName != null  and indicatorName != ''"> and indicator_name like concat('%', #{indicatorName}, '%')</if>
+            <if test="unitOfMeasurement != null  and unitOfMeasurement != ''"> and unit_of_measurement = #{unitOfMeasurement}</if>
+            <if test="year != null  and year != ''"> and year = #{year}</if>
+            <if test="annualTargetValue != null "> and annual_target_value = #{annualTargetValue}</if>
+            <if test="evaluationFrequency != null  and evaluationFrequency != ''"> and evaluation_frequency = #{evaluationFrequency}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="q1TargetValue != null "> and q1_target_value = #{q1TargetValue}</if>
+            <if test="q1Result != null "> and q1_result = #{q1Result}</if>
+            <if test="q1VerifiedValue != null "> and q1_verified_value = #{q1VerifiedValue}</if>
+            <if test="q2TargetValue != null "> and q2_target_value = #{q2TargetValue}</if>
+            <if test="q2Result != null "> and q2_result = #{q2Result}</if>
+            <if test="q2VerifiedValue != null "> and q2_verified_value = #{q2VerifiedValue}</if>
+            <if test="q3TargetValue != null "> and q3_target_value = #{q3TargetValue}</if>
+            <if test="q3Result != null "> and q3_result = #{q3Result}</if>
+            <if test="q3VerifiedValue != null "> and q3_verified_value = #{q3VerifiedValue}</if>
+            <if test="q4TargetValue != null  and q4TargetValue != ''"> and q4_target_value = #{q4TargetValue}</if>
+            <if test="q4Result != null  and q4Result != ''"> and q4_result = #{q4Result}</if>
+            <if test="q4VerifiedValue != null  and q4VerifiedValue != ''"> and q4_verified_value = #{q4VerifiedValue}</if>
+            <if test="beizhu != null  and beizhu != ''"> and beizhu = #{beizhu}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecueityCompanyKpiById" parameterType="Long" resultMap="SecueityCompanyKpiResult">
+        <include refid="selectSecueityCompanyKpiVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecueityCompanyKpi" parameterType="SecueityCompanyKpi" useGeneratedKeys="true" keyProperty="id">
+        insert into secueity_company_kpi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="indicatorName != null and indicatorName != ''">indicator_name,</if>
+            <if test="unitOfMeasurement != null and unitOfMeasurement != ''">unit_of_measurement,</if>
+            <if test="year != null and year != ''">year,</if>
+            <if test="annualTargetValue != null">annual_target_value,</if>
+            <if test="evaluationFrequency != null and evaluationFrequency != ''">evaluation_frequency,</if>
+            <if test="weight != null">weight,</if>
+            <if test="q1TargetValue != null">q1_target_value,</if>
+            <if test="q1Result != null">q1_result,</if>
+            <if test="q1VerifiedValue != null">q1_verified_value,</if>
+            <if test="q2TargetValue != null">q2_target_value,</if>
+            <if test="q2Result != null">q2_result,</if>
+            <if test="q2VerifiedValue != null">q2_verified_value,</if>
+            <if test="q3TargetValue != null">q3_target_value,</if>
+            <if test="q3Result != null">q3_result,</if>
+            <if test="q3VerifiedValue != null">q3_verified_value,</if>
+            <if test="q4TargetValue != null">q4_target_value,</if>
+            <if test="q4Result != null">q4_result,</if>
+            <if test="q4VerifiedValue != null">q4_verified_value,</if>
+            <if test="beizhu != null">beizhu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="indicatorName != null and indicatorName != ''">#{indicatorName},</if>
+            <if test="unitOfMeasurement != null and unitOfMeasurement != ''">#{unitOfMeasurement},</if>
+            <if test="year != null and year != ''">#{year},</if>
+            <if test="annualTargetValue != null">#{annualTargetValue},</if>
+            <if test="evaluationFrequency != null and evaluationFrequency != ''">#{evaluationFrequency},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="q1TargetValue != null">#{q1TargetValue},</if>
+            <if test="q1Result != null">#{q1Result},</if>
+            <if test="q1VerifiedValue != null">#{q1VerifiedValue},</if>
+            <if test="q2TargetValue != null">#{q2TargetValue},</if>
+            <if test="q2Result != null">#{q2Result},</if>
+            <if test="q2VerifiedValue != null">#{q2VerifiedValue},</if>
+            <if test="q3TargetValue != null">#{q3TargetValue},</if>
+            <if test="q3Result != null">#{q3Result},</if>
+            <if test="q3VerifiedValue != null">#{q3VerifiedValue},</if>
+            <if test="q4TargetValue != null">#{q4TargetValue},</if>
+            <if test="q4Result != null">#{q4Result},</if>
+            <if test="q4VerifiedValue != null">#{q4VerifiedValue},</if>
+            <if test="beizhu != null">#{beizhu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecueityCompanyKpi" parameterType="SecueityCompanyKpi">
+        update secueity_company_kpi
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
+            <if test="unitOfMeasurement != null and unitOfMeasurement != ''">unit_of_measurement = #{unitOfMeasurement},</if>
+            <if test="year != null and year != ''">year = #{year},</if>
+            <if test="annualTargetValue != null">annual_target_value = #{annualTargetValue},</if>
+            <if test="evaluationFrequency != null and evaluationFrequency != ''">evaluation_frequency = #{evaluationFrequency},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="q1TargetValue != null">q1_target_value = #{q1TargetValue},</if>
+            <if test="q1Result != null">q1_result = #{q1Result},</if>
+            <if test="q1VerifiedValue != null">q1_verified_value = #{q1VerifiedValue},</if>
+            <if test="q2TargetValue != null">q2_target_value = #{q2TargetValue},</if>
+            <if test="q2Result != null">q2_result = #{q2Result},</if>
+            <if test="q2VerifiedValue != null">q2_verified_value = #{q2VerifiedValue},</if>
+            <if test="q3TargetValue != null">q3_target_value = #{q3TargetValue},</if>
+            <if test="q3Result != null">q3_result = #{q3Result},</if>
+            <if test="q3VerifiedValue != null">q3_verified_value = #{q3VerifiedValue},</if>
+            <if test="q4TargetValue != null">q4_target_value = #{q4TargetValue},</if>
+            <if test="q4Result != null">q4_result = #{q4Result},</if>
+            <if test="q4VerifiedValue != null">q4_verified_value = #{q4VerifiedValue},</if>
+            <if test="beizhu != null">beizhu = #{beizhu},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecueityCompanyKpiById" parameterType="Long">
+        delete from secueity_company_kpi where id = #{id}
+    </delete>
+
+    <delete id="deleteSecueityCompanyKpiByIds" parameterType="String">
+        delete from secueity_company_kpi where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

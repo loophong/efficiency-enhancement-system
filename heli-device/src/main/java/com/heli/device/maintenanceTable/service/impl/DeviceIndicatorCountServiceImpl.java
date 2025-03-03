@@ -1,10 +1,16 @@
 package com.heli.device.maintenanceTable.service.impl;
 
+import java.io.InputStream;
 import java.util.List;
+
+import com.alibaba.excel.EasyExcel;
+import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
+import com.heli.device.maintenanceTable.listener.IndicatorListener;
+import com.ruoyi.common.core.domain.R;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.device.maintenanceTable.mapper.DeviceIndicatorCountMapper;
-import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
 import com.heli.device.maintenanceTable.service.IDeviceIndicatorCountService;
 
 /**
@@ -14,10 +20,30 @@ import com.heli.device.maintenanceTable.service.IDeviceIndicatorCountService;
  * @date 2025-01-18
  */
 @Service
+@Slf4j
 public class DeviceIndicatorCountServiceImpl implements IDeviceIndicatorCountService 
 {
     @Autowired
     private DeviceIndicatorCountMapper deviceIndicatorCountMapper;
+
+    @Override
+    public R<String> readIndicatorToDB(String fileName, InputStream inputStream) {
+        try {
+//            log.info("开始读取文件: {}", fileName);
+            // 读取文件前清空数据库
+//            log.info("开始清空数据库");
+//            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+            EasyExcel.read(inputStream, DeviceIndicatorCount.class, new IndicatorListener(deviceIndicatorCountMapper)).sheet().doRead();
+            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
+
 
     /**
      * 查询设备指标分析

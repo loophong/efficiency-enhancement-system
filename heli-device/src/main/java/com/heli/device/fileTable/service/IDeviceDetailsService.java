@@ -1,7 +1,9 @@
 package com.heli.device.fileTable.service;
 
+import java.io.InputStream;
 import java.util.List;
 import com.heli.device.fileTable.domain.DeviceDetails;
+import com.ruoyi.common.core.domain.R;
 
 /**
  * 设备台账Service接口
@@ -18,6 +20,15 @@ public interface IDeviceDetailsService
      * @return 设备台账
      */
     public DeviceDetails selectDeviceDetailsByDetailsId(String detailsId);
+
+    /**
+     * 读取设备台账
+     *
+     * @param fileName    文件名
+     * @param inputStream 输入流
+     * @return {@link R }<{@link String }>
+     */
+    public R<String> readDetailsToDB(String fileName, InputStream inputStream);
 
     /**
      * 查询设备台账列表

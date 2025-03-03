@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityManagementMapper">
+    
+    <resultMap type="SecurityManagement" id="SecurityManagementResult">
+        <result property="id"    column="id"    />
+        <result property="address"    column="address"    />
+        <result property="beiyong1"    column="beiyong1"    />
+        <result property="beiyong2"    column="beiyong2"    />
+        <result property="beiyong3"    column="beiyong3"    />
+        <result property="beiyong4"    column="beiyong4"    />
+    </resultMap>
+
+    <sql id="selectSecurityManagementVo">
+        select id, address, beiyong1, beiyong2, beiyong3, beiyong4 from security_management
+    </sql>
+
+    <select id="selectSecurityManagementList" parameterType="SecurityManagement" resultMap="SecurityManagementResult">
+        <include refid="selectSecurityManagementVo"/>
+        <where>  
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="beiyong1 != null  and beiyong1 != ''"> and beiyong1 = #{beiyong1}</if>
+            <if test="beiyong2 != null "> and beiyong2 = #{beiyong2}</if>
+            <if test="beiyong3 != null "> and beiyong3 = #{beiyong3}</if>
+            <if test="beiyong4 != null  and beiyong4 != ''"> and beiyong4 = #{beiyong4}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityManagementById" parameterType="Long" resultMap="SecurityManagementResult">
+        <include refid="selectSecurityManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityManagement" parameterType="SecurityManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into security_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="address != null">address,</if>
+            <if test="beiyong1 != null">beiyong1,</if>
+            <if test="beiyong2 != null">beiyong2,</if>
+            <if test="beiyong3 != null">beiyong3,</if>
+            <if test="beiyong4 != null">beiyong4,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="address != null">#{address},</if>
+            <if test="beiyong1 != null">#{beiyong1},</if>
+            <if test="beiyong2 != null">#{beiyong2},</if>
+            <if test="beiyong3 != null">#{beiyong3},</if>
+            <if test="beiyong4 != null">#{beiyong4},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityManagement" parameterType="SecurityManagement">
+        update security_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="address != null">address = #{address},</if>
+            <if test="beiyong1 != null">beiyong1 = #{beiyong1},</if>
+            <if test="beiyong2 != null">beiyong2 = #{beiyong2},</if>
+            <if test="beiyong3 != null">beiyong3 = #{beiyong3},</if>
+            <if test="beiyong4 != null">beiyong4 = #{beiyong4},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityManagementById" parameterType="Long">
+        delete from security_management where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityManagementByIds" parameterType="String">
+        delete from security_management where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

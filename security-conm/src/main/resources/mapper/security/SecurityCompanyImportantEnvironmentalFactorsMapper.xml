@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityCompanyImportantEnvironmentalFactorsMapper">
+    
+    <resultMap type="SecurityCompanyImportantEnvironmentalFactors" id="SecurityCompanyImportantEnvironmentalFactorsResult">
+        <result property="id"    column="id"    />
+        <result property="environmentalFactor"    column="environmental_factor"    />
+        <result property="environmentalImpact"    column="environmental_impact"    />
+        <result property="activityProductService"    column="activity_product_service"    />
+        <result property="departmentProcessPosition"    column="department_process_position"    />
+        <result property="temporalState"    column="temporal_state"    />
+        <result property="controlMeasures"    column="control_measures"    />
+    </resultMap>
+
+    <sql id="selectSecurityCompanyImportantEnvironmentalFactorsVo">
+        select id, environmental_factor, environmental_impact, activity_product_service, department_process_position, temporal_state, control_measures from security_company_important_environmental_factors
+    </sql>
+
+    <select id="selectSecurityCompanyImportantEnvironmentalFactorsList" parameterType="SecurityCompanyImportantEnvironmentalFactors" resultMap="SecurityCompanyImportantEnvironmentalFactorsResult">
+        <include refid="selectSecurityCompanyImportantEnvironmentalFactorsVo"/>
+        <where>  
+            <if test="environmentalFactor != null  and environmentalFactor != ''"> and environmental_factor like concat('%', #{environmentalFactor}, '%')</if>
+            <if test="environmentalImpact != null  and environmentalImpact != ''"> and environmental_impact like concat('%', #{environmentalImpact}, '%')</if>
+            <if test="activityProductService != null  and activityProductService != ''"> and activity_product_service like concat('%', #{activityProductService}, '%')</if>
+            <if test="departmentProcessPosition != null  and departmentProcessPosition != ''"> and department_process_position like concat('%', #{departmentProcessPosition}, '%')</if>
+            <if test="temporalState != null  and temporalState != ''"> and temporal_state like concat('%', #{temporalState}, '%')</if>
+            <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures like concat('%', #{controlMeasures}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityCompanyImportantEnvironmentalFactorsById" parameterType="Long" resultMap="SecurityCompanyImportantEnvironmentalFactorsResult">
+        <include refid="selectSecurityCompanyImportantEnvironmentalFactorsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityCompanyImportantEnvironmentalFactors" parameterType="SecurityCompanyImportantEnvironmentalFactors" useGeneratedKeys="true" keyProperty="id">
+        insert into security_company_important_environmental_factors
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor,</if>
+            <if test="environmentalImpact != null and environmentalImpact != ''">environmental_impact,</if>
+            <if test="activityProductService != null">activity_product_service,</if>
+            <if test="departmentProcessPosition != null">department_process_position,</if>
+            <if test="temporalState != null">temporal_state,</if>
+            <if test="controlMeasures != null">control_measures,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="environmentalFactor != null and environmentalFactor != ''">#{environmentalFactor},</if>
+            <if test="environmentalImpact != null and environmentalImpact != ''">#{environmentalImpact},</if>
+            <if test="activityProductService != null">#{activityProductService},</if>
+            <if test="departmentProcessPosition != null">#{departmentProcessPosition},</if>
+            <if test="temporalState != null">#{temporalState},</if>
+            <if test="controlMeasures != null">#{controlMeasures},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityCompanyImportantEnvironmentalFactors" parameterType="SecurityCompanyImportantEnvironmentalFactors">
+        update security_company_important_environmental_factors
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor = #{environmentalFactor},</if>
+            <if test="environmentalImpact != null and environmentalImpact != ''">environmental_impact = #{environmentalImpact},</if>
+            <if test="activityProductService != null">activity_product_service = #{activityProductService},</if>
+            <if test="departmentProcessPosition != null">department_process_position = #{departmentProcessPosition},</if>
+            <if test="temporalState != null">temporal_state = #{temporalState},</if>
+            <if test="controlMeasures != null">control_measures = #{controlMeasures},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityCompanyImportantEnvironmentalFactorsById" parameterType="Long">
+        delete from security_company_important_environmental_factors where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityCompanyImportantEnvironmentalFactorsByIds" parameterType="String">
+        delete from security_company_important_environmental_factors where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

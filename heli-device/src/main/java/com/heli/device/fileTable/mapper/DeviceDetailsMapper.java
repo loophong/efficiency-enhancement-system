@@ -1,7 +1,11 @@
 package com.heli.device.fileTable.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.fileTable.domain.DeviceDetails;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 设备台账Mapper接口
@@ -9,7 +13,7 @@ import com.heli.device.fileTable.domain.DeviceDetails;
  * @author YYY
  * @date 2025-01-19
  */
-public interface DeviceDetailsMapper 
+public interface DeviceDetailsMapper extends BaseMapper<DeviceDetails>
 {
     /**
      * 查询设备台账
@@ -58,4 +62,9 @@ public interface DeviceDetailsMapper
      * @return 结果
      */
     public int deleteDeviceDetailsByDetailsIds(String[] detailsIds);
+
+
+    @Select("SELECT * FROM device_details " +
+            "WHERE inventory_num = #{inventoryNum} ")
+    public DeviceDetails selectExistByNum(@Param("inventoryNum") String inventoryNum);
 }

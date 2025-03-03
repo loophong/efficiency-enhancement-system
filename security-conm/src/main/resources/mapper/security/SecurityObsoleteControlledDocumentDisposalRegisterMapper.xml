@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityObsoleteControlledDocumentDisposalRegisterMapper">
+    
+    <resultMap type="SecurityObsoleteControlledDocumentDisposalRegister" id="SecurityObsoleteControlledDocumentDisposalRegisterResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="documentNumber"    column="document_number"    />
+        <result property="recyclingDepartment"    column="recycling_department"    />
+        <result property="isDestroyed"    column="is_destroyed"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="year"    column="year"    />
+        <result property="reviewer"    column="reviewer"    />
+    </resultMap>
+
+    <sql id="selectSecurityObsoleteControlledDocumentDisposalRegisterVo">
+        select id, file_name, document_number, recycling_department, is_destroyed, remarks, year, reviewer from security_obsolete_controlled_document_disposal_register
+    </sql>
+
+    <select id="selectSecurityObsoleteControlledDocumentDisposalRegisterList" parameterType="SecurityObsoleteControlledDocumentDisposalRegister" resultMap="SecurityObsoleteControlledDocumentDisposalRegisterResult">
+        <include refid="selectSecurityObsoleteControlledDocumentDisposalRegisterVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
+            <if test="recyclingDepartment != null  and recyclingDepartment != ''"> and recycling_department = #{recyclingDepartment}</if>
+            <if test="isDestroyed != null "> and is_destroyed = #{isDestroyed}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="year != null  and year != ''"> and year = #{year}</if>
+            <if test="reviewer != null  and reviewer != ''"> and reviewer = #{reviewer}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityObsoleteControlledDocumentDisposalRegisterById" parameterType="Long" resultMap="SecurityObsoleteControlledDocumentDisposalRegisterResult">
+        <include refid="selectSecurityObsoleteControlledDocumentDisposalRegisterVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityObsoleteControlledDocumentDisposalRegister" parameterType="SecurityObsoleteControlledDocumentDisposalRegister" useGeneratedKeys="true" keyProperty="id">
+        insert into security_obsolete_controlled_document_disposal_register
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="documentNumber != null">document_number,</if>
+            <if test="recyclingDepartment != null">recycling_department,</if>
+            <if test="isDestroyed != null">is_destroyed,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="year != null">year,</if>
+            <if test="reviewer != null">reviewer,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="documentNumber != null">#{documentNumber},</if>
+            <if test="recyclingDepartment != null">#{recyclingDepartment},</if>
+            <if test="isDestroyed != null">#{isDestroyed},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="year != null">#{year},</if>
+            <if test="reviewer != null">#{reviewer},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityObsoleteControlledDocumentDisposalRegister" parameterType="SecurityObsoleteControlledDocumentDisposalRegister">
+        update security_obsolete_controlled_document_disposal_register
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="documentNumber != null">document_number = #{documentNumber},</if>
+            <if test="recyclingDepartment != null">recycling_department = #{recyclingDepartment},</if>
+            <if test="isDestroyed != null">is_destroyed = #{isDestroyed},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="reviewer != null">reviewer = #{reviewer},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityObsoleteControlledDocumentDisposalRegisterById" parameterType="Long">
+        delete from security_obsolete_controlled_document_disposal_register where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityObsoleteControlledDocumentDisposalRegisterByIds" parameterType="String">
+        delete from security_obsolete_controlled_document_disposal_register where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

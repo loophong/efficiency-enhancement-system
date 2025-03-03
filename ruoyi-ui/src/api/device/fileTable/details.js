@@ -42,3 +42,14 @@ export function delDetails(detailsId) {
     method: 'delete'
   })
 }
+
+export function uploadFile(data, aimUrl) {
+  return request({
+    url: aimUrl,
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+    });
+}

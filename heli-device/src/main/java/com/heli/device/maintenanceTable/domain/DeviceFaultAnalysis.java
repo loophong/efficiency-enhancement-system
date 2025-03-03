@@ -4,7 +4,9 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -16,6 +18,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author YYY
  * @date 2025-01-17
  */
+@TableName(value ="device_fault_analysis")
+@Data
 public class DeviceFaultAnalysis extends BaseEntity
 {
     private static final long serialVersionUID = 1L;

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper">
+
+    <resultMap type="DeviceMajorPlan" id="DeviceMajorPlanResult">
+        <result property="majorId"    column="major_id"    />
+        <result property="majorOrder"    column="major_order"    />
+        <result property="majorName"    column="major_name"    />
+        <result property="majorPosition"    column="major_position"    />
+        <result property="majorProject"    column="major_project"    />
+        <result property="majorCycleNum"    column="major_cycle_num"    />
+        <result property="majorPeople"    column="major_people"    />
+        <result property="majorMonth"    column="major_month"    />
+        <result property="weekJanOne"    column="week_jan_one"    />
+        <result property="weekJanTwo"    column="week_jan_two"    />
+        <result property="weekJanThree"    column="week_jan_three"    />
+        <result property="weekJanFour"    column="week_jan_four"    />
+        <result property="weekFebOne"    column="week_feb_one"    />
+        <result property="weekFebTwo"    column="week_feb_two"    />
+        <result property="weekFebThree"    column="week_feb_three"    />
+        <result property="weekFebFour"    column="week_feb_four"    />
+        <result property="weekMarOne"    column="week_mar_one"    />
+        <result property="weekMarTwo"    column="week_mar_two"    />
+        <result property="weekMarThree"    column="week_mar_three"    />
+        <result property="weekMarFour"    column="week_mar_four"    />
+        <result property="weekAprOne"    column="week_apr_one"    />
+        <result property="weekAprTwo"    column="week_apr_two"    />
+        <result property="weekAprThree"    column="week_apr_three"    />
+        <result property="weekAprFour"    column="week_apr_four"    />
+        <result property="weekMayOne"    column="week_may_one"    />
+        <result property="weekMayTwo"    column="week_may_two"    />
+        <result property="weekMayThree"    column="week_may_three"    />
+        <result property="weekMayFour"    column="week_may_four"    />
+        <result property="weekJunOne"    column="week_jun_one"    />
+        <result property="weekJunTwo"    column="week_jun_two"    />
+        <result property="weekJunThree"    column="week_jun_three"    />
+        <result property="weekJunFour"    column="week_jun_four"    />
+        <result property="weekJulOne"    column="week_jul_one"    />
+        <result property="weekJulTwo"    column="week_jul_two"    />
+        <result property="weekJulThree"    column="week_jul_three"    />
+        <result property="weekJulFour"    column="week_jul_four"    />
+        <result property="weekAugOne"    column="week_aug_one"    />
+        <result property="weekAugTwo"    column="week_aug_two"    />
+        <result property="weekAugThree"    column="week_aug_three"    />
+        <result property="weekAugFour"    column="week_aug_four"    />
+        <result property="weekSepOne"    column="week_sep_one"    />
+        <result property="weekSepTwo"    column="week_sep_two"    />
+        <result property="weekSepThree"    column="week_sep_three"    />
+        <result property="weekSepFour"    column="week_sep_four"    />
+        <result property="weekOctOne"    column="week_oct_one"    />
+        <result property="weekOctTwo"    column="week_oct_two"    />
+        <result property="weekOctThree"    column="week_oct_three"    />
+        <result property="weekOctFour"    column="week_oct_four"    />
+        <result property="weekNovOne"    column="week_nov_one"    />
+        <result property="weekNovTwo"    column="week_nov_two"    />
+        <result property="weekNovThree"    column="week_nov_three"    />
+        <result property="weekNovFour"    column="week_nov_four"    />
+        <result property="weekDecOne"    column="week_dec_one"    />
+        <result property="weekDecTwo"    column="week_dec_two"    />
+        <result property="weekDecThree"    column="week_dec_three"    />
+        <result property="weekDecFour"    column="week_dec_four"    />
+    </resultMap>
+
+    <sql id="selectDeviceMajorPlanVo">
+        select major_id, major_order, major_name, major_position, major_project, major_cycle_num, major_people, major_month, week_jan_one, week_jan_two, week_jan_three, week_jan_four, week_feb_one, week_feb_two, week_feb_three, week_feb_four, week_mar_one, week_mar_two, week_mar_three, week_mar_four, week_apr_one, week_apr_two, week_apr_three, week_apr_four, week_may_one, week_may_two, week_may_three, week_may_four, week_jun_one, week_jun_two, week_jun_three, week_jun_four, week_jul_one, week_jul_two, week_jul_three, week_jul_four, week_aug_one, week_aug_two, week_aug_three, week_aug_four, week_sep_one, week_sep_two, week_sep_three, week_sep_four, week_oct_one, week_oct_two, week_oct_three, week_oct_four, week_nov_one, week_nov_two, week_nov_three, week_nov_four, week_dec_one, week_dec_two, week_dec_three, week_dec_four from device_major_plan
+    </sql>
+
+    <select id="selectDeviceMajorPlanList" parameterType="DeviceMajorPlan" resultMap="DeviceMajorPlanResult">
+        <include refid="selectDeviceMajorPlanVo"/>
+        <where>
+            <if test="majorOrder != null  and majorOrder != ''"> and major_order = #{majorOrder}</if>
+            <if test="majorName != null  and majorName != ''"> and major_name like concat('%', #{majorName}, '%')</if>
+            <if test="majorPosition != null  and majorPosition != ''"> and major_position = #{majorPosition}</if>
+            <if test="majorProject != null  and majorProject != ''"> and major_project like concat('%', #{majorProject}, '%')</if>
+            <if test="majorCycleNum != null  and majorCycleNum != ''"> and major_cycle_num = #{majorCycleNum}</if>
+            <if test="majorPeople != null  and majorPeople != ''"> and major_people like concat('%', #{majorPeople}, '%')</if>
+            <if test="majorMonth != null  and majorMonth != ''"> and major_month = #{majorMonth}</if>
+            <if test="weekJanOne != null  and weekJanOne != ''"> and week_jan_one = #{weekJanOne}</if>
+            <if test="weekJanTwo != null  and weekJanTwo != ''"> and week_jan_two = #{weekJanTwo}</if>
+            <if test="weekJanThree != null  and weekJanThree != ''"> and week_jan_three = #{weekJanThree}</if>
+            <if test="weekJanFour != null  and weekJanFour != ''"> and week_jan_four = #{weekJanFour}</if>
+            <if test="weekFebOne != null  and weekFebOne != ''"> and week_feb_one = #{weekFebOne}</if>
+            <if test="weekFebTwo != null  and weekFebTwo != ''"> and week_feb_two = #{weekFebTwo}</if>
+            <if test="weekFebThree != null  and weekFebThree != ''"> and week_feb_three = #{weekFebThree}</if>
+            <if test="weekFebFour != null  and weekFebFour != ''"> and week_feb_four = #{weekFebFour}</if>
+            <if test="weekMarOne != null  and weekMarOne != ''"> and week_mar_one = #{weekMarOne}</if>
+            <if test="weekMarTwo != null  and weekMarTwo != ''"> and week_mar_two = #{weekMarTwo}</if>
+            <if test="weekMarThree != null  and weekMarThree != ''"> and week_mar_three = #{weekMarThree}</if>
+            <if test="weekMarFour != null  and weekMarFour != ''"> and week_mar_four = #{weekMarFour}</if>
+            <if test="weekAprOne != null  and weekAprOne != ''"> and week_apr_one = #{weekAprOne}</if>
+            <if test="weekAprTwo != null  and weekAprTwo != ''"> and week_apr_two = #{weekAprTwo}</if>
+            <if test="weekAprThree != null  and weekAprThree != ''"> and week_apr_three = #{weekAprThree}</if>
+            <if test="weekAprFour != null  and weekAprFour != ''"> and week_apr_four = #{weekAprFour}</if>
+            <if test="weekMayOne != null  and weekMayOne != ''"> and week_may_one = #{weekMayOne}</if>
+            <if test="weekMayTwo != null  and weekMayTwo != ''"> and week_may_two = #{weekMayTwo}</if>
+            <if test="weekMayThree != null  and weekMayThree != ''"> and week_may_three = #{weekMayThree}</if>
+            <if test="weekMayFour != null  and weekMayFour != ''"> and week_may_four = #{weekMayFour}</if>
+            <if test="weekJunOne != null  and weekJunOne != ''"> and week_jun_one = #{weekJunOne}</if>
+            <if test="weekJunTwo != null  and weekJunTwo != ''"> and week_jun_two = #{weekJunTwo}</if>
+            <if test="weekJunThree != null  and weekJunThree != ''"> and week_jun_three = #{weekJunThree}</if>
+            <if test="weekJunFour != null  and weekJunFour != ''"> and week_jun_four = #{weekJunFour}</if>
+            <if test="weekJulOne != null  and weekJulOne != ''"> and week_jul_one = #{weekJulOne}</if>
+            <if test="weekJulTwo != null  and weekJulTwo != ''"> and week_jul_two = #{weekJulTwo}</if>
+            <if test="weekJulThree != null  and weekJulThree != ''"> and week_jul_three = #{weekJulThree}</if>
+            <if test="weekJulFour != null  and weekJulFour != ''"> and week_jul_four = #{weekJulFour}</if>
+            <if test="weekAugOne != null  and weekAugOne != ''"> and week_aug_one = #{weekAugOne}</if>
+            <if test="weekAugTwo != null  and weekAugTwo != ''"> and week_aug_two = #{weekAugTwo}</if>
+            <if test="weekAugThree != null  and weekAugThree != ''"> and week_aug_three = #{weekAugThree}</if>
+            <if test="weekAugFour != null  and weekAugFour != ''"> and week_aug_four = #{weekAugFour}</if>
+            <if test="weekSepOne != null  and weekSepOne != ''"> and week_sep_one = #{weekSepOne}</if>
+            <if test="weekSepTwo != null  and weekSepTwo != ''"> and week_sep_two = #{weekSepTwo}</if>
+            <if test="weekSepThree != null  and weekSepThree != ''"> and week_sep_three = #{weekSepThree}</if>
+            <if test="weekSepFour != null  and weekSepFour != ''"> and week_sep_four = #{weekSepFour}</if>
+            <if test="weekOctOne != null  and weekOctOne != ''"> and week_oct_one = #{weekOctOne}</if>
+            <if test="weekOctTwo != null  and weekOctTwo != ''"> and week_oct_two = #{weekOctTwo}</if>
+            <if test="weekOctThree != null  and weekOctThree != ''"> and week_oct_three = #{weekOctThree}</if>
+            <if test="weekOctFour != null  and weekOctFour != ''"> and week_oct_four = #{weekOctFour}</if>
+            <if test="weekNovOne != null  and weekNovOne != ''"> and week_nov_one = #{weekNovOne}</if>
+            <if test="weekNovTwo != null  and weekNovTwo != ''"> and week_nov_two = #{weekNovTwo}</if>
+            <if test="weekNovThree != null  and weekNovThree != ''"> and week_nov_three = #{weekNovThree}</if>
+            <if test="weekNovFour != null  and weekNovFour != ''"> and week_nov_four = #{weekNovFour}</if>
+            <if test="weekDecOne != null  and weekDecOne != ''"> and week_dec_one = #{weekDecOne}</if>
+            <if test="weekDecTwo != null  and weekDecTwo != ''"> and week_dec_two = #{weekDecTwo}</if>
+            <if test="weekDecThree != null  and weekDecThree != ''"> and week_dec_three = #{weekDecThree}</if>
+            <if test="weekDecFour != null  and weekDecFour != ''"> and week_dec_four = #{weekDecFour}</if>
+        </where>
+    </select>
+
+    <select id="selectDeviceMajorPlanByMajorId" parameterType="String" resultMap="DeviceMajorPlanResult">
+        <include refid="selectDeviceMajorPlanVo"/>
+        where major_id = #{majorId}
+    </select>
+
+    <insert id="insertDeviceMajorPlan" parameterType="DeviceMajorPlan" useGeneratedKeys="true" keyProperty="majorId">
+        insert into device_major_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="majorOrder != null">major_order,</if>
+            <if test="majorName != null">major_name,</if>
+            <if test="majorPosition != null">major_position,</if>
+            <if test="majorProject != null">major_project,</if>
+            <if test="majorCycleNum != null">major_cycle_num,</if>
+            <if test="majorPeople != null">major_people,</if>
+            <if test="majorMonth != null">major_month,</if>
+            <if test="weekJanOne != null">week_jan_one,</if>
+            <if test="weekJanTwo != null">week_jan_two,</if>
+            <if test="weekJanThree != null">week_jan_three,</if>
+            <if test="weekJanFour != null">week_jan_four,</if>
+            <if test="weekFebOne != null">week_feb_one,</if>
+            <if test="weekFebTwo != null">week_feb_two,</if>
+            <if test="weekFebThree != null">week_feb_three,</if>
+            <if test="weekFebFour != null">week_feb_four,</if>
+            <if test="weekMarOne != null">week_mar_one,</if>
+            <if test="weekMarTwo != null">week_mar_two,</if>
+            <if test="weekMarThree != null">week_mar_three,</if>
+            <if test="weekMarFour != null">week_mar_four,</if>
+            <if test="weekAprOne != null">week_apr_one,</if>
+            <if test="weekAprTwo != null">week_apr_two,</if>
+            <if test="weekAprThree != null">week_apr_three,</if>
+            <if test="weekAprFour != null">week_apr_four,</if>
+            <if test="weekMayOne != null">week_may_one,</if>
+            <if test="weekMayTwo != null">week_may_two,</if>
+            <if test="weekMayThree != null">week_may_three,</if>
+            <if test="weekMayFour != null">week_may_four,</if>
+            <if test="weekJunOne != null">week_jun_one,</if>
+            <if test="weekJunTwo != null">week_jun_two,</if>
+            <if test="weekJunThree != null">week_jun_three,</if>
+            <if test="weekJunFour != null">week_jun_four,</if>
+            <if test="weekJulOne != null">week_jul_one,</if>
+            <if test="weekJulTwo != null">week_jul_two,</if>
+            <if test="weekJulThree != null">week_jul_three,</if>
+            <if test="weekJulFour != null">week_jul_four,</if>
+            <if test="weekAugOne != null">week_aug_one,</if>
+            <if test="weekAugTwo != null">week_aug_two,</if>
+            <if test="weekAugThree != null">week_aug_three,</if>
+            <if test="weekAugFour != null">week_aug_four,</if>
+            <if test="weekSepOne != null">week_sep_one,</if>
+            <if test="weekSepTwo != null">week_sep_two,</if>
+            <if test="weekSepThree != null">week_sep_three,</if>
+            <if test="weekSepFour != null">week_sep_four,</if>
+            <if test="weekOctOne != null">week_oct_one,</if>
+            <if test="weekOctTwo != null">week_oct_two,</if>
+            <if test="weekOctThree != null">week_oct_three,</if>
+            <if test="weekOctFour != null">week_oct_four,</if>
+            <if test="weekNovOne != null">week_nov_one,</if>
+            <if test="weekNovTwo != null">week_nov_two,</if>
+            <if test="weekNovThree != null">week_nov_three,</if>
+            <if test="weekNovFour != null">week_nov_four,</if>
+            <if test="weekDecOne != null">week_dec_one,</if>
+            <if test="weekDecTwo != null">week_dec_two,</if>
+            <if test="weekDecThree != null">week_dec_three,</if>
+            <if test="weekDecFour != null">week_dec_four,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="majorOrder != null">#{majorOrder},</if>
+            <if test="majorName != null">#{majorName},</if>
+            <if test="majorPosition != null">#{majorPosition},</if>
+            <if test="majorProject != null">#{majorProject},</if>
+            <if test="majorCycleNum != null">#{majorCycleNum},</if>
+            <if test="majorPeople != null">#{majorPeople},</if>
+            <if test="majorMonth != null">#{majorMonth},</if>
+            <if test="weekJanOne != null">#{weekJanOne},</if>
+            <if test="weekJanTwo != null">#{weekJanTwo},</if>
+            <if test="weekJanThree != null">#{weekJanThree},</if>
+            <if test="weekJanFour != null">#{weekJanFour},</if>
+            <if test="weekFebOne != null">#{weekFebOne},</if>
+            <if test="weekFebTwo != null">#{weekFebTwo},</if>
+            <if test="weekFebThree != null">#{weekFebThree},</if>
+            <if test="weekFebFour != null">#{weekFebFour},</if>
+            <if test="weekMarOne != null">#{weekMarOne},</if>
+            <if test="weekMarTwo != null">#{weekMarTwo},</if>
+            <if test="weekMarThree != null">#{weekMarThree},</if>
+            <if test="weekMarFour != null">#{weekMarFour},</if>
+            <if test="weekAprOne != null">#{weekAprOne},</if>
+            <if test="weekAprTwo != null">#{weekAprTwo},</if>
+            <if test="weekAprThree != null">#{weekAprThree},</if>
+            <if test="weekAprFour != null">#{weekAprFour},</if>
+            <if test="weekMayOne != null">#{weekMayOne},</if>
+            <if test="weekMayTwo != null">#{weekMayTwo},</if>
+            <if test="weekMayThree != null">#{weekMayThree},</if>
+            <if test="weekMayFour != null">#{weekMayFour},</if>
+            <if test="weekJunOne != null">#{weekJunOne},</if>
+            <if test="weekJunTwo != null">#{weekJunTwo},</if>
+            <if test="weekJunThree != null">#{weekJunThree},</if>
+            <if test="weekJunFour != null">#{weekJunFour},</if>
+            <if test="weekJulOne != null">#{weekJulOne},</if>
+            <if test="weekJulTwo != null">#{weekJulTwo},</if>
+            <if test="weekJulThree != null">#{weekJulThree},</if>
+            <if test="weekJulFour != null">#{weekJulFour},</if>
+            <if test="weekAugOne != null">#{weekAugOne},</if>
+            <if test="weekAugTwo != null">#{weekAugTwo},</if>
+            <if test="weekAugThree != null">#{weekAugThree},</if>
+            <if test="weekAugFour != null">#{weekAugFour},</if>
+            <if test="weekSepOne != null">#{weekSepOne},</if>
+            <if test="weekSepTwo != null">#{weekSepTwo},</if>
+            <if test="weekSepThree != null">#{weekSepThree},</if>
+            <if test="weekSepFour != null">#{weekSepFour},</if>
+            <if test="weekOctOne != null">#{weekOctOne},</if>
+            <if test="weekOctTwo != null">#{weekOctTwo},</if>
+            <if test="weekOctThree != null">#{weekOctThree},</if>
+            <if test="weekOctFour != null">#{weekOctFour},</if>
+            <if test="weekNovOne != null">#{weekNovOne},</if>
+            <if test="weekNovTwo != null">#{weekNovTwo},</if>
+            <if test="weekNovThree != null">#{weekNovThree},</if>
+            <if test="weekNovFour != null">#{weekNovFour},</if>
+            <if test="weekDecOne != null">#{weekDecOne},</if>
+            <if test="weekDecTwo != null">#{weekDecTwo},</if>
+            <if test="weekDecThree != null">#{weekDecThree},</if>
+            <if test="weekDecFour != null">#{weekDecFour},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDeviceMajorPlan" parameterType="DeviceMajorPlan">
+        update device_major_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="majorOrder != null">major_order = #{majorOrder},</if>
+            <if test="majorName != null">major_name = #{majorName},</if>
+            <if test="majorPosition != null">major_position = #{majorPosition},</if>
+            <if test="majorProject != null">major_project = #{majorProject},</if>
+            <if test="majorCycleNum != null">major_cycle_num = #{majorCycleNum},</if>
+            <if test="majorPeople != null">major_people = #{majorPeople},</if>
+            <if test="majorMonth != null">major_month = #{majorMonth},</if>
+            <if test="weekJanOne != null">week_jan_one = #{weekJanOne},</if>
+            <if test="weekJanTwo != null">week_jan_two = #{weekJanTwo},</if>
+            <if test="weekJanThree != null">week_jan_three = #{weekJanThree},</if>
+            <if test="weekJanFour != null">week_jan_four = #{weekJanFour},</if>
+            <if test="weekFebOne != null">week_feb_one = #{weekFebOne},</if>
+            <if test="weekFebTwo != null">week_feb_two = #{weekFebTwo},</if>
+            <if test="weekFebThree != null">week_feb_three = #{weekFebThree},</if>
+            <if test="weekFebFour != null">week_feb_four = #{weekFebFour},</if>
+            <if test="weekMarOne != null">week_mar_one = #{weekMarOne},</if>
+            <if test="weekMarTwo != null">week_mar_two = #{weekMarTwo},</if>
+            <if test="weekMarThree != null">week_mar_three = #{weekMarThree},</if>
+            <if test="weekMarFour != null">week_mar_four = #{weekMarFour},</if>
+            <if test="weekAprOne != null">week_apr_one = #{weekAprOne},</if>
+            <if test="weekAprTwo != null">week_apr_two = #{weekAprTwo},</if>
+            <if test="weekAprThree != null">week_apr_three = #{weekAprThree},</if>
+            <if test="weekAprFour != null">week_apr_four = #{weekAprFour},</if>
+            <if test="weekMayOne != null">week_may_one = #{weekMayOne},</if>
+            <if test="weekMayTwo != null">week_may_two = #{weekMayTwo},</if>
+            <if test="weekMayThree != null">week_may_three = #{weekMayThree},</if>
+            <if test="weekMayFour != null">week_may_four = #{weekMayFour},</if>
+            <if test="weekJunOne != null">week_jun_one = #{weekJunOne},</if>
+            <if test="weekJunTwo != null">week_jun_two = #{weekJunTwo},</if>
+            <if test="weekJunThree != null">week_jun_three = #{weekJunThree},</if>
+            <if test="weekJunFour != null">week_jun_four = #{weekJunFour},</if>
+            <if test="weekJulOne != null">week_jul_one = #{weekJulOne},</if>
+            <if test="weekJulTwo != null">week_jul_two = #{weekJulTwo},</if>
+            <if test="weekJulThree != null">week_jul_three = #{weekJulThree},</if>
+            <if test="weekJulFour != null">week_jul_four = #{weekJulFour},</if>
+            <if test="weekAugOne != null">week_aug_one = #{weekAugOne},</if>
+            <if test="weekAugTwo != null">week_aug_two = #{weekAugTwo},</if>
+            <if test="weekAugThree != null">week_aug_three = #{weekAugThree},</if>
+            <if test="weekAugFour != null">week_aug_four = #{weekAugFour},</if>
+            <if test="weekSepOne != null">week_sep_one = #{weekSepOne},</if>
+            <if test="weekSepTwo != null">week_sep_two = #{weekSepTwo},</if>
+            <if test="weekSepThree != null">week_sep_three = #{weekSepThree},</if>
+            <if test="weekSepFour != null">week_sep_four = #{weekSepFour},</if>
+            <if test="weekOctOne != null">week_oct_one = #{weekOctOne},</if>
+            <if test="weekOctTwo != null">week_oct_two = #{weekOctTwo},</if>
+            <if test="weekOctThree != null">week_oct_three = #{weekOctThree},</if>
+            <if test="weekOctFour != null">week_oct_four = #{weekOctFour},</if>
+            <if test="weekNovOne != null">week_nov_one = #{weekNovOne},</if>
+            <if test="weekNovTwo != null">week_nov_two = #{weekNovTwo},</if>
+            <if test="weekNovThree != null">week_nov_three = #{weekNovThree},</if>
+            <if test="weekNovFour != null">week_nov_four = #{weekNovFour},</if>
+            <if test="weekDecOne != null">week_dec_one = #{weekDecOne},</if>
+            <if test="weekDecTwo != null">week_dec_two = #{weekDecTwo},</if>
+            <if test="weekDecThree != null">week_dec_three = #{weekDecThree},</if>
+            <if test="weekDecFour != null">week_dec_four = #{weekDecFour},</if>
+        </trim>
+        where major_id = #{majorId}
+    </update>
+
+    <delete id="deleteDeviceMajorPlanByMajorId" parameterType="String">
+        delete from device_major_plan where major_id = #{majorId}
+    </delete>
+
+    <delete id="deleteDeviceMajorPlanByMajorIds" parameterType="String">
+        delete from device_major_plan where major_id in
+        <foreach item="majorId" collection="array" open="(" separator="," close=")">
+            #{majorId}
+        </foreach>
+    </delete>
+</mapper>

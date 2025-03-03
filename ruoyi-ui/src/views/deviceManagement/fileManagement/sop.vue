@@ -10,13 +10,13 @@
       <el-form-item label="设备名称" prop="sopName">
         <el-input v-model="queryParams.sopName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="SOP类型" prop="sopType">
-        <el-input v-model="queryParams.sopType" placeholder="请输入SOP类型" clearable @keyup.enter="handleQuery" />
+      <el-form-item label="SOP类型" prop="sopMaintenance">
+        <el-input v-model="queryParams.sopMaintenance" placeholder="请输入SOP类型" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="上传时间" style="width: 308px">
+      <!-- <el-form-item label="上传时间" style="width: 308px">
         <el-date-picker v-model="daterangeUpTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
           start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="是否是历史版本" prop="ifHistory">
         <el-input v-model="queryParams.ifHistory" placeholder="请输入是否是历史版本" clearable @keyup.enter="handleQuery" />
       </el-form-item> -->
@@ -48,18 +48,18 @@
 
     <el-table v-loading="loading" :data="fileList" @selection-change="handleSelectionChange" border stripe>
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="主键id" align="center" prop="sopFileId" /> -->
-      <!-- <el-table-column label="关联id" align="center" prop="sopCombineId" /> -->
       <el-table-column label="设备编号" align="center" prop="sopNum" />
       <el-table-column label="设备名称" align="center" prop="sopName" />
-      <el-table-column label="SOP类型" align="center" prop="sopType" />
-      <el-table-column label="上传时间" align="center" prop="upTime" width="180">
+      <el-table-column label="保养文件" align="center" prop="sopMaintenance">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.upTime, '{y}-{m}-{d}') }}</span>
+          <span v-html="formatFileInfo(scope.row.sopMaintenance)"></span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="是否是历史版本" align="center" prop="ifHistory" /> -->
-      <el-table-column label="文件信息" align="center" prop="sopInfo" />
+      <el-table-column label="维修文件" align="center" prop="sopRepair">
+        <template #default="scope">
+          <span v-html="formatFileInfo(scope.row.sopRepair)"></span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -79,24 +79,17 @@
         <!-- <el-form-item label="关联id" prop="sopCombineId">
           <el-input v-model="form.sopCombineId" placeholder="请输入关联id" />
         </el-form-item> -->
-        <!-- <el-form-item label="设备编号" prop="sopNum">
+        <el-form-item label="设备编号" prop="sopNum">
           <el-input v-model="form.sopNum" placeholder="请输入设备编号" />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="设备名称" prop="sopName">
           <el-input v-model="form.sopName" placeholder="请输入设备名称" />
         </el-form-item>
-        <el-form-item label="SOP类型" prop="sopType">
-          <el-input v-model="form.sopType" placeholder="请输入SOP类型" />
+        <el-form-item label="保养文件" prop="sopMaintenance">
+          <file-upload :limit="1" v-model="form.sopMaintenance" />
         </el-form-item>
-        <el-form-item label="上传时间" prop="upTime">
-          <el-date-picker clearable v-model="form.upTime" type="date" value-format="YYYY-MM-DD" placeholder="请选择上传时间">
-          </el-date-picker>
-        </el-form-item>
-        <!-- <el-form-item label="是否是历史版本" prop="ifHistory">
-          <el-input v-model="form.ifHistory" placeholder="请输入是否是历史版本" />
-        </el-form-item> -->
-        <el-form-item label="文件信息" prop="sopInfo">
-          <file-upload v-model="form.sopInfo" />
+        <el-form-item label="维修文件" prop="sopRepair">
+          <file-upload v-model="form.sopRepair" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -109,9 +102,9 @@
   </div>
 </template>
 
-<script setup name="File">
+<script setup name="Sop">
 import { listFile, getFile, delFile, addFile, updateFile } from "@/api/device/fileTable/sop";
-
+import { ElMessage } from 'element-plus'
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
@@ -124,6 +117,10 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const daterangeUpTime = ref([]);
+const route = useRoute();
+const router = useRouter();
+
+const routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
@@ -133,16 +130,63 @@ const data = reactive({
     sopCombineId: null,
     sopNum: null,
     sopName: null,
-    sopType: null,
+    sopMaintenance: null,
     upTime: null,
     ifHistory: null,
-    sopInfo: null
+    sopRepair: null
   },
   rules: {
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+const handleRouteParams = () => {
+  if (routerDeviceNum) {
+    console.log('跳转进入---→Received deviceNum:', routerDeviceNum);
+    data.queryParams.sopNum = routerDeviceNum;
+    getList(); // 假设需要根据路由参数重新获取列表数据
+  } else {
+    console.log('非跳转进入');
+    // 可以选择性地在这里添加其他逻辑
+  }
+};
+
+
+onMounted(() => {
+  handleRouteParams();
+});
+
+
+function formatFileInfo(fileInfo) {
+  if (fileInfo == '' || fileInfo == null) {
+    return fileInfo;
+  }
+
+  // 判断是否包含逗号（多个文件）
+  const filePaths = fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo];
+  const formattedInfo = filePaths.map(path => {
+    // 提取文件名（带扩展名）
+    const fileNameWithExt = path.split('/').pop();
+
+    // 去掉文件名中的时间戳部分
+    const fileName = fileNameWithExt.split('_')[0]; // 取第一部分作为文件名
+    const fileExt = fileNameWithExt.split('.').pop(); // 获取文件扩展名
+
+    // 提取上传日期
+    const uploadDateMatch = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+    let formattedDate = '';
+    if (uploadDateMatch) {
+      // 组合上传日期
+      formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
+    }
+
+    // 返回格式化后的字符串，用 [] 括起来
+    return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
+  }).join('<br>'); // 如果有多个文件
+
+  return formattedInfo;
+}
 
 /** 查询SOP文件管理列表 */
 function getList() {
@@ -172,10 +216,10 @@ function reset() {
     sopCombineId: null,
     sopNum: null,
     sopName: null,
-    sopType: null,
+    sopMaintenance: null,
     upTime: null,
     ifHistory: null,
-    sopInfo: null
+    sopRepair: null
   };
   proxy.resetForm("fileRef");
 }

@@ -3,16 +3,18 @@ import request from '@/utils/request'
 // 查询设备故障分析列表
 export function listAnalysis(query) {
   return request({
-    url: '/fault/analysis/list',
+    url: '/fault/maintenance/listByDate',
     method: 'get',
-    params: query
+    params: {
+      yearAndMonth: query.yearAndMonth,
+    },
   })
 }
 
 // 查询设备故障分析详细
 export function getAnalysis(analysisId) {
   return request({
-    url: '/fault/analysis/' + analysisId,
+    url: '/fault/maintenance/' + analysisId,
     method: 'get'
   })
 }
@@ -20,7 +22,7 @@ export function getAnalysis(analysisId) {
 // 新增设备故障分析
 export function addAnalysis(data) {
   return request({
-    url: '/fault/analysis',
+    url: '/fault/maintenance',
     method: 'post',
     data: data
   })
@@ -29,7 +31,7 @@ export function addAnalysis(data) {
 // 修改设备故障分析
 export function updateAnalysis(data) {
   return request({
-    url: '/fault/analysis',
+    url: '/fault/maintenance',
     method: 'put',
     data: data
   })
@@ -38,7 +40,7 @@ export function updateAnalysis(data) {
 // 删除设备故障分析
 export function delAnalysis(analysisId) {
   return request({
-    url: '/fault/analysis/' + analysisId,
+    url: '/fault/maintenance/' + analysisId,
     method: 'delete'
   })
 }
