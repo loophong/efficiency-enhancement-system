@@ -1,11 +1,13 @@
 package com.heli.production.controller;
 
+import com.heli.production.domain.dto.SpecialHandleDTO;
 import com.heli.production.domain.entity.SpecialCasesEntity;
 import com.heli.production.service.ISpecialCasesService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 
 import com.ruoyi.framework.websocket.WebSocketServer;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,9 +90,14 @@ public class SpecialCasesController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:special:edit')")
     @Log(title = "特殊情况", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SpecialCasesEntity specialCases) {
-        webSocketServer.sendMessage(1L, "特殊情况，已处理");
-        return toAjax(specialCasesService.updateSpecialCases(specialCases));
+    public AjaxResult edit(@RequestBody SpecialHandleDTO dto) {
+        List<Long> notifyUserList = dto.getNotifyUserList();
+        for (Long id : notifyUserList) {
+            webSocketServer.sendMessage(id, "生产有重要特殊情况处理，请及时查看");
+        }
+        SpecialCasesEntity specialCasesEntity = new SpecialCasesEntity();
+        BeanUtils.copyProperties(dto, specialCasesEntity);
+        return toAjax(specialCasesService.updateSpecialCases(specialCasesEntity));
     }
 
     /**

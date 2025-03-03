@@ -121,22 +121,24 @@ public class WebSocketServer {
     /**
      * 这个方法与上面几个方法不一样。没有用注解，是根据自己需要添加的方法。   我是在有代办消息时 调用此接口 向指定用户发送消息
      *
-     * @param message
+     * @param userId
      * @throws IOException
      */
-
     public void sendMessage(Long userId, String message) {
         System.out.println("服务端推送" + userId + "的消息:" + message);
         CopyOnWriteArraySet<WebSocketServer> webSocketSet = userwebSocketMap.get(userId);
-        //群发消息
-        for (WebSocketServer item : webSocketSet) {
-            try {
-                item.session.getBasicRemote().sendText(message);
-//                item.session.getBasicRemote().sendObject();
-            } catch (IOException e) {
-                e.printStackTrace();
-                continue;
+        // 检查用户是否在线
+        if (webSocketSet != null && !webSocketSet.isEmpty()) {
+            //群发消息
+            for (WebSocketServer item : webSocketSet) {
+                try {
+                    item.session.getBasicRemote().sendText(message);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+        }else {
+            log.info("用户" + userId + "不在线");
         }
     }
 
