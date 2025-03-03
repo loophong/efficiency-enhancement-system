@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityKnowledgeAssessmentMapper">
+    
+    <resultMap type="SecurityKnowledgeAssessment" id="SecurityKnowledgeAssessmentResult">
+        <result property="id"    column="id"    />
+        <result property="examineeName"    column="examinee_name"    />
+        <result property="writtenScore"    column="written_score"    />
+        <result property="practicalScore"    column="practical_score"    />
+        <result property="other"    column="other"    />
+        <result property="isQualified"    column="is_qualified"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="assessmentContent"    column="assessment_content"    />
+        <result property="examinationDate"    column="examination_date"    />
+        <result property="assessmentForm"    column="assessment_form"    />
+        <result property="assessor"    column="assessor"    />
+    </resultMap>
+
+    <sql id="selectSecurityKnowledgeAssessmentVo">
+        select id, examinee_name, written_score, practical_score, other, is_qualified, remarks, assessment_content, examination_date, assessment_form, assessor from security_knowledge_assessment
+    </sql>
+
+    <select id="selectSecurityKnowledgeAssessmentList" parameterType="SecurityKnowledgeAssessment" resultMap="SecurityKnowledgeAssessmentResult">
+        <include refid="selectSecurityKnowledgeAssessmentVo"/>
+        <where>  
+            <if test="examineeName != null  and examineeName != ''"> and examinee_name like concat('%', #{examineeName}, '%')</if>
+            <if test="writtenScore != null "> and written_score = #{writtenScore}</if>
+            <if test="practicalScore != null "> and practical_score = #{practicalScore}</if>
+            <if test="other != null  and other != ''"> and other = #{other}</if>
+            <if test="isQualified != null "> and is_qualified = #{isQualified}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="assessmentContent != null  and assessmentContent != ''"> and assessment_content = #{assessmentContent}</if>
+            <if test="examinationDate != null "> and examination_date = #{examinationDate}</if>
+            <if test="assessmentForm != null  and assessmentForm != ''"> and assessment_form = #{assessmentForm}</if>
+            <if test="assessor != null  and assessor != ''"> and assessor = #{assessor}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityKnowledgeAssessmentById" parameterType="Long" resultMap="SecurityKnowledgeAssessmentResult">
+        <include refid="selectSecurityKnowledgeAssessmentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityKnowledgeAssessment" parameterType="SecurityKnowledgeAssessment" useGeneratedKeys="true" keyProperty="id">
+        insert into security_knowledge_assessment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="examineeName != null and examineeName != ''">examinee_name,</if>
+            <if test="writtenScore != null">written_score,</if>
+            <if test="practicalScore != null">practical_score,</if>
+            <if test="other != null">other,</if>
+            <if test="isQualified != null">is_qualified,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="assessmentContent != null">assessment_content,</if>
+            <if test="examinationDate != null">examination_date,</if>
+            <if test="assessmentForm != null">assessment_form,</if>
+            <if test="assessor != null">assessor,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="examineeName != null and examineeName != ''">#{examineeName},</if>
+            <if test="writtenScore != null">#{writtenScore},</if>
+            <if test="practicalScore != null">#{practicalScore},</if>
+            <if test="other != null">#{other},</if>
+            <if test="isQualified != null">#{isQualified},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="assessmentContent != null">#{assessmentContent},</if>
+            <if test="examinationDate != null">#{examinationDate},</if>
+            <if test="assessmentForm != null">#{assessmentForm},</if>
+            <if test="assessor != null">#{assessor},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityKnowledgeAssessment" parameterType="SecurityKnowledgeAssessment">
+        update security_knowledge_assessment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="examineeName != null and examineeName != ''">examinee_name = #{examineeName},</if>
+            <if test="writtenScore != null">written_score = #{writtenScore},</if>
+            <if test="practicalScore != null">practical_score = #{practicalScore},</if>
+            <if test="other != null">other = #{other},</if>
+            <if test="isQualified != null">is_qualified = #{isQualified},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="assessmentContent != null">assessment_content = #{assessmentContent},</if>
+            <if test="examinationDate != null">examination_date = #{examinationDate},</if>
+            <if test="assessmentForm != null">assessment_form = #{assessmentForm},</if>
+            <if test="assessor != null">assessor = #{assessor},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityKnowledgeAssessmentById" parameterType="Long">
+        delete from security_knowledge_assessment where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityKnowledgeAssessmentByIds" parameterType="String">
+        delete from security_knowledge_assessment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

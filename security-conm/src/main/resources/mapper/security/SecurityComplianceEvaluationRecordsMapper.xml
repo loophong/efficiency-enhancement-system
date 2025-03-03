@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityComplianceEvaluationRecordsMapper">
+    
+    <resultMap type="SecurityComplianceEvaluationRecords" id="SecurityComplianceEvaluationRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="regulationName"    column="regulation_name"    />
+        <result property="documentNumber"    column="document_number"    />
+        <result property="issuingUnit"    column="issuing_unit"    />
+        <result property="issuanceRevisionDate"    column="issuance_revision_date"    />
+        <result property="implementationDate"    column="implementation_date"    />
+        <result property="effectiveness"    column="effectiveness"    />
+        <result property="applicableClauses"    column="applicable_clauses"    />
+        <result property="complianceStatus"    column="compliance_status"    />
+    </resultMap>
+
+    <sql id="selectSecurityComplianceEvaluationRecordsVo">
+        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness, applicable_clauses, compliance_status from security_compliance_evaluation_records
+    </sql>
+
+    <select id="selectSecurityComplianceEvaluationRecordsList" parameterType="SecurityComplianceEvaluationRecords" resultMap="SecurityComplianceEvaluationRecordsResult">
+        <include refid="selectSecurityComplianceEvaluationRecordsVo"/>
+        <where>  
+            <if test="regulationName != null  and regulationName != ''"> and regulation_name like concat('%', #{regulationName}, '%')</if>
+            <if test="documentNumber != null  and documentNumber != ''"> and document_number like concat('%', #{documentNumber}, '%')</if>
+            <if test="issuingUnit != null  and issuingUnit != ''"> and issuing_unit like concat('%', #{issuingUnit}, '%')</if>
+            <if test="issuanceRevisionDate != null "> and issuance_revision_date like concat('%', #{issuanceRevisionDate}, '%')</if>
+            <if test="implementationDate != null "> and implementation_date like concat('%', #{implementationDate}, '%')</if>
+            <if test="effectiveness != null  and effectiveness != ''"> and effectiveness like concat('%', #{effectiveness}, '%')</if>
+            <if test="applicableClauses != null  and applicableClauses != ''"> and applicable_clauses like concat('%', #{applicableClauses}, '%')</if>
+            <if test="complianceStatus != null  and complianceStatus != ''"> and compliance_status like concat('%', #{complianceStatus}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityComplianceEvaluationRecordsById" parameterType="Long" resultMap="SecurityComplianceEvaluationRecordsResult">
+        <include refid="selectSecurityComplianceEvaluationRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityComplianceEvaluationRecords" parameterType="SecurityComplianceEvaluationRecords" useGeneratedKeys="true" keyProperty="id">
+        insert into security_compliance_evaluation_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">regulation_name,</if>
+            <if test="documentNumber != null">document_number,</if>
+            <if test="issuingUnit != null">issuing_unit,</if>
+            <if test="issuanceRevisionDate != null">issuance_revision_date,</if>
+            <if test="implementationDate != null">implementation_date,</if>
+            <if test="effectiveness != null">effectiveness,</if>
+            <if test="applicableClauses != null">applicable_clauses,</if>
+            <if test="complianceStatus != null">compliance_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">#{regulationName},</if>
+            <if test="documentNumber != null">#{documentNumber},</if>
+            <if test="issuingUnit != null">#{issuingUnit},</if>
+            <if test="issuanceRevisionDate != null">#{issuanceRevisionDate},</if>
+            <if test="implementationDate != null">#{implementationDate},</if>
+            <if test="effectiveness != null">#{effectiveness},</if>
+            <if test="applicableClauses != null">#{applicableClauses},</if>
+            <if test="complianceStatus != null">#{complianceStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityComplianceEvaluationRecords" parameterType="SecurityComplianceEvaluationRecords">
+        update security_compliance_evaluation_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">regulation_name = #{regulationName},</if>
+            <if test="documentNumber != null">document_number = #{documentNumber},</if>
+            <if test="issuingUnit != null">issuing_unit = #{issuingUnit},</if>
+            <if test="issuanceRevisionDate != null">issuance_revision_date = #{issuanceRevisionDate},</if>
+            <if test="implementationDate != null">implementation_date = #{implementationDate},</if>
+            <if test="effectiveness != null">effectiveness = #{effectiveness},</if>
+            <if test="applicableClauses != null">applicable_clauses = #{applicableClauses},</if>
+            <if test="complianceStatus != null">compliance_status = #{complianceStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityComplianceEvaluationRecordsById" parameterType="Long">
+        delete from security_compliance_evaluation_records where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityComplianceEvaluationRecordsByIds" parameterType="String">
+        delete from security_compliance_evaluation_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

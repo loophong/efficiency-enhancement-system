@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEducationAnnualTrainingPlanMapper">
+    
+    <resultMap type="SecurityEducationAnnualTrainingPlan" id="SecurityEducationAnnualTrainingPlanResult">
+        <result property="id"    column="id"    />
+        <result property="trainingProject1"    column="training_project_1"    />
+        <result property="trainingProject2"    column="training_project_2"    />
+        <result property="trainees"    column="trainees"    />
+        <result property="trainingCategoryContent"    column="training_category_content"    />
+        <result property="trainingMethod"    column="training_method"    />
+        <result property="hours"    column="hours"    />
+        <result property="trainingMonth"    column="training_month"    />
+        <result property="assessmentMethod"    column="assessment_method"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityEducationAnnualTrainingPlanVo">
+        select id, training_project_1, training_project_2, trainees, training_category_content, training_method, hours, training_month, assessment_method, remarks from security_education_annual_training_plan
+    </sql>
+
+    <select id="selectSecurityEducationAnnualTrainingPlanList" parameterType="SecurityEducationAnnualTrainingPlan" resultMap="SecurityEducationAnnualTrainingPlanResult">
+        <include refid="selectSecurityEducationAnnualTrainingPlanVo"/>
+        <where>  
+            <if test="trainingProject1 != null  and trainingProject1 != ''"> and training_project_1 like concat('%', #{trainingProject1}, '%')</if>
+            <if test="trainingProject2 != null  and trainingProject2 != ''"> and training_project_2 like concat('%', #{trainingProject2}, '%')</if>
+            <if test="trainees != null  and trainees != ''"> and trainees = #{trainees}</if>
+            <if test="trainingCategoryContent != null  and trainingCategoryContent != ''"> and training_category_content = #{trainingCategoryContent}</if>
+            <if test="trainingMethod != null  and trainingMethod != ''"> and training_method = #{trainingMethod}</if>
+            <if test="hours != null "> and hours = #{hours}</if>
+            <if test="trainingMonth != null  and trainingMonth != ''"> and training_month like concat('%', #{trainingMonth}, '%')</if>
+            <if test="assessmentMethod != null  and assessmentMethod != ''"> and assessment_method like concat('%', #{assessmentMethod}, '%')</if>
+            <if test="remarks != null  and remarks != ''"> and remarks like concat('%', #{remarks}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEducationAnnualTrainingPlanById" parameterType="Long" resultMap="SecurityEducationAnnualTrainingPlanResult">
+        <include refid="selectSecurityEducationAnnualTrainingPlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEducationAnnualTrainingPlan" parameterType="SecurityEducationAnnualTrainingPlan" useGeneratedKeys="true" keyProperty="id">
+        insert into security_education_annual_training_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="trainingProject1 != null">training_project_1,</if>
+            <if test="trainingProject2 != null">training_project_2,</if>
+            <if test="trainees != null and trainees != ''">trainees,</if>
+            <if test="trainingCategoryContent != null">training_category_content,</if>
+            <if test="trainingMethod != null">training_method,</if>
+            <if test="hours != null">hours,</if>
+            <if test="trainingMonth != null">training_month,</if>
+            <if test="assessmentMethod != null">assessment_method,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="trainingProject1 != null">#{trainingProject1},</if>
+            <if test="trainingProject2 != null">#{trainingProject2},</if>
+            <if test="trainees != null and trainees != ''">#{trainees},</if>
+            <if test="trainingCategoryContent != null">#{trainingCategoryContent},</if>
+            <if test="trainingMethod != null">#{trainingMethod},</if>
+            <if test="hours != null">#{hours},</if>
+            <if test="trainingMonth != null">#{trainingMonth},</if>
+            <if test="assessmentMethod != null">#{assessmentMethod},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEducationAnnualTrainingPlan" parameterType="SecurityEducationAnnualTrainingPlan">
+        update security_education_annual_training_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="trainingProject1 != null">training_project_1 = #{trainingProject1},</if>
+            <if test="trainingProject2 != null">training_project_2 = #{trainingProject2},</if>
+            <if test="trainees != null and trainees != ''">trainees = #{trainees},</if>
+            <if test="trainingCategoryContent != null">training_category_content = #{trainingCategoryContent},</if>
+            <if test="trainingMethod != null">training_method = #{trainingMethod},</if>
+            <if test="hours != null">hours = #{hours},</if>
+            <if test="trainingMonth != null">training_month = #{trainingMonth},</if>
+            <if test="assessmentMethod != null">assessment_method = #{assessmentMethod},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEducationAnnualTrainingPlanById" parameterType="Long">
+        delete from security_education_annual_training_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEducationAnnualTrainingPlanByIds" parameterType="String">
+        delete from security_education_annual_training_plan where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

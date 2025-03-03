@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecutityEnvironmentalFactorsImpactMapper">
+    
+    <resultMap type="SecutityEnvironmentalFactorsImpact" id="SecutityEnvironmentalFactorsImpactResult">
+        <result property="id"    column="id"    />
+        <result property="activity"    column="activity"    />
+        <result property="environmentalFactor"    column="environmental_factor"    />
+        <result property="impactOfEnvironmentalFactor"    column="impact_of_environmental_factor"    />
+        <result property="evaluationOfEnvironmentalFactor"    column="evaluation_of_environmental_factor"    />
+        <result property="environmentalImpact"    column="environmental_impact"    />
+        <result property="tense"    column="tense"    />
+        <result property="status"    column="status"    />
+        <result property="controlMeasures"    column="control_measures"    />
+        <result property="statu"    column="statu"    />
+    </resultMap>
+
+    <sql id="selectSecutityEnvironmentalFactorsImpactVo">
+        select id, activity, environmental_factor, impact_of_environmental_factor, evaluation_of_environmental_factor, environmental_impact, tense, status, control_measures, statu from secutity_environmental_factors_impact
+    </sql>
+
+    <select id="selectSecutityEnvironmentalFactorsImpactList" parameterType="SecutityEnvironmentalFactorsImpact" resultMap="SecutityEnvironmentalFactorsImpactResult">
+        <include refid="selectSecutityEnvironmentalFactorsImpactVo"/>
+        <where>  
+            <if test="activity != null  and activity != ''"> and activity = #{activity}</if>
+            <if test="environmentalFactor != null  and environmentalFactor != ''"> and environmental_factor = #{environmentalFactor}</if>
+            <if test="impactOfEnvironmentalFactor != null  and impactOfEnvironmentalFactor != ''"> and impact_of_environmental_factor = #{impactOfEnvironmentalFactor}</if>
+            <if test="evaluationOfEnvironmentalFactor != null  and evaluationOfEnvironmentalFactor != ''"> and evaluation_of_environmental_factor = #{evaluationOfEnvironmentalFactor}</if>
+            <if test="environmentalImpact != null  and environmentalImpact != ''"> and environmental_impact = #{environmentalImpact}</if>
+            <if test="tense != null  and tense != ''"> and tense = #{tense}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures = #{controlMeasures}</if>
+            <if test="statu != null "> and statu = #{statu}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecutityEnvironmentalFactorsImpactById" parameterType="Long" resultMap="SecutityEnvironmentalFactorsImpactResult">
+        <include refid="selectSecutityEnvironmentalFactorsImpactVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecutityEnvironmentalFactorsImpact" parameterType="SecutityEnvironmentalFactorsImpact" useGeneratedKeys="true" keyProperty="id">
+        insert into secutity_environmental_factors_impact
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="activity != null and activity != ''">activity,</if>
+            <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor,</if>
+            <if test="impactOfEnvironmentalFactor != null">impact_of_environmental_factor,</if>
+            <if test="evaluationOfEnvironmentalFactor != null">evaluation_of_environmental_factor,</if>
+            <if test="environmentalImpact != null">environmental_impact,</if>
+            <if test="tense != null">tense,</if>
+            <if test="status != null">status,</if>
+            <if test="controlMeasures != null">control_measures,</if>
+            <if test="statu != null">statu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="activity != null and activity != ''">#{activity},</if>
+            <if test="environmentalFactor != null and environmentalFactor != ''">#{environmentalFactor},</if>
+            <if test="impactOfEnvironmentalFactor != null">#{impactOfEnvironmentalFactor},</if>
+            <if test="evaluationOfEnvironmentalFactor != null">#{evaluationOfEnvironmentalFactor},</if>
+            <if test="environmentalImpact != null">#{environmentalImpact},</if>
+            <if test="tense != null">#{tense},</if>
+            <if test="status != null">#{status},</if>
+            <if test="controlMeasures != null">#{controlMeasures},</if>
+            <if test="statu != null">#{statu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecutityEnvironmentalFactorsImpact" parameterType="SecutityEnvironmentalFactorsImpact">
+        update secutity_environmental_factors_impact
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activity != null and activity != ''">activity = #{activity},</if>
+            <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor = #{environmentalFactor},</if>
+            <if test="impactOfEnvironmentalFactor != null">impact_of_environmental_factor = #{impactOfEnvironmentalFactor},</if>
+            <if test="evaluationOfEnvironmentalFactor != null">evaluation_of_environmental_factor = #{evaluationOfEnvironmentalFactor},</if>
+            <if test="environmentalImpact != null">environmental_impact = #{environmentalImpact},</if>
+            <if test="tense != null">tense = #{tense},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="controlMeasures != null">control_measures = #{controlMeasures},</if>
+            <if test="statu != null">statu = #{statu},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecutityEnvironmentalFactorsImpactById" parameterType="Long">
+        delete from secutity_environmental_factors_impact where id = #{id}
+    </delete>
+
+    <delete id="deleteSecutityEnvironmentalFactorsImpactByIds" parameterType="String">
+        delete from secutity_environmental_factors_impact where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
