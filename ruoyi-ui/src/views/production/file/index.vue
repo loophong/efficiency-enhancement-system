@@ -2,44 +2,19 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="归属类型" prop="type">
-        <el-input
-            v-model="queryParams.type"
-            placeholder="请输入归属类型"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.type" placeholder="请输入归属类型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="关联编号" prop="connectionId">
-        <el-input
-            v-model="queryParams.connectionId"
-            placeholder="请输入关联编号"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.connectionId" placeholder="请输入关联编号" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="文件名" prop="fileName">
-        <el-input
-            v-model="queryParams.fileName"
-            placeholder="请输入文件名"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.fileName" placeholder="请输入文件名" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="文件大小" prop="fileSize">
-        <el-input
-            v-model="queryParams.fileSize"
-            placeholder="请输入文件大小"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.fileSize" placeholder="请输入文件大小" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="描述" prop="description">
-        <el-input
-            v-model="queryParams.description"
-            placeholder="请输入描述"
-            clearable
-            @keyup.enter="handleQuery"
-        />
+        <el-input v-model="queryParams.description" placeholder="请输入描述" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -49,42 +24,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['production:file:add']"
-        >新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:file:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['production:file:edit']"
-        >修改</el-button>
+        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:file:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['production:file:remove']"
-        >删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:file:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['production:file:export']"
-        >导出</el-button>
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:file:export']">导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -107,13 +56,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
-    />
+    <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList"/>
 
     <!-- 添加或修改生产文件对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>

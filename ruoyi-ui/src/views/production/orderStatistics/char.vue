@@ -4,9 +4,17 @@
     <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
       <el-form-item label="统计年月" prop="yearAndMonth">
         <el-date-picker v-model="queryParams.yearAndMonth" type="monthrange" clearable
-                        unlink-panels range-separator="-" start-placeholder="开始时间"
+                        unlink-panels range-separator="-" start-placeholder="开始时间" date-format="yyyy-MM"
+                        value-format="YYYY-MM-DD"
                         end-placeholder="结束时间" :shortcuts="shortcuts">
         </el-date-picker>
+      </el-form-item>
+
+      <el-form-item label="产能类型" prop="capacityType">
+        <el-select v-model="queryParams.capacityType" placeholder="请选择产能类型" clearable style="width: 240px">
+          <el-option v-for="item in capacityTypeList"
+                     :key="item" :label="item" :value="item"/>
+        </el-select>
       </el-form-item>
 
       <el-form-item label="车型" prop="vehicleModel">
@@ -15,12 +23,7 @@
                      :key="item" :label="item" :value="item"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="产能类型" prop="capacityType">
-        <el-select v-model="queryParams.capacityType" placeholder="请选择产能类型" clearable style="width: 240px">
-          <el-option v-for="item in capacityTypeList"
-                     :key="item" :label="item" :value="item"/>
-        </el-select>
-      </el-form-item>
+
       <el-form-item>
         <!--        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>-->
         <!--        <el-button icon="Refresh" @click="resetQuery">重置</el-button>-->
@@ -189,14 +192,24 @@ const chart = ref(null);
 
 const initChart = () => {
 
-    if (!chart.value) return;
+  if (!chart.value) return;
   const myChart = echarts.init(chart.value);
+
+  // 将charDataList按yearAndMonth排序
+  charDataList.value.sort((a, b) => {
+    return a.yearAndMonth - b.yearAndMonth;
+  });
+
+  console.log("charDataList", charDataList.value)
+
 
   let xAxisData = [];
   let seriesData = [];
-   charDataList.value.forEach(item => {
-     xAxisData.push(item.yearAndMonth)
-     seriesData.push(item.quantity)
+  let yName = [];
+  charDataList.value.forEach(item => {
+    xAxisData.push(item.yearAndMonth)
+    seriesData.push(item.quantity)
+    yName.push(item.vehicleModel)
   });
   // const seriesData = charDataList.value.map(item => item.quantity);
 
@@ -204,6 +217,7 @@ const initChart = () => {
   console.log("charDataList", charDataList.value)
   console.log("xAxisData", xAxisData)
   console.log("seriesData", seriesData)
+  console.log("yName", yName)
 
   const option = {
     title: {

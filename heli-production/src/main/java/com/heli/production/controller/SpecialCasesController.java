@@ -24,6 +24,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -92,8 +93,10 @@ public class SpecialCasesController extends BaseController {
     @PutMapping
     public AjaxResult edit(@RequestBody SpecialHandleDTO dto) {
         List<Long> notifyUserList = dto.getNotifyUserList();
-        for (Long id : notifyUserList) {
-            webSocketServer.sendMessage(id, "生产有重要特殊情况处理，请及时查看");
+        if(notifyUserList != null ){
+            for (Long id : notifyUserList) {
+                webSocketServer.sendMessage(id, "生产有重要特殊情况处理，请及时查看");
+            }
         }
         SpecialCasesEntity specialCasesEntity = new SpecialCasesEntity();
         BeanUtils.copyProperties(dto, specialCasesEntity);
@@ -107,6 +110,7 @@ public class SpecialCasesController extends BaseController {
     @Log(title = "特殊情况", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
-        return toAjax(specialCasesService.deleteSpecialCasesByIds(ids));
+        return toAjax(specialCasesService.removeByIds(Arrays.asList(ids)));
+
     }
 }

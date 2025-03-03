@@ -7,8 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.dto.CharParamsDTO;
 import com.heli.production.domain.entity.HistoryOrderStatisticsEntity;
 import com.heli.production.service.IHistoryOrderStatisticsService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +29,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author hong
  * @date 2025-02-20
  */
+@Slf4j
 @RestController
 @RequestMapping("/production/orderStatistics")
 public class HistoryOrderStatisticsController extends BaseController {
@@ -89,6 +89,7 @@ public class HistoryOrderStatisticsController extends BaseController {
 
     @PostMapping("/charData")
     public AjaxResult getCharData(@RequestBody CharParamsDTO charParamsDTO) {
+        log.info("charParamsDTO:{}", charParamsDTO);
         LambdaQueryWrapper<HistoryOrderStatisticsEntity> queryWrapper = new LambdaQueryWrapper<HistoryOrderStatisticsEntity>()
                 .eq(charParamsDTO.getVehicleModel() != null, HistoryOrderStatisticsEntity::getVehicleModel, charParamsDTO.getVehicleModel())
                 .eq(charParamsDTO.getCapacityType() != null, HistoryOrderStatisticsEntity::getCapacityType, charParamsDTO.getCapacityType())

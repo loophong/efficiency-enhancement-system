@@ -35,7 +35,7 @@
                      :value="dict.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="填报时间" prop="uploadDate">
+      <el-form-item label="处理时间" prop="uploadDate">
         <el-date-picker clearable v-model="queryParams.uploadDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择填报时间">
         </el-date-picker>
@@ -71,7 +71,7 @@
 
     <el-table v-loading="loading" :data="casesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="主键" align="center" prop="id"/>-->
+      <!--      <el-table-column label="主键" align="center" prop="id"/>-->
       <el-table-column label="订单号" align="center" prop="orderNumber"/>
       <el-table-column label="上线日期" align="center" prop="onlineDate" width="180">
         <template #default="scope">
@@ -100,22 +100,26 @@
         </template>
       </el-table-column>
       <el-table-column label="解决方案" align="center" prop="solution"/>
-      <el-table-column label="填报时间" align="center" prop="uploadDate" width="180">
+      <el-table-column label="处理时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="文件" align="center" prop="files"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"-->
-          <!--                     v-hasPermi="['production:cases:edit']">修改-->
-          <!--          </el-button>-->
+          <!--                    <el-button link type="primary" icon="View" @click="handleUpdate(scope.row)"-->
+          <!--                               v-hasPermi="['production:cases:query']">修改-->
+          <!--                    </el-button>-->
           <el-button v-if="scope.row.approvalStatus === 0" link type="primary" icon="Edit"
                      @click="handleSpecial(scope.row)"
                      v-hasPermi="['production:cases:handle']">处理
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['production:cases:remove']">删除
+          </el-button>
+          <el-button link type="primary" icon="View" @click="viewResult(scope.row)"
+                     v-hasPermi="['production:cases:query']">查看
           </el-button>
         </template>
       </el-table-column>
@@ -219,6 +223,9 @@
         <el-form-item label="解决方案" prop="solution">
           <el-input v-model="handleForm.solution" placeholder="请输入解决方案" type="textarea"/>
         </el-form-item>
+        <el-form-item label="文件" prop="files">
+          <file-upload v-model="handleForm.files"/>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -229,12 +236,64 @@
     </el-dialog>
 
 
+    <!-- 查看对话框 -->
+    <el-dialog :title="title" v-model="viewResultVisible" width="500px" append-to-body>
+      <el-form ref="resultRef" :model="resultForm" label-width="120px">
+        <el-form-item label="订单号" prop="orderNumber">
+          <el-input disabled v-model="resultForm.orderNumber" placeholder="请输入订单号"/>
+        </el-form-item>
+        <el-form-item label="上线日期" prop="onlineDate">
+          <el-date-picker disabled clearable v-model="resultForm.onlineDate" type="date" value-format="YYYY-MM-DD"
+                          placeholder="请选择上线日期">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="故障原因" prop="faultReason">
+          <el-select disabled v-model="resultForm.faultReason" placeholder="请选择故障原因">
+            <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="责任科室" prop="responsibleDepartment">
+          <el-select disabled v-model="resultForm.responsibleDepartment" placeholder="请选择责任科室">
+            <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="故障说明" prop="faultDescription">
+          <el-input disabled v-model="resultForm.faultDescription" placeholder="请输入故障说明" type="textarea"/>
+        </el-form-item>
+        <el-form-item label="是否为重大故障" prop="isMajorFault">
+          <el-select disabled v-model="resultForm.isMajorFault" placeholder="请选择是否为重大故障">
+            <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item  label="处理状态" prop="approvalStatus">
+          <el-select disabled v-model="resultForm.approvalStatus" placeholder="请选择处理状态">
+            <el-option v-for="dict in production_special_statue" :key="dict.value" :label="dict.label"
+                       :value="parseInt(dict.value)"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item  label="处理时间" prop="uploadDate">
+          <el-date-picker disabled clearable v-model="resultForm.uploadDate" type="date" value-format="YYYY-MM-DD"
+                          placeholder="请选择填报时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="解决方案" prop="solution">
+          <el-input disabled v-model="resultForm.solution" placeholder="请输入解决方案" type="textarea"/>
+        </el-form-item>
+        <el-form-item label="文件" prop="files">
+          <file-view v-model="resultForm.files"/>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Cases">
 import {listCases, getCases, delCases, addCases, updateCases} from "@/api/production/special";
 import {listUserAndDept} from "@/api/system/user";
+import fileView from "@/views/production/fileView";
 
 const {proxy} = getCurrentInstance();
 const {
@@ -460,7 +519,8 @@ function handleReset() {
     solution: null,
     isMajorFault: null,
     approvalStatus: null,
-    uploadDate: null
+    uploadDate: null,
+    files: null
   };
   proxy.resetForm("handleRef");
 }
@@ -504,5 +564,36 @@ function handleMajorFaultChange(value) {
       usersList.value = response.data;
     });
   }
+}
+
+
+const viewResultVisible = ref(false);
+const resultForm = ref({});
+
+function viewResult(row) {
+  resetResult();
+  const _id = row.id
+  getCases(_id).then(response => {
+    resultForm.value = response.data;
+    viewResultVisible.value = true;
+    title.value = "查看";
+  });
+}
+
+function resetResult() {
+  resultForm.value = {
+    id: null,
+    orderNumber: null,
+    onlineDate: null,
+    faultReason: null,
+    faultDescription: null,
+    responsibleDepartment: null,
+    solution: null,
+    isMajorFault: null,
+    approvalStatus: null,
+    uploadDate: null,
+    files: null
+  };
+  proxy.resetForm("resultRef");
 }
 </script>
