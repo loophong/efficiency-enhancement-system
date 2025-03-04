@@ -217,4 +217,16 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
 
+    /**
+     * @description: 获取当前时间的上一年
+     * @author: hong
+     * @date: 2025/3/4 16:43
+     * @version: 1.0
+     */
+    public static Date getPreviousYear(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.YEAR, -1);
+        return calendar.getTime();
+    }
 }

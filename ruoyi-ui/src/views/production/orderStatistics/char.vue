@@ -15,7 +15,7 @@
           <el-option v-for="item in capacityTypeList"
                      :key="item" :label="item" :value="item"/>
         </el-select>
-      </el-form-item>
+      </el-form-item>订单预测
 
       <el-form-item label="车型" prop="vehicleModel">
         <el-select v-model="queryParams.vehicleModel" placeholder="请选择车型" clearable style="width: 240px">
