@@ -111,6 +111,8 @@ public class HistoryOrderStatisticsController extends BaseController {
                 .eq(charParamsDTO.getCapacityType() != null, HistoryOrderStatisticsEntity::getCapacityType, charParamsDTO.getCapacityType())
                 .between(charParamsDTO.getStartTime() != null, HistoryOrderStatisticsEntity::getYearAndMonth, charParamsDTO.getStartTime(), charParamsDTO.getEndTime());
         List<HistoryOrderStatisticsEntity> list = historyOrderStatisticsEntityService.list(queryWrapper);
+        // 将列表中小于等于3的全部去掉
+//        list.removeIf(historyOrderStatisticsEntity -> historyOrderStatisticsEntity.getQuantity() <= 10);
         return success(list);
     }
 
