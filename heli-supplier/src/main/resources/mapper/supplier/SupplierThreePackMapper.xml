@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierThreePackMapper">
+    
+    <resultMap type="SupplierThreePack" id="SupplierThreePackResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="responsibilityJudgmentTime"    column="responsibility_judgment_time"    />
+        <result property="plannedDeliveryTime"    column="planned_delivery_time"    />
+        <result property="actualDeliveryTime"    column="actual_delivery_time"    />
+        <result property="specificWarrantyItems"    column="specific_warranty_items"    />
+        <result property="happenTime"    column="happen_time"    />
+        <result property="reporter"    column="reporter"    />
+    </resultMap>
+
+    <sql id="selectSupplierThreePackVo">
+        select id, supplier_code, supplier_name, responsibility_judgment_time, planned_delivery_time, actual_delivery_time, specific_warranty_items, happen_time, reporter from supplier_three_pack
+    </sql>
+
+    <select id="selectSupplierThreePackList" parameterType="SupplierThreePack" resultMap="SupplierThreePackResult">
+        <include refid="selectSupplierThreePackVo"/>
+        <where>  
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="responsibilityJudgmentTime != null "> and responsibility_judgment_time = #{responsibilityJudgmentTime}</if>
+            <if test="plannedDeliveryTime != null "> and planned_delivery_time = #{plannedDeliveryTime}</if>
+            <if test="actualDeliveryTime != null "> and actual_delivery_time = #{actualDeliveryTime}</if>
+            <if test="specificWarrantyItems != null  and specificWarrantyItems != ''"> and specific_warranty_items = #{specificWarrantyItems}</if>
+            <if test="happenTime != null "> and happen_time = #{happenTime}</if>
+            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>
+        </where>
+    </select>
+    
+    <select id="selectSupplierThreePackById" parameterType="String" resultMap="SupplierThreePackResult">
+        <include refid="selectSupplierThreePackVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierThreePack" parameterType="SupplierThreePack" useGeneratedKeys="true" keyProperty="id">
+        insert into supplier_three_pack
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="responsibilityJudgmentTime != null">responsibility_judgment_time,</if>
+            <if test="plannedDeliveryTime != null">planned_delivery_time,</if>
+            <if test="actualDeliveryTime != null">actual_delivery_time,</if>
+            <if test="specificWarrantyItems != null">specific_warranty_items,</if>
+            <if test="happenTime != null">happen_time,</if>
+            <if test="reporter != null">reporter,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="responsibilityJudgmentTime != null">#{responsibilityJudgmentTime},</if>
+            <if test="plannedDeliveryTime != null">#{plannedDeliveryTime},</if>
+            <if test="actualDeliveryTime != null">#{actualDeliveryTime},</if>
+            <if test="specificWarrantyItems != null">#{specificWarrantyItems},</if>
+            <if test="happenTime != null">#{happenTime},</if>
+            <if test="reporter != null">#{reporter},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSupplierThreePack" parameterType="SupplierThreePack">
+        update supplier_three_pack
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="responsibilityJudgmentTime != null">responsibility_judgment_time = #{responsibilityJudgmentTime},</if>
+            <if test="plannedDeliveryTime != null">planned_delivery_time = #{plannedDeliveryTime},</if>
+            <if test="actualDeliveryTime != null">actual_delivery_time = #{actualDeliveryTime},</if>
+            <if test="specificWarrantyItems != null">specific_warranty_items = #{specificWarrantyItems},</if>
+            <if test="happenTime != null">happen_time = #{happenTime},</if>
+            <if test="reporter != null">reporter = #{reporter},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierThreePackById" parameterType="String">
+        delete from supplier_three_pack where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierThreePackByIds" parameterType="String">
+        delete from supplier_three_pack where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

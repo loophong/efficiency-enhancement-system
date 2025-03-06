@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SuppliersQualifiedMapper">
+
+    <resultMap type="SuppliersQualified" id="SuppliersQualifiedResult">
+        <result property="id"    column="id"    />
+        <result property="controlSystem"    column="control_system"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="mainSupplyrange"    column="main_supplyRange"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSuppliersQualifiedVo">
+        select id, control_system, supplier_code, supplier_name, main_supplyRange, remarks from suppliers_qualified
+    </sql>
+
+    <select id="selectSuppliersQualifiedList" parameterType="SuppliersQualified" resultMap="SuppliersQualifiedResult">
+        <include refid="selectSuppliersQualifiedVo"/>
+        <where>
+            <if test="controlSystem != null  and controlSystem != ''"> and control_system = #{controlSystem}</if>
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="mainSupplyrange != null  and mainSupplyrange != ''"> and main_supplyRange = #{mainSupplyrange}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+
+    <select id="selectSuppliersQualifiedById" parameterType="Long" resultMap="SuppliersQualifiedResult">
+        <include refid="selectSuppliersQualifiedVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSuppliersQualified" parameterType="SuppliersQualified" useGeneratedKeys="true" keyProperty="id">
+        insert into suppliers_qualified
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="controlSystem != null">control_system,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="mainSupplyrange != null">main_supplyRange,</if>
+            <if test="remarks != null">remarks,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="controlSystem != null">#{controlSystem},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="mainSupplyrange != null">#{mainSupplyrange},</if>
+            <if test="remarks != null">#{remarks},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSuppliersQualified" parameterType="SuppliersQualified">
+        update suppliers_qualified
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="controlSystem != null">control_system = #{controlSystem},</if>
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="mainSupplyrange != null">main_supplyRange = #{mainSupplyrange},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSuppliersQualifiedById" parameterType="Long">
+        delete from suppliers_qualified where id = #{id}
+    </delete>
+
+    <delete id="deleteSuppliersQualifiedByIds" parameterType="String">
+        delete from suppliers_qualified where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

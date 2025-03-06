@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierQualityIncidentsMapper">
+
+    <resultMap type="SupplierQualityIncidents" id="SupplierQualityIncidentsResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="uploadId"    column="upload_id"    />
+        <result property="incidentDescription"    column="incident_description"    />
+    </resultMap>
+
+    <sql id="selectSupplierQualityIncidentsVo">
+        select id, supplier_code, supplier_name, upload_time, upload_id, incident_description from supplier_quality_incidents
+    </sql>
+
+    <select id="selectSupplierQualityIncidentsList" parameterType="SupplierQualityIncidents" resultMap="SupplierQualityIncidentsResult">
+        <include refid="selectSupplierQualityIncidentsVo"/>
+        <where>
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+            <if test="uploadId != null "> and upload_id = #{uploadId}</if>
+            <if test="incidentDescription != null  and incidentDescription != ''"> and incident_description = #{incidentDescription}</if>
+        </where>
+    </select>
+
+    <select id="selectSupplierQualityIncidentsById" parameterType="String" resultMap="SupplierQualityIncidentsResult">
+        <include refid="selectSupplierQualityIncidentsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierQualityIncidents" parameterType="SupplierQualityIncidents" useGeneratedKeys="true" keyProperty="id">
+        insert into supplier_quality_incidents
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="uploadId != null">upload_id,</if>
+            <if test="incidentDescription != null">incident_description,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="uploadId != null">#{uploadId},</if>
+            <if test="incidentDescription != null">#{incidentDescription},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSupplierQualityIncidents" parameterType="SupplierQualityIncidents">
+        update supplier_quality_incidents
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="uploadId != null">upload_id = #{uploadId},</if>
+            <if test="incidentDescription != null">incident_description = #{incidentDescription},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierQualityIncidentsById" parameterType="String">
+        delete from supplier_quality_incidents where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierQualityIncidentsByIds" parameterType="String">
+        delete from supplier_quality_incidents where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
