@@ -134,3 +134,11 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+
+// 查询用户名和部门
+export function listUserAndDept() {
+  return request({
+    url: '/system/user/listUserAndDept',
+    method: 'get'
+  })
+}

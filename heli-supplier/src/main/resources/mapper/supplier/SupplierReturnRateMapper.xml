@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierReturnRateMapper">
+
+    <resultMap type="SupplierReturnRate" id="SupplierReturnRateResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="returnRate"    column="return_rate"    />
+        <result property="month"    column="month"    />
+    </resultMap>
+
+    <sql id="selectSupplierReturnRateVo">
+        select id, supplier_code, supplier_name, return_rate, month from supplier_return_rate
+    </sql>
+
+    <select id="selectSupplierReturnRateList" parameterType="SupplierReturnRate" resultMap="SupplierReturnRateResult">
+        <include refid="selectSupplierReturnRateVo"/>
+        <where>
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="returnRate != null  and returnRate != ''"> and return_rate = #{returnRate}</if>
+            <if test="month != null "> and month = #{month}</if>
+        </where>
+    </select>
+
+    <select id="selectSupplierReturnRateById" parameterType="String" resultMap="SupplierReturnRateResult">
+        <include refid="selectSupplierReturnRateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierReturnRate" parameterType="SupplierReturnRate" useGeneratedKeys="true" keyProperty="id">
+        insert into supplier_return_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="returnRate != null">return_rate,</if>
+            <if test="month != null">month,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="returnRate != null">#{returnRate},</if>
+            <if test="month != null">#{month},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSupplierReturnRate" parameterType="SupplierReturnRate">
+        update supplier_return_rate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="returnRate != null">return_rate = #{returnRate},</if>
+            <if test="month != null">month = #{month},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierReturnRateById" parameterType="String">
+        delete from supplier_return_rate where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierReturnRateByIds" parameterType="String">
+        delete from supplier_return_rate where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

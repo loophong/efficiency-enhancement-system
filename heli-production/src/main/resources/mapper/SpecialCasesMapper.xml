@@ -15,6 +15,7 @@
         <result property="isMajorFault" column="is_major_fault"/>
         <result property="approvalStatus" column="approval_status"/>
         <result property="uploadDate" column="upload_date"/>
+        <result property="files" column="files"/>
     </resultMap>
 
     <sql id="selectSpecialCasesVo">
@@ -27,7 +28,8 @@
                solution,
                is_major_fault,
                approval_status,
-               upload_date
+               upload_date,
+               files
         from production_special_cases
     </sql>
 
@@ -43,6 +45,7 @@
             <if test="isMajorFault != null ">and is_major_fault = #{isMajorFault}</if>
             <if test="approvalStatus != null  and approvalStatus != ''">and approval_status = #{approvalStatus}</if>
             <if test="uploadDate != null ">and upload_date = #{uploadDate}</if>
+            <if test="files != null ">and files = #{files}</if>
         </where>
     </select>
 
@@ -63,6 +66,7 @@
             <if test="isMajorFault != null">is_major_fault,</if>
             <if test="approvalStatus != null">approval_status,</if>
             <if test="uploadDate != null">upload_date,</if>
+            <if test="files != null">files,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNumber != null">#{orderNumber},</if>
@@ -74,6 +78,7 @@
             <if test="isMajorFault != null">#{isMajorFault},</if>
             <if test="approvalStatus != null">#{approvalStatus},</if>
             <if test="uploadDate != null">#{uploadDate},</if>
+            <if test="files != null">#{files},</if>
         </trim>
     </insert>
 
@@ -89,6 +94,7 @@
             <if test="isMajorFault != null">is_major_fault = #{isMajorFault},</if>
             <if test="approvalStatus != null">approval_status = #{approvalStatus},</if>
             <if test="uploadDate != null">upload_date = #{uploadDate},</if>
+            <if test="files != null">files = #{files},</if>
         </trim>
         where id = #{id}
     </update>

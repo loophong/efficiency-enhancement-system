@@ -3,6 +3,8 @@ package com.ruoyi.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.ruoyi.common.core.domain.entity.SysUserAndDept;
 import jakarta.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -546,5 +548,16 @@ public class SysUserServiceImpl implements ISysUserService
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
         }
         return successMsg.toString();
+    }
+
+    /**
+     * @description: 查询用户名和部门
+     * @author: hong
+     * @date: 2025/3/3 16:31
+     * @version: 1.0
+     */
+    @Override
+    public List<SysUserAndDept> selectUserAndDeptList() {
+        return userMapper.selectUserAndDeptList();
     }
 }
