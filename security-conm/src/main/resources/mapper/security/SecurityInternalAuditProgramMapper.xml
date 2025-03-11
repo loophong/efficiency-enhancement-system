@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityInternalAuditProgramMapper">
+    
+    <resultMap type="SecurityInternalAuditProgram" id="SecurityInternalAuditProgramResult">
+        <result property="id"    column="id"    />
+        <result property="uploadDate"    column="upload_date"    />
+        <result property="uploadBy"    column="upload_by"    />
+        <result property="uploadDept"    column="upload_dept"    />
+        <result property="files"    column="files"    />
+    </resultMap>
+
+    <sql id="selectSecurityInternalAuditProgramVo">
+        select id, upload_date, upload_by, upload_dept, files from security_Internal_audit_program
+    </sql>
+
+    <select id="selectSecurityInternalAuditProgramList" parameterType="SecurityInternalAuditProgram" resultMap="SecurityInternalAuditProgramResult">
+        <include refid="selectSecurityInternalAuditProgramVo"/>
+        <where>  
+            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
+            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
+            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="files != null  and files != ''"> and files like concat('%', #{files}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityInternalAuditProgramById" parameterType="String" resultMap="SecurityInternalAuditProgramResult">
+        <include refid="selectSecurityInternalAuditProgramVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityInternalAuditProgram" parameterType="SecurityInternalAuditProgram" useGeneratedKeys="true" keyProperty="id">
+        insert into security_Internal_audit_program
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date,</if>
+            <if test="uploadBy != null">upload_by,</if>
+            <if test="uploadDept != null">upload_dept,</if>
+            <if test="files != null and files != ''">files,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">#{uploadDate},</if>
+            <if test="uploadBy != null">#{uploadBy},</if>
+            <if test="uploadDept != null">#{uploadDept},</if>
+            <if test="files != null and files != ''">#{files},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityInternalAuditProgram" parameterType="SecurityInternalAuditProgram">
+        update security_Internal_audit_program
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
+            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
+            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
+            <if test="files != null and files != ''">files = #{files},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityInternalAuditProgramById" parameterType="String">
+        delete from security_Internal_audit_program where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityInternalAuditProgramByIds" parameterType="String">
+        delete from security_Internal_audit_program where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
