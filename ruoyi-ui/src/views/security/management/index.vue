@@ -1,152 +1,54 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <!-- <el-form-item label="1备用字段" prop="beiyong1">
-        <el-input
-          v-model="queryParams.beiyong1"
-          placeholder="请输入1备用字段"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="2备用字段" prop="beiyong2">
-        <el-input
-          v-model="queryParams.beiyong2"
-          placeholder="请输入2备用字段"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="3备用字段" prop="beiyong3">
-        <el-date-picker clearable
-          v-model="queryParams.beiyong3"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择3备用字段">
-        </el-date-picker>
-      </el-form-item> -->
-      <!-- <el-form-item label="4备用字段" prop="beiyong4">
-        <el-input
-          v-model="queryParams.beiyong4"
-          placeholder="请输入4备用字段"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>  -->
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['security:management:add']"
-        >新增</el-button>
-      </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="info"
           plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['security:management:edit']"
-        >修改</el-button>
-      </el-col> -->
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['security:management:remove']"
-        >删除</el-button>
-      </el-col> -->
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['security:management:export']"
-        >导出</el-button>
+          icon="Upload"
+          @click="handleImport"
+        >导入</el-button>
+        <el-button 
+        type="danger" plain
+         icon="Delete" 
+         @click="handleRemoveFile"
+         >删除文件</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="managementList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="文件路径" align="center" prop="address" />
-      <el-table-column label="1备用字段" align="center" prop="beiyong1" />
-      <el-table-column label="2备用字段" align="center" prop="beiyong2" />
-      <el-table-column label="3备用字段" align="center" prop="beiyong3" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.beiyong3, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="4备用字段" align="center" prop="beiyong4" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:management:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:management:remove']">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    
-    <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
-    />
 
-    <!-- 添加或修改管理手册对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="managementRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="文件路径" prop="address">
-          <el-input v-model="form.address" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="1备用字段" prop="beiyong1">
-          <el-input v-model="form.beiyong1" placeholder="请输入1备用字段" />
-        </el-form-item>
-        <el-form-item label="2备用字段" prop="beiyong2">
-          <el-input v-model="form.beiyong2" placeholder="请输入2备用字段" />
-        </el-form-item>
-        <el-form-item label="3备用字段" prop="beiyong3">
-          <el-date-picker clearable
-            v-model="form.beiyong3"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择3备用字段">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="4备用字段" prop="beiyong4">
-          <el-input v-model="form.beiyong4" placeholder="请输入4备用字段" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <!-- 文件预览区域 -->
+    <div v-if="filePreview" class="file-preview">
+      <div v-if="fileType === 'pdf'">
+        <canvas ref="pdfCanvas"></canvas>
+      </div>
+      <div v-else-if="fileType === 'word'">
+        <div v-html="wordContent"></div>
+      </div>
+      <div v-else-if="fileType === 'excel'">
+        <div v-html="excelContent"></div>
+      </div>
+      <div v-else>
+        <p>不支持的文件类型</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup name="Management">
 import { listManagement, getManagement, delManagement, addManagement, updateManagement } from "@/api/security/management";
-
+import { ref, reactive, toRefs, getCurrentInstance } from 'vue';
+import * as pdfjsLib from 'pdfjs-dist';
+import mammoth from 'mammoth';
+import * as XLSX from 'xlsx';
+import { ElMessage } from 'element-plus';
 const { proxy } = getCurrentInstance();
+import { onMounted } from 'vue';
+
 
 const managementList = ref([]);
 const open = ref(false);
@@ -157,6 +59,10 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const filePreview = ref(false);
+const fileType = ref('');
+const wordContent = ref('');
+const excelContent = ref('');
 
 const data = reactive({
   form: {},
@@ -175,6 +81,34 @@ const data = reactive({
     ],
   }
 });
+
+onMounted(() => {
+  const storedFileType = localStorage.getItem('fileType');
+  const storedFilePreview = localStorage.getItem('filePreview');
+
+  if (storedFilePreview === 'true') {
+    fileType.value = storedFileType;
+    filePreview.value = true;
+
+    if (storedFileType === 'pdf') {
+      const pdfCanvasData = localStorage.getItem('pdfCanvasData');
+      const canvas = document.querySelector('canvas');
+      const context = canvas.getContext('2d');
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        context.drawImage(img, 0, 0);
+      };
+      img.src = pdfCanvasData;
+    } else if (storedFileType === 'word') {
+      wordContent.value = localStorage.getItem('wordContent');
+    } else if (storedFileType === 'excel') {
+      excelContent.value = localStorage.getItem('excelContent');
+    }
+  }
+});
+
 
 const { queryParams, form, rules } = toRefs(data);
 
@@ -236,7 +170,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-  const _id = row.id || ids.value
+  const _id = row.id || ids.value;
   getManagement(_id).then(response => {
     form.value = response.data;
     open.value = true;
@@ -280,8 +214,112 @@ function handleDelete(row) {
 function handleExport() {
   proxy.download('security/management/export', {
     ...queryParams.value
-  }, `management_${new Date().getTime()}.xlsx`)
+  }, `management_${new Date().getTime()}.xlsx`);
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xls, .xlsx, .pdf, .doc, .docx';
+  input.onchange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      handleFilePreview(file);
+    }
+  };
+  input.click();
+}
+
+/** 文件预览处理 */
+function handleFilePreview(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const content = e.target.result;
+    if (file.type === 'application/pdf') {
+      fileType.value = 'pdf';
+      pdfjsLib.getDocument(content).promise.then(pdfDoc => {
+        pdfDoc.getPage(1).then(page => {
+          const scale = 1.5;
+          const viewport = page.getViewport({ scale });
+          const canvas = document.querySelector('canvas');
+          const context = canvas.getContext('2d');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+
+          const renderContext = {
+            canvasContext: context,
+            viewport: viewport
+          };
+          page.render(renderContext);
+          filePreview.value = true;
+
+          // 存储文件预览内容到 localStorage
+          localStorage.setItem('fileType', fileType.value);
+          localStorage.setItem('filePreview', true);
+          localStorage.setItem('pdfCanvasData', canvas.toDataURL());
+        });
+      });
+    } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+               file.type === 'application/msword') {
+      fileType.value = 'word';
+      mammoth.convertToHtml({ arrayBuffer: content })
+        .then(result => {
+          wordContent.value = result.value;
+          filePreview.value = true;
+
+          // 存储文件预览内容到 localStorage
+          localStorage.setItem('fileType', fileType.value);
+          localStorage.setItem('filePreview', true);
+          localStorage.setItem('wordContent', wordContent.value);
+        })
+        .catch(err => {
+          console.error(err);
+          ElMessage.error('文件预览失败');
+        });
+    } else if (file.type === 'application/vnd.ms-excel' ||
+               file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+      fileType.value = 'excel';
+      const workbook = XLSX.read(content, { type: 'binary' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      excelContent.value = XLSX.utils.sheet_to_html(worksheet);
+      filePreview.value = true;
+
+      // 存储文件预览内容到 localStorage
+      localStorage.setItem('fileType', fileType.value);
+      localStorage.setItem('filePreview', true);
+      localStorage.setItem('excelContent', excelContent.value);
+    } else {
+      ElMessage.error('不支持的文件类型');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function handleRemoveFile() {
+  filePreview.value = false;
+  fileType.value = '';
+  wordContent.value = '';
+  excelContent.value = '';
+
+  // 清除 localStorage 中的文件预览内容
+  localStorage.removeItem('fileType');
+  localStorage.removeItem('filePreview');
+  localStorage.removeItem('pdfCanvasData');
+  localStorage.removeItem('wordContent');
+  localStorage.removeItem('excelContent');
 }
 
 getList();
 </script>
+
+<style scoped>
+.file-preview {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+</style>

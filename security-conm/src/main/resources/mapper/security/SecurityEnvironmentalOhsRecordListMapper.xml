@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEnvironmentalOhsRecordListMapper">
+    
+    <resultMap type="SecurityEnvironmentalOhsRecordList" id="SecurityEnvironmentalOhsRecordListResult">
+        <result property="id"    column="id"    />
+        <result property="recordNumber"    column="record_number"    />
+        <result property="recordName"    column="record_name"    />
+        <result property="responsibleDepartment"    column="responsible_department"    />
+        <result property="retentionPeriod"    column="retention_period"    />
+    </resultMap>
+
+    <sql id="selectSecurityEnvironmentalOhsRecordListVo">
+        select id, record_number, record_name, responsible_department, retention_period from security_environmental_ohs_record_list
+    </sql>
+
+    <select id="selectSecurityEnvironmentalOhsRecordListList" parameterType="SecurityEnvironmentalOhsRecordList" resultMap="SecurityEnvironmentalOhsRecordListResult">
+        <include refid="selectSecurityEnvironmentalOhsRecordListVo"/>
+        <where>  
+            <if test="recordNumber != null  and recordNumber != ''"> and record_number = #{recordNumber}</if>
+            <if test="recordName != null  and recordName != ''"> and record_name like concat('%', #{recordName}, '%')</if>
+            <if test="responsibleDepartment != null  and responsibleDepartment != ''"> and responsible_department = #{responsibleDepartment}</if>
+            <if test="retentionPeriod != null  and retentionPeriod != ''"> and retention_period = #{retentionPeriod}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEnvironmentalOhsRecordListById" parameterType="Long" resultMap="SecurityEnvironmentalOhsRecordListResult">
+        <include refid="selectSecurityEnvironmentalOhsRecordListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEnvironmentalOhsRecordList" parameterType="SecurityEnvironmentalOhsRecordList" useGeneratedKeys="true" keyProperty="id">
+        insert into security_environmental_ohs_record_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordNumber != null and recordNumber != ''">record_number,</if>
+            <if test="recordName != null and recordName != ''">record_name,</if>
+            <if test="responsibleDepartment != null">responsible_department,</if>
+            <if test="retentionPeriod != null">retention_period,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordNumber != null and recordNumber != ''">#{recordNumber},</if>
+            <if test="recordName != null and recordName != ''">#{recordName},</if>
+            <if test="responsibleDepartment != null">#{responsibleDepartment},</if>
+            <if test="retentionPeriod != null">#{retentionPeriod},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEnvironmentalOhsRecordList" parameterType="SecurityEnvironmentalOhsRecordList">
+        update security_environmental_ohs_record_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordNumber != null and recordNumber != ''">record_number = #{recordNumber},</if>
+            <if test="recordName != null and recordName != ''">record_name = #{recordName},</if>
+            <if test="responsibleDepartment != null">responsible_department = #{responsibleDepartment},</if>
+            <if test="retentionPeriod != null">retention_period = #{retentionPeriod},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEnvironmentalOhsRecordListById" parameterType="Long">
+        delete from security_environmental_ohs_record_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEnvironmentalOhsRecordListByIds" parameterType="String">
+        delete from security_environmental_ohs_record_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

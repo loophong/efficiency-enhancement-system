@@ -1,7 +1,11 @@
 package com.ruoyi.security.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.security.service.ISecurityHazardousChemicalInventoryService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import com.ruoyi.security.domain.SecurityHazardousMaterialsSafetyInspection;
 import com.ruoyi.security.service.ISecurityHazardousMaterialsSafetyInspectionService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 危化品检查记录Controller
@@ -27,6 +32,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author wang
  * @date 2025-03-03
  */
+@Slf4j
 @RestController
 @RequestMapping("/security/hazardousinspection")
 public class SecurityHazardousMaterialsSafetyInspectionController extends BaseController
@@ -101,4 +107,22 @@ public class SecurityHazardousMaterialsSafetyInspectionController extends BaseCo
     {
         return toAjax(securityHazardousMaterialsSafetyInspectionService.deleteSecurityHazardousMaterialsSafetyInspectionByIds(ids));
     }
+
+    /**
+     * 导入危化品检查记录
+     */
+    @Log(title = "[危险检查记录i]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    public void importTable( MultipartFile excelFile) {
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+            securityHazardousMaterialsSafetyInspectionService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
+
 }
+
+

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityOccupationalHazardPositionPersonnelListMapper">
+    
+    <resultMap type="SecurityOccupationalHazardPositionPersonnelList" id="SecurityOccupationalHazardPositionPersonnelListResult">
+        <result property="id"    column="id"    />
+        <result property="teamName"    column="team_name"    />
+        <result property="name"    column="name"    />
+        <result property="gender"    column="gender"    />
+        <result property="jobType"    column="job_type"    />
+        <result property="exposureFactors"    column="exposure_factors"    />
+        <result property="preJobHealthCheckup"    column="pre_job_health_checkup"    />
+        <result property="duringJobHealthCheckup"    column="during_job_health_checkup"    />
+        <result property="postJobHealthCheckup"    column="post_job_health_checkup"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityOccupationalHazardPositionPersonnelListVo">
+        select id, team_name, name, gender, job_type, exposure_factors, pre_job_health_checkup, during_job_health_checkup, post_job_health_checkup, remarks from security_occupational_hazard_position_personnel_list
+    </sql>
+
+    <select id="selectSecurityOccupationalHazardPositionPersonnelListList" parameterType="SecurityOccupationalHazardPositionPersonnelList" resultMap="SecurityOccupationalHazardPositionPersonnelListResult">
+        <include refid="selectSecurityOccupationalHazardPositionPersonnelListVo"/>
+        <where>  
+            <if test="teamName != null  and teamName != ''"> and team_name = #{teamName}</if>
+            <if test="name != null  and name != ''"> and name = #{name}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="jobType != null  and jobType != ''"> and job_type = #{jobType}</if>
+            <if test="exposureFactors != null  and exposureFactors != ''"> and exposure_factors = #{exposureFactors}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityOccupationalHazardPositionPersonnelListById" parameterType="Long" resultMap="SecurityOccupationalHazardPositionPersonnelListResult">
+        <include refid="selectSecurityOccupationalHazardPositionPersonnelListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityOccupationalHazardPositionPersonnelList" parameterType="SecurityOccupationalHazardPositionPersonnelList" useGeneratedKeys="true" keyProperty="id">
+        insert into security_occupational_hazard_position_personnel_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">team_name,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="jobType != null">job_type,</if>
+            <if test="exposureFactors != null">exposure_factors,</if>
+            <if test="preJobHealthCheckup != null">pre_job_health_checkup,</if>
+            <if test="duringJobHealthCheckup != null">during_job_health_checkup,</if>
+            <if test="postJobHealthCheckup != null">post_job_health_checkup,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">#{teamName},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="jobType != null">#{jobType},</if>
+            <if test="exposureFactors != null">#{exposureFactors},</if>
+            <if test="preJobHealthCheckup != null">#{preJobHealthCheckup},</if>
+            <if test="duringJobHealthCheckup != null">#{duringJobHealthCheckup},</if>
+            <if test="postJobHealthCheckup != null">#{postJobHealthCheckup},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityOccupationalHazardPositionPersonnelList" parameterType="SecurityOccupationalHazardPositionPersonnelList">
+        update security_occupational_hazard_position_personnel_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamName != null and teamName != ''">team_name = #{teamName},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="jobType != null">job_type = #{jobType},</if>
+            <if test="exposureFactors != null">exposure_factors = #{exposureFactors},</if>
+            <if test="preJobHealthCheckup != null">pre_job_health_checkup = #{preJobHealthCheckup},</if>
+            <if test="duringJobHealthCheckup != null">during_job_health_checkup = #{duringJobHealthCheckup},</if>
+            <if test="postJobHealthCheckup != null">post_job_health_checkup = #{postJobHealthCheckup},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityOccupationalHazardPositionPersonnelListById" parameterType="Long">
+        delete from security_occupational_hazard_position_personnel_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityOccupationalHazardPositionPersonnelListByIds" parameterType="String">
+        delete from security_occupational_hazard_position_personnel_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

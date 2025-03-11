@@ -9,19 +9,19 @@ import com.ruoyi.security.service.ISecurityEnvironmentalOrganizationDescriptionS
 
 /**
  * 环境识别Service业务层处理
- * 
- * @author 王
- * @date 2025-01-14
+ *
+ * @author wang
+ * @date 2025-03-05
  */
 @Service
-public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements ISecurityEnvironmentalOrganizationDescriptionService 
+public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements ISecurityEnvironmentalOrganizationDescriptionService
 {
     @Autowired
     private SecurityEnvironmentalOrganizationDescriptionMapper securityEnvironmentalOrganizationDescriptionMapper;
 
     /**
      * 查询环境识别
-     * 
+     *
      * @param id 环境识别主键
      * @return 环境识别
      */
@@ -33,7 +33,7 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
 
     /**
      * 查询环境识别列表
-     * 
+     *
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 环境识别
      */
@@ -45,7 +45,7 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
 
     /**
      * 新增环境识别
-     * 
+     *
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -57,7 +57,7 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
 
     /**
      * 修改环境识别
-     * 
+     *
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -69,7 +69,7 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
 
     /**
      * 批量删除环境识别
-     * 
+     *
      * @param ids 需要删除的环境识别主键
      * @return 结果
      */
@@ -81,7 +81,7 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
 
     /**
      * 删除环境识别信息
-     * 
+     *
      * @param id 环境识别主键
      * @return 结果
      */

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityCorrectivePreventiveMeasuresApprovalMapper">
+    
+    <resultMap type="SecurityCorrectivePreventiveMeasuresApproval" id="SecurityCorrectivePreventiveMeasuresApprovalResult">
+        <result property="id"    column="id"    />
+        <result property="responsibleUnit"    column="responsible_unit"    />
+        <result property="participatingUnits"    column="participating_units"    />
+        <result property="nonConformanceDescription"    column="non_conformance_description"    />
+        <result property="causeAnalysis"    column="cause_analysis"    />
+        <result property="responsiblePerson"    column="responsible_person"    />
+        <result property="time"    column="time"    />
+        <result property="correctivePreventivePlan"    column="corrective_preventive_plan"    />
+        <result property="responsibleUnitSupervisor"    column="responsible_unit_supervisor"    />
+        <result property="managerRepresentativeApproval"    column="manager_representative_approval"    />
+        <result property="planTime"    column="plan_time"    />
+        <result property="implementationStatus"    column="implementation_status"    />
+        <result property="responsibleDepartmentHead"    column="responsible_department_head"    />
+        <result property="completionTime"    column="completion_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityCorrectivePreventiveMeasuresApprovalVo">
+        select id, responsible_unit, participating_units, non_conformance_description, cause_analysis, responsible_person, time, corrective_preventive_plan, responsible_unit_supervisor, manager_representative_approval, plan_time, implementation_status, responsible_department_head, completion_time from security_corrective_preventive_measures_approval
+    </sql>
+
+    <select id="selectSecurityCorrectivePreventiveMeasuresApprovalList" parameterType="SecurityCorrectivePreventiveMeasuresApproval" resultMap="SecurityCorrectivePreventiveMeasuresApprovalResult">
+        <include refid="selectSecurityCorrectivePreventiveMeasuresApprovalVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectSecurityCorrectivePreventiveMeasuresApprovalById" parameterType="Long" resultMap="SecurityCorrectivePreventiveMeasuresApprovalResult">
+        <include refid="selectSecurityCorrectivePreventiveMeasuresApprovalVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityCorrectivePreventiveMeasuresApproval" parameterType="SecurityCorrectivePreventiveMeasuresApproval" useGeneratedKeys="true" keyProperty="id">
+        insert into security_corrective_preventive_measures_approval
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="responsibleUnit != null and responsibleUnit != ''">responsible_unit,</if>
+            <if test="participatingUnits != null and participatingUnits != ''">participating_units,</if>
+            <if test="nonConformanceDescription != null and nonConformanceDescription != ''">non_conformance_description,</if>
+            <if test="causeAnalysis != null and causeAnalysis != ''">cause_analysis,</if>
+            <if test="responsiblePerson != null">responsible_person,</if>
+            <if test="time != null">time,</if>
+            <if test="correctivePreventivePlan != null">corrective_preventive_plan,</if>
+            <if test="responsibleUnitSupervisor != null">responsible_unit_supervisor,</if>
+            <if test="managerRepresentativeApproval != null">manager_representative_approval,</if>
+            <if test="planTime != null">plan_time,</if>
+            <if test="implementationStatus != null">implementation_status,</if>
+            <if test="responsibleDepartmentHead != null">responsible_department_head,</if>
+            <if test="completionTime != null">completion_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="responsibleUnit != null and responsibleUnit != ''">#{responsibleUnit},</if>
+            <if test="participatingUnits != null and participatingUnits != ''">#{participatingUnits},</if>
+            <if test="nonConformanceDescription != null and nonConformanceDescription != ''">#{nonConformanceDescription},</if>
+            <if test="causeAnalysis != null and causeAnalysis != ''">#{causeAnalysis},</if>
+            <if test="responsiblePerson != null">#{responsiblePerson},</if>
+            <if test="time != null">#{time},</if>
+            <if test="correctivePreventivePlan != null">#{correctivePreventivePlan},</if>
+            <if test="responsibleUnitSupervisor != null">#{responsibleUnitSupervisor},</if>
+            <if test="managerRepresentativeApproval != null">#{managerRepresentativeApproval},</if>
+            <if test="planTime != null">#{planTime},</if>
+            <if test="implementationStatus != null">#{implementationStatus},</if>
+            <if test="responsibleDepartmentHead != null">#{responsibleDepartmentHead},</if>
+            <if test="completionTime != null">#{completionTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityCorrectivePreventiveMeasuresApproval" parameterType="SecurityCorrectivePreventiveMeasuresApproval">
+        update security_corrective_preventive_measures_approval
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="responsibleUnit != null and responsibleUnit != ''">responsible_unit = #{responsibleUnit},</if>
+            <if test="participatingUnits != null and participatingUnits != ''">participating_units = #{participatingUnits},</if>
+            <if test="nonConformanceDescription != null and nonConformanceDescription != ''">non_conformance_description = #{nonConformanceDescription},</if>
+            <if test="causeAnalysis != null and causeAnalysis != ''">cause_analysis = #{causeAnalysis},</if>
+            <if test="responsiblePerson != null">responsible_person = #{responsiblePerson},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="correctivePreventivePlan != null">corrective_preventive_plan = #{correctivePreventivePlan},</if>
+            <if test="responsibleUnitSupervisor != null">responsible_unit_supervisor = #{responsibleUnitSupervisor},</if>
+            <if test="managerRepresentativeApproval != null">manager_representative_approval = #{managerRepresentativeApproval},</if>
+            <if test="planTime != null">plan_time = #{planTime},</if>
+            <if test="implementationStatus != null">implementation_status = #{implementationStatus},</if>
+            <if test="responsibleDepartmentHead != null">responsible_department_head = #{responsibleDepartmentHead},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityCorrectivePreventiveMeasuresApprovalById" parameterType="Long">
+        delete from security_corrective_preventive_measures_approval where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityCorrectivePreventiveMeasuresApprovalByIds" parameterType="String">
+        delete from security_corrective_preventive_measures_approval where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

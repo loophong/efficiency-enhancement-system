@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEmergencySuppliesLedgerMapper">
+    
+    <resultMap type="SecurityEmergencySuppliesLedger" id="SecurityEmergencySuppliesLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="supplyName"    column="supply_name"    />
+        <result property="emergencySupplyType"    column="emergency_supply_type"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="unitOfMeasurement"    column="unit_of_measurement"    />
+        <result property="storageLocation"    column="storage_location"    />
+        <result property="contactPerson"    column="contact_person"    />
+        <result property="phoneNumber"    column="phone_number"    />
+    </resultMap>
+
+    <sql id="selectSecurityEmergencySuppliesLedgerVo">
+        select id, supply_name, emergency_supply_type, quantity, unit_of_measurement, storage_location, contact_person, phone_number from security_emergency_supplies_ledger
+    </sql>
+
+    <select id="selectSecurityEmergencySuppliesLedgerList" parameterType="SecurityEmergencySuppliesLedger" resultMap="SecurityEmergencySuppliesLedgerResult">
+        <include refid="selectSecurityEmergencySuppliesLedgerVo"/>
+        <where>  
+            <if test="supplyName != null  and supplyName != ''"> and supply_name like concat('%', #{supplyName}, '%')</if>
+            <if test="emergencySupplyType != null  and emergencySupplyType != ''"> and emergency_supply_type = #{emergencySupplyType}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="unitOfMeasurement != null  and unitOfMeasurement != ''"> and unit_of_measurement = #{unitOfMeasurement}</if>
+            <if test="storageLocation != null  and storageLocation != ''"> and storage_location = #{storageLocation}</if>
+            <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEmergencySuppliesLedgerById" parameterType="Long" resultMap="SecurityEmergencySuppliesLedgerResult">
+        <include refid="selectSecurityEmergencySuppliesLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEmergencySuppliesLedger" parameterType="SecurityEmergencySuppliesLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_emergency_supplies_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplyName != null and supplyName != ''">supply_name,</if>
+            <if test="emergencySupplyType != null">emergency_supply_type,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="unitOfMeasurement != null">unit_of_measurement,</if>
+            <if test="storageLocation != null">storage_location,</if>
+            <if test="contactPerson != null">contact_person,</if>
+            <if test="phoneNumber != null">phone_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplyName != null and supplyName != ''">#{supplyName},</if>
+            <if test="emergencySupplyType != null">#{emergencySupplyType},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="unitOfMeasurement != null">#{unitOfMeasurement},</if>
+            <if test="storageLocation != null">#{storageLocation},</if>
+            <if test="contactPerson != null">#{contactPerson},</if>
+            <if test="phoneNumber != null">#{phoneNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEmergencySuppliesLedger" parameterType="SecurityEmergencySuppliesLedger">
+        update security_emergency_supplies_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplyName != null and supplyName != ''">supply_name = #{supplyName},</if>
+            <if test="emergencySupplyType != null">emergency_supply_type = #{emergencySupplyType},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unitOfMeasurement != null">unit_of_measurement = #{unitOfMeasurement},</if>
+            <if test="storageLocation != null">storage_location = #{storageLocation},</if>
+            <if test="contactPerson != null">contact_person = #{contactPerson},</if>
+            <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEmergencySuppliesLedgerById" parameterType="Long">
+        delete from security_emergency_supplies_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEmergencySuppliesLedgerByIds" parameterType="String">
+        delete from security_emergency_supplies_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

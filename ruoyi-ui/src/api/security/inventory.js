@@ -43,7 +43,7 @@ export function delInventory(id) {
   })
 }
 
-// 上传订单表
+
 export function importFile(formData) {
   return request({
     url: '/security/inventory/import',

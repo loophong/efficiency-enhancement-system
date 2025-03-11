@@ -70,6 +70,11 @@
           v-hasPermi="['security:hazardousinspection:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button @click="handleImport" type="success" plain icon="Upload">
+          导入
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -100,6 +105,30 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
+
+
+       <!-- 文件上传弹窗 -->
+       <el-dialog title="危险化学品检查记录" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+      <el-form :model="form" ref="form" label-width="90px">
+        <el-form-item label="上传表类：">
+          <span style="color: rgb(68, 140, 39);">危险化学品检查记录</span>
+          <br>
+        </el-form-item>
+
+        <el-form-item label="上传文件：">
+          <input type="file" ref="inputFile" @change="checkFile"/>
+          <br>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
+        <el-button @click="cancelUpload">取 消</el-button>
+        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
+        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
+      </span>
+    </el-dialog>
+
+
 
     <!-- 添加或修改危化品检查记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -136,7 +165,7 @@
 </template>
 
 <script setup name="Hazardousinspection">
-import { listHazardousinspection, getHazardousinspection, delHazardousinspection, addHazardousinspection, updateHazardousinspection } from "@/api/security/hazardousinspection";
+import { listHazardousinspection, getHazardousinspection, delHazardousinspection, addHazardousinspection, updateHazardousinspection,importFile } from "@/api/security/hazardousinspection";
 
 const { proxy } = getCurrentInstance();
 
@@ -273,6 +302,67 @@ function handleExport() {
   proxy.download('security/hazardousinspection/export', {
     ...queryParams.value
   }, `hazardousinspection_${new Date().getTime()}.xlsx`)
+}
+
+//上传文件
+const uploadDialogVisible = ref(false);
+const inputFile = ref(null);
+const isLoading = ref(false);
+
+/** 导入按钮操作 */
+function handleImport() {
+  resetUpload();
+  uploadDialogVisible.value = true;
+}
+
+/** 表单重置 */
+function resetUpload() {
+  if (inputFile.value) {
+    inputFile.value.value = "";
+  }
+}
+
+/** 取消上传 */
+function cancelUpload() {
+  uploadDialogVisible.value = false;
+  resetUpload();
+}
+
+/** excel文件上传 */
+function uploadFile() {
+  if (inputFile.value && inputFile.value.files.length > 0) {
+    isLoading.value = true;
+    const file = inputFile.value.files[0];
+    console.log(inputFile.value);
+    console.log(file);
+    const formData = new FormData();
+    formData.append('excelFile', file);
+    importFile(formData).then(() => {
+      proxy.$modal.msgSuccess("导入成功");
+      getList();
+      uploadDialogVisible.value = false;
+      isLoading.value = false;
+    }).catch(() => {
+      proxy.$modal.msgError("导入失败");
+      isLoading.value = false;
+    }).finally(() => {
+      resetUpload();
+    });
+  } else {
+    proxy.$modal.msgError("请选择文件");
+  }
+}
+
+/** 检查文件是否为excel */
+function checkFile() {
+  const file = inputFile.value.files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    proxy.$modal.msgError("只能上传 Excel 文件！");
+    resetUpload();
+  }
 }
 
 getList();
