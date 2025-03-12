@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.PlanCoSignMapper">
+    
+    <resultMap type="PlanCoSignEntity" id="PlanCoSignResult">
+        <result property="id"    column="id"    />
+        <result property="reviewerId"    column="reviewer_id"    />
+        <result property="reviewerName"    column="reviewer_name"    />
+        <result property="reviewStatus"    column="review_status"    />
+        <result property="onlineDate"    column="online_date"    />
+        <result property="comments"    column="comments"    />
+    </resultMap>
+
+    <sql id="selectPlanCoSignVo">
+        select id, reviewer_id, reviewer_name, review_status, online_date, comments from production_plan_co_sign
+    </sql>
+
+    <select id="selectPlanCoSignList" parameterType="PlanCoSignEntity" resultMap="PlanCoSignResult">
+        <include refid="selectPlanCoSignVo"/>
+        <where>  
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+            <if test="reviewerId != null "> and reviewer_id = #{reviewerId}</if>
+            <if test="reviewerName != null  and reviewerName != ''"> and reviewer_name like concat('%', #{reviewerName}, '%')</if>
+            <if test="reviewStatus != null  and reviewStatus != ''"> and review_status = #{reviewStatus}</if>
+            <if test="onlineDate != null "> and online_date = #{onlineDate}</if>
+            <if test="comments != null  and comments != ''"> and comments = #{comments}</if>
+        </where>
+    </select>
+    
+    <select id="selectPlanCoSignById" parameterType="String" resultMap="PlanCoSignResult">
+        <include refid="selectPlanCoSignVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPlanCoSign" parameterType="PlanCoSignEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_plan_co_sign
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reviewerId != null">reviewer_id,</if>
+            <if test="reviewerName != null">reviewer_name,</if>
+            <if test="reviewStatus != null">review_status,</if>
+            <if test="onlineDate != null">online_date,</if>
+            <if test="comments != null">comments,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reviewerId != null">#{reviewerId},</if>
+            <if test="reviewerName != null">#{reviewerName},</if>
+            <if test="reviewStatus != null">#{reviewStatus},</if>
+            <if test="onlineDate != null">#{onlineDate},</if>
+            <if test="comments != null">#{comments},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlanCoSign" parameterType="PlanCoSignEntity">
+        update production_plan_co_sign
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="reviewerId != null">reviewer_id = #{reviewerId},</if>
+            <if test="reviewerName != null">reviewer_name = #{reviewerName},</if>
+            <if test="reviewStatus != null">review_status = #{reviewStatus},</if>
+            <if test="onlineDate != null">online_date = #{onlineDate},</if>
+            <if test="comments != null">comments = #{comments},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePlanCoSignById" parameterType="String">
+        delete from production_plan_co_sign where id = #{id}
+    </delete>
+
+    <delete id="deletePlanCoSignByIds" parameterType="String">
+        delete from production_plan_co_sign where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
