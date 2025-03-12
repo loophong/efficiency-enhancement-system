@@ -7,20 +7,12 @@
       <el-step title="第二步" description="加急订单排产"/>
       <el-step title="第三步" description="系统排产"/>
       <el-step title="第四步" description="未排产订单列表"/>
-      <el-step title="第五步" description="预测订单生成"/>
+<!--      <el-step title="第五步" description="预测订单生成"/>-->
       <el-step title="第六步" description="生成日生产计划"/>
     </el-steps>
 
 
-    <!--    第二步:定义form表单-->
-    <!--    <el-form-->
-    <!--        ref="dataForm"-->
-    <!--        :model="temp"-->
-    <!--        :rules="formRules"-->
-    <!--        label-position="left"-->
-    <!--        label-width="100px"-->
-    <!--        style="width: 400px;-->
-    <!--    margin-left: 50px">-->
+
 
     <!-- 第三步:定义4个盒子对象active => 1 到 4-->
     <div v-show="active === 1">
@@ -391,6 +383,13 @@ const unscheduledList = ref([]);
 
 // 步骤条下一步的方法
 function next() {
+  if(active.value === 1){
+    // 校验日期是否选择
+    if (productionDate.value === '') {
+      proxy.$modal.msgError("请选择排产日期")
+      return
+    }
+  }
   if (active.value < 6) {
     active.value++
   }
@@ -400,6 +399,9 @@ function next() {
   }
   if (active.value === 4) {
     getUnscheduledList()
+  }
+  if (active.value === 5) {
+    active.value++
   }
   console.log("当前active：" + active.value)
 }

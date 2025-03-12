@@ -23,6 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单信息Controller
@@ -52,7 +53,10 @@ public class OrderSchedulingController extends BaseController {
     public AjaxResult list(@RequestParam Date date) {
         OrdersAndCapacityVO ordersAndCapacityVO = new OrdersAndCapacityVO();
         List<DailyUsedCapacityEntity> dailyUsedCapacityEntities = dailyUsedCapacityService.list(new LambdaQueryWrapper<DailyUsedCapacityEntity>().eq(DailyUsedCapacityEntity::getProductionDate, date));
-        List<OrderSchedulingEntity> list = orderSchedulingService.list(new LambdaQueryWrapper<OrderSchedulingEntity>().eq(OrderSchedulingEntity::getOnlineDate, date));
+        List<OrderSchedulingEntity> list = orderSchedulingService.list(
+                new LambdaQueryWrapper<OrderSchedulingEntity>()
+                        .eq(OrderSchedulingEntity::getIsScheduling, 1)
+                        .eq(OrderSchedulingEntity::getOnlineDate, date));
         ordersAndCapacityVO.setDailyUsedCapacityEntities(dailyUsedCapacityEntities);
         ordersAndCapacityVO.setOrderSchedulingEntities(list);
         return success(ordersAndCapacityVO);
@@ -100,16 +104,33 @@ public class OrderSchedulingController extends BaseController {
 
         log.info("排产订单信息: {}", schedulingDTO.getOrderSchedulingList());
         log.info("使用产能表: {}", schedulingDTO.getDailyUsedCapacityList());
+        Date date = schedulingDTO.getDate();
+        log.info("排产日期: {}", date);
+//        log.info("size:{}", schedulingDTO.getOrderSchedulingList().size());
+//        log.info("id:{}", schedulingDTO.getOrderSchedulingList().get(0).getId());
 
-        log.info("size:{}", schedulingDTO.getOrderSchedulingList().size());
-        log.info("id:{}", schedulingDTO.getOrderSchedulingList().get(1).getId());
 
-        orderSchedulingService.updateBatchById(schedulingDTO.getOrderSchedulingList());
+        // 如果订单排产，则更新，不排产则设置排产状态为未排产，并修改上线时间为null
+        schedulingDTO.getOrderSchedulingList().forEach(orderSchedulingEntity -> {
+            if (orderSchedulingEntity.getIsScheduling().equals(1)) {
+                orderSchedulingService.updateById(orderSchedulingEntity);
+            } else {
+                log.info("取消订单排产，id：" + orderSchedulingEntity.getId());
+                orderSchedulingService.update(
+                        new LambdaUpdateWrapper<OrderSchedulingEntity>()
+                                .eq(OrderSchedulingEntity::getId, orderSchedulingEntity.getId())
+                                .set(OrderSchedulingEntity::getIsScheduling, 0).setSql("online_date = NULL"));
+            }
+        });
+
+
         dailyUsedCapacityService.saveOrUpdateBatch(schedulingDTO.getDailyUsedCapacityList());
+
+        int size = schedulingDTO.getOrderSchedulingList().stream().filter((orderSchedulingEntity) -> orderSchedulingEntity.getIsScheduling().equals(1)).toList().size();
         workdayService.update(
                 new LambdaUpdateWrapper<WorkdayEntity>()
                         .eq(WorkdayEntity::getDate, schedulingDTO.getDailyUsedCapacityList().get(0).getProductionDate())
-                        .set(WorkdayEntity::getProductStatus, 1)
+                        .set(WorkdayEntity::getProductStatus, size > 0 ? 1 : 0)
         );
         return success();
     }
