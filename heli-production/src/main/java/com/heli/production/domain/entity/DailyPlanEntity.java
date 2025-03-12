@@ -4,6 +4,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -25,7 +26,7 @@ public class DailyPlanEntity implements Serializable {
     /**
      * 主键
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private String id;
 
     /**
@@ -47,16 +48,16 @@ public class DailyPlanEntity implements Serializable {
     private String contractNumber;
 
     /**
-     * 车型（项目号）
+     * 车号
      */
-    @Excel(name = "车型", readConverterExp = "项=目号")
-    private String vehicleModel;
+    @Excel(name = "车号")
+    private String vehicleNumber;
 
     /**
-     * 门架
+     * 车型（项目号）
      */
-    @Excel(name = "门架")
-    private String mast;
+    @Excel(name = "项目号")
+    private String vehicleModel;
 
     /**
      * 项目说明
@@ -65,10 +66,10 @@ public class DailyPlanEntity implements Serializable {
     private String projectDescription;
 
     /**
-     * 车号
+     * 门架
      */
-    @Excel(name = "车号")
-    private String vehicleNumber;
+    @Excel(name = "配装门架")
+    private String mast;
 
     /**
      * 数量
@@ -98,13 +99,13 @@ public class DailyPlanEntity implements Serializable {
      * 订单系统交货期
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "订单系统交货期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "计划交货期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date systemDeliveryDate;
 
     /**
      * 网点名称（客户）
      */
-    @Excel(name = "网点名称", readConverterExp = "客=户")
+    @Excel(name = "客户")
     private String branch;
 
     /**
@@ -117,7 +118,7 @@ public class DailyPlanEntity implements Serializable {
     /**
      * 上线日期（排产日期）
      */
-    @Excel(name = "上线日期", readConverterExp = "排产日期")
+//    @Excel(name = "上线日期", readConverterExp = "排产日期")
     private Date onlineDate;
 
 }

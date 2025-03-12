@@ -1,19 +1,20 @@
 package com.heli.production.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.production.domain.entity.DailyPlanEntity;
 
 /**
  * 日生产计划Service接口
- * 
+ *
  * @author hong
  * @date 2025-03-12
  */
-public interface IDailyPlanService
-{
+public interface IDailyPlanService extends IService<DailyPlanEntity> {
     /**
      * 查询日生产计划
-     * 
+     *
      * @param id 日生产计划主键
      * @return 日生产计划
      */
@@ -21,7 +22,7 @@ public interface IDailyPlanService
 
     /**
      * 查询日生产计划列表
-     * 
+     *
      * @param productionDailyPlan 日生产计划
      * @return 日生产计划集合
      */
@@ -29,7 +30,7 @@ public interface IDailyPlanService
 
     /**
      * 新增日生产计划
-     * 
+     *
      * @param productionDailyPlan 日生产计划
      * @return 结果
      */
@@ -37,7 +38,7 @@ public interface IDailyPlanService
 
     /**
      * 修改日生产计划
-     * 
+     *
      * @param productionDailyPlan 日生产计划
      * @return 结果
      */
@@ -45,7 +46,7 @@ public interface IDailyPlanService
 
     /**
      * 批量删除日生产计划
-     * 
+     *
      * @param ids 需要删除的日生产计划主键集合
      * @return 结果
      */
@@ -53,7 +54,7 @@ public interface IDailyPlanService
 
     /**
      * 删除日生产计划信息
-     * 
+     *
      * @param id 日生产计划主键
      * @return 结果
      */

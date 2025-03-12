@@ -91,26 +91,26 @@
       <el-table-column label="序号" align="center" prop="serialNumber"/>
       <el-table-column label="生产订单号" align="center" prop="productionOrderNumber"/>
       <el-table-column label="合同号" align="center" prop="contractNumber"/>
-      <el-table-column label="车型" align="center" prop="vehicleModel"/>
-      <el-table-column label="门架" align="center" prop="mast"/>
-      <el-table-column label="项目说明" align="center" prop="projectDescription"/>
       <el-table-column label="车号" align="center" prop="vehicleNumber"/>
+      <el-table-column label="项目号" align="center" prop="vehicleModel"/>
+      <el-table-column label="项目说明" align="center" prop="projectDescription"/>
+      <el-table-column label="配装门架" align="center" prop="mast"/>
       <el-table-column label="数量" align="center" prop="quantity"/>
       <el-table-column label="属具" align="center" prop="attachments"/>
       <el-table-column label="阀片" align="center" prop="valvePlate"/>
-      <el-table-column label="描述性配置信息" align="center" prop="descriptiveConfigurationInfo"/>
-      <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="180">
+      <el-table-column label="描述性配置信息" align="center" prop="descriptiveConfigurationInfo" width="200"/>
+      <el-table-column label="计划交货交货期" align="center" prop="systemDeliveryDate" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="网点名称" align="center" prop="branch"/>
-      <el-table-column label="接单日期" align="center" prop="orderDate" width="180">
+      <el-table-column label="客户" align="center" prop="branch"/>
+      <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上线日期" align="center" prop="onlineDate" width="180">
+      <el-table-column label="上线日期" align="center" prop="onlineDate" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.onlineDate, '{y}-{m}-{d}') }}</span>
         </template>

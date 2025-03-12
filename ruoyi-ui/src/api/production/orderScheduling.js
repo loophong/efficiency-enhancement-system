@@ -61,11 +61,11 @@ export function getOrders() {
     })
 }
 
-export function schedulingOrders(submitDate,orderSchedulingList, dailyUsedCapacityList) {
+export function schedulingOrders(date,orderSchedulingList, dailyUsedCapacityList) {
 
     // 构建 schedulingDTO
     const schedulingDTO = {
-        'date':submitDate,
+        date,
         orderSchedulingList,
         dailyUsedCapacityList
     };

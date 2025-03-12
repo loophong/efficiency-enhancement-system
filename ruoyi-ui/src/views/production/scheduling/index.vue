@@ -777,6 +777,7 @@ function submitForm() {
       orderSchedulingList.push({
         'id': item.id,
         'isScheduling': 1,
+        'quantity': item.quantity,
         'onlineDate': date
       })
     }
@@ -802,7 +803,7 @@ function submitForm() {
   })
   console.log("使用的产能为" + JSON.stringify(dailyUsedCapacityList))
 
-  schedulingOrders(orderSchedulingList, dailyUsedCapacityList).then((response) => {
+  schedulingOrders(date,orderSchedulingList, dailyUsedCapacityList).then((response) => {
     console.log("排产结果" + response)
     // 提示用户排产成功
     // proxy.$message({
