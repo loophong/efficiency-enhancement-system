@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierSelfTestReportsMapper">
+    
+    <resultMap type="SupplierSelfTestReports" id="SupplierSelfTestReportsResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="responsibilityJudgmentTime"    column="responsibility_judgment_time"    />
+        <result property="specificContent"    column="specific_content"    />
+        <result property="happenTime"    column="happen_time"    />
+        <result property="reporter"    column="reporter"    />
+    </resultMap>
+
+    <sql id="selectSupplierSelfTestReportsVo">
+        select id, supplier_code, supplier_name, responsibility_judgment_time, specific_content, happen_time, reporter from supplier_self_test_reports
+    </sql>
+
+    <select id="selectSupplierSelfTestReportsList" parameterType="SupplierSelfTestReports" resultMap="SupplierSelfTestReportsResult">
+        <include refid="selectSupplierSelfTestReportsVo"/>
+        <where>  
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="responsibilityJudgmentTime != null "> and responsibility_judgment_time = #{responsibilityJudgmentTime}</if>
+            <if test="specificContent != null  and specificContent != ''"> and specific_content = #{specificContent}</if>
+            <if test="happenTime != null "> and happen_time = #{happenTime}</if>
+            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>
+        </where>
+    </select>
+    
+    <select id="selectSupplierSelfTestReportsById" parameterType="Long" resultMap="SupplierSelfTestReportsResult">
+        <include refid="selectSupplierSelfTestReportsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierSelfTestReports" parameterType="SupplierSelfTestReports">
+        insert into supplier_self_test_reports
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="responsibilityJudgmentTime != null">responsibility_judgment_time,</if>
+            <if test="specificContent != null">specific_content,</if>
+            <if test="happenTime != null">happen_time,</if>
+            <if test="reporter != null">reporter,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="responsibilityJudgmentTime != null">#{responsibilityJudgmentTime},</if>
+            <if test="specificContent != null">#{specificContent},</if>
+            <if test="happenTime != null">#{happenTime},</if>
+            <if test="reporter != null">#{reporter},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSupplierSelfTestReports" parameterType="SupplierSelfTestReports">
+        update supplier_self_test_reports
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="responsibilityJudgmentTime != null">responsibility_judgment_time = #{responsibilityJudgmentTime},</if>
+            <if test="specificContent != null">specific_content = #{specificContent},</if>
+            <if test="happenTime != null">happen_time = #{happenTime},</if>
+            <if test="reporter != null">reporter = #{reporter},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierSelfTestReportsById" parameterType="Long">
+        delete from supplier_self_test_reports where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierSelfTestReportsByIds" parameterType="String">
+        delete from supplier_self_test_reports where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
