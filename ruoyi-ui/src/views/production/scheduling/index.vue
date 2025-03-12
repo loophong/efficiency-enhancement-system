@@ -4,7 +4,7 @@
     <!-- 第一步:定义出4个步骤  -->
     <el-steps :active="active" finish-status="success" align-center>
       <el-step title="第一步" description="设置生产日期和产能"/>
-      <el-step title="第二步" description="加急订单排产"/>
+      <el-step title="第二步" description="特殊订单排产"/>
       <el-step title="第三步" description="系统排产"/>
       <el-step title="第四步" description="未排产订单列表"/>
 <!--      <el-step title="第五步" description="预测订单生成"/>-->
@@ -108,6 +108,7 @@
                 <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
               </template>
             </el-table-column>
+            <el-table-column label="缺件信息" align="center" prop="missingPartRecords"/>
             <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
             <el-table-column label="产能型号" align="center" prop="capacityType"/>
             <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
@@ -485,8 +486,19 @@ function getOrderList() {
 
     // 从订单列表中划分出一般订单和加急订单
     allOrders.value = response.data
-    urgentList.value = response.data.filter(item => item.isUrgent === 1);
-    standardList.value = response.data.filter(item => item.isUrgent !== 1);
+
+    // urgentList.value = response.data.filter(item => item.isUrgent === 1);
+    // standardList.value = response.data.filter(item => item.isUrgent !== 1);
+
+    // update :3-12 修改，将加急订单改为特殊订单，特殊订单包括 加急订单 和 缺件订单
+    response.data.forEach(item => {
+      if(item.isUrgent === 1 || item.procurementArrivalDate !== null){
+        urgentList.value.push(item)
+      }else {
+        standardList.value.push(item)
+      }
+    })
+
     standardList.value.sort((a, b) => new Date(a.latestOnlineDate) - new Date(b.latestOnlineDate));
 
     // 按车型分类统计未排产订单数
