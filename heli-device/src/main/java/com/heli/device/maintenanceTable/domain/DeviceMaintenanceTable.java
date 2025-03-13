@@ -95,6 +95,10 @@ public class DeviceMaintenanceTable extends BaseEntity
     @ExcelProperty(value = "是否停机")
     private String ifDown;
 
+    /** 故障现象文件 */
+    @ExcelIgnore
+    private String faultFile;
+
     public void setMaintenanceTableId(Long maintenanceTableId)
     {
         this.maintenanceTableId = maintenanceTableId;
@@ -249,6 +253,17 @@ public class DeviceMaintenanceTable extends BaseEntity
         return ifDown;
     }
 
+    public void setFaultFile(String faultFile)
+    {
+        this.faultFile = faultFile;
+    }
+
+    public String getFaultFile()
+    {
+        return faultFile;
+    }
+
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -269,6 +284,7 @@ public class DeviceMaintenanceTable extends BaseEntity
                 .append("faultDuration", getFaultDuration())
                 .append("maintenanceCast", getMaintenanceCast())
                 .append("ifDown", getIfDown())
+                .append("faultFile", getFaultFile())
                 .toString();
     }
 }

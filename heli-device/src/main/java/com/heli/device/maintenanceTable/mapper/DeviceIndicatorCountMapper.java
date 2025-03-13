@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
+import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Select;
 
 
 /**
@@ -14,6 +17,13 @@ import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
  */
 public interface DeviceIndicatorCountMapper extends BaseMapper<DeviceIndicatorCount>
 {
+
+    @Select("SELECT * FROM device_indicator_count " +
+            "WHERE indicator_time = #{year} " +
+            "AND indicator_name = #{indicatorName} ")
+    DeviceIndicatorCount selectExist(@Param("year") String year,
+                                       @Param("indicatorName") String indicatorName);
+
     /**
      * 查询设备指标分析
      * 

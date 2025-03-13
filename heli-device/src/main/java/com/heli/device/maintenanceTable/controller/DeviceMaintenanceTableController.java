@@ -61,12 +61,13 @@ public class DeviceMaintenanceTableController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
     @GetMapping("/listByDate")
-    public TableDataInfo listByDate(@DateTimeFormat(pattern = "yyyy-MM")Date yearAndMonth)
+    public TableDataInfo listByDate(@DateTimeFormat(pattern = "yyyy-MM")Date yearAndMonth,String faultType)
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         String formattedDate = sdf.format(yearAndMonth);
+        log.info(faultType);
 //        startPage();
-        List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate);
+        List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate,faultType);
         return getDataTable(list);
     }
 
@@ -78,7 +79,7 @@ public class DeviceMaintenanceTableController extends BaseController
     public TableDataInfo treeList(DeviceMaintenanceTable deviceMaintenanceTable)
     {
 //        startPage();
-        List<Map<String, Object>> list = deviceMaintenanceTableService.handleTreeList();
+        List<Map<String, Object>> list = deviceMaintenanceTableService.handleTreeList(deviceMaintenanceTable);
         return getDataTable(list);
     }
 

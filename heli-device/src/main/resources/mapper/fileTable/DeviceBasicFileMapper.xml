@@ -16,10 +16,14 @@
         <result property="fileInfo"    column="file_info"    />
         <result property="fileInfoRepair"    column="file_info_repair"    />
         <result property="ifHistory"    column="if_history"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
     </resultMap>
 
     <sql id="selectDeviceBasicFileVo">
-        select basic_file_id, basic_combine_maintenance, basic_combine_repair, device_num, device_name, file_type, up_time, version_id, file_info, file_info_repair, if_history from device_basic_file
+        select basic_file_id, basic_combine_maintenance, basic_combine_repair, device_num, device_name, file_type, up_time, version_id, file_info, file_info_repair, if_history, create_by, create_time, update_time, update_by from device_basic_file
     </sql>
 
     <select id="selectDeviceBasicFileList" parameterType="DeviceBasicFile" resultMap="DeviceBasicFileResult">
@@ -27,7 +31,7 @@
         <where>
             <if test="basicCombineMaintenance != null "> and basic_combine_maintenance = #{basicCombineMaintenance}</if>
             <if test="basicCombineRepair != null  and basicCombineRepair != ''"> and basic_combine_repair = #{basicCombineRepair}</if>
-            <if test="deviceNum != null  and deviceNum != ''"> and device_num = #{deviceNum}</if>
+            <if test="deviceNum != null  and deviceNum != ''"> and device_num like concat('%', #{deviceNum}, '%')</if>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
             <if test="fileType != null  and fileType != ''"> and file_type = #{fileType}</if>
             <if test="upTime != null "> and up_time = #{upTime}</if>
@@ -56,6 +60,10 @@
             <if test="fileInfo != null">file_info,</if>
             <if test="fileInfoRepair != null">file_info_repair,</if>
             <if test="ifHistory != null">if_history,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="basicCombineMaintenance != null">#{basicCombineMaintenance},</if>
@@ -68,6 +76,10 @@
             <if test="fileInfo != null">#{fileInfo},</if>
             <if test="fileInfoRepair != null">#{fileInfoRepair},</if>
             <if test="ifHistory != null">#{ifHistory},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
         </trim>
     </insert>
 
@@ -84,6 +96,10 @@
             <if test="fileInfo != null">file_info = #{fileInfo},</if>
             <if test="fileInfoRepair != null">file_info_repair = #{fileInfoRepair},</if>
             <if test="ifHistory != null">if_history = #{ifHistory},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
         </trim>
         where basic_file_id = #{basicFileId}
     </update>

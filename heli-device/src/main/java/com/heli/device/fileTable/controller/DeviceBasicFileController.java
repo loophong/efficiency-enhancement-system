@@ -1,6 +1,8 @@
 package com.heli.device.fileTable.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class DeviceBasicFileController extends BaseController
 {
     @Autowired
     private IDeviceBasicFileService deviceBasicFileService;
+
+
+
+
 
     /**
      * 查询设备基础档案列表
@@ -101,4 +107,7 @@ public class DeviceBasicFileController extends BaseController
     {
         return toAjax(deviceBasicFileService.deleteDeviceBasicFileByBasicFileIds(basicFileIds));
     }
+
+
+
 }

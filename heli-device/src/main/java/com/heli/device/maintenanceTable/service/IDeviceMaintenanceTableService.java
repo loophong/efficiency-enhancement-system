@@ -64,5 +64,5 @@ public interface IDeviceMaintenanceTableService
      */
     public int deleteDeviceMaintenanceTableByMaintenanceTableId(Long maintenanceTableId);
 
-    public List<Map<String, Object>> handleTreeList();
+    public List<Map<String, Object>> handleTreeList(DeviceMaintenanceTable deviceMaintenanceTable);
 }

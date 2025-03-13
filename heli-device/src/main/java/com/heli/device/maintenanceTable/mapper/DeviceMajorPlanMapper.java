@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
+import org.springframework.data.repository.query.Param;
 
 /**
  * 专业计划保养Mapper接口
@@ -13,6 +14,8 @@ import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
  */
 public interface DeviceMajorPlanMapper extends BaseMapper<DeviceMajorPlan>
 {
+
+    List<DeviceMajorPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields);
     /**
      * 查询专业计划保养
      * 

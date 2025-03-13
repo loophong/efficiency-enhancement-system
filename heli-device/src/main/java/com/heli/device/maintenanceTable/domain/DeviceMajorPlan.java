@@ -804,6 +804,8 @@ public class DeviceMajorPlan extends BaseEntity
                 .append("weekDecTwo", getWeekDecTwo())
                 .append("weekDecThree", getWeekDecThree())
                 .append("weekDecFour", getWeekDecFour())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
                 .toString();
     }
 }

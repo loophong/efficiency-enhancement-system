@@ -113,9 +113,9 @@ public class DeviceIndicatorCountController extends BaseController
 //    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
     @PostMapping("/import")
     @Transactional
-    public AjaxResult indicatorList(String yearAndMonth, MultipartFile excelFile) {
+    public AjaxResult indicatorList(String year, MultipartFile excelFile) {
         log.info("excelFile"+"="+excelFile);
-        log.info("date"+"="+yearAndMonth);
+        log.info("日期="+year);
 //        if (financialInterestsTableService.checkInterestsDataIsExisted(yearAndMonth)) {
 //            return AjaxResult.error("当月利润表已上传");
 //        }
@@ -124,7 +124,7 @@ public class DeviceIndicatorCountController extends BaseController
         try (InputStream inputStream = excelFile.getInputStream()) {
             //清空数据库
             log.info("开始读取 " + excelFile.getName() + " 文件");
-            deviceIndicatorCountService.readIndicatorToDB(excelFile.getOriginalFilename(), inputStream);
+            deviceIndicatorCountService.readIndicatorToDB(excelFile.getOriginalFilename(), inputStream,year);
 //            financialTempTableService.tempTableToInterestsTable(yearAndMonth);
             status = 1;
         } catch (Exception e) {

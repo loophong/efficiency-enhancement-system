@@ -3,8 +3,10 @@ package com.heli.device.maintenanceTable.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
+import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
 import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
+import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
@@ -66,7 +68,22 @@ public class MajorPlanExcelListener implements ReadListener<DeviceMajorPlan> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-        deviceMajorPlanMapper.insert(cacheDataList);
-//        financialTempTableMapper.batchInsertSalaryTable(cacheDataList);
+//        deviceMajorPlanMapper.insert(cacheDataList);
+
+        SecurityUtils securityUtils = new SecurityUtils();
+//        deviceGroupPlanMapper.insert(cacheDataList);
+        Long userId =securityUtils.getUserId();
+        for (DeviceMajorPlan data : cacheDataList) {
+//            DeviceGroupPlan existing = deviceGroupPlanMapper.selectExist(data.getDeviceNum(),data.getFaultPhenomenon(),data.getReportedTime());
+//            if (existing != null) {
+//                // 如果存在重复记录，执行更新操作
+//                data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
+//                deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
+//            } else {
+            // 否则，执行插入操作
+            data.setCreateBy(userId.toString());
+            deviceMajorPlanMapper.insertDeviceMajorPlan(data);
+//            }
+        }
     }
 }

@@ -68,5 +68,5 @@ public interface IDeviceIndicatorCountService
      * @param inputStream 输入流
      * @return {@link R }<{@link String }>
      */
-    public R<String> readIndicatorToDB(String fileName, InputStream inputStream);
+    public R<String> readIndicatorToDB(String fileName, InputStream inputStream,String year);
 }

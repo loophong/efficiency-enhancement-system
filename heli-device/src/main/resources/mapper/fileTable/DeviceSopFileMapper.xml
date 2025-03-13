@@ -13,17 +13,21 @@
         <result property="sopRepair"    column="sop_repair"    />
         <result property="upTime"    column="up_time"    />
         <result property="ifHistory"    column="if_history"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
     </resultMap>
 
     <sql id="selectDeviceSopFileVo">
-        select sop_file_id, sop_combine_id, sop_num, sop_name, sop_maintenance, sop_repair, up_time, if_history from device_sop_file
+        select sop_file_id, sop_combine_id, sop_num, sop_name, sop_maintenance, sop_repair, up_time, if_history, create_time, create_by, update_time, update_by from device_sop_file
     </sql>
 
     <select id="selectDeviceSopFileList" parameterType="DeviceSopFile" resultMap="DeviceSopFileResult">
         <include refid="selectDeviceSopFileVo"/>
         <where>
             <if test="sopCombineId != null "> and sop_combine_id = #{sopCombineId}</if>
-            <if test="sopNum != null  and sopNum != ''"> and sop_num = #{sopNum}</if>
+            <if test="sopNum != null  and sopNum != ''"> and sop_num like concat('%', #{sopNum}, '%')</if>
             <if test="sopName != null  and sopName != ''"> and sop_name like concat('%', #{sopName}, '%')</if>
             <if test="sopMaintenance != null  and sopMaintenance != ''"> and sop_maintenance = #{sopMaintenance}</if>
             <if test="sopRepair != null  and sopRepair != ''"> and sop_repair = #{sopRepair}</if>
@@ -47,6 +51,10 @@
             <if test="sopRepair != null">sop_repair,</if>
             <if test="upTime != null">up_time,</if>
             <if test="ifHistory != null">if_history,</if>
+            create_time,
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="sopCombineId != null">#{sopCombineId},</if>
@@ -56,6 +64,10 @@
             <if test="sopRepair != null">#{sopRepair},</if>
             <if test="upTime != null">#{upTime},</if>
             <if test="ifHistory != null">#{ifHistory},</if>
+            CONVERT_TZ(NOW(), 'SYSTEM', '+08:00'),
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
         </trim>
     </insert>
 
@@ -69,6 +81,10 @@
             <if test="sopRepair != null">sop_repair = #{sopRepair},</if>
             <if test="upTime != null">up_time = #{upTime},</if>
             <if test="ifHistory != null">if_history = #{ifHistory},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
         </trim>
         where sop_file_id = #{sopFileId}
     </update>

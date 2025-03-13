@@ -23,10 +23,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="indicatorOct"    column="indicator_oct"    />
         <result property="indicatorNov"    column="indicator_nov"    />
         <result property="indicatorDec"    column="indicator_dec"    />
+        <result property="indicatorFile"    column="indicator_file"    />
     </resultMap>
 
     <sql id="selectDeviceIndicatorCountVo">
-        select indicator_id, indicator_name, indicator_target, indicator_up, indicator_down, indicator_time, indicator_jan, indicator_feb, indicator_mar, indicator_apr, indicator_may, indicator_jun, indicator_jul, indicator_aug, indicator_sep, indicator_oct, indicator_nov, indicator_dec from device_indicator_count
+        select indicator_id, indicator_name, indicator_target, indicator_up, indicator_down, indicator_time, indicator_jan, indicator_feb, indicator_mar, indicator_apr, indicator_may, indicator_jun, indicator_jul, indicator_aug, indicator_sep, indicator_oct, indicator_nov, indicator_dec,indicator_file from device_indicator_count
     </sql>
 
     <select id="selectDeviceIndicatorCountList" parameterType="DeviceIndicatorCount" resultMap="DeviceIndicatorCountResult">
@@ -49,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null  and indicatorOct != ''"> and indicator_oct = #{indicatorOct}</if>
             <if test="indicatorNov != null  and indicatorNov != ''"> and indicator_nov = #{indicatorNov}</if>
             <if test="indicatorDec != null  and indicatorDec != ''"> and indicator_dec = #{indicatorDec}</if>
+            <if test="indicatorFile != null  and indicatorFile != ''"> and indicator_file = #{indicatorFile}</if>
         </where>
     </select>
 
@@ -77,6 +79,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null">indicator_oct,</if>
             <if test="indicatorNov != null">indicator_nov,</if>
             <if test="indicatorDec != null">indicator_dec,</if>
+            <if test="indicatorFile != null">indicator_file,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="indicatorName != null">#{indicatorName},</if>
@@ -96,6 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null">#{indicatorOct},</if>
             <if test="indicatorNov != null">#{indicatorNov},</if>
             <if test="indicatorDec != null">#{indicatorDec},</if>
+            <if test="indicatorFile != null">#{indicatorFile},</if>
         </trim>
     </insert>
 
@@ -119,6 +123,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="indicatorOct != null">indicator_oct = #{indicatorOct},</if>
             <if test="indicatorNov != null">indicator_nov = #{indicatorNov},</if>
             <if test="indicatorDec != null">indicator_dec = #{indicatorDec},</if>
+            <if test="indicatorFile != null">indicator_file = #{indicatorFile},</if>
         </trim>
         where indicator_id = #{indicatorId}
     </update>

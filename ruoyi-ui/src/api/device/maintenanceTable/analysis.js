@@ -7,6 +7,18 @@ export function listAnalysis(query) {
     method: 'get',
     params: {
       yearAndMonth: query.yearAndMonth,
+      faultType:query.faultType
+    },
+  })
+}
+
+export function listAnalysisByNameAndDate(query) {
+  return request({
+    url: '/fault/analysis/listByNameAndDate',
+    method: 'get',
+    params: {
+      analysisRecordTime: query.analysisRecordTime,
+      analysisName:query.analysisName
     },
   })
 }
@@ -14,7 +26,7 @@ export function listAnalysis(query) {
 // 查询设备故障分析详细
 export function getAnalysis(analysisId) {
   return request({
-    url: '/fault/maintenance/' + analysisId,
+    url: '/fault/analysis/' + analysisId,
     method: 'get'
   })
 }
@@ -22,7 +34,7 @@ export function getAnalysis(analysisId) {
 // 新增设备故障分析
 export function addAnalysis(data) {
   return request({
-    url: '/fault/maintenance',
+    url: '/fault/analysis',
     method: 'post',
     data: data
   })
@@ -31,7 +43,7 @@ export function addAnalysis(data) {
 // 修改设备故障分析
 export function updateAnalysis(data) {
   return request({
-    url: '/fault/maintenance',
+    url: '/fault/analysis',
     method: 'put',
     data: data
   })

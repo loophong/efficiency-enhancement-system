@@ -83,6 +83,10 @@ public class DeviceDetails extends BaseEntity
     @ExcelProperty(value = "品牌")
     private String brand;
 
+    /** 故障次数 */
+    @ExcelIgnore
+    private String faultCount;
+
 
 
     public void setDetailsId(String detailsId)
@@ -209,6 +213,16 @@ public class DeviceDetails extends BaseEntity
         return tonnage;
     }
 
+    public void setFaultCount(String faultCount)
+    {
+        this.faultCount = faultCount;
+    }
+
+    public String getFaultCount()
+    {
+        return faultCount;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -226,6 +240,7 @@ public class DeviceDetails extends BaseEntity
             .append("assetOrigin", getAssetOrigin())
             .append("brand", getBrand())
             .append("tonnage", getTonnage())
+            .append("faultCount", getFaultCount())
             .toString();
     }
 }

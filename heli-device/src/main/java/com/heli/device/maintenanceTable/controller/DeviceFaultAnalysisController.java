@@ -1,6 +1,9 @@
 package com.heli.device.maintenanceTable.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.heli.device.maintenanceTable.mapper.DeviceFaultAnalysisMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +36,20 @@ public class DeviceFaultAnalysisController extends BaseController
 {
     @Autowired
     private IDeviceFaultAnalysisService deviceFaultAnalysisService;
+    @Autowired
+    private DeviceFaultAnalysisMapper deviceFaultAnalysisMapper;
 
-    /**
+//    @PreAuthorize("@ss.hasPermi('fault:analysis:list')")
+    @GetMapping("/listByNameAndDate")
+    public TableDataInfo listByNameAndDate(Date analysisRecordTime , String analysisName)
+    {
+
+        List<DeviceFaultAnalysis> deviceFaultAnalysis = deviceFaultAnalysisMapper.selectByNameAndDate(analysisRecordTime,analysisName);
+        return getDataTable(deviceFaultAnalysis);
+    }
+
+
+    /**   selectByNameAndDate
      * 查询设备故障分析列表
      */
     @PreAuthorize("@ss.hasPermi('fault:analysis:list')")
@@ -68,6 +83,8 @@ public class DeviceFaultAnalysisController extends BaseController
     {
         return success(deviceFaultAnalysisService.selectDeviceFaultAnalysisByAnalysisId(analysisId));
     }
+
+
 
     /**
      * 新增设备故障分析

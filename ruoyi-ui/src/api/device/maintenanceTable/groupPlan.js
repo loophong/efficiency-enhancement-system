@@ -43,6 +43,14 @@ export function delPlan(groupId) {
   })
 }
 
+// 班组计划保养消息列表
+export function tipList() {
+  return request({
+    url: '/fault/groupPlan/tipList',
+    method: 'get'
+  })
+}
+
 export function uploadFile(data, aimUrl) {
   return request({
     url: aimUrl,

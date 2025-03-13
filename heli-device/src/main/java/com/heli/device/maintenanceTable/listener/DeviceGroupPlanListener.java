@@ -8,6 +8,7 @@ import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 import java.util.List;
 
 import com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper;
+import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class DeviceGroupPlanListener implements ReadListener<DeviceGroupPlan> {
@@ -74,17 +75,20 @@ public class DeviceGroupPlanListener implements ReadListener<DeviceGroupPlan> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-        deviceGroupPlanMapper.insert(cacheDataList);
-//        for (DeviceGroupPlan data : cacheDataList) {
+        SecurityUtils securityUtils = new SecurityUtils();
+//        deviceGroupPlanMapper.insert(cacheDataList);
+        Long userId =securityUtils.getUserId();
+        for (DeviceGroupPlan data : cacheDataList) {
 //            DeviceGroupPlan existing = deviceGroupPlanMapper.selectExist(data.getDeviceNum(),data.getFaultPhenomenon(),data.getReportedTime());
 //            if (existing != null) {
 //                // 如果存在重复记录，执行更新操作
 //                data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
 //                deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
 //            } else {
-//                // 否则，执行插入操作
-//                deviceMaintenanceTableMapper.insertDeviceMaintenanceTable(data);
+                // 否则，执行插入操作
+            data.setCreateBy(userId.toString());
+            deviceGroupPlanMapper.insertDeviceGroupPlan(data);
 //            }
-//        }
+        }
     }
 }

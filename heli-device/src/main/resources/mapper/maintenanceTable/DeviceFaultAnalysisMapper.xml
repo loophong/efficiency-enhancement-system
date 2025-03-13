@@ -3,29 +3,26 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceFaultAnalysisMapper">
-    
     <resultMap type="DeviceFaultAnalysis" id="DeviceFaultAnalysisResult">
         <result property="analysisId"    column="analysis_id"    />
         <result property="analysisName"    column="analysis_name"    />
-        <result property="analysisTime"    column="analysis_time"    />
-        <result property="analysisReason"    column="analysis_reason"    />
         <result property="analysisRecordTime"    column="analysis_record_time"    />
+        <result property="maintenanceAnalysis"    column="maintenance_analysis"    />
     </resultMap>
 
     <sql id="selectDeviceFaultAnalysisVo">
-        select analysis_id, analysis_name, analysis_time, analysis_reason, analysis_record_time from device_fault_analysis
+        select analysis_id, analysis_name, analysis_record_time, maintenance_analysis from device_fault_analysis
     </sql>
 
     <select id="selectDeviceFaultAnalysisList" parameterType="DeviceFaultAnalysis" resultMap="DeviceFaultAnalysisResult">
         <include refid="selectDeviceFaultAnalysisVo"/>
-        <where>  
+        <where>
             <if test="analysisName != null  and analysisName != ''"> and analysis_name like concat('%', #{analysisName}, '%')</if>
-            <if test="analysisTime != null  and analysisTime != ''"> and analysis_time = #{analysisTime}</if>
-            <if test="analysisReason != null  and analysisReason != ''"> and analysis_reason = #{analysisReason}</if>
-            <if test="params.beginAnalysisRecordTime != null and params.beginAnalysisRecordTime != '' and params.endAnalysisRecordTime != null and params.endAnalysisRecordTime != ''"> and analysis_record_time between #{params.beginAnalysisRecordTime} and #{params.endAnalysisRecordTime}</if>
+            <if test="analysisRecordTime != null "> and analysis_record_time = #{analysisRecordTime}</if>
+            <if test="maintenanceAnalysis != null  and maintenanceAnalysis != ''"> and maintenance_analysis = #{maintenanceAnalysis}</if>
         </where>
     </select>
-    
+
     <select id="selectDeviceFaultAnalysisByAnalysisId" parameterType="String" resultMap="DeviceFaultAnalysisResult">
         <include refid="selectDeviceFaultAnalysisVo"/>
         where analysis_id = #{analysisId}
@@ -35,25 +32,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into device_fault_analysis
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="analysisName != null and analysisName != ''">analysis_name,</if>
-            <if test="analysisTime != null and analysisTime != ''">analysis_time,</if>
-            <if test="analysisReason != null">analysis_reason,</if>
             <if test="analysisRecordTime != null">analysis_record_time,</if>
-         </trim>
+            <if test="maintenanceAnalysis != null and maintenanceAnalysis != ''">maintenance_analysis,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="analysisName != null and analysisName != ''">#{analysisName},</if>
-            <if test="analysisTime != null and analysisTime != ''">#{analysisTime},</if>
-            <if test="analysisReason != null">#{analysisReason},</if>
             <if test="analysisRecordTime != null">#{analysisRecordTime},</if>
-         </trim>
+            <if test="maintenanceAnalysis != null and maintenanceAnalysis != ''">#{maintenanceAnalysis},</if>
+        </trim>
     </insert>
 
     <update id="updateDeviceFaultAnalysis" parameterType="DeviceFaultAnalysis">
         update device_fault_analysis
         <trim prefix="SET" suffixOverrides=",">
             <if test="analysisName != null and analysisName != ''">analysis_name = #{analysisName},</if>
-            <if test="analysisTime != null and analysisTime != ''">analysis_time = #{analysisTime},</if>
-            <if test="analysisReason != null">analysis_reason = #{analysisReason},</if>
             <if test="analysisRecordTime != null">analysis_record_time = #{analysisRecordTime},</if>
+            <if test="maintenanceAnalysis != null and maintenanceAnalysis != ''">analysis_reason = #{maintenanceAnalysis},</if>
         </trim>
         where analysis_id = #{analysisId}
     </update>
@@ -63,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteDeviceFaultAnalysisByAnalysisIds" parameterType="String">
-        delete from device_fault_analysis where analysis_id in 
+        delete from device_fault_analysis where analysis_id in
         <foreach item="analysisId" collection="array" open="(" separator="," close=")">
             #{analysisId}
         </foreach>

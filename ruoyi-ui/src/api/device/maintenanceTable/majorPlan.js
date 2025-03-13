@@ -43,6 +43,13 @@ export function delPlan(majorId) {
   })
 }
 
+// 专业计划保养消息列表
+export function tipList() {
+  return request({
+    url: '/fault/majorPlan/tipList',
+    method: 'get'
+  })
+}
 
 export function uploadFile(data, aimUrl) {
   return request({
