@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 记录表Controller
  * 
  * @author wang
- * @date 2025-02-23
+ * @date 2025-03-11
  */
 @RestController
 @RequestMapping("/security/record")

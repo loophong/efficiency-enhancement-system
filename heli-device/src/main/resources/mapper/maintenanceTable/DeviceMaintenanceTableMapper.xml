@@ -22,10 +22,11 @@
         <result property="faultDuration"    column="fault_duration"    />
         <result property="maintenanceCast"    column="maintenance_cast"    />
         <result property="ifDown"    column="if_down"    />
+        <result property="faultFile"    column="fault_file"    />
     </resultMap>
 
     <sql id="selectDeviceMaintenanceTableVo">
-        select maintenance_table_id, device_name, work_status, device_num, issue_type, fault_type, apply_by, apply_department, maintenance_people, fault_phenomenon, maintenance_analysis, maintenance_content, reported_time, resolution_time, fault_duration, maintenance_cast, if_down from device_maintenance_table
+        select maintenance_table_id, device_name, work_status, device_num, issue_type, fault_type, apply_by, apply_department, maintenance_people, fault_phenomenon, maintenance_analysis, maintenance_content, reported_time, resolution_time, fault_duration, maintenance_cast, if_down,fault_file from device_maintenance_table
     </sql>
 
     <select id="selectDeviceMaintenanceTableList" parameterType="DeviceMaintenanceTable" resultMap="DeviceMaintenanceTableResult">
@@ -42,11 +43,20 @@
             <if test="faultPhenomenon != null  and faultPhenomenon != ''"> and fault_phenomenon = #{faultPhenomenon}</if>
             <if test="maintenanceAnalysis != null  and maintenanceAnalysis != ''"> and maintenance_analysis = #{maintenanceAnalysis}</if>
             <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content = #{maintenanceContent}</if>
-            <if test="reportedTime != null "> and reported_time = #{reportedTime}</if>
-            <if test="resolutionTime != null "> and resolution_time = #{resolutionTime}</if>
+            <if test="params.beginReportedTime != null and params.beginReportedTime != '' and params.endReportedTime != null and params.endReportedTime != ''">
+                AND STR_TO_DATE(reported_time, '%y-%m-%d %H:%i')
+                BETWEEN STR_TO_DATE(#{params.beginReportedTime}, '%y-%m-%d %H:%i')
+                AND DATE_ADD(STR_TO_DATE(#{params.endReportedTime}, '%y-%m-%d %H:%i'), INTERVAL 1 DAY)
+            </if>
+            <if test="params.beginResolutionTime != null and params.beginResolutionTime != '' and params.endResolutionTime != null and params.endResolutionTime != ''">
+                AND STR_TO_DATE(resolution_time, '%y-%m-%d %H:%i')
+                BETWEEN STR_TO_DATE(#{params.beginResolutionTime}, '%y-%m-%d %H:%i')
+                AND DATE_ADD(STR_TO_DATE(#{params.endResolutionTime}, '%y-%m-%d %H:%i'), INTERVAL 1 DAY)
+            </if>
             <if test="faultDuration != null  and faultDuration != ''"> and fault_duration = #{faultDuration}</if>
             <if test="maintenanceCast != null  and maintenanceCast != ''"> and maintenance_cast = #{maintenanceCast}</if>
             <if test="ifDown != null  and ifDown != ''"> and if_down = #{ifDown}</if>
+            <if test="faultFile != null  and faultFile != ''"> and fault_file = #{faultFile}</if>
         </where>
     </select>
 
@@ -74,6 +84,7 @@
             <if test="faultDuration != null">fault_duration,</if>
             <if test="maintenanceCast != null">maintenance_cast,</if>
             <if test="ifDown != null">if_down,</if>
+            <if test="faultFile != null">fault_file,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deviceName != null">#{deviceName},</if>
@@ -92,6 +103,7 @@
             <if test="faultDuration != null">#{faultDuration},</if>
             <if test="maintenanceCast != null">#{maintenanceCast},</if>
             <if test="ifDown != null">#{ifDown},</if>
+            <if test="faultFile != null">#{faultFile},</if>
         </trim>
     </insert>
 
@@ -114,6 +126,7 @@
             <if test="faultDuration != null">fault_duration = #{faultDuration},</if>
             <if test="maintenanceCast != null">maintenance_cast = #{maintenanceCast},</if>
             <if test="ifDown != null">if_down = #{ifDown},</if>
+            <if test="faultFile != null">fault_file = #{faultFile},</if>
         </trim>
         where maintenance_table_id = #{maintenanceTableId}
     </update>

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.heli.device.maintenanceTable.domain.DeviceIndicatorCount;
 
+import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
 import com.heli.device.maintenanceTable.mapper.DeviceIndicatorCountMapper;
 import lombok.extern.log4j.Log4j2;
 @Log4j2
@@ -20,6 +21,8 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
     private static final int BATCH_COUNT = 200;
 
     private int currentRow = 0;
+
+    private String year ="";
     private DeviceIndicatorCountMapper deviceIndicatorCountMapper;
 
     /**
@@ -32,8 +35,9 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
 
     private List<DeviceIndicatorCount> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public IndicatorListener(DeviceIndicatorCountMapper deviceIndicatorCountMapper) {
+    public IndicatorListener(DeviceIndicatorCountMapper deviceIndicatorCountMapper,String year) {
         this.deviceIndicatorCountMapper = deviceIndicatorCountMapper;
+        this.year = year;
     }
 
     /**
@@ -84,8 +88,18 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-        log.info("cacheDataList"+cacheDataList);
-        deviceIndicatorCountMapper.insert(cacheDataList);
-//        financialTempTableMapper.batchInsertSalaryTable(cacheDataList);
+//        deviceIndicatorCountMapper.insert(cacheDataList);
+        for (DeviceIndicatorCount data : cacheDataList) {
+            DeviceIndicatorCount existing = deviceIndicatorCountMapper.selectExist(year,data.getIndicatorName());
+            if (existing != null) {
+                // 如果存在重复记录，执行更新操作
+                data.setIndicatorId(existing.getIndicatorId()); // 确保设置了ID以便更新正确的记录
+                deviceIndicatorCountMapper.updateDeviceIndicatorCount(data);
+            } else {
+                // 否则，执行插入操作
+                data.setIndicatorTime(year);
+                deviceIndicatorCountMapper.insertDeviceIndicatorCount(data);
+            }
+        }
     }
 }

@@ -133,6 +133,10 @@ public class DeviceSopFile extends BaseEntity
                 .append("sopRepair", getSopRepair())
                 .append("upTime", getUpTime())
                 .append("ifHistory", getIfHistory())
+                .append("updateTime", getUpdateTime())
+                .append("updateBy", getUpdateBy())
+                .append("createTime", getCreateTime())
+                .append("createBy", getCreateBy())
                 .toString();
     }
 }

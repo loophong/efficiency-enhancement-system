@@ -41,26 +41,34 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="L" prop="l">
+      <el-form-item label="L" prop="evaluationA">
         <el-input
-          v-model="queryParams.l"
+          v-model="queryParams.evaluationA"
           placeholder="请输入L"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="E" prop="e">
+      <el-form-item label="E" prop="evaluationB">
         <el-input
-          v-model="queryParams.e"
+          v-model="queryParams.evaluationB"
           placeholder="请输入E"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="C" prop="c">
+      <el-form-item label="C" prop="evaluationC">
         <el-input
-          v-model="queryParams.c"
+          v-model="queryParams.evaluationC"
           placeholder="请输入C"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="三角形" prop="evaluationSanjiaoxing">
+        <el-input
+          v-model="queryParams.evaluationSanjiaoxing"
+          placeholder="请输入三角形"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -161,9 +169,10 @@
       <el-table-column label="危害方式" align="center" prop="hazardMode" />
       <el-table-column label="可能导致的事故" align="center" prop="possibleConsequences" />
       <el-table-column label="评价方式(LEC)" align="center" prop="evaluationMethod" />
-      <el-table-column label="L" align="center" prop="l" />
-      <el-table-column label="E" align="center" prop="e" />
-      <el-table-column label="C" align="center" prop="c" />
+      <el-table-column label="L" align="center" prop="evaluationA" />
+      <el-table-column label="E" align="center" prop="evaluationB" />
+      <el-table-column label="C" align="center" prop="evaluationC" />
+      <el-table-column label="三角形" align="center" prop="evaluationSanjiaoxing" />
       <el-table-column label="风险级别" align="center" prop="riskLevel" />
       <el-table-column label="控制措施" align="center" prop="controlMeasures" />
       <el-table-column label="审核人" align="center" prop="auditor" />
@@ -207,14 +216,17 @@
         <el-form-item label="评价方式(LEC)" prop="evaluationMethod">
           <el-input v-model="form.evaluationMethod" placeholder="请输入评价方式(LEC)" />
         </el-form-item>
-        <el-form-item label="L" prop="l">
-          <el-input v-model="form.l" placeholder="请输入L" />
+        <el-form-item label="L" prop="evaluationA">
+          <el-input v-model="form.evaluationA" placeholder="请输入L" />
         </el-form-item>
-        <el-form-item label="E" prop="e">
-          <el-input v-model="form.e" placeholder="请输入E" />
+        <el-form-item label="E" prop="evaluationB">
+          <el-input v-model="form.evaluationB" placeholder="请输入E" />
         </el-form-item>
-        <el-form-item label="C" prop="c">
-          <el-input v-model="form.c" placeholder="请输入C" />
+        <el-form-item label="C" prop="evaluationC">
+          <el-input v-model="form.evaluationC" placeholder="请输入C" />
+        </el-form-item>
+        <el-form-item label="三角形" prop="evaluationSanjiaoxing">
+          <el-input v-model="form.evaluationSanjiaoxing" placeholder="请输入三角形" />
         </el-form-item>
         <el-form-item label="风险级别" prop="riskLevel">
           <el-input v-model="form.riskLevel" placeholder="请输入风险级别" />
@@ -272,9 +284,10 @@ const data = reactive({
     hazardMode: null,
     possibleConsequences: null,
     evaluationMethod: null,
-    l: null,
-    e: null,
-    c: null,
+    evaluationA: null,
+    evaluationB: null,
+    evaluationC: null,
+    evaluationSanjiaoxing: null,
     riskLevel: null,
     controlMeasures: null,
     auditor: null,
@@ -318,9 +331,10 @@ function reset() {
     hazardMode: null,
     possibleConsequences: null,
     evaluationMethod: null,
-    l: null,
-    e: null,
-    c: null,
+    evaluationA: null,
+    evaluationB: null,
+    evaluationC: null,
+    evaluationSanjiaoxing: null,
     riskLevel: null,
     controlMeasures: null,
     auditor: null,

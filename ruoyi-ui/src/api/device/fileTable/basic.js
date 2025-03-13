@@ -42,3 +42,12 @@ export function delFile(basicFileId) {
     method: 'delete'
   })
 }
+
+
+// 删除设备基础档案
+export function getUserId() {
+  return request({
+    url: '/file/basic/userId',
+    method: 'delete'
+  })
+}

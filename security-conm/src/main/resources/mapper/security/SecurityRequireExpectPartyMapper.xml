@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.security.mapper.SecurityRequireExpectPartyMapper">
-    
+
     <resultMap type="SecurityRequireExpectParty" id="SecurityRequireExpectPartyResult">
         <result property="id"    column="id"    />
         <result property="partyInvolved"    column="party_involved"    />
@@ -11,29 +11,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="monitoringIndicators"    column="monitoring_indicators"    />
         <result property="monitoringFrequency"    column="monitoring_frequency"    />
         <result property="monitoringDepartment"    column="monitoring_department"    />
-        <result property="beiyongziduan1"    column="beiyongziduan1"    />
-        <result property="beiyongziduan2"    column="beiyongziduan2"    />
-        <result property="beiyongziduan3"    column="beiyongziduan3"    />
+        <result property="approvalTime"    column="approval_time"    />
+        <result property="fillTime"    column="fill_time"    />
+        <result property="status"    column="status"    />
+        <result property="statusDepartment"    column="status_department"    />
     </resultMap>
 
     <sql id="selectSecurityRequireExpectPartyVo">
-        select id, party_involved, demand_, monitoring_indicators, monitoring_frequency, monitoring_department, beiyongziduan1, beiyongziduan2, beiyongziduan3 from security_require_expect_party
+        select id, party_involved, demand_, monitoring_indicators, monitoring_frequency, monitoring_department, approval_time, fill_time, status, status_department from security_require_expect_party
     </sql>
 
     <select id="selectSecurityRequireExpectPartyList" parameterType="SecurityRequireExpectParty" resultMap="SecurityRequireExpectPartyResult">
         <include refid="selectSecurityRequireExpectPartyVo"/>
-        <where>  
+        <where>
             <if test="partyInvolved != null  and partyInvolved != ''"> and party_involved = #{partyInvolved}</if>
             <if test="demand != null  and demand != ''"> and demand_ = #{demand}</if>
             <if test="monitoringIndicators != null  and monitoringIndicators != ''"> and monitoring_indicators = #{monitoringIndicators}</if>
             <if test="monitoringFrequency != null  and monitoringFrequency != ''"> and monitoring_frequency = #{monitoringFrequency}</if>
             <if test="monitoringDepartment != null  and monitoringDepartment != ''"> and monitoring_department = #{monitoringDepartment}</if>
-            <if test="beiyongziduan1 != null "> and beiyongziduan1 = #{beiyongziduan1}</if>
-            <if test="beiyongziduan2 != null  and beiyongziduan2 != ''"> and beiyongziduan2 = #{beiyongziduan2}</if>
-            <if test="beiyongziduan3 != null "> and beiyongziduan3 = #{beiyongziduan3}</if>
+            <if test="approvalTime != null "> and approval_time = #{approvalTime}</if>
+            <if test="fillTime != null "> and fill_time = #{fillTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="statusDepartment != null  and statusDepartment != ''"> and status_department = #{statusDepartment}</if>
         </where>
     </select>
-    
+
     <select id="selectSecurityRequireExpectPartyById" parameterType="Long" resultMap="SecurityRequireExpectPartyResult">
         <include refid="selectSecurityRequireExpectPartyVo"/>
         where id = #{id}
@@ -47,20 +49,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monitoringIndicators != null">monitoring_indicators,</if>
             <if test="monitoringFrequency != null">monitoring_frequency,</if>
             <if test="monitoringDepartment != null">monitoring_department,</if>
-            <if test="beiyongziduan1 != null">beiyongziduan1,</if>
-            <if test="beiyongziduan2 != null">beiyongziduan2,</if>
-            <if test="beiyongziduan3 != null">beiyongziduan3,</if>
-         </trim>
+            <if test="approvalTime != null">approval_time,</if>
+            <if test="fillTime != null">fill_time,</if>
+            <if test="status != null">status,</if>
+            <if test="statusDepartment != null">status_department,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="partyInvolved != null">#{partyInvolved},</if>
             <if test="demand != null">#{demand},</if>
             <if test="monitoringIndicators != null">#{monitoringIndicators},</if>
             <if test="monitoringFrequency != null">#{monitoringFrequency},</if>
             <if test="monitoringDepartment != null">#{monitoringDepartment},</if>
-            <if test="beiyongziduan1 != null">#{beiyongziduan1},</if>
-            <if test="beiyongziduan2 != null">#{beiyongziduan2},</if>
-            <if test="beiyongziduan3 != null">#{beiyongziduan3},</if>
-         </trim>
+            <if test="approvalTime != null">#{approvalTime},</if>
+            <if test="fillTime != null">#{fillTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusDepartment != null">#{statusDepartment},</if>
+        </trim>
     </insert>
 
     <update id="updateSecurityRequireExpectParty" parameterType="SecurityRequireExpectParty">
@@ -71,9 +75,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monitoringIndicators != null">monitoring_indicators = #{monitoringIndicators},</if>
             <if test="monitoringFrequency != null">monitoring_frequency = #{monitoringFrequency},</if>
             <if test="monitoringDepartment != null">monitoring_department = #{monitoringDepartment},</if>
-            <if test="beiyongziduan1 != null">beiyongziduan1 = #{beiyongziduan1},</if>
-            <if test="beiyongziduan2 != null">beiyongziduan2 = #{beiyongziduan2},</if>
-            <if test="beiyongziduan3 != null">beiyongziduan3 = #{beiyongziduan3},</if>
+            <if test="approvalTime != null">approval_time = #{approvalTime},</if>
+            <if test="fillTime != null">fill_time = #{fillTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusDepartment != null">status_department = #{statusDepartment},</if>
         </trim>
         where id = #{id}
     </update>
@@ -83,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityRequireExpectPartyByIds" parameterType="String">
-        delete from security_require_expect_party where id in 
+        delete from security_require_expect_party where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

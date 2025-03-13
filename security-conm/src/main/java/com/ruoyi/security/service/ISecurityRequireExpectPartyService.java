@@ -5,15 +5,15 @@ import com.ruoyi.security.domain.SecurityRequireExpectParty;
 
 /**
  * 相关方期望Service接口
- * 
+ *
  * @author wang
- * @date 2025-02-20
+ * @date 2025-03-11
  */
-public interface ISecurityRequireExpectPartyService 
+public interface ISecurityRequireExpectPartyService
 {
     /**
      * 查询相关方期望
-     * 
+     *
      * @param id 相关方期望主键
      * @return 相关方期望
      */
@@ -21,7 +21,7 @@ public interface ISecurityRequireExpectPartyService
 
     /**
      * 查询相关方期望列表
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 相关方期望集合
      */
@@ -29,7 +29,7 @@ public interface ISecurityRequireExpectPartyService
 
     /**
      * 新增相关方期望
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface ISecurityRequireExpectPartyService
 
     /**
      * 修改相关方期望
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface ISecurityRequireExpectPartyService
 
     /**
      * 批量删除相关方期望
-     * 
+     *
      * @param ids 需要删除的相关方期望主键集合
      * @return 结果
      */
@@ -53,7 +53,7 @@ public interface ISecurityRequireExpectPartyService
 
     /**
      * 删除相关方期望信息
-     * 
+     *
      * @param id 相关方期望主键
      * @return 结果
      */

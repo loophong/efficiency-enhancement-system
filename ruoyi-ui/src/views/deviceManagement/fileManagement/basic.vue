@@ -44,23 +44,33 @@
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['file:basic:export']">导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="info" plain icon="Refresh" @click="resetGetList"
+          v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="fileList" @selection-change="handleSelectionChange" border stripe>
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键id" align="center" prop="basicFileId" /> -->
       <!-- <el-table-column label="关联保养id" align="center" prop="basicCombineMaintenance" /> -->
       <!-- <el-table-column label="关联维修id" align="center" prop="basicCombineRepair" /> -->
-      <el-table-column label="设备编号" align="center" prop="deviceNum" width="180" />
-      <el-table-column label="设备名称" align="center" prop="deviceName" />
-      <el-table-column label="档案类型" align="center" prop="fileType" />
-      <el-table-column label="文件信息" align="center" prop="fileInfoRepair" width="500">
+      <el-table-column label="设备编号" align="center" prop="deviceNum" width="160" />
+      <el-table-column label="设备名称" align="center" prop="deviceName" width="160" />
+      <!-- <el-table-column label="档案类型" align="center" prop="fileType" /> -->
+      <el-table-column label="文件信息" align="center" prop="fileInfoRepair">
         <template #default="scope">
           <span v-html="formatFileInfo(scope.row.fileInfoRepair)"></span>
         </template>
       </el-table-column>
       <el-table-column label="版本号" align="center" prop="versionId" width="120" />
+      <el-table-column label="修改人" align="center" prop="updateBy" v-if="currentStatus == '历史'" width="120" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" v-if="currentStatus == '历史'" width="120">
+        <!-- <template #default="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+        </template> -->
+      </el-table-column>
       <!-- <el-table-column label="是否是历史版本" align="center" prop="ifHistory" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -68,12 +78,16 @@
             v-hasPermi="['file:basic:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['file:basic:remove']">删除</el-button>
+          <el-button link type="primary" icon="InfoFilled" @click="getHistoryList(scope.row)"
+            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
+          <el-button link type="primary" icon="Back" @click="resetGetList(scope.row)"
+            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '1'">返回</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="getList" />
+      v-model:limit="queryParams.pageSize" @pagination="getWhich" />
 
     <!-- 添加或修改设备基础档案对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
@@ -119,7 +133,10 @@
 
 <script setup name="Basic">
 import { listFile, getFile, delFile, addFile, updateFile } from "@/api/device/fileTable/basic";
+import { getInfo } from "@/api/login";
 import { ElMessage } from 'element-plus'
+import { format } from 'date-fns';
+
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
@@ -131,9 +148,13 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const currentStatus = ref("默认");
+const currentUserName = ref("");
+const currentUserId = ref(0);
 
 const data = reactive({
   form: {},
+  formForHistory: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -155,7 +176,34 @@ const data = reactive({
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, form, rules, formForHistory } = toRefs(data);
+
+
+
+function resetGetList() {
+  currentStatus.value = '默认';
+  queryParams.value = {
+    pageNum: 1,
+    pageSize: 10,
+    basicCombineMaintenance: null,
+    basicCombineRepair: null,
+    deviceNum: null,
+    deviceName: null,
+    fileType: null,
+    upTime: null,
+    versionId: null,
+    fileInfo: null,
+    fileInfoRepair: null,
+    ifHistory: null
+  },
+    getList();
+}
+
+
+getInfo().then(result => {
+  currentUserId.value = result.user.userId
+  currentUserName.value = result.user.userName
+})
 
 function formatFileInfo(fileInfo) {
   if (fileInfo == '' || fileInfo == null) {
@@ -191,6 +239,7 @@ function formatFileInfo(fileInfo) {
 /** 查询设备基础档案列表 */
 function getList() {
   loading.value = true;
+  queryParams.value.ifHistory = currentStatus.value == '默认' ? '0' : '1';
   listFile(queryParams.value).then(response => {
     fileList.value = response.rows;
     total.value = response.total;
@@ -198,6 +247,32 @@ function getList() {
   });
 }
 
+/** 查询SOP文件历史列表 */
+function getHistoryList(row) {
+  loading.value = true;
+  currentStatus.value = '历史'
+  queryParams.value.deviceNum = row.deviceNum
+  queryParams.value.ifHistory = '1';
+  queryParams.value.params = {};
+  // if (null != daterangeUpTime && '' != daterangeUpTime && Array.isArray(daterangeUpTime.value)) {
+  //   console.log('进入')
+  //   queryParams.value.params["beginUpTime"] = daterangeUpTime.value[0];
+  //   queryParams.value.params["endUpTime"] = daterangeUpTime.value[1];
+  // }
+  listFile(queryParams.value).then(response => {
+    fileList.value = response.rows;
+    total.value = response.total;
+    loading.value = false;
+  });
+}
+
+function getWhich() {
+  if (currentStatus.value == '默认') {
+    getList();
+  } else {
+    getHistoryList();
+  }
+}
 // 取消按钮
 function cancel() {
   open.value = false;
@@ -209,7 +284,7 @@ function reset() {
   form.value = {
     basicFileId: null,
     basicCombineMaintenance: null,
-    basicCombineRepair: [],
+    basicCombineRepair: null,
     deviceNum: null,
     deviceName: null,
     fileType: null,
@@ -253,9 +328,14 @@ function handleUpdate(row) {
   reset();
   const _basicFileId = row.basicFileId || ids.value
   getFile(_basicFileId).then(response => {
-    form.value = response.data;
+    form.value = { ...response.data };
+    formForHistory.value = { ...response.data };
+    formForHistory.value.basicFileId = null;
+    formForHistory.value.ifHistory = '1';
+    formForHistory.value.updateBy = currentUserName.value;
+    formForHistory.value.updateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
     open.value = true;
-    title.value = "修改设备基础档案";
+    title.value = "修改";
   });
 }
 
@@ -263,14 +343,17 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["fileRef"].validate(valid => {
     if (valid) {
-      form.value.basicCombineRepair = form.value.basicCombineRepair.join(",");
+      // form.value.basicCombineRepair = form.value.basicCombineRepair.join(",");
       if (form.value.basicFileId != null) {
         updateFile(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
+          addFile(formForHistory.value)
           getList();
         });
       } else {
+        form.value.ifHistory = '0';
+        form.value.createBy = currentUserName.value;
         addFile(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

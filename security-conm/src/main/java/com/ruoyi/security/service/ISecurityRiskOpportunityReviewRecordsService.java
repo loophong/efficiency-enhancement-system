@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityRiskOpportunityReviewRecords;
  * 记录表Service接口
  * 
  * @author wang
- * @date 2025-02-23
+ * @date 2025-03-11
  */
 public interface ISecurityRiskOpportunityReviewRecordsService 
 {

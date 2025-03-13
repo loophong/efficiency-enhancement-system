@@ -27,12 +27,12 @@
         <el-input v-model="queryParams.maintenanceContent" placeholder="请输入维修内容" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="报修时间" style="width: 308px">
-        <el-date-picker v-model="daterangeReportedTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-          start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+        <el-date-picker v-model="daterangeReportedTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm" type="daterange"
+          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item label="处理时间" style="width: 308px">
-        <el-date-picker v-model="daterangeResolutionTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-          start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+        <el-date-picker v-model="daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
+          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item label="故障时长" prop="faultDuration">
         <el-input v-model="queryParams.faultDuration" placeholder="请输入故障时长" clearable @keyup.enter="handleQuery" />
@@ -100,6 +100,7 @@
       <el-table-column label="申请部门" align="center" prop="applyDepartment" />
       <el-table-column label="维修人员" align="center" prop="maintenancePeople" />
       <el-table-column label="故障现象" align="center" prop="faultPhenomenon" />
+      <el-table-column label="故障现象文件" align="center" prop="faultFile" />
       <el-table-column label="维修分析" align="center" prop="maintenanceAnalysis" />
       <el-table-column label="维修内容" align="center" prop="maintenanceContent" />
       <el-table-column label="报修时间" align="center" prop="reportedTime" width="180">
@@ -158,6 +159,9 @@
         </el-form-item>
         <el-form-item label="故障现象" prop="faultPhenomenon">
           <el-input v-model="form.faultPhenomenon" placeholder="请输入故障现象" />
+        </el-form-item>
+        <el-form-item label="故障现象文件" prop="faultFile">
+          <file-upload v-model="form.faultFile" />
         </el-form-item>
         <el-form-item label="维修分析" prop="maintenanceAnalysis">
           <el-input v-model="form.maintenanceAnalysis" placeholder="请输入维修分析" />
@@ -266,15 +270,15 @@ onMounted(() => {
   handleRouteParams();
 });
 
-/** 查询2.设备故障记录(导入)列表 */
+/** 查询设备故障记录列表 */
 function getList() {
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeReportedTime && '' != daterangeReportedTime) {
+  if (null != daterangeReportedTime && '' != daterangeReportedTime && Array.isArray(daterangeReportedTime.value)) {
     queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
     queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
   }
-  if (null != daterangeResolutionTime && '' != daterangeResolutionTime) {
+  if (null != daterangeResolutionTime && '' != daterangeResolutionTime && Array.isArray(daterangeResolutionTime.value)) {
     queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
     queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
   }

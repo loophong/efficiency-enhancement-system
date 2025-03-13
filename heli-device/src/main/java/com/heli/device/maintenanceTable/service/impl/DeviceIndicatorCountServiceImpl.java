@@ -27,7 +27,7 @@ public class DeviceIndicatorCountServiceImpl implements IDeviceIndicatorCountSer
     private DeviceIndicatorCountMapper deviceIndicatorCountMapper;
 
     @Override
-    public R<String> readIndicatorToDB(String fileName, InputStream inputStream) {
+    public R<String> readIndicatorToDB(String fileName, InputStream inputStream,String year) {
         try {
 //            log.info("开始读取文件: {}", fileName);
             // 读取文件前清空数据库
@@ -35,7 +35,7 @@ public class DeviceIndicatorCountServiceImpl implements IDeviceIndicatorCountSer
 //            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
-            EasyExcel.read(inputStream, DeviceIndicatorCount.class, new IndicatorListener(deviceIndicatorCountMapper)).sheet().doRead();
+            EasyExcel.read(inputStream, DeviceIndicatorCount.class, new IndicatorListener(deviceIndicatorCountMapper,year)).sheet().doRead();
             return R.ok("读取" + fileName + "文件成功");
         } catch (Exception e) {
             e.printStackTrace();

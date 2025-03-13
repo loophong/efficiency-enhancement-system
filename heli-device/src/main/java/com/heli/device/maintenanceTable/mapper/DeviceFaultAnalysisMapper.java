@@ -1,9 +1,13 @@
 package com.heli.device.maintenanceTable.mapper;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceFaultAnalysis;
+import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Select;
 
 
 /**
@@ -14,6 +18,18 @@ import com.heli.device.maintenanceTable.domain.DeviceFaultAnalysis;
  */
 public interface DeviceFaultAnalysisMapper extends BaseMapper<DeviceFaultAnalysis>
 {
+
+
+    @Select({
+            "<script>",
+            "SELECT * FROM device_fault_analysis",
+            "WHERE analysis_record_time = #{analysisRecordTime}",
+            "<if test='analysisName != null and analysisName != \"\"'>",
+            "AND analysis_name = #{analysisName}",
+            "</if>",
+            "</script>"
+    })
+    public List<DeviceFaultAnalysis> selectByNameAndDate(@Param("analysisRecordTime") Date analysisRecordTime, @Param("analysisName") String analysisName);
     /**
      * 查询设备故障分析
      * 

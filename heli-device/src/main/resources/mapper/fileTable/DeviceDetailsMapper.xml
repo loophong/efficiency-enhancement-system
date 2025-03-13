@@ -19,10 +19,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="assetOrigin"    column="asset_origin"    />
         <result property="brand"    column="brand"    />
         <result property="tonnage"    column="tonnage"    />
+        <result property="faultCount"    column="fault_count"    />
     </resultMap>
 
     <sql id="selectDeviceDetailsVo">
-        select details_id, financial_date, inventory_num, fixed_asset_name, details_group, device_status, device_type, if_key, storage_unit, cost_center, used_year, asset_origin, brand, tonnage from device_details
+        select details_id, financial_date, inventory_num, fixed_asset_name, details_group, device_status, device_type, if_key, storage_unit, cost_center, used_year, asset_origin, brand, tonnage, IFNULL(dm.fault_count, 0) as fault_count
+        from device_details dd
+        LEFT JOIN (
+            SELECT dm.device_num, COUNT(*) AS fault_count
+            FROM device_maintenance_table dm
+            GROUP BY dm.device_num
+        ) AS dm ON dd.inventory_num = dm.device_num
     </sql>
 
     <select id="selectDeviceDetailsList" parameterType="DeviceDetails" resultMap="DeviceDetailsResult">
@@ -41,6 +48,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="assetOrigin != null  and assetOrigin != ''"> and asset_origin = #{assetOrigin}</if>
             <if test="brand != null  and brand != ''"> and brand like concat('%', #{brand}, '%')</if>
             <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
+            <if test="faultCount != null  and faultCount != ''"> and fault_count = #{faultCount}</if>
         </where>
     </select>
     

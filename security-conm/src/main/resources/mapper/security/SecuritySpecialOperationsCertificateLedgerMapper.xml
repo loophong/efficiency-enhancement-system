@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecuritySpecialOperationsCertificateLedgerMapper">
+    
+    <resultMap type="SecuritySpecialOperationsCertificateLedger" id="SecuritySpecialOperationsCertificateLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="unitName"    column="unit_name"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="equipmentCategory"    column="equipment_category"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="internalNumber"    column="internal_number"    />
+        <result property="usageCertificateNumber"    column="usage_certificate_number"    />
+        <result property="issuanceDate"    column="issuance_date"    />
+        <result property="manufacturingUnit"    column="manufacturing_unit"    />
+        <result property="inspectionDate"    column="inspection_date"    />
+        <result property="nextInspectionDate"    column="next_inspection_date"    />
+        <result property="isDisabled"    column="is_disabled"    />
+        <result property="specialEquipememtCategory"    column="special_equipememt_category"    />
+    </resultMap>
+
+    <sql id="selectSecuritySpecialOperationsCertificateLedgerVo">
+        select id, unit_name, equipment_name, equipment_category, equipment_model, internal_number, usage_certificate_number, issuance_date, manufacturing_unit, inspection_date, next_inspection_date, is_disabled, special_equipememt_category from security_special_operations_certificate_ledger
+    </sql>
+
+    <select id="selectSecuritySpecialOperationsCertificateLedgerList" parameterType="SecuritySpecialOperationsCertificateLedger" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
+        <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
+        <where>  
+            <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
+            <if test="equipmentCategory != null  and equipmentCategory != ''"> and equipment_category = #{equipmentCategory}</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model = #{equipmentModel}</if>
+            <if test="internalNumber != null  and internalNumber != ''"> and internal_number = #{internalNumber}</if>
+            <if test="usageCertificateNumber != null  and usageCertificateNumber != ''"> and usage_certificate_number = #{usageCertificateNumber}</if>
+            <if test="isDisabled != null  and isDisabled != ''"> and is_disabled = #{isDisabled}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecuritySpecialOperationsCertificateLedgerById" parameterType="Long" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
+        <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecuritySpecialOperationsCertificateLedger" parameterType="SecuritySpecialOperationsCertificateLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_special_operations_certificate_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name,</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
+            <if test="equipmentCategory != null">equipment_category,</if>
+            <if test="equipmentModel != null">equipment_model,</if>
+            <if test="internalNumber != null">internal_number,</if>
+            <if test="usageCertificateNumber != null">usage_certificate_number,</if>
+            <if test="issuanceDate != null">issuance_date,</if>
+            <if test="manufacturingUnit != null">manufacturing_unit,</if>
+            <if test="inspectionDate != null">inspection_date,</if>
+            <if test="nextInspectionDate != null">next_inspection_date,</if>
+            <if test="isDisabled != null">is_disabled,</if>
+            <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">special_equipememt_category,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">#{unitName},</if>
+            <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
+            <if test="equipmentCategory != null">#{equipmentCategory},</if>
+            <if test="equipmentModel != null">#{equipmentModel},</if>
+            <if test="internalNumber != null">#{internalNumber},</if>
+            <if test="usageCertificateNumber != null">#{usageCertificateNumber},</if>
+            <if test="issuanceDate != null">#{issuanceDate},</if>
+            <if test="manufacturingUnit != null">#{manufacturingUnit},</if>
+            <if test="inspectionDate != null">#{inspectionDate},</if>
+            <if test="nextInspectionDate != null">#{nextInspectionDate},</if>
+            <if test="isDisabled != null">#{isDisabled},</if>
+            <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">#{specialEquipememtCategory},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecuritySpecialOperationsCertificateLedger" parameterType="SecuritySpecialOperationsCertificateLedger">
+        update security_special_operations_certificate_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
+            <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="equipmentCategory != null">equipment_category = #{equipmentCategory},</if>
+            <if test="equipmentModel != null">equipment_model = #{equipmentModel},</if>
+            <if test="internalNumber != null">internal_number = #{internalNumber},</if>
+            <if test="usageCertificateNumber != null">usage_certificate_number = #{usageCertificateNumber},</if>
+            <if test="issuanceDate != null">issuance_date = #{issuanceDate},</if>
+            <if test="manufacturingUnit != null">manufacturing_unit = #{manufacturingUnit},</if>
+            <if test="inspectionDate != null">inspection_date = #{inspectionDate},</if>
+            <if test="nextInspectionDate != null">next_inspection_date = #{nextInspectionDate},</if>
+            <if test="isDisabled != null">is_disabled = #{isDisabled},</if>
+            <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">special_equipememt_category = #{specialEquipememtCategory},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecuritySpecialOperationsCertificateLedgerById" parameterType="Long">
+        delete from security_special_operations_certificate_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecuritySpecialOperationsCertificateLedgerByIds" parameterType="String">
+        delete from security_special_operations_certificate_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

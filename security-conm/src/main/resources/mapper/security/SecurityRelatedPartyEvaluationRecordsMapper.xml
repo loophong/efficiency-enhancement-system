@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityRelatedPartyEvaluationRecordsMapper">
+    
+    <resultMap type="SecurityRelatedPartyEvaluationRecords" id="SecurityRelatedPartyEvaluationRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="evaluationContent"    column="evaluation_content"    />
+        <result property="score"    column="score"    />
+        <result property="rating"    column="rating"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="evaluators"    column="evaluators"    />
+        <result property="evaluationCriteria"    column="evaluation_criteria"    />
+        <result property="evaluationSuggestions"    column="evaluation_suggestions"    />
+        <result property="statu"    column="statu"    />
+    </resultMap>
+
+    <sql id="selectSecurityRelatedPartyEvaluationRecordsVo">
+        select id, evaluation_content, score, rating, remarks, evaluators, evaluation_criteria, evaluation_suggestions, statu from security_related_party_evaluation_records
+    </sql>
+
+    <select id="selectSecurityRelatedPartyEvaluationRecordsList" parameterType="SecurityRelatedPartyEvaluationRecords" resultMap="SecurityRelatedPartyEvaluationRecordsResult">
+        <include refid="selectSecurityRelatedPartyEvaluationRecordsVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="rating != null  and rating != ''"> and rating = #{rating}</if>
+            <if test="evaluators != null  and evaluators != ''"> and evaluators = #{evaluators}</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityRelatedPartyEvaluationRecordsById" parameterType="Long" resultMap="SecurityRelatedPartyEvaluationRecordsResult">
+        <include refid="selectSecurityRelatedPartyEvaluationRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityRelatedPartyEvaluationRecords" parameterType="SecurityRelatedPartyEvaluationRecords" useGeneratedKeys="true" keyProperty="id">
+        insert into security_related_party_evaluation_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="evaluationContent != null and evaluationContent != ''">evaluation_content,</if>
+            <if test="score != null">score,</if>
+            <if test="rating != null and rating != ''">rating,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="evaluators != null">evaluators,</if>
+            <if test="evaluationCriteria != null">evaluation_criteria,</if>
+            <if test="evaluationSuggestions != null">evaluation_suggestions,</if>
+            <if test="statu != null">statu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="evaluationContent != null and evaluationContent != ''">#{evaluationContent},</if>
+            <if test="score != null">#{score},</if>
+            <if test="rating != null and rating != ''">#{rating},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="evaluators != null">#{evaluators},</if>
+            <if test="evaluationCriteria != null">#{evaluationCriteria},</if>
+            <if test="evaluationSuggestions != null">#{evaluationSuggestions},</if>
+            <if test="statu != null">#{statu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityRelatedPartyEvaluationRecords" parameterType="SecurityRelatedPartyEvaluationRecords">
+        update security_related_party_evaluation_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="evaluationContent != null and evaluationContent != ''">evaluation_content = #{evaluationContent},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="rating != null and rating != ''">rating = #{rating},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="evaluators != null">evaluators = #{evaluators},</if>
+            <if test="evaluationCriteria != null">evaluation_criteria = #{evaluationCriteria},</if>
+            <if test="evaluationSuggestions != null">evaluation_suggestions = #{evaluationSuggestions},</if>
+            <if test="statu != null">statu = #{statu},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityRelatedPartyEvaluationRecordsById" parameterType="Long">
+        delete from security_related_party_evaluation_records where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityRelatedPartyEvaluationRecordsByIds" parameterType="String">
+        delete from security_related_party_evaluation_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

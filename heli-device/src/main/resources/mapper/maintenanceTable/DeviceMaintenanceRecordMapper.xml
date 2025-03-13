@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceMaintenanceRecordMapper">
+    
+    <resultMap type="DeviceMaintenanceRecord" id="DeviceMaintenanceRecordResult">
+        <result property="maintenanceId"    column="maintenance_id"    />
+        <result property="maintenancePlanId"    column="maintenance_plan_id"    />
+        <result property="planMonthTime"    column="plan_month_time"    />
+        <result property="completionDescription"    column="completion_description"    />
+        <result property="imageAttachment"    column="image_attachment"    />
+        <result property="remainingIssuesDescription"    column="remaining_issues_description"    />
+        <result property="remainingIssuesAnalysis"    column="remaining_issues_analysis"    />
+        <result property="maintenanceExamineStatus"    column="maintenance_examine_status"    />
+        <result property="maintenanceExamineComment"    column="maintenance_examine_comment"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="maintenanceDeadline"    column="maintenance_deadline"    />
+        <result property="majorGroup"    column="major_group"    />
+    </resultMap>
+
+    <sql id="selectDeviceMaintenanceRecordVo">
+        select maintenance_id, maintenance_plan_id, plan_month_time, completion_description, image_attachment, remaining_issues_description, remaining_issues_analysis, maintenance_examine_status, maintenance_examine_comment, create_time, create_by, update_time, update_by, maintenance_deadline,major_group from device_maintenance_record
+    </sql>
+
+    <select id="selectDeviceMaintenanceRecordList" parameterType="DeviceMaintenanceRecord" resultMap="DeviceMaintenanceRecordResult">
+        <include refid="selectDeviceMaintenanceRecordVo"/>
+        <where>  
+            <if test="maintenancePlanId != null "> and maintenance_plan_id = #{maintenancePlanId}</if>
+            <if test="planMonthTime != null  and planMonthTime != ''"> and plan_month_time = #{planMonthTime}</if>
+            <if test="completionDescription != null  and completionDescription != ''"> and completion_description like concat('%', #{completionDescription}, '%')</if>
+            <if test="imageAttachment != null  and imageAttachment != ''"> and image_attachment = #{imageAttachment}</if>
+            <if test="remainingIssuesDescription != null  and remainingIssuesDescription != ''"> and remaining_issues_description like concat('%', #{remainingIssuesDescription}, '%')</if>
+            <if test="remainingIssuesAnalysis != null  and remainingIssuesAnalysis != ''"> and remaining_issues_analysis like concat('%', #{remainingIssuesAnalysis}, '%')</if>
+            <if test="maintenanceExamineStatus != null  and maintenanceExamineStatus != ''"> and maintenance_examine_status = #{maintenanceExamineStatus}</if>
+            <if test="maintenanceExamineComment != null  and maintenanceExamineComment != ''"> and maintenance_examine_comment = #{maintenanceExamineComment}</if>
+            <if test="maintenanceDeadline != null and maintenanceDeadline != ''"> and maintenance_deadline = #{maintenanceDeadline}</if>
+            <if test="majorGroup != null and majorGroup != ''"> and major_group = #{majorGroup}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceMaintenanceRecordByMaintenanceId" parameterType="Long" resultMap="DeviceMaintenanceRecordResult">
+        <include refid="selectDeviceMaintenanceRecordVo"/>
+        where maintenance_id = #{maintenanceId}
+    </select>
+
+    <insert id="insertDeviceMaintenanceRecord" parameterType="DeviceMaintenanceRecord">
+        insert into device_maintenance_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="maintenanceId != null">maintenance_id,</if>
+            <if test="maintenancePlanId != null">maintenance_plan_id,</if>
+            <if test="planMonthTime != null">plan_month_time,</if>
+            <if test="completionDescription != null and completionDescription != ''">completion_description,</if>
+            <if test="imageAttachment != null and imageAttachment != ''">image_attachment,</if>
+            <if test="remainingIssuesDescription != null">remaining_issues_description,</if>
+            <if test="remainingIssuesAnalysis != null">remaining_issues_analysis,</if>
+            <if test="maintenanceExamineStatus != null">maintenance_examine_status,</if>
+            <if test="maintenanceExamineComment != null">maintenance_examine_comment,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="maintenanceDeadline != null">maintenance_deadline,</if>
+            <if test="majorGroup != null">major_group,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="maintenanceId != null">#{maintenanceId},</if>
+            <if test="maintenancePlanId != null">#{maintenancePlanId},</if>
+            <if test="planMonthTime != null">#{planMonthTime},</if>
+            <if test="completionDescription != null and completionDescription != ''">#{completionDescription},</if>
+            <if test="imageAttachment != null and imageAttachment != ''">#{imageAttachment},</if>
+            <if test="remainingIssuesDescription != null">#{remainingIssuesDescription},</if>
+            <if test="remainingIssuesAnalysis != null">#{remainingIssuesAnalysis},</if>
+            <if test="maintenanceExamineStatus != null">#{maintenanceExamineStatus},</if>
+            <if test="maintenanceExamineComment != null">#{maintenanceExamineComment},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="maintenanceDeadline != null">#{maintenanceDeadline},</if>
+            <if test="majorGroup != null">#{majorGroup},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceMaintenanceRecord" parameterType="DeviceMaintenanceRecord">
+        update device_maintenance_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="maintenancePlanId != null">maintenance_plan_id = #{maintenancePlanId},</if>
+            <if test="planMonthTime != null">plan_month_time = #{planMonthTime},</if>
+            <if test="completionDescription != null and completionDescription != ''">completion_description = #{completionDescription},</if>
+            <if test="imageAttachment != null and imageAttachment != ''">image_attachment = #{imageAttachment},</if>
+            <if test="remainingIssuesDescription != null">remaining_issues_description = #{remainingIssuesDescription},</if>
+            <if test="remainingIssuesAnalysis != null">remaining_issues_analysis = #{remainingIssuesAnalysis},</if>
+            <if test="maintenanceExamineStatus != null">maintenance_examine_status = #{maintenanceExamineStatus},</if>
+            <if test="maintenanceExamineComment != null">maintenance_examine_comment = #{maintenanceExamineComment},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="maintenanceDeadline != null">maintenance_deadline = #{maintenanceDeadline},</if>
+        </trim>
+        where maintenance_id = #{maintenanceId}
+    </update>
+
+    <delete id="deleteDeviceMaintenanceRecordByMaintenanceId" parameterType="Long">
+        delete from device_maintenance_record where maintenance_id = #{maintenanceId}
+    </delete>
+
+    <delete id="deleteDeviceMaintenanceRecordByMaintenanceIds" parameterType="String">
+        delete from device_maintenance_record where maintenance_id in 
+        <foreach item="maintenanceId" collection="array" open="(" separator="," close=")">
+            #{maintenanceId}
+        </foreach>
+    </delete>
+</mapper>

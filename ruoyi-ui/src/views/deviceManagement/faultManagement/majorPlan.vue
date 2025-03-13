@@ -19,12 +19,6 @@
       <el-form-item label="人员" prop="majorPeople">
         <el-input v-model="queryParams.majorPeople" placeholder="请输入人员" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="月份" prop="majorMonth">
-        <el-input v-model="queryParams.majorMonth" placeholder="请输入月份" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="第几周" prop="majorMonthWeek">
-        <el-input v-model="queryParams.majorMonthWeek" placeholder="请输入第几周" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
       <el-form-item label="内容" prop="majorContent">
         <el-input v-model="queryParams.majorContent" placeholder="请输入内容" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -51,7 +45,7 @@
         <!--Excel 参数导入 -->
         <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%" @close="resetFileInput">
+        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
           <el-form :model="form" ref="formRef" label-width="90px">
           </el-form>
           <div class="upload-area">
@@ -79,12 +73,14 @@
         <el-button type="primary" plain icon="Hide" @click="showFullYear = false"
           v-hasPermi="['maintenanceTable:plan:add']">当月及上月数据</el-button>
       </el-col>
-
+      <el-badge :value="listForTip.length" class="item" color="green">
+        <el-button @click="openMessage = true">消息详情</el-button>
+      </el-badge>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border>
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键id" align="center" prop="majorId" /> -->
       <!-- <el-table-column label="序号" align="center" prop="majorOrder" /> -->
       <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
@@ -95,242 +91,578 @@
       <!-- <el-table-column label="月份" align="center" prop="majorMonth" /> -->
       <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="showFullYear || ifCurrentMonth(1)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJanOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJanOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="一月2W" align="center" prop="weekJanTwo" v-if="showFullYear || ifCurrentMonth(1)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJanTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJanTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="一月3W" align="center" prop="weekJanThree" v-if="showFullYear || ifCurrentMonth(1)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJanThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJanThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="一月4W" align="center" prop="weekJanFour" v-if="showFullYear || ifCurrentMonth(1)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJanFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJanFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJanFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="二月1W" align="center" prop="weekFebOne" v-if="showFullYear || ifCurrentMonth(2)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekFebOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekFebOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="二月2W" align="center" prop="weekFebTwo" v-if="showFullYear || ifCurrentMonth(2)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekFebTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekFebTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="二月3W" align="center" prop="weekFebThree" v-if="showFullYear || ifCurrentMonth(2)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekFebThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekFebThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="二月4W" align="center" prop="weekFebFour" v-if="showFullYear || ifCurrentMonth(2)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekFebFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekFebFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekFebFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="三月1W" align="center" prop="weekMarOne" v-if="showFullYear || ifCurrentMonth(3)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMarOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMarOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="三月2W" align="center" prop="weekMarTwo" v-if="showFullYear || ifCurrentMonth(3)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMarTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMarTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="三月3W" align="center" prop="weekMarThree" v-if="showFullYear || ifCurrentMonth(3)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMarThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMarThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="三月4W" align="center" prop="weekMarFour" v-if="showFullYear || ifCurrentMonth(3)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMarFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMarFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMarFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="四月1W" align="center" prop="weekAprOne" v-if="showFullYear || ifCurrentMonth(4)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAprOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAprOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="四月2W" align="center" prop="weekAprTwo" v-if="showFullYear || ifCurrentMonth(4)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAprTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAprTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="四月3W" align="center" prop="weekAprThree" v-if="showFullYear || ifCurrentMonth(4)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAprThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAprThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="四月4W" align="center" prop="weekAprFour" v-if="showFullYear || ifCurrentMonth(4)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAprFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAprFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAprFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="五月1W" align="center" prop="weekMayOne" v-if="showFullYear || ifCurrentMonth(5)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMayOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMayOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="五月2W" align="center" prop="weekMayTwo" v-if="showFullYear || ifCurrentMonth(5)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMayTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMayTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="五月3W" align="center" prop="weekMayThree" v-if="showFullYear || ifCurrentMonth(5)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMayThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMayThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="五月4W" align="center" prop="weekMayFour" v-if="showFullYear || ifCurrentMonth(5)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekMayFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekMayFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekMayFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="六月1W" align="center" prop="weekJunOne" v-if="showFullYear || ifCurrentMonth(6)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJunOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJunOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="六月2W" align="center" prop="weekJunTwo" v-if="showFullYear || ifCurrentMonth(6)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJunTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJunTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="六月3W" align="center" prop="weekJunThree" v-if="showFullYear || ifCurrentMonth(6)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJunThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJunThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="六月4W" align="center" prop="weekJunFour" v-if="showFullYear || ifCurrentMonth(6)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJunFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJunFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJunFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="七月1W" align="center" prop="weekJulOne" v-if="showFullYear || ifCurrentMonth(7)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJulOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJulOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="七月2W" align="center" prop="weekJulTwo" v-if="showFullYear || ifCurrentMonth(7)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJulTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJulTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="七月3W" align="center" prop="weekJulThree" v-if="showFullYear || ifCurrentMonth(7)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJulThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJulThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="七月4W" align="center" prop="weekJulFour" v-if="showFullYear || ifCurrentMonth(7)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekJulFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekJulFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekJulFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="八月1W" align="center" prop="weekAugOne" v-if="showFullYear || ifCurrentMonth(8)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAugOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAugOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="八月2W" align="center" prop="weekAugTwo" v-if="showFullYear || ifCurrentMonth(8)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAugTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAugTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="八月3W" align="center" prop="weekAugThree" v-if="showFullYear || ifCurrentMonth(8)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAugThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAugThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="八月4W" align="center" prop="weekAugFour" v-if="showFullYear || ifCurrentMonth(8)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekAugFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekAugFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekAugFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="九月1W" align="center" prop="weekSepOne" v-if="showFullYear || ifCurrentMonth(9)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekSepOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekSepOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="九月2W" align="center" prop="weekSepTwo" v-if="showFullYear || ifCurrentMonth(9)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekSepTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekSepTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="九月3W" align="center" prop="weekSepThree" v-if="showFullYear || ifCurrentMonth(9)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekSepThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekSepThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="九月4W" align="center" prop="weekSepFour" v-if="showFullYear || ifCurrentMonth(9)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekSepFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekSepFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekSepFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十月1W" align="center" prop="weekOctOne" v-if="showFullYear || ifCurrentMonth(10)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekOctOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekOctOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十月2W" align="center" prop="weekOctTwo" v-if="showFullYear || ifCurrentMonth(10)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekOctTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekOctTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十月3W" align="center" prop="weekOctThree" v-if="showFullYear || ifCurrentMonth(10)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekOctThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekOctThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十月4W" align="center" prop="weekOctFour" v-if="showFullYear || ifCurrentMonth(10)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekOctFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekOctFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekOctFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十一月1W" align="center" prop="weekNovOne" v-if="showFullYear || ifCurrentMonth(11)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekNovOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekNovOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十一月2W" align="center" prop="weekNovTwo" v-if="showFullYear || ifCurrentMonth(11)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekNovTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekNovTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十一月3W" align="center" prop="weekNovThree" v-if="showFullYear || ifCurrentMonth(11)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekNovThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekNovThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十一月4W" align="center" prop="weekNovFour" v-if="showFullYear || ifCurrentMonth(11)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekNovFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekNovFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekNovFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十二月1W" align="center" prop="weekDecOne" v-if="showFullYear || ifCurrentMonth(12)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecOne }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekDecOne')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecOne).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekDecOne).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十二月2W" align="center" prop="weekDecTwo" v-if="showFullYear || ifCurrentMonth(12)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecTwo }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekDecTwo')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecTwo).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekDecTwo).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十二月3W" align="center" prop="weekDecThree" v-if="showFullYear || ifCurrentMonth(12)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecThree }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekDecThree')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecThree).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekDecThree).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="十二月4W" align="center" prop="weekDecFour" v-if="showFullYear || ifCurrentMonth(12)">
         <template #default="scope">
-          <span :style="{ fontSize: '30px', fontWeight: 'bold' }">{{ scope.row.weekDecFour }}</span>
+          <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+            @click="handleCellClick(scope.row, 'weekDecFour')">
+            <span>
+              <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecFour).symbol
+              }}</span>
+              <span>{{ parseStatus(scope.row.weekDecFour).description }}</span>
+            </span>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -347,11 +679,11 @@
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
     <!-- 添加或修改专业计划保养对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="planRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="序号" prop="majorOrder">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form ref="planRef" :model="form" :rules="rules" label-width="120px">
+        <!-- <el-form-item label="序号" prop="majorOrder">
           <el-input v-model="form.majorOrder" placeholder="请输入序号" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="设备名称" prop="majorName">
           <el-input v-model="form.majorName" placeholder="请输入设备名称" />
         </el-form-item>
@@ -384,29 +716,630 @@
         </div>
       </template>
     </el-dialog>
+
+    <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
+      <el-table v-loading="loading" :data="listForTip" @selection-change="handleSelectionChange" border>
+        <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
+        <el-table-column label="部位" align="center" prop="majorPosition" />
+        <el-table-column label="保养维修项目" align="center" prop="majorProject" width="280" />
+        <el-table-column label="周期" align="center" prop="majorCycleNum" />
+        <el-table-column label="人员" align="center" prop="majorPeople" />
+        <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="needShow['weekJanOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJanOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJanOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="一月2W" align="center" prop="weekJanTwo" v-if="needShow['weekJanTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJanTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJanTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="一月3W" align="center" prop="weekJanThree" v-if="needShow['weekJanThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJanThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJanThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="一月4W" align="center" prop="weekJanFour" v-if="needShow['weekJanFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJanFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJanFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJanFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="二月1W" align="center" prop="weekFebOne" v-if="needShow['weekFebOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekFebOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekFebOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="二月2W" align="center" prop="weekFebTwo" v-if="needShow['weekFebTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekFebTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekFebTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="二月3W" align="center" prop="weekFebThree" v-if="needShow['weekFebThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekFebThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekFebThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="二月4W" align="center" prop="weekFebFour" v-if="needShow['weekFebFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekFebFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekFebFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekFebFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="三月1W" align="center" prop="weekMarOne" v-if="needShow['weekMarOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMarOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMarOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="三月2W" align="center" prop="weekMarTwo" v-if="needShow['weekMarTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMarTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMarTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="三月3W" align="center" prop="weekMarThree" v-if="needShow['weekMarThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMarThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMarThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="三月4W" align="center" prop="weekMarFour" v-if="needShow['weekMarFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMarFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMarFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMarFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="四月1W" align="center" prop="weekAprOne" v-if="needShow['weekAprOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAprOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAprOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="四月2W" align="center" prop="weekAprTwo" v-if="needShow['weekAprTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAprTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAprTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="四月3W" align="center" prop="weekAprThree" v-if="needShow['weekAprThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAprThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAprThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="四月4W" align="center" prop="weekAprFour" v-if="needShow['weekAprFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAprFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAprFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAprFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="五月1W" align="center" prop="weekMayOne" v-if="needShow['weekMayOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMayOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMayOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="五月2W" align="center" prop="weekMayTwo" v-if="needShow['weekMayTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMayTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMayTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="五月3W" align="center" prop="weekMayThree" v-if="needShow['weekMayThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMayThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMayThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="五月4W" align="center" prop="weekMayFour" v-if="needShow['weekMayFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekMayFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekMayFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekMayFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="六月1W" align="center" prop="weekJunOne" v-if="needShow['weekJunOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJunOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJunOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="六月2W" align="center" prop="weekJunTwo" v-if="needShow['weekJunTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJunTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJunTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="六月3W" align="center" prop="weekJunThree" v-if="needShow['weekJunThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJunThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJunThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="六月4W" align="center" prop="weekJunFour" v-if="needShow['weekJunFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJunFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJunFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJunFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="七月1W" align="center" prop="weekJulOne" v-if="needShow['weekJulOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJulOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJulOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="七月2W" align="center" prop="weekJulTwo" v-if="needShow['weekJulTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJulTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJulTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="七月3W" align="center" prop="weekJulThree" v-if="needShow['weekJulThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJulThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJulThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="七月4W" align="center" prop="weekJulFour" v-if="needShow['weekJulFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekJulFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekJulFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekJulFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="八月1W" align="center" prop="weekAugOne" v-if="needShow['weekAugOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAugOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAugOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="八月2W" align="center" prop="weekAugTwo" v-if="needShow['weekAugTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAugTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAugTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="八月3W" align="center" prop="weekAugThree" v-if="needShow['weekAugThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAugThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAugThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="八月4W" align="center" prop="weekAugFour" v-if="needShow['weekAugFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekAugFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekAugFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekAugFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="九月1W" align="center" prop="weekSepOne" v-if="needShow['weekSepOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekSepOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekSepOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="九月2W" align="center" prop="weekSepTwo" v-if="needShow['weekSepTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekSepTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekSepTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="九月3W" align="center" prop="weekSepThree" v-if="needShow['weekSepThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekSepThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekSepThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="九月4W" align="center" prop="weekSepFour" v-if="needShow['weekSepFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekSepFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekSepFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekSepFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十月1W" align="center" prop="weekOctOne" v-if="needShow['weekOctOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekOctOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekOctOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十月2W" align="center" prop="weekOctTwo" v-if="needShow['weekOctTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekOctTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekOctTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十月3W" align="center" prop="weekOctThree" v-if="needShow['weekOctThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekOctThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekOctThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十月4W" align="center" prop="weekOctFour" v-if="needShow['weekOctFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekOctFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekOctFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekOctFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十一月1W" align="center" prop="weekNovOne" v-if="needShow['weekNovOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekNovOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekNovOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十一月2W" align="center" prop="weekNovTwo" v-if="needShow['weekNovTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekNovTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekNovTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十一月3W" align="center" prop="weekNovThree" v-if="needShow['weekNovThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekNovThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekNovThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十一月4W" align="center" prop="weekNovFour" v-if="needShow['weekNovFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekNovFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekNovFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekNovFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十二月1W" align="center" prop="weekDecOne" v-if="needShow['weekDecOne']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekDecOne')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecOne).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekDecOne).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十二月2W" align="center" prop="weekDecTwo" v-if="needShow['weekDecTwo']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekDecTwo')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecTwo).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekDecTwo).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十二月3W" align="center" prop="weekDecThree" v-if="needShow['weekDecThree']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekDecThree')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecThree).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekDecThree).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="十二月4W" align="center" prop="weekDecFour" v-if="needShow['weekDecFour']">
+          <template #default="scope">
+            <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              @click="handleCellClick(scope.row, 'weekDecFour')">
+              <span>
+                <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.weekDecFour).symbol
+                }}</span>
+                <span>{{ parseStatus(scope.row.weekDecFour).description }}</span>
+              </span>
+            </div>
+          </template>
+        </el-table-column>
+
+      </el-table>
+    </el-dialog>
+    <record ref="recordRef" :rowFromProps="rowForProps" :showDialog="showDialogNull" :majorGroup="majorGroup"
+      v-if="showRecord" @getMajor="getList"></record>
   </div>
 </template>
 
 <script setup name="majorPlan">
-import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile } from "@/api/device/maintenanceTable/majorPlan";
+import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList } from "@/api/device/maintenanceTable/majorPlan";
 import { ElMessage } from 'element-plus'
+import record from "./record.vue"
 import { format } from 'date-fns';
+import { ElNotification } from 'element-plus'
+import { getInfo } from "@/api/login";
 
 const { proxy } = getCurrentInstance();
 
 const planList = ref([]);
+const listForTip = ref([]);
 const open = ref(false);
+const openMessage = ref(false);
 const loading = ref(true);
 const buttonLoading = ref(false);
 const showSearch = ref(true);
 const showFullYear = ref(false);
+const showRecord = ref(false);
+const showDialogNull = ref(false);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const showDialog = ref(false);
 const total = ref(0);
+const notifyOffset = ref(0);
 const title = ref("");
-
+const rowForProps = reactive({})
+const majorGroup = ref('专业')
+const currentUserName = ref("");
+const currentUserId = ref(0);
+const needShow = reactive({})
 const data = reactive({
   form: {},
   queryParams: {
@@ -420,7 +1353,8 @@ const data = reactive({
     majorPeople: null,
     majorMonth: null,
     majorMonthWeek: null,
-    majorContent: null
+    majorContent: null,
+    majorGroup: null
   },
   rules: {
   }
@@ -429,6 +1363,22 @@ const data = reactive({
 const { queryParams, form, rules } = toRefs(data);
 
 
+function showNotification(keyword) {
+  // 根据传递进来的参数计算新的偏移量
+  const newOffset = notifyOffset.value + 100;
+  // 显示通知
+  ElNotification({
+    title: '专业计划',
+    dangerouslyUseHTMLString: true,
+    message: `<span>您有</span><span style="color: #2d7ad6;">[${keyword}]</span><span>审核中，请及时处理</span>`,
+    type: "warning",
+    offset: newOffset,
+    duration: 7000,
+  })
+  // 更新偏移量，避免堆叠
+  notifyOffset.value = newOffset;
+}
+//显示当月及上月
 function ifCurrentMonth(num) {
   const now = new Date();
   const currentMonth = now.getMonth() + 1; // 加1以转换为实际的月份
@@ -441,10 +1391,37 @@ function getList() {
   listPlan(queryParams.value).then(response => {
     planList.value = response.rows;
     total.value = response.total;
+    // console.log('needShow----->', needShow)
+    // console.log('majorList------->', listForTip.value)
     loading.value = false;
   });
+  tipList().then(result => {
+    listForTip.value = result.rows
+
+    const tmp = JSON.parse(JSON.stringify(result.rows))
+    const fields = [];
+    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].forEach(month => {
+      ['One', 'Two', 'Three', 'Four'].forEach(week => {
+        fields.push(`week${month}${week}`);
+      });
+    });
+    tmp.forEach(element => {
+      fields.forEach(field => {
+        if (element.createBy == currentUserId.value && element[field] != '' && element[field] != null && element[field].includes('待审核')) {
+          console.log(element)
+          needShow[field] = true
+          showNotification(field);
+        }
+      });
+    });
+  })
 }
 
+//获取当前用户信息
+getInfo().then(result => {
+  currentUserId.value = result.user.userId
+  currentUserName.value = result.user.userName
+})
 // 取消按钮
 function cancel() {
   open.value = false;
@@ -466,6 +1443,17 @@ function reset() {
     majorContent: null
   };
   proxy.resetForm("planRef");
+}
+
+
+function handleCellClick(row, cell) {
+  console.log('id:', row.groupId);
+  const content = row[cell];
+  console.log('内容：', content);
+  row.monthTime = cell
+  rowForProps.data = row
+  showDialogNull.value = !showDialogNull.value
+  showRecord.value = true
 }
 
 /** 搜索按钮操作 */
@@ -524,6 +1512,23 @@ function submitForm() {
       }
     }
   });
+}
+
+function parseStatus(input) {
+  const trimmedInput = input ? input.trim() : '';
+
+  const match = trimmedInput.match(/^([^\(\)])(?:[^(]*\((.*?)\))?/);
+  if (match) {
+    const symbol = match[1]; // 提取符号
+    const description = match[2] ? `(${match[2]})` : '';
+    return { symbol: symbol, description: description };
+  } else {
+    if (!trimmedInput || trimmedInput.length === 0) {
+      return { symbol: '\u200B', description: '' };
+    } else {
+      return { symbol: trimmedInput, description: '' };
+    }
+  }
 }
 
 /** 删除按钮操作 */

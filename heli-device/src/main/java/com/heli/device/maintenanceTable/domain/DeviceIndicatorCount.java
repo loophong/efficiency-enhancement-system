@@ -50,10 +50,10 @@ public class DeviceIndicatorCount extends BaseEntity
     private String indicatorDown;
 
     /** 日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @JsonFormat(pattern = "yyyy-MM-dd")
 //    @ExcelProperty(value = "日期", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelIgnore
-    private Date indicatorTime;
+    private String indicatorTime;
 
     /** 一月数据 */
     @ExcelProperty(value = "1月")
@@ -103,6 +103,10 @@ public class DeviceIndicatorCount extends BaseEntity
     @ExcelProperty(value = "12月")
     private String indicatorDec;
 
+    /** 分析文档 */
+    @ExcelProperty(value = "12月")
+    private String indicatorFile;
+
     public void setIndicatorId(Long indicatorId)
     {
         this.indicatorId = indicatorId;
@@ -148,12 +152,12 @@ public class DeviceIndicatorCount extends BaseEntity
     {
         return indicatorDown;
     }
-    public void setIndicatorTime(Date indicatorTime)
+    public void setIndicatorTime(String indicatorTime)
     {
         this.indicatorTime = indicatorTime;
     }
 
-    public Date getIndicatorTime()
+    public String getIndicatorTime()
     {
         return indicatorTime;
     }
@@ -266,6 +270,16 @@ public class DeviceIndicatorCount extends BaseEntity
         return indicatorDec;
     }
 
+    public void setIndicatorFile(String indicatorFile)
+    {
+        this.indicatorFile = indicatorFile;
+    }
+
+    public String getIndicatorFile()
+    {
+        return indicatorFile;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -287,6 +301,7 @@ public class DeviceIndicatorCount extends BaseEntity
                 .append("indicatorOct", getIndicatorOct())
                 .append("indicatorNov", getIndicatorNov())
                 .append("indicatorDec", getIndicatorDec())
+                .append("indicatorFile", getIndicatorFile())
                 .toString();
     }
 }

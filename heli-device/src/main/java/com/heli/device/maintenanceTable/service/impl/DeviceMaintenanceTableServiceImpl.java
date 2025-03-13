@@ -63,9 +63,10 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
      * @return {@link List }<{@link Map }<{@link String }, {@link Object }>>
      */
     @Override
-    public List<Map<String, Object>> handleTreeList(){
+    public List<Map<String, Object>> handleTreeList(DeviceMaintenanceTable deviceMaintenanceTable){
         // 转换逻辑
-        List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectTree();
+        List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectDeviceMaintenanceTableList(deviceMaintenanceTable);
+        log.info(list.toString());
         List<Map<String, Object>> transformedList = list.stream().collect(Collectors.groupingBy(DeviceMaintenanceTable::getDeviceNum))
                 .entrySet().stream().map(entry -> {
                     Map<String, Object> deviceMap = new HashMap<>();
@@ -95,6 +96,7 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
                                     itemMap.put("deviceName", maintenanceItem.getDeviceName());
                                     itemMap.put("workStatus", maintenanceItem.getWorkStatus());
                                     itemMap.put("issueType", maintenanceItem.getIssueType());
+                                    itemMap.put("faultType", maintenanceItem.getFaultType());
                                     itemMap.put("applyBy", maintenanceItem.getApplyBy());
                                     itemMap.put("applyDepartment", maintenanceItem.getApplyDepartment());
                                     itemMap.put("maintenancePeople", maintenanceItem.getMaintenancePeople());

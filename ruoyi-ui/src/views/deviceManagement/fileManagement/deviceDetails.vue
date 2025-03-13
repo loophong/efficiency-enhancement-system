@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="资本化日期" style="width: 308px">
         <el-date-picker v-model="daterangeFinancialDate" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
           start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -82,26 +82,27 @@
     </el-row>
 
     <el-table v-loading="loading" :data="detailsList" @selection-change="handleSelectionChange" border stripe>
-      <el-table-column type="selection" width="55" align="center" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键id" align="center" prop="detailsId" /> -->
-      <el-table-column label="资本化日期" align="center" prop="financialDate" width="180">
+      <el-table-column label="资本化日期" align="center" prop="financialDate" width="140">
         <template #default="scope">
           <span>{{ parseTime(scope.row.financialDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="存货号" align="center" prop="inventoryNum" />
+      <el-table-column label="故障次数" align="center" prop="faultCount" width="80" />
       <el-table-column label="固定资产名称" align="center" prop="fixedAssetName" />
       <el-table-column label="班组" align="center" prop="detailsGroup" />
       <el-table-column label="设备状态" align="center" prop="deviceStatus" />
       <el-table-column label="设备类别" align="center" prop="deviceType" />
-      <el-table-column label="重点设备标注" align="center" prop="ifKey">
+      <el-table-column label="重点设备标注" align="center" prop="ifKey" width="120">
         <template #default="scope">
           <span :style="{ fontSize: '28px' }">{{ scope.row.ifKey }}</span>
         </template>
       </el-table-column>
       <el-table-column label="保管使用单位" align="center" prop="storageUnit" />
       <el-table-column label="责任成本中心" align="center" prop="costCenter" />
-      <el-table-column label="使用年限" align="center" prop="usedYear" />
+      <el-table-column label="使用年限" align="center" prop="usedYear" width="80" />
       <el-table-column label="资产原值" align="center" prop="assetOrigin" />
       <el-table-column label="品牌" align="center" prop="brand" />
       <el-table-column label="吨位" align="center" prop="tonnage" />

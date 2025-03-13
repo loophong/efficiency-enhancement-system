@@ -169,6 +169,8 @@ public class DeviceGroupPlan extends BaseEntity
             .append("monthTwo", getMonthTwo())
             .append("monthThree", getMonthThree())
             .append("monthFour", getMonthFour())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
             .toString();
     }
 }

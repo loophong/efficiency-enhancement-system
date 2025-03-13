@@ -43,13 +43,17 @@
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['maintenanceTable:file:export']">导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="Info" plain icon="Refresh" @click="resetGetList"
+          v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="fileList" @selection-change="handleSelectionChange" border stripe>
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="设备编号" align="center" prop="sopNum" />
-      <el-table-column label="设备名称" align="center" prop="sopName" />
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column label="设备编号" align="center" prop="sopNum" width="160" />
+      <el-table-column label="设备名称" align="center" prop="sopName" width="160" />
       <el-table-column label="保养文件" align="center" prop="sopMaintenance">
         <template #default="scope">
           <span v-html="formatFileInfo(scope.row.sopMaintenance)"></span>
@@ -60,18 +64,28 @@
           <span v-html="formatFileInfo(scope.row.sopRepair)"></span>
         </template>
       </el-table-column>
+      <el-table-column label="修改人" align="center" prop="updateBy" v-if="currentStatus == '历史'" width="120" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" v-if="currentStatus == '历史'" width="120">
+        <!-- <template #default="scope">
+          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
+        </template> -->
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
             v-hasPermi="['maintenanceTable:file:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['maintenanceTable:file:remove']">删除</el-button>
+          <el-button link type="primary" icon="InfoFilled" @click="getHistoryList(scope.row)"
+            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
+          <el-button link type="primary" icon="Back" @click="resetGetList(scope.row)"
+            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '1'">返回</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="getList" />
+      v-model:limit="queryParams.pageSize" @pagination="getWhich" />
 
     <!-- 添加或修改SOP文件管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -104,7 +118,10 @@
 
 <script setup name="Sop">
 import { listFile, getFile, delFile, addFile, updateFile } from "@/api/device/fileTable/sop";
+import { getInfo } from "@/api/login";
 import { ElMessage } from 'element-plus'
+import { format } from 'date-fns';
+
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
@@ -116,14 +133,18 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const currentStatus = ref("默认");
 const daterangeUpTime = ref([]);
 const route = useRoute();
 const router = useRouter();
+const currentUserName = ref("");
+const currentUserId = ref(0);
 
 const routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
+  formForHistory: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -139,7 +160,7 @@ const data = reactive({
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, form, rules, formForHistory } = toRefs(data);
 
 const handleRouteParams = () => {
   if (routerDeviceNum) {
@@ -157,6 +178,21 @@ onMounted(() => {
   handleRouteParams();
 });
 
+function resetGetList() {
+  currentStatus.value = '默认';
+  queryParams.value = {
+    pageNum: 1,
+    pageSize: 10,
+    sopCombineId: null,
+    sopNum: null,
+    sopName: null,
+    sopMaintenance: null,
+    upTime: null,
+    ifHistory: null,
+    sopRepair: null
+  }
+  getList();
+}
 
 function formatFileInfo(fileInfo) {
   if (fileInfo == '' || fileInfo == null) {
@@ -191,6 +227,25 @@ function formatFileInfo(fileInfo) {
 /** 查询SOP文件管理列表 */
 function getList() {
   loading.value = true;
+  queryParams.value.ifHistory = currentStatus.value == '默认' ? '0' : '1';
+  queryParams.value.params = {};
+  if (null != daterangeUpTime && '' != daterangeUpTime && Array.isArray(daterangeUpTime.value)) {
+    queryParams.value.params["beginUpTime"] = daterangeUpTime.value[0];
+    queryParams.value.params["endUpTime"] = daterangeUpTime.value[1];
+  }
+  listFile(queryParams.value).then(response => {
+    fileList.value = response.rows;
+    total.value = response.total;
+    loading.value = false;
+  });
+}
+
+/** 查询SOP文件历史列表 */
+function getHistoryList(row) {
+  loading.value = true;
+  currentStatus.value = '历史'
+  queryParams.value.sopNum = row.sopNum
+  queryParams.value.ifHistory = '1';
   queryParams.value.params = {};
   if (null != daterangeUpTime && '' != daterangeUpTime) {
     queryParams.value.params["beginUpTime"] = daterangeUpTime.value[0];
@@ -201,6 +256,19 @@ function getList() {
     total.value = response.total;
     loading.value = false;
   });
+}
+
+getInfo().then(result => {
+  currentUserId.value = result.user.userId
+  currentUserName.value = result.user.userName
+})
+
+function getWhich() {
+  if (currentStatus.value == '默认') {
+    getList();
+  } else {
+    getHistoryList();
+  }
 }
 
 // 取消按钮
@@ -254,9 +322,15 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
+  formForHistory.value = {};
   const _sopFileId = row.sopFileId || ids.value
   getFile(_sopFileId).then(response => {
-    form.value = response.data;
+    form.value = { ...response.data };
+    formForHistory.value = { ...response.data };
+    formForHistory.value.sopFileId = null;
+    formForHistory.value.ifHistory = '1';
+    formForHistory.value.updateBy = currentUserName.value;
+    formForHistory.value.updateTime = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
     open.value = true;
     title.value = "修改SOP文件管理";
   });
@@ -269,10 +343,13 @@ function submitForm() {
       if (form.value.sopFileId != null) {
         updateFile(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
+          addFile(formForHistory.value)
           open.value = false;
           getList();
         });
       } else {
+        form.value.ifHistory = '0';
+        form.value.createBy = currentUserName.value;
         addFile(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

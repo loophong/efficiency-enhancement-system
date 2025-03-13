@@ -1,8 +1,10 @@
 package com.heli.device.maintenanceTable.controller;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
 import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,31 @@ public class DeviceMajorPlanController extends BaseController
 {
     @Autowired
     private IDeviceMajorPlanService deviceMajorPlanService;
+
+    @Autowired
+    private DeviceMajorPlanMapper deviceMajorPlanMapper;
+
+    /**
+     * 查询专业计划消息列表
+     */
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:list')")
+    @GetMapping("/tipList")
+    public TableDataInfo tipList()
+    {
+        List<String> fields = new ArrayList<>();
+        String[] months = {"jan_", "feb_", "mar_", "apr_", "may_", "jun_", "jul_", "aug_", "sep_", "oct_", "nov_", "dec_"};
+        String[] weeks = {"one", "two", "three", "four"};
+
+        for (String month : months) {
+            for (String week : weeks) {
+                fields.add("week_" + month + week);
+            }
+        }
+
+        List<DeviceMajorPlan> list = deviceMajorPlanMapper.selectRecordsByAuditStatus(fields);
+        return getDataTable(list);
+    }
+
 
     /**
      * 查询专业计划保养列表

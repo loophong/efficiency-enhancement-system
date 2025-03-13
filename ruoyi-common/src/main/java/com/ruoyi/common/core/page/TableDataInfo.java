@@ -82,4 +82,5 @@ public class TableDataInfo implements Serializable
     {
         this.msg = msg;
     }
+
 }

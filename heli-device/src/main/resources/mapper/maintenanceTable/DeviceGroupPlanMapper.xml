@@ -15,10 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="monthTwo"    column="month_two"    />
         <result property="monthThree"    column="month_three"    />
         <result property="monthFour"    column="month_four"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
     </resultMap>
 
     <sql id="selectDeviceGroupPlanVo">
-        select group_id, order_num, device_type, execute_group, maintenance_content, maintenance_cycle, month_one, month_two, month_three, month_four from device_group_plan
+        select group_id, order_num, device_type, execute_group, maintenance_content, maintenance_cycle, month_one, month_two, month_three, month_four,create_by,create_time from device_group_plan
     </sql>
 
     <select id="selectDeviceGroupPlanList" parameterType="DeviceGroupPlan" resultMap="DeviceGroupPlanResult">
@@ -33,6 +35,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null  and monthTwo != ''"> and month_two = #{monthTwo}</if>
             <if test="monthThree != null  and monthThree != ''"> and month_three = #{monthThree}</if>
             <if test="monthFour != null  and monthFour != ''"> and month_four = #{monthFour}</if>
+        </where>
+    </select>
+
+    <select id="selectRecordsByAuditStatus" parameterType="DeviceGroupPlan" resultMap="DeviceGroupPlanResult">
+        SELECT *
+        FROM device_group_plan
+        <where>
+            <foreach collection="fields" item="field" separator="OR">
+                ${field} LIKE '%待审核%'
+            </foreach>
         </where>
     </select>
     
@@ -53,6 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">month_two,</if>
             <if test="monthThree != null">month_three,</if>
             <if test="monthFour != null">month_four,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNum != null">#{orderNum},</if>
@@ -64,6 +78,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">#{monthTwo},</if>
             <if test="monthThree != null">#{monthThree},</if>
             <if test="monthFour != null">#{monthFour},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
          </trim>
     </insert>
 
@@ -79,6 +95,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">month_two = #{monthTwo},</if>
             <if test="monthThree != null">month_three = #{monthThree},</if>
             <if test="monthFour != null">month_four = #{monthFour},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
         </trim>
         where group_id = #{groupId}
     </update>

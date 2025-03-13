@@ -175,6 +175,10 @@ public class DeviceBasicFile extends BaseEntity
                 .append("fileInfo", getFileInfo())
                 .append("fileInfoRepair", getFileInfoRepair())
                 .append("ifHistory", getIfHistory())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
+                .append("updateTime", getUpdateTime())
+                .append("updateBy", getUpdateBy())
                 .toString();
     }
 }

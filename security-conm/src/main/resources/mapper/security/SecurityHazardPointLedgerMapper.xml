@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityHazardPointLedgerMapper">
+    
+    <resultMap type="SecurityHazardPointLedger" id="SecurityHazardPointLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="evaluationUnit"    column="evaluation_unit"    />
+        <result property="position"    column="position"    />
+        <result property="inspectionLocation"    column="inspection_location"    />
+        <result property="chemicalFactorName"    column="chemical_factor_name"    />
+        <result property="physicalFactorName"    column="physical_factor_name"    />
+        <result property="productionDustName"    column="production_dust_name"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityHazardPointLedgerVo">
+        select id, evaluation_unit, position, inspection_location, chemical_factor_name, physical_factor_name, production_dust_name, remarks from security_hazard_point_ledger
+    </sql>
+
+    <select id="selectSecurityHazardPointLedgerList" parameterType="SecurityHazardPointLedger" resultMap="SecurityHazardPointLedgerResult">
+        <include refid="selectSecurityHazardPointLedgerVo"/>
+        <where>  
+            <if test="evaluationUnit != null  and evaluationUnit != ''"> and evaluation_unit = #{evaluationUnit}</if>
+            <if test="position != null  and position != ''"> and position = #{position}</if>
+            <if test="inspectionLocation != null  and inspectionLocation != ''"> and inspection_location = #{inspectionLocation}</if>
+            <if test="chemicalFactorName != null  and chemicalFactorName != ''"> and chemical_factor_name like concat('%', #{chemicalFactorName}, '%')</if>
+            <if test="physicalFactorName != null  and physicalFactorName != ''"> and physical_factor_name like concat('%', #{physicalFactorName}, '%')</if>
+            <if test="productionDustName != null  and productionDustName != ''"> and production_dust_name like concat('%', #{productionDustName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityHazardPointLedgerById" parameterType="Long" resultMap="SecurityHazardPointLedgerResult">
+        <include refid="selectSecurityHazardPointLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityHazardPointLedger" parameterType="SecurityHazardPointLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_hazard_point_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="evaluationUnit != null and evaluationUnit != ''">evaluation_unit,</if>
+            <if test="position != null and position != ''">position,</if>
+            <if test="inspectionLocation != null and inspectionLocation != ''">inspection_location,</if>
+            <if test="chemicalFactorName != null">chemical_factor_name,</if>
+            <if test="physicalFactorName != null">physical_factor_name,</if>
+            <if test="productionDustName != null">production_dust_name,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="evaluationUnit != null and evaluationUnit != ''">#{evaluationUnit},</if>
+            <if test="position != null and position != ''">#{position},</if>
+            <if test="inspectionLocation != null and inspectionLocation != ''">#{inspectionLocation},</if>
+            <if test="chemicalFactorName != null">#{chemicalFactorName},</if>
+            <if test="physicalFactorName != null">#{physicalFactorName},</if>
+            <if test="productionDustName != null">#{productionDustName},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityHazardPointLedger" parameterType="SecurityHazardPointLedger">
+        update security_hazard_point_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="evaluationUnit != null and evaluationUnit != ''">evaluation_unit = #{evaluationUnit},</if>
+            <if test="position != null and position != ''">position = #{position},</if>
+            <if test="inspectionLocation != null and inspectionLocation != ''">inspection_location = #{inspectionLocation},</if>
+            <if test="chemicalFactorName != null">chemical_factor_name = #{chemicalFactorName},</if>
+            <if test="physicalFactorName != null">physical_factor_name = #{physicalFactorName},</if>
+            <if test="productionDustName != null">production_dust_name = #{productionDustName},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityHazardPointLedgerById" parameterType="Long">
+        delete from security_hazard_point_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityHazardPointLedgerByIds" parameterType="String">
+        delete from security_hazard_point_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

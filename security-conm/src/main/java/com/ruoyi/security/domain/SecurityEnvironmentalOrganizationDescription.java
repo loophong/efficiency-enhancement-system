@@ -9,15 +9,15 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 环境识别对象 Security_environmental_organization_description
- * 
- * @author 王
- * @date 2025-01-14
+ *
+ * @author wang
+ * @date 2025-03-05
  */
 public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** ID */
+    /** 序号 */
     private Long id;
 
     /** 环境 */
@@ -32,108 +32,93 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
     @Excel(name = "环境要素描述")
     private String description;
 
-    /** 备用字段1 */
-    @Excel(name = "备用字段1")
-    private String beiyongziduan1;
+    /** 审批状态 */
+    @Excel(name = "审批状态")
+    private String statu;
 
-    /** 备用字段2 */
-    @Excel(name = "备用字段2")
-    private Long beiyongziduan2;
+    /** 审批科室 */
+    @Excel(name = "审批科室")
+    private String statuDepartment;
 
-    /** 备用字段3 */
+    /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "备用字段3", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date beiyongdiduan3;
+    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date statuTime;
 
-    /** 备用字段4 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "备用字段4", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date beiyongziduan4;
-
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setEnvironment(String environment) 
+    public void setEnvironment(String environment)
     {
         this.environment = environment;
     }
 
-    public String getEnvironment() 
+    public String getEnvironment()
     {
         return environment;
     }
-    public void setFeatures(String features) 
+    public void setFeatures(String features)
     {
         this.features = features;
     }
 
-    public String getFeatures() 
+    public String getFeatures()
     {
         return features;
     }
-    public void setDescription(String description) 
+    public void setDescription(String description)
     {
         this.description = description;
     }
 
-    public String getDescription() 
+    public String getDescription()
     {
         return description;
     }
-    public void setBeiyongziduan1(String beiyongziduan1) 
+    public void setStatu(String statu)
     {
-        this.beiyongziduan1 = beiyongziduan1;
+        this.statu = statu;
     }
 
-    public String getBeiyongziduan1() 
+    public String getStatu()
     {
-        return beiyongziduan1;
+        return statu;
     }
-    public void setBeiyongziduan2(Long beiyongziduan2) 
+    public void setStatuDepartment(String statuDepartment)
     {
-        this.beiyongziduan2 = beiyongziduan2;
-    }
-
-    public Long getBeiyongziduan2() 
-    {
-        return beiyongziduan2;
-    }
-    public void setBeiyongdiduan3(Date beiyongdiduan3) 
-    {
-        this.beiyongdiduan3 = beiyongdiduan3;
+        this.statuDepartment = statuDepartment;
     }
 
-    public Date getBeiyongdiduan3() 
+    public String getStatuDepartment()
     {
-        return beiyongdiduan3;
+        return statuDepartment;
     }
-    public void setBeiyongziduan4(Date beiyongziduan4) 
+    public void setStatuTime(Date statuTime)
     {
-        this.beiyongziduan4 = beiyongziduan4;
+        this.statuTime = statuTime;
     }
 
-    public Date getBeiyongziduan4() 
+    public Date getStatuTime()
     {
-        return beiyongziduan4;
+        return statuTime;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("environment", getEnvironment())
-            .append("features", getFeatures())
-            .append("description", getDescription())
-            .append("beiyongziduan1", getBeiyongziduan1())
-            .append("beiyongziduan2", getBeiyongziduan2())
-            .append("beiyongdiduan3", getBeiyongdiduan3())
-            .append("beiyongziduan4", getBeiyongziduan4())
-            .toString();
+                .append("id", getId())
+                .append("environment", getEnvironment())
+                .append("features", getFeatures())
+                .append("description", getDescription())
+                .append("statu", getStatu())
+                .append("statuDepartment", getStatuDepartment())
+                .append("statuTime", getStatuTime())
+                .toString();
     }
 }

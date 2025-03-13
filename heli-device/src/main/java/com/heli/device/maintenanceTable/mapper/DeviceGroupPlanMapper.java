@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
+import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
+import org.springframework.data.repository.query.Param;
 
 
 /**
@@ -14,6 +16,8 @@ import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
  */
 public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
 {
+
+    List<DeviceGroupPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields);
     /**
      * 查询班组计划保养
      * 

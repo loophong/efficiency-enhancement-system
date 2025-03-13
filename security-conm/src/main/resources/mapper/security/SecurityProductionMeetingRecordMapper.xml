@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityProductionMeetingRecordMapper">
+    
+    <resultMap type="SecurityProductionMeetingRecord" id="SecurityProductionMeetingRecordResult">
+        <result property="id"    column="id"    />
+        <result property="meetingTime"    column="meeting_time"    />
+        <result property="meetingContent"    column="meeting_content"    />
+        <result property="meetingLocation"    column="meeting_location"    />
+        <result property="attendees"    column="attendees"    />
+        <result property="meetingChairman"    column="meeting_chairman"    />
+        <result property="meetingNotes"    column="meeting_notes"    />
+        <result property="meetingContent2"    column="meeting_content2"    />
+    </resultMap>
+
+    <sql id="selectSecurityProductionMeetingRecordVo">
+        select id, meeting_time, meeting_content, meeting_location, attendees, meeting_chairman, meeting_notes, meeting_content2 from security_production_meeting_record
+    </sql>
+
+    <select id="selectSecurityProductionMeetingRecordList" parameterType="SecurityProductionMeetingRecord" resultMap="SecurityProductionMeetingRecordResult">
+        <include refid="selectSecurityProductionMeetingRecordVo"/>
+        <where>  
+            <if test="meetingTime != null "> and meeting_time = #{meetingTime}</if>
+            <if test="meetingContent != null  and meetingContent != ''"> and meeting_content = #{meetingContent}</if>
+            <if test="meetingLocation != null  and meetingLocation != ''"> and meeting_location = #{meetingLocation}</if>
+            <if test="attendees != null  and attendees != ''"> and attendees = #{attendees}</if>
+            <if test="meetingChairman != null  and meetingChairman != ''"> and meeting_chairman = #{meetingChairman}</if>
+            <if test="meetingNotes != null  and meetingNotes != ''"> and meeting_notes = #{meetingNotes}</if>
+            <if test="meetingContent2 != null  and meetingContent2 != ''"> and meeting_content2 = #{meetingContent2}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityProductionMeetingRecordById" parameterType="Long" resultMap="SecurityProductionMeetingRecordResult">
+        <include refid="selectSecurityProductionMeetingRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityProductionMeetingRecord" parameterType="SecurityProductionMeetingRecord" useGeneratedKeys="true" keyProperty="id">
+        insert into security_production_meeting_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="meetingTime != null">meeting_time,</if>
+            <if test="meetingContent != null and meetingContent != ''">meeting_content,</if>
+            <if test="meetingLocation != null and meetingLocation != ''">meeting_location,</if>
+            <if test="attendees != null and attendees != ''">attendees,</if>
+            <if test="meetingChairman != null">meeting_chairman,</if>
+            <if test="meetingNotes != null">meeting_notes,</if>
+            <if test="meetingContent2 != null">meeting_content2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="meetingTime != null">#{meetingTime},</if>
+            <if test="meetingContent != null and meetingContent != ''">#{meetingContent},</if>
+            <if test="meetingLocation != null and meetingLocation != ''">#{meetingLocation},</if>
+            <if test="attendees != null and attendees != ''">#{attendees},</if>
+            <if test="meetingChairman != null">#{meetingChairman},</if>
+            <if test="meetingNotes != null">#{meetingNotes},</if>
+            <if test="meetingContent2 != null">#{meetingContent2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityProductionMeetingRecord" parameterType="SecurityProductionMeetingRecord">
+        update security_production_meeting_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="meetingTime != null">meeting_time = #{meetingTime},</if>
+            <if test="meetingContent != null and meetingContent != ''">meeting_content = #{meetingContent},</if>
+            <if test="meetingLocation != null and meetingLocation != ''">meeting_location = #{meetingLocation},</if>
+            <if test="attendees != null and attendees != ''">attendees = #{attendees},</if>
+            <if test="meetingChairman != null">meeting_chairman = #{meetingChairman},</if>
+            <if test="meetingNotes != null">meeting_notes = #{meetingNotes},</if>
+            <if test="meetingContent2 != null">meeting_content2 = #{meetingContent2},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityProductionMeetingRecordById" parameterType="Long">
+        delete from security_production_meeting_record where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityProductionMeetingRecordByIds" parameterType="String">
+        delete from security_production_meeting_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

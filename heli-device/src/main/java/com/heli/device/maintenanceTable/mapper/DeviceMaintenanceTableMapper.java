@@ -32,10 +32,18 @@ public interface DeviceMaintenanceTableMapper extends BaseMapper<DeviceMaintenan
      */
     public List<DeviceMaintenanceTable> selectDeviceMaintenanceTableList(DeviceMaintenanceTable deviceMaintenanceTable);
 
-    @Select("SELECT * FROM device_maintenance_table " +
-            "WHERE DATE_FORMAT(STR_TO_DATE(reported_time, '%y-%m-%d %H:%i'), '%Y-%m') = #{yearAndMonth}")
-    public List<DeviceMaintenanceTable> selectListByDate(String yearAndMonth);
+    @Select({
+            "<script>",
+            "SELECT * FROM device_maintenance_table",
+            "WHERE DATE_FORMAT(STR_TO_DATE(reported_time, '%y-%m-%d %H:%i'), '%Y-%m') = #{yearAndMonth}",
+            "<if test='faultType != null and faultType != \"\"'>",
+            "AND fault_type = #{faultType}",
+            "</if>",
+            "</script>"
+    })
+    public List<DeviceMaintenanceTable> selectListByDate(@Param("yearAndMonth") String yearAndMonth,@Param("faultType") String faultType);
     /**
+     *
      * 新增设备故障记录
      *
      * @param deviceMaintenanceTable 设备故障记录

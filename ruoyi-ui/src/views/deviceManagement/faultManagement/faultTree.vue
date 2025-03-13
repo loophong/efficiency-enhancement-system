@@ -5,12 +5,12 @@
         <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="报修时间" style="width: 308px">
-        <el-date-picker v-model="daterangeReportedTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-          start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+        <el-date-picker v-model="daterangeReportedTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm" type="daterange"
+          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item label="处理时间" style="width: 308px">
-        <el-date-picker v-model="daterangeResolutionTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-          start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+        <el-date-picker v-model="daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
+          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -20,51 +20,31 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:table:add']">新增</el-button>
+        <el-button type="primary" plain icon="Hide" @click="showTable = false" v-if="showTable == true">隐藏表格</el-button>
+        <el-button type="primary" plain icon="View" @click="showTable = true" v-if="showTable == false">显示表格</el-button>
+        <el-button type="primary" plain icon="View" @click="showTree = true" v-if="showTree == false">显示故障树</el-button>
+        <el-button type="primary" plain icon="Hide" @click="showTree = false" v-if="showTree == true">隐藏故障树</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:table:edit']">修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:table:remove']">删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <!--Excel 参数导入 -->
-        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
-        </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
-          <el-form :model="form" ref="formRef" label-width="90px">
-            <!-- 如果有表单内容，这里添加 -->
-          </el-form>
-          <div class="upload-area">
-            <i class="el-icon-upload"></i>
-            <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
-          </div>
-          <span class="dialog-footer">
-            <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend">确 定</el-button>
-            <!-- <el-button type="primary" :loading="true">上传中</el-button> -->
-          </span>
-        </el-dialog>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
-          v-hasPermi="['system:table:export']">导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+
+
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="handleTreeList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="tableList" row-key="uniqueId" @selection-change="handleSelectionChange" border
-      stripe :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-if="showTable" v-loading="loading" :data="tableList" row-key="uniqueId"
+      @selection-change="handleSelectionChange" border stripe
+      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
+      <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <!-- <el-table-column label="主键id" align="center" prop="maintenanceTableId" /> -->
       <el-table-column label="设备编号" align="center" prop="deviceNum" width="180" />
+      <el-table-column label="故障类型" align="center" prop="faultType">
+        <template #default="scope">
+          <span v-if="scope.row.count">{{ scope.row.faultType }}({{ scope.row.count }})</span>
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
       <el-table-column label="设备名称" align="center" prop="deviceName" />
       <el-table-column label="工单状态" align="center" prop="workStatus" />
       <el-table-column label="问题类型" align="center" prop="issueType" />
-      <el-table-column label="故障类型" align="center" prop="faultType" />
       <el-table-column label="申请人" align="center" prop="applyBy" />
       <el-table-column label="申请部门" align="center" prop="applyDepartment" />
       <el-table-column label="维修人员" align="center" prop="maintenancePeople" />
@@ -80,22 +60,22 @@
       <el-table-column label="是否停机" align="center" prop="ifDown" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+          <!-- <el-button link type="primary" icon="Edit" v-if="scope.row.applyBy" @click="handleUpdate(scope.row)"
             v-hasPermi="['system:table:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['system:table:remove']">删除</el-button>
-          <el-button link type="primary" icon="Position" @click="handleToDetails(scope.row)"
-            v-hasPermi="['system:table:edit']">跳转台账</el-button>
-          <el-button link type="primary" icon="Position" @click="handleToSop(scope.row)"
-            v-hasPermi="['system:table:edit']">跳转SOP文件</el-button>
+          <el-button link type="primary" icon="Delete" v-if="scope.row.applyBy" @click="handleDelete(scope.row)"
+            v-hasPermi="['system:table:remove']">删除</el-button> -->
+          <el-button link type="primary" icon="Position" v-if="scope.row.reportedTime"
+            @click="handleToAnalysis(scope.row, 'fault', 'analysis')"
+            v-hasPermi="['system:table:edit']">跳转故障分析</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize" @pagination="handleChangePage(queryParams.pageNum)" />
+    <fault-chart ref="chartRef" v-if="showTree" :chartData="chartData"></fault-chart>
+    <!-- <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize" @pagination="handleChangePage(queryParams.pageNum)" /> -->
 
-    <!-- 添加或修改2.设备故障记录(导入)对话框 -->
+    <!-- 添加或修改设备故障记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="tableRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备编号" prop="deviceNum">
@@ -162,7 +142,7 @@
 <script setup name="Tree">
 import { listTable, getTable, delTable, addTable, updateTable, uploadFile, getTreeList } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
-
+import faultChart from "./faultChart.vue"
 
 const { proxy } = getCurrentInstance();
 
@@ -171,11 +151,14 @@ const total = ref(0);
 const tableList = ref([]);
 const open = ref(false);
 const loading = ref(false);
+const showTree = ref(false);
+const showTable = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
-
+const chartData = reactive({})
+const route = useRoute();
 const title = ref("");
 const pagesList = ref([]);
 const router = useRouter();
@@ -187,8 +170,9 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 1000,
     deviceName: null,
+    deviceNum: null,
     workStatus: null,
     faultType: null,
     applyBy: null,
@@ -203,18 +187,35 @@ const data = reactive({
     maintenanceCast: null,
     ifDown: null
   },
+
   rules: {
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-getTreeList().then(response => {
-  total.value = response.total
-  pagesList.value = paginateData(response).pages;
-  // console.log({ pagesList })
-})
-function paginateData(data, pageSize = 10) {
+
+function handleTreeList() {
+  loading.value = true;
+  queryParams.value.params = {};
+  if (null != daterangeReportedTime && '' != daterangeReportedTime && Array.isArray(daterangeReportedTime.value)) {
+    queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
+    queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
+  }
+  if (null != daterangeResolutionTime && '' != daterangeResolutionTime && Array.isArray(daterangeResolutionTime.value)) {
+    queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
+    queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
+  }
+  getTreeList(queryParams.value).then(response => {
+    total.value = response.total
+    pagesList.value = paginateData(response).pages;
+    // console.log({ pagesList })
+    showTree.value = true
+    chartData.data = pagesList.value
+    loading.value = false;
+  })
+}
+function paginateData(data, pageSize = 1000) {
   // console.log({ data })
   const rows = data.rows;
   const totalRows = rows.length;
@@ -234,41 +235,45 @@ function paginateData(data, pageSize = 10) {
 
 }
 
-function handleChangePage(index) {
-  tableList.value = pagesList.value[index - 1]
+function handleToAnalysis(row, module, destination) {
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { faultType: row.faultType, yearAndMonth: row.reportedTime } });
 }
 
+// function handleChangePage(index) {
+//   tableList.value = pagesList.value[index - 1]
+// }
 
 
-/** 查询设备故障记录(导入)列表 */
-getTreeList(queryParams.value).then(response => {
-  const paginatedData = paginateData(response);
-  // tableList.value = response.rows;
-});
 
-function getPageList() {
-  // tableList.value = pages[0]
-}
+// /** 查询设备故障记录列表 */
+// getTreeList(queryParams.value).then(response => {
+//   const paginatedData = paginateData(response);
+//   // tableList.value = response.rows;
+// });
 
-/** 查询2.设备故障记录(导入)列表 */
-function getList() {
-  console.log('执行getList')
-  loading.value = true;
-  queryParams.value.params = {};
-  if (null != daterangeReportedTime && '' != daterangeReportedTime) {
-    queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
-    queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
-  }
-  if (null != daterangeResolutionTime && '' != daterangeResolutionTime) {
-    queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
-    queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
-  }
-  listTable(queryParams.value).then(response => {
-    // tableList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
-  });
-}
+// function getPageList() {
+//   // tableList.value = pages[0]
+// }
+
+/** 查询设备故障记录列表 */
+// function getList() {
+//   loading.value = true;
+//   queryParams.value.params = {};
+//   if (null != daterangeReportedTime && '' != daterangeReportedTime) {
+//     queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
+//     queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
+//   }
+//   if (null != daterangeResolutionTime && '' != daterangeResolutionTime) {
+//     queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
+//     queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
+//   }
+//   listTable(queryParams.value).then(response => {
+//     // tableList.value = response.rows;
+//     total.value = response.total;
+//     loading.value = false;
+//   });
+//   loading.value = false;
+// }
 
 // 取消按钮
 function cancel() {
@@ -301,7 +306,7 @@ function reset() {
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
-  getList();
+  handleTreeList();
 }
 
 /** 重置按钮操作 */
@@ -323,7 +328,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加2.设备故障记录(导入)";
+  title.value = "添加";
 }
 
 /** 修改按钮操作 */
@@ -333,7 +338,7 @@ function handleUpdate(row) {
   getTable(_maintenanceTableId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改2.设备故障记录(导入)";
+    title.value = "修改";
   });
 }
 
@@ -358,16 +363,16 @@ function submitForm() {
   });
 }
 
-/** 删除按钮操作 */
-function handleDelete(row) {
-  const _maintenanceTableIds = row.maintenanceTableId || ids.value;
-  proxy.$modal.confirm('是否确认删除2.设备故障记录(导入)编号为"' + _maintenanceTableIds + '"的数据项？').then(function () {
-    return delTable(_maintenanceTableIds);
-  }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => { });
-}
+// /** 删除按钮操作 */
+// function handleDelete(row) {
+//   const _maintenanceTableIds = row.maintenanceTableId || ids.value;
+//   proxy.$modal.confirm('是否确认删除2.设备故障记录(导入)编号为"' + _maintenanceTableIds + '"的数据项？').then(function () {
+//     return delTable(_maintenanceTableIds);
+//   }).then(() => {
+//     getList();
+//     proxy.$modal.msgSuccess("删除成功");
+//   }).catch(() => { });
+// }
 
 /** 台账跳转按钮操作 */
 function handleToDetails(row) {

@@ -9,9 +9,9 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 相关方期望对象 security_require_expect_party
- * 
+ *
  * @author wang
- * @date 2025-02-20
+ * @date 2025-03-11
  */
 public class SecurityRequireExpectParty extends BaseEntity
 {
@@ -40,114 +40,128 @@ public class SecurityRequireExpectParty extends BaseEntity
     @Excel(name = "监测部门")
     private String monitoringDepartment;
 
-    /** 备用字段1 */
+    /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "备用字段1", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date beiyongziduan1;
+    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date approvalTime;
 
-    /** 备用字段2 */
-    @Excel(name = "备用字段2")
-    private String beiyongziduan2;
-
-    /** 备用字段3 */
+    /** 填报时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "备用字段3", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date beiyongziduan3;
+    @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date fillTime;
 
-    public void setId(Long id) 
+    /** 审批状态 */
+    @Excel(name = "审批状态")
+    private String status;
+
+    /** 审批部门 */
+    @Excel(name = "审批部门")
+    private String statusDepartment;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setPartyInvolved(String partyInvolved) 
+    public void setPartyInvolved(String partyInvolved)
     {
         this.partyInvolved = partyInvolved;
     }
 
-    public String getPartyInvolved() 
+    public String getPartyInvolved()
     {
         return partyInvolved;
     }
-    public void setDemand(String demand) 
+    public void setDemand(String demand)
     {
         this.demand = demand;
     }
 
-    public String getDemand() 
+    public String getDemand()
     {
         return demand;
     }
-    public void setMonitoringIndicators(String monitoringIndicators) 
+    public void setMonitoringIndicators(String monitoringIndicators)
     {
         this.monitoringIndicators = monitoringIndicators;
     }
 
-    public String getMonitoringIndicators() 
+    public String getMonitoringIndicators()
     {
         return monitoringIndicators;
     }
-    public void setMonitoringFrequency(String monitoringFrequency) 
+    public void setMonitoringFrequency(String monitoringFrequency)
     {
         this.monitoringFrequency = monitoringFrequency;
     }
 
-    public String getMonitoringFrequency() 
+    public String getMonitoringFrequency()
     {
         return monitoringFrequency;
     }
-    public void setMonitoringDepartment(String monitoringDepartment) 
+    public void setMonitoringDepartment(String monitoringDepartment)
     {
         this.monitoringDepartment = monitoringDepartment;
     }
 
-    public String getMonitoringDepartment() 
+    public String getMonitoringDepartment()
     {
         return monitoringDepartment;
     }
-    public void setBeiyongziduan1(Date beiyongziduan1) 
+    public void setApprovalTime(Date approvalTime)
     {
-        this.beiyongziduan1 = beiyongziduan1;
+        this.approvalTime = approvalTime;
     }
 
-    public Date getBeiyongziduan1() 
+    public Date getApprovalTime()
     {
-        return beiyongziduan1;
+        return approvalTime;
     }
-    public void setBeiyongziduan2(String beiyongziduan2) 
+    public void setFillTime(Date fillTime)
     {
-        this.beiyongziduan2 = beiyongziduan2;
-    }
-
-    public String getBeiyongziduan2() 
-    {
-        return beiyongziduan2;
-    }
-    public void setBeiyongziduan3(Date beiyongziduan3) 
-    {
-        this.beiyongziduan3 = beiyongziduan3;
+        this.fillTime = fillTime;
     }
 
-    public Date getBeiyongziduan3() 
+    public Date getFillTime()
     {
-        return beiyongziduan3;
+        return fillTime;
+    }
+    public void setStatus(String status)
+    {
+        this.status = status;
+    }
+
+    public String getStatus()
+    {
+        return status;
+    }
+    public void setStatusDepartment(String statusDepartment)
+    {
+        this.statusDepartment = statusDepartment;
+    }
+
+    public String getStatusDepartment()
+    {
+        return statusDepartment;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("partyInvolved", getPartyInvolved())
-            .append("demand", getDemand())
-            .append("monitoringIndicators", getMonitoringIndicators())
-            .append("monitoringFrequency", getMonitoringFrequency())
-            .append("monitoringDepartment", getMonitoringDepartment())
-            .append("beiyongziduan1", getBeiyongziduan1())
-            .append("beiyongziduan2", getBeiyongziduan2())
-            .append("beiyongziduan3", getBeiyongziduan3())
-            .toString();
+                .append("id", getId())
+                .append("partyInvolved", getPartyInvolved())
+                .append("demand", getDemand())
+                .append("monitoringIndicators", getMonitoringIndicators())
+                .append("monitoringFrequency", getMonitoringFrequency())
+                .append("monitoringDepartment", getMonitoringDepartment())
+                .append("approvalTime", getApprovalTime())
+                .append("fillTime", getFillTime())
+                .append("status", getStatus())
+                .append("statusDepartment", getStatusDepartment())
+                .toString();
     }
 }
