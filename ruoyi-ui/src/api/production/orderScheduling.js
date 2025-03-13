@@ -54,10 +54,13 @@ export function getUrgentOrder() {
     })
 }
 
-export function getOrders() {
+export function getOrders(date) {
     return request({
         url: '/production/scheduling/getOrderList',
-        method: 'get'
+        method: 'get',
+        params: {
+            'date': date
+        }
     })
 }
 
