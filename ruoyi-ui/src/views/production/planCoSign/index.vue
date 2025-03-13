@@ -66,7 +66,12 @@
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['production:planCoSign:edit']">修改
           </el-button>
-          <el-button link v-if="scope.row.reviewStatus ==='pending'" type="primary" icon="Edit" @click="handleCoSign(scope.row)"
+          <el-button link v-if="scope.row.reviewStatus ==='rejected' || scope.row.reviewStatus ==='created'"
+                     type="primary" icon="Edit" @click="submitCoSign(scope.row)"
+                     v-hasPermi="['production:planCoSign:handle']">发起会签
+          </el-button>
+          <el-button link v-if="scope.row.reviewStatus ==='pending'" type="primary" icon="Edit"
+                     @click="handleCoSign(scope.row)"
                      v-hasPermi="['production:planCoSign:handle']">处理会签
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
@@ -386,7 +391,7 @@ function submitCoSignForm() {
   proxy.$refs["handlePlanCoSignRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        form.value.reviewStatus = "created";
+        // form.value.reviewStatus = "created";
         updatePlanCoSign(form.value).then(response => {
           proxy.$modal.msgSuccess("会签处理成功");
           coSignVisible.value = false;
@@ -397,9 +402,44 @@ function submitCoSignForm() {
   });
 }
 
+/** 会签审批确认按钮 */
+// function submitCoSignForm() {
+//   proxy.$refs["handlePlanCoSignRef"].validate(valid => {
+//     if (valid) {
+//       if (form.value.id != null) {
+//         // form.value.reviewStatus = "created";
+//         updatePlanCoSign(form.value).then(response => {
+//           proxy.$modal.msgSuccess("会签处理成功");
+//           coSignVisible.value = false;
+//           getList();
+//         });
+//       }
+//     }
+//   });
+// }
+
 // 取消按钮
 function cancelSign() {
   coSignVisible.value = false;
   reset();
+}
+
+function submitCoSign(row) {
+  // 提示用户是否会签
+  proxy.$modal.confirm('是否确认发起会签？').then(function () {
+    // 用户点击确定，执行会签操作
+    let result = {
+      'id': row.id,
+      'reviewStatus': "pending"
+    }
+    updatePlanCoSign(result).then(response => {
+      proxy.$modal.msgSuccess("发起会签成功");
+      getList();
+    });
+  }).catch(function () {
+    // 用户点击取消，取消会签操作
+
+  });
+
 }
 </script>

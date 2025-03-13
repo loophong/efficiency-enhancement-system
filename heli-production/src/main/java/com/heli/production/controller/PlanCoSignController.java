@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.entity.DailyPlanEntity;
+import com.heli.production.domain.entity.SysNotificationsEntity;
 import com.heli.production.domain.vo.CoSignInfoVO;
 import com.heli.production.service.IDailyPlanService;
+import com.heli.production.service.ISysNotificationsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class PlanCoSignController extends BaseController {
     private IPlanCoSignService planCoSignService;
     @Autowired
     private IDailyPlanService dailyPlanService;
+    @Autowired
+    private ISysNotificationsService sysNotificationsService;
 
     /**
      * 查询计划会签列表
@@ -103,7 +107,17 @@ public class PlanCoSignController extends BaseController {
         if(size == 0){
             return AjaxResult.error("当日没有排产计划，请先创建排产计划");
         }
-        return toAjax(planCoSignService.insertPlanCoSign(planCoSign));
+        planCoSignService.insertPlanCoSign(planCoSign);
+
+        //创建消息实体
+        SysNotificationsEntity sysNotificationsEntity = new SysNotificationsEntity();
+        sysNotificationsEntity.setType("production_plan_co_sign");
+        sysNotificationsEntity.setReceiverId(planCoSign.getReviewerId());
+        sysNotificationsEntity.setSenderId(getUserId());
+        sysNotificationsEntity.setTitle("计划会签");
+        sysNotificationsEntity.setContent("您有一条新的计划会签待审核，请及时处理");
+        sysNotificationsService.createNotifications(sysNotificationsEntity);
+        return success();
     }
 
     /**
