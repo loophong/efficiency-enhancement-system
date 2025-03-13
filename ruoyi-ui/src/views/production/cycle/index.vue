@@ -11,10 +11,12 @@
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="产能车型" prop="capacityVehicleModel">
-        <el-input v-model="queryParams.capacityVehicleModel" placeholder="请输入产能车型" clearable @keyup.enter="handleQuery"/>
+        <el-input v-model="queryParams.capacityVehicleModel" placeholder="请输入产能车型" clearable
+                  @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="生产周期" prop="productionCycle">
-        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable @keyup.enter="handleQuery"/>
+        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable
+                  @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -28,15 +30,18 @@
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:cycle:edit']">修改
+        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+                   v-hasPermi="['production:cycle:edit']">修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:cycle:remove']">删除
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+                   v-hasPermi="['production:cycle:remove']">删除
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:cycle:export']">导出
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:cycle:export']">
+          导出
         </el-button>
       </el-col>
 
@@ -58,15 +63,18 @@
       <el-table-column label="生产周期" align="center" prop="productionCycle"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['production:cycle:edit']">修改
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                     v-hasPermi="['production:cycle:edit']">修改
           </el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['production:cycle:remove']">删除
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                     v-hasPermi="['production:cycle:remove']">删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList"/>
+    <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize"
+                @pagination="getList"/>
 
     <!-- 添加或修改产能对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -80,9 +88,16 @@
         <el-form-item label="车型" prop="vehicleModel">
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
+        <!--        <el-form-item label="产能车型" prop="capacityVehicleModel">-->
+        <!--          <el-input v-model="form.capacityVehicleModel" placeholder="请输入产能车型"/>-->
+        <!--        </el-form-item>-->
         <el-form-item label="产能车型" prop="capacityVehicleModel">
-          <el-input v-model="form.capacityVehicleModel" placeholder="请输入产能车型"/>
+          <el-select v-model="form.capacityVehicleModel" placeholder="请选择" style="width: 100%">
+            <el-option v-for="item in capacityList" :key="item.value" :label="item.label"
+                       :value="item.value"/>
+          </el-select>
         </el-form-item>
+
         <el-form-item label="生产周期" prop="productionCycle">
           <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
         </el-form-item>
@@ -121,6 +136,7 @@
 
 <script setup name="Cycle">
 import {listCycle, getCycle, delCycle, addCycle, updateCycle, importFile} from "@/api/production/cycle";
+import {all} from "@/api/production/capacity"
 
 const {proxy} = getCurrentInstance();
 
@@ -163,15 +179,28 @@ const data = reactive({
     capacityVehicleModel: [
       {required: true, message: "产能车型不能为空", trigger: "blur"}
     ],
+    // productionCycle: [
+    //   {required: true, message: "生产周期不能为空", trigger: "blur"}
+    // ]
+    // 生产周期必须为大于0的整数类型
     productionCycle: [
-      {required: true, message: "生产周期不能为空", trigger: "blur"}
+      { required: true, message: "生产周期不能为空", trigger: "blur" },
+      { validator: (rule, value, callback) => {
+          if (!Number.isInteger(Number(value)) || Number(value) <= 0) {
+            callback(new Error("生产周期必须为大于0的整数"));
+          } else {
+            callback();
+          }
+        }, trigger: "blur"
+      }
     ]
+
   }
 });
 
 const {queryParams, form, rules} = toRefs(data);
 
-/** 查询产能列表 */
+/** 查询生产周期列表 */
 function getList() {
   loading.value = true;
   listCycle(queryParams.value).then(response => {
@@ -335,4 +364,19 @@ function checkFile() {
     resetUpload();
   }
 }
+
+const capacityList = ref([]);
+// 创建页面时调用
+onMounted(() => {
+  all().then(response => {
+    response.data.capacityEntities.forEach((item) => {
+      capacityList.value.push({
+        'label': item.capacityType,
+        'value': item.capacityType,
+      })
+    });
+  });
+});
+
+
 </script>
