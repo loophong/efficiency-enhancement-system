@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.production.mapper.DailyPlanMapper">
+
+    <resultMap type="DailyPlanEntity" id="ProductionDailyPlanResult">
+        <result property="id"    column="id"    />
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="productionOrderNumber"    column="production_order_number"    />
+        <result property="contractNumber"    column="contract_number"    />
+        <result property="vehicleModel"    column="vehicle_model"    />
+        <result property="mast"    column="mast"    />
+        <result property="projectDescription"    column="project_description"    />
+        <result property="vehicleNumber"    column="vehicle_number"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="attachments"    column="attachments"    />
+        <result property="valvePlate"    column="valve_plate"    />
+        <result property="descriptiveConfigurationInfo"    column="descriptive_configuration_info"    />
+        <result property="systemDeliveryDate"    column="system_delivery_date"    />
+        <result property="branch"    column="branch"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="onlineDate"    column="online_date"    />
+    </resultMap>
+
+    <sql id="selectProductionDailyPlanVo">
+        select id, serial_number, production_order_number, contract_number, vehicle_model, mast, project_description, vehicle_number, quantity, attachments, valve_plate, descriptive_configuration_info, system_delivery_date, branch, order_date, online_date from production_daily_plan
+    </sql>
+
+    <select id="selectProductionDailyPlanList" parameterType="DailyPlanEntity" resultMap="ProductionDailyPlanResult">
+        <include refid="selectProductionDailyPlanVo"/>
+        <where>
+            <if test="serialNumber != null  and serialNumber != ''"> and serial_number = #{serialNumber}</if>
+            <if test="productionOrderNumber != null  and productionOrderNumber != ''"> and production_order_number = #{productionOrderNumber}</if>
+            <if test="contractNumber != null  and contractNumber != ''"> and contract_number = #{contractNumber}</if>
+            <if test="vehicleModel != null  and vehicleModel != ''"> and vehicle_model = #{vehicleModel}</if>
+            <if test="mast != null  and mast != ''"> and mast = #{mast}</if>
+            <if test="projectDescription != null  and projectDescription != ''"> and project_description = #{projectDescription}</if>
+            <if test="vehicleNumber != null  and vehicleNumber != ''"> and vehicle_number = #{vehicleNumber}</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="attachments != null  and attachments != ''"> and attachments = #{attachments}</if>
+            <if test="valvePlate != null  and valvePlate != ''"> and valve_plate = #{valvePlate}</if>
+            <if test="descriptiveConfigurationInfo != null  and descriptiveConfigurationInfo != ''"> and descriptive_configuration_info = #{descriptiveConfigurationInfo}</if>
+            <if test="systemDeliveryDate != null "> and system_delivery_date = #{systemDeliveryDate}</if>
+            <if test="branch != null  and branch != ''"> and branch = #{branch}</if>
+            <if test="orderDate != null "> and order_date = #{orderDate}</if>
+            <if test="onlineDate != null "> and online_date = #{onlineDate}</if>
+        </where>
+    </select>
+
+    <select id="selectProductionDailyPlanById" parameterType="String" resultMap="ProductionDailyPlanResult">
+        <include refid="selectProductionDailyPlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertProductionDailyPlan" parameterType="DailyPlanEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into production_daily_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serialNumber != null">serial_number,</if>
+            <if test="productionOrderNumber != null">production_order_number,</if>
+            <if test="contractNumber != null">contract_number,</if>
+            <if test="vehicleModel != null">vehicle_model,</if>
+            <if test="mast != null">mast,</if>
+            <if test="projectDescription != null">project_description,</if>
+            <if test="vehicleNumber != null">vehicle_number,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="attachments != null">attachments,</if>
+            <if test="valvePlate != null">valve_plate,</if>
+            <if test="descriptiveConfigurationInfo != null">descriptive_configuration_info,</if>
+            <if test="systemDeliveryDate != null">system_delivery_date,</if>
+            <if test="branch != null">branch,</if>
+            <if test="orderDate != null">order_date,</if>
+            <if test="onlineDate != null">online_date,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serialNumber != null">#{serialNumber},</if>
+            <if test="productionOrderNumber != null">#{productionOrderNumber},</if>
+            <if test="contractNumber != null">#{contractNumber},</if>
+            <if test="vehicleModel != null">#{vehicleModel},</if>
+            <if test="mast != null">#{mast},</if>
+            <if test="projectDescription != null">#{projectDescription},</if>
+            <if test="vehicleNumber != null">#{vehicleNumber},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="attachments != null">#{attachments},</if>
+            <if test="valvePlate != null">#{valvePlate},</if>
+            <if test="descriptiveConfigurationInfo != null">#{descriptiveConfigurationInfo},</if>
+            <if test="systemDeliveryDate != null">#{systemDeliveryDate},</if>
+            <if test="branch != null">#{branch},</if>
+            <if test="orderDate != null">#{orderDate},</if>
+            <if test="onlineDate != null">#{onlineDate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProductionDailyPlan" parameterType="DailyPlanEntity">
+        update production_daily_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serialNumber != null">serial_number = #{serialNumber},</if>
+            <if test="productionOrderNumber != null">production_order_number = #{productionOrderNumber},</if>
+            <if test="contractNumber != null">contract_number = #{contractNumber},</if>
+            <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
+            <if test="mast != null">mast = #{mast},</if>
+            <if test="projectDescription != null">project_description = #{projectDescription},</if>
+            <if test="vehicleNumber != null">vehicle_number = #{vehicleNumber},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="attachments != null">attachments = #{attachments},</if>
+            <if test="valvePlate != null">valve_plate = #{valvePlate},</if>
+            <if test="descriptiveConfigurationInfo != null">descriptive_configuration_info = #{descriptiveConfigurationInfo},</if>
+            <if test="systemDeliveryDate != null">system_delivery_date = #{systemDeliveryDate},</if>
+            <if test="branch != null">branch = #{branch},</if>
+            <if test="orderDate != null">order_date = #{orderDate},</if>
+            <if test="onlineDate != null">online_date = #{onlineDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteProductionDailyPlanById" parameterType="String">
+        delete from production_daily_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteProductionDailyPlanByIds" parameterType="String">
+        delete from production_daily_plan where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

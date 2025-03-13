@@ -61,10 +61,11 @@ export function getOrders() {
     })
 }
 
-export function schedulingOrders(orderSchedulingList, dailyUsedCapacityList) {
+export function schedulingOrders(date,orderSchedulingList, dailyUsedCapacityList) {
 
     // 构建 schedulingDTO
     const schedulingDTO = {
+        date,
         orderSchedulingList,
         dailyUsedCapacityList
     };

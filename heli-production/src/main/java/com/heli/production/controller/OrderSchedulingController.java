@@ -3,14 +3,17 @@ package com.heli.production.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.heli.production.domain.dto.SchedulingDTO;
+import com.heli.production.domain.entity.DailyPlanEntity;
 import com.heli.production.domain.entity.DailyUsedCapacityEntity;
 import com.heli.production.domain.entity.OrderSchedulingEntity;
 import com.heli.production.domain.entity.WorkdayEntity;
 import com.heli.production.domain.vo.OrdersAndCapacityVO;
+import com.heli.production.service.IDailyPlanService;
 import com.heli.production.service.IDailyUsedCapacityService;
 import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.service.IWorkdayService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单信息Controller
@@ -40,6 +44,8 @@ public class OrderSchedulingController extends BaseController {
     private IDailyUsedCapacityService dailyUsedCapacityService;
     @Autowired
     private IWorkdayService workdayService;
+    @Autowired
+    private IDailyPlanService dailyPlanService;
 
 
     /**
@@ -52,7 +58,10 @@ public class OrderSchedulingController extends BaseController {
     public AjaxResult list(@RequestParam Date date) {
         OrdersAndCapacityVO ordersAndCapacityVO = new OrdersAndCapacityVO();
         List<DailyUsedCapacityEntity> dailyUsedCapacityEntities = dailyUsedCapacityService.list(new LambdaQueryWrapper<DailyUsedCapacityEntity>().eq(DailyUsedCapacityEntity::getProductionDate, date));
-        List<OrderSchedulingEntity> list = orderSchedulingService.list(new LambdaQueryWrapper<OrderSchedulingEntity>().eq(OrderSchedulingEntity::getOnlineDate, date));
+        List<OrderSchedulingEntity> list = orderSchedulingService.list(
+                new LambdaQueryWrapper<OrderSchedulingEntity>()
+                        .eq(OrderSchedulingEntity::getIsScheduling, 1)
+                        .eq(OrderSchedulingEntity::getOnlineDate, date));
         ordersAndCapacityVO.setDailyUsedCapacityEntities(dailyUsedCapacityEntities);
         ordersAndCapacityVO.setOrderSchedulingEntities(list);
         return success(ordersAndCapacityVO);
@@ -83,6 +92,10 @@ public class OrderSchedulingController extends BaseController {
                         .eq(WorkdayEntity::getDate, date)
                         .set(WorkdayEntity::getProductStatus, 0)
         );
+        // 删除日生产计划
+        dailyPlanService.remove(
+                new LambdaQueryWrapper<DailyPlanEntity>().eq(DailyPlanEntity::getOnlineDate, date)
+        );
         return success();
     }
 
@@ -101,17 +114,89 @@ public class OrderSchedulingController extends BaseController {
         log.info("排产订单信息: {}", schedulingDTO.getOrderSchedulingList());
         log.info("使用产能表: {}", schedulingDTO.getDailyUsedCapacityList());
 
-        log.info("size:{}", schedulingDTO.getOrderSchedulingList().size());
-        log.info("id:{}", schedulingDTO.getOrderSchedulingList().get(1).getId());
+        Date date = schedulingDTO.getDate();
+        log.info("排产日期: {}", date);
 
-        orderSchedulingService.updateBatchById(schedulingDTO.getOrderSchedulingList());
+        // 如果订单排产，则更新，不排产则设置排产状态为未排产，并修改上线时间为null
+        schedulingDTO.getOrderSchedulingList().forEach(orderSchedulingEntity -> {
+            if (orderSchedulingEntity.getIsScheduling().equals(1)) {
+                orderSchedulingService.updateById(orderSchedulingEntity);
+            } else {
+                log.info("取消订单排产，id：" + orderSchedulingEntity.getId());
+                orderSchedulingService.update(
+                        new LambdaUpdateWrapper<OrderSchedulingEntity>()
+                                .eq(OrderSchedulingEntity::getId, orderSchedulingEntity.getId())
+                                .set(OrderSchedulingEntity::getIsScheduling, 0).setSql("online_date = NULL"));
+            }
+        });
+
         dailyUsedCapacityService.saveOrUpdateBatch(schedulingDTO.getDailyUsedCapacityList());
+
+        int size = schedulingDTO.getOrderSchedulingList().stream().filter((orderSchedulingEntity) -> orderSchedulingEntity.getIsScheduling().equals(1)).toList().size();
         workdayService.update(
                 new LambdaUpdateWrapper<WorkdayEntity>()
                         .eq(WorkdayEntity::getDate, schedulingDTO.getDailyUsedCapacityList().get(0).getProductionDate())
-                        .set(WorkdayEntity::getProductStatus, 1)
+                        .set(WorkdayEntity::getProductStatus, size > 0 ? 1 : 0)
         );
+
+        // 生成日计划
+        // 1、如果当日已排产，则移除原有计划
+        dailyPlanService.remove(new LambdaQueryWrapper<DailyPlanEntity>().eq(DailyPlanEntity::getOnlineDate, date));
+        // 2、创建新的排产计划
+        schedulingDTO.getOrderSchedulingList().forEach(item -> {
+            if (item.getIsScheduling().equals(1)) {
+                OrderSchedulingEntity orderSchedulingEntity = orderSchedulingService.getById(item.getId());
+                for (int i = 0; i < orderSchedulingEntity.getQuantity(); i++) {
+                    DailyPlanEntity dailyPlanEntity = new DailyPlanEntity();
+                    dailyPlanEntity.setContractNumber(orderSchedulingEntity.getContractNumber());
+                    dailyPlanEntity.setVehicleModel(orderSchedulingEntity.getVehicleModel());
+                    dailyPlanEntity.setMast(orderSchedulingEntity.getMast());
+                    dailyPlanEntity.setQuantity(1L);
+                    dailyPlanEntity.setAttachments(orderSchedulingEntity.getAttachments());
+                    // 阀片需要转换
+                    // 取出第一个字符，并将其从中文转换为阿拉伯数字
+                    char c = orderSchedulingEntity.getValvePlate().charAt(0);
+                    dailyPlanEntity.setValvePlate(String.valueOf(convertor(c)));
+                    // 配置信息需要转换
+                    String tmp = "";
+                    if (orderSchedulingEntity.getAirFilter() != null){
+                        tmp += orderSchedulingEntity.getAirFilter();
+                    }
+                    if (orderSchedulingEntity.getTires() != null){
+                        tmp += orderSchedulingEntity.getTires();
+                    }
+                    if (orderSchedulingEntity.getConfiguration() != null){
+                        tmp += orderSchedulingEntity.getConfiguration();
+                    }
+                    dailyPlanEntity.setDescriptiveConfigurationInfo(tmp);
+
+                    dailyPlanEntity.setSystemDeliveryDate(orderSchedulingEntity.getSystemDeliveryDate());
+                    dailyPlanEntity.setOrderDate(orderSchedulingEntity.getOrderDate());
+                    dailyPlanEntity.setBranch(orderSchedulingEntity.getBranch());
+                    dailyPlanEntity.setOnlineDate(orderSchedulingEntity.getOnlineDate());
+
+                    dailyPlanService.save(dailyPlanEntity);
+                }
+            }
+        });
+
         return success();
+    }
+
+    public int convertor(char c) {
+        return switch (c) {
+            case '一' -> 1;
+            case '二', '两' -> 2;
+            case '三' -> 3;
+            case '四' -> 4;
+            case '五' -> 5;
+            case '六' -> 6;
+            case '七' -> 7;
+            case '八' -> 8;
+            case '九' -> 9;
+            case '十' -> 10;
+            default -> 0;
+        };
     }
 
     /**

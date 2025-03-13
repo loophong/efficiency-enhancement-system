@@ -735,6 +735,7 @@ function getOrdersAndCapacityByDate() {
       console.log("查询结果为" + response);
       usedCapacity.value = response.data.dailyUsedCapacityEntities;
       scheduledList.value = response.data.orderSchedulingEntities;
+      submitDate.value = insertOrderDate.value;
 
       scheduledList.value.unshift(insertDialogRow.value);
       console.log("待排产订单：" + JSON.stringify(insertDialogRow.value));
@@ -743,12 +744,15 @@ function getOrdersAndCapacityByDate() {
       nextTick(() => {
         scheduledList.value.forEach(item => {
           proxy.$refs.scheduledTable.toggleRowSelection(item, true);
+
         });
+        handleStandardSelectionChange(selection)
       });
     })
   }
 }
 
+const submitDate = ref(dayjs().format("YYYY-MM-DD"));
 function submitInsetOrder() {
 
   // insertOrderDate.value();
@@ -765,13 +769,14 @@ function submitInsetOrder() {
     })
   });
 
-  schedulingOrders(orderSchedulingList, usedCapacity.value).then((response) => {
+  schedulingOrders(submitDate,orderSchedulingList, usedCapacity.value).then((response) => {
     console.log("排产结果" + response)
     // 提示用户排产成功
     // proxy.$message({
     //   message: "排产成功"
     // })
     cancelInsertOrder()
+    getList()
   })
 }
 
@@ -782,6 +787,7 @@ function cancelInsertOrder() {
   usedCapacity.value = [];
   scheduledList.value = [];
   insertOrderDate.value = "";
+  getList()
 }
 
 /**
