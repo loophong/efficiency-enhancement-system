@@ -62,4 +62,6 @@ public interface IMainPlanTableService extends IService<MainPlanTableEntity> {
     public int deleteMainPlanTableById(String id);
 
     void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadDate);
+
+    void checkTableData(String originalFilename, MultipartFile excelFile, Date date);
 }

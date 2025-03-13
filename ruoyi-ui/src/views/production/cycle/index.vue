@@ -96,11 +96,11 @@
     </el-dialog>
 
     <!-- 文件上传弹窗 -->
-    <el-dialog title="导入主计划表" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+    <el-dialog title="导入生产周期表" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
 
       <el-form :model="form" ref="form" label-width="90px">
         <el-form-item label="上传表类：">
-          <span style="color: rgb(68, 140, 39);">主计划表</span>
+          <span style="color: rgb(68, 140, 39);">生产周期表</span>
           <br>
         </el-form-item>
         <el-form-item label="上传文件：">

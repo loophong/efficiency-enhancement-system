@@ -38,7 +38,7 @@ public interface IOrderSchedulingService extends IService<OrderSchedulingEntity>
      */
     public int deleteOrderSchedulingById(Long id);
 
-    void updateOrderData(Date date);
+    List<OrderSchedulingEntity> updateOrderData(Date date);
 
     /**
      * @description: 查询缺件订单列表

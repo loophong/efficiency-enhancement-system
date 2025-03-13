@@ -123,10 +123,15 @@
         >删除
         </el-button>
       </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
+      <!--                   v-hasPermi="['production:scheduling:export']"-->
+      <!--        >导出-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
-                   v-hasPermi="['production:scheduling:export']"
-        >导出
+        <el-button @click="handleImport" type="success" plain icon="Upload"
+                   v-hasPermi="['production:mainPlanTable:import']">导入
         </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -436,6 +441,37 @@
         </div>
       </template>
     </el-dialog>
+
+
+    <!-- 文件上传弹窗 -->
+    <el-dialog title="导入主计划表" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+
+      <el-form :model="form" ref="form" label-width="90px">
+        <el-form-item label="上传表类：">
+          <span style="color: rgb(68, 140, 39);">主计划表</span>
+          <br>
+        </el-form-item>
+        <el-form-item label="上传日期：">
+          <!--    时间选择器      -->
+          <el-date-picker clearable v-model="uploadDate" type="date" value-format="YYYY-MM-DD"
+                          placeholder="请选择上传日期">
+          </el-date-picker>
+          <br>
+        </el-form-item>
+        <el-form-item label="上传文件：">
+          <input type="file" ref="inputFile" @change="checkFile"/>
+          <br>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
+        <el-button @click="cancelUpload">取 消</el-button>
+        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
+        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
+      </span>
+    </el-dialog>
+
+
   </div>
 </template>
 
@@ -448,9 +484,12 @@ import {
   updateScheduling,
   getOrdersAndCapacityInfoByDate, schedulingOrders
 } from "@/api/production/orderScheduling.js";
+
+
 import {addCases} from "@/api/production/special";
 import dayjs from "dayjs";
 import useTagsViewStore from "@/store/modules/tagsView.js";
+import {importFile} from "@/api/production/mainPlanTable.js";
 // import {getCapacity} from "@/api/production/capacity";
 // import {handleStandardSelectionChange} from "../scheduling/index.vue";
 
@@ -753,6 +792,7 @@ function getOrdersAndCapacityByDate() {
 }
 
 const submitDate = ref(dayjs().format("YYYY-MM-DD"));
+
 function submitInsetOrder() {
 
   // insertOrderDate.value();
@@ -769,7 +809,7 @@ function submitInsetOrder() {
     })
   });
 
-  schedulingOrders(submitDate,orderSchedulingList, usedCapacity.value).then((response) => {
+  schedulingOrders(submitDate.value, orderSchedulingList, usedCapacity.value).then((response) => {
     console.log("排产结果" + response)
     // 提示用户排产成功
     // proxy.$message({
@@ -838,4 +878,100 @@ function getUsedCapacity(capacityType, list) {
   console.log("车型已使用产能：" + used)
   return used ? used : 0;
 }
+
+
+// 上传文件
+const uploadDialogVisible = ref(false);
+const isLoading = ref(false);
+const inputFile = ref(null);
+const uploadDate = ref('');
+
+
+/** 导入按钮操作 */
+function handleImport() {
+  resetUpload();
+  uploadDialogVisible.value = true;
+}
+
+/** 表单重置 */
+function resetUpload() {
+  if (inputFile.value) {
+    inputFile.value.value = "";
+  }
+}
+
+/** 取消上传 */
+function cancelUpload() {
+  uploadDialogVisible.value = false;
+  resetUpload();
+}
+
+/** excel文件上传 */
+function uploadFile() {
+  if (inputFile.value && inputFile.value.files.length > 0) {
+    isLoading.value = true;
+    const file = inputFile.value.files[0];
+    console.log(inputFile.value);
+    console.log("时间：" + uploadDate.value);
+    console.log(file);
+    const formData = new FormData();
+    formData.append('date', uploadDate.value);
+    formData.append('excelFile', file);
+    importFile(formData).then((response) => {
+      console.log("导入结果：" + response);
+
+      if (response.length === 0) {
+        proxy.$modal.msgSuccess("导入成功");
+        getList();
+        uploadDialogVisible.value = false;
+        isLoading.value = false;
+      } else {
+// 使用对话框提示用户，并且点击确认才可关闭
+        proxy.$modal.confirm('导入失败，车型的生产周期不存在，请填写后重新导入：' + JSON.stringify(response.data), '导入失败', {
+          confirmButtonText: '确认',
+          cancelButtonText: '取消',
+          type: 'error',
+          callback: action => {
+            // if (action === 'confirm') {
+            //   // 跳转进入生产周期index页面
+            //   proxy.$router.push({ path: '/production/cycle' });
+            // }
+            // uploadDialogVisible.value = false;
+            // isLoading.value = false;
+          }
+        }).then(() => {
+            // 跳转进入生产周期index页面
+            uploadDialogVisible.value = false;
+            isLoading.value = false;
+            proxy.$router.push({path: '/production/cycle'});
+        }).catch(() => {
+          uploadDialogVisible.value = false;
+          isLoading.value = false;
+        });
+      }
+
+    }).catch(() => {
+      proxy.$modal.msgError("导入失败");
+      isLoading.value = false;
+    }).finally(() => {
+      resetUpload();
+    });
+  } else {
+    proxy.$modal.msgError("请选择文件");
+  }
+}
+
+/** 检查文件是否为excel */
+function checkFile() {
+  const file = inputFile.value.files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    proxy.$modal.msgError("只能上传 Excel 文件！");
+    resetUpload();
+  }
+}
+
+
 </script>
