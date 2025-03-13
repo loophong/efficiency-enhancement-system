@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityAccidentProcessRecordsMapper">
+    
+    <resultMap type="SecurityAccidentProcessRecords" id="SecurityAccidentProcessRecordsResult">
+        <result property="id"    column="id"    />
+        <result property="accidentName"    column="accident_name"    />
+        <result property="location"    column="location"    />
+        <result property="accidentCategory"    column="accident_category"    />
+        <result property="injuredPersonName"    column="injured_person_name"    />
+        <result property="injuredPersonGender"    column="injured_person_gender"    />
+        <result property="injuredPersonAge"    column="injured_person_age"    />
+        <result property="injuredPersonJobTitle"    column="injured_person_job_title"    />
+        <result property="injuredPersonWorkDescription"    column="injured_person_work_description"    />
+        <result property="injuredPart"    column="injured_part"    />
+        <result property="safetyEducationReceivedInjured"    column="safety_education_received_injured"    />
+        <result property="employeeCode"    column="employee_code"    />
+        <result property="homeAddress"    column="home_address"    />
+        <result property="contactNumber"    column="contact_number"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="workTime"    column="work_time"    />
+        <result property="responsiblePersonName"    column="responsible_person_name"    />
+        <result property="responsiblePersonGender"    column="responsible_person_gender"    />
+        <result property="responsiblePersonAge"    column="responsible_person_age"    />
+        <result property="responsiblePersonJobTitle"    column="responsible_person_job_title"    />
+        <result property="injurySeverity"    column="injury_severity"    />
+        <result property="safetyEducationReceivedResponsible"    column="safety_education_received_responsible"    />
+        <result property="startWorkingDate"    column="start_working_date"    />
+        <result property="accidentProcess"    column="accident_process"    />
+        <result property="postAccidentActions"    column="post_accident_actions"    />
+        <result property="accidentClassification"    column="accident_classification"    />
+        <result property="recordDate"    column="record_date"    />
+        <result property="recorder"    column="recorder"    />
+    </resultMap>
+
+    <sql id="selectSecurityAccidentProcessRecordsVo">
+        select id, accident_name, location, accident_category, injured_person_name, injured_person_gender, injured_person_age, injured_person_job_title, injured_person_work_description, injured_part, safety_education_received_injured, employee_code, home_address, contact_number, id_number, work_time, responsible_person_name, responsible_person_gender, responsible_person_age, responsible_person_job_title, injury_severity, safety_education_received_responsible, start_working_date, accident_process, post_accident_actions, accident_classification, record_date, recorder from security_accident_process_records
+    </sql>
+
+    <select id="selectSecurityAccidentProcessRecordsList" parameterType="SecurityAccidentProcessRecords" resultMap="SecurityAccidentProcessRecordsResult">
+        <include refid="selectSecurityAccidentProcessRecordsVo"/>
+        <where>  
+            <if test="accidentName != null  and accidentName != ''"> and accident_name like concat('%', #{accidentName}, '%')</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="accidentCategory != null  and accidentCategory != ''"> and accident_category = #{accidentCategory}</if>
+            <if test="injuredPersonName != null  and injuredPersonName != ''"> and injured_person_name like concat('%', #{injuredPersonName}, '%')</if>
+            <if test="injuredPersonGender != null  and injuredPersonGender != ''"> and injured_person_gender = #{injuredPersonGender}</if>
+            <if test="injuredPersonAge != null "> and injured_person_age = #{injuredPersonAge}</if>
+            <if test="injuredPersonJobTitle != null  and injuredPersonJobTitle != ''"> and injured_person_job_title = #{injuredPersonJobTitle}</if>
+            <if test="injuredPersonWorkDescription != null  and injuredPersonWorkDescription != ''"> and injured_person_work_description = #{injuredPersonWorkDescription}</if>
+            <if test="injuredPart != null  and injuredPart != ''"> and injured_part = #{injuredPart}</if>
+            <if test="safetyEducationReceivedInjured != null  and safetyEducationReceivedInjured != ''"> and safety_education_received_injured = #{safetyEducationReceivedInjured}</if>
+            <if test="employeeCode != null  and employeeCode != ''"> and employee_code = #{employeeCode}</if>
+            <if test="homeAddress != null  and homeAddress != ''"> and home_address = #{homeAddress}</if>
+            <if test="contactNumber != null  and contactNumber != ''"> and contact_number = #{contactNumber}</if>
+            <if test="idNumber != null  and idNumber != ''"> and id_number = #{idNumber}</if>
+            <if test="workTime != null "> and work_time = #{workTime}</if>
+            <if test="responsiblePersonName != null  and responsiblePersonName != ''"> and responsible_person_name like concat('%', #{responsiblePersonName}, '%')</if>
+            <if test="responsiblePersonGender != null  and responsiblePersonGender != ''"> and responsible_person_gender = #{responsiblePersonGender}</if>
+            <if test="responsiblePersonAge != null "> and responsible_person_age = #{responsiblePersonAge}</if>
+            <if test="responsiblePersonJobTitle != null  and responsiblePersonJobTitle != ''"> and responsible_person_job_title = #{responsiblePersonJobTitle}</if>
+            <if test="injurySeverity != null  and injurySeverity != ''"> and injury_severity = #{injurySeverity}</if>
+            <if test="safetyEducationReceivedResponsible != null  and safetyEducationReceivedResponsible != ''"> and safety_education_received_responsible = #{safetyEducationReceivedResponsible}</if>
+            <if test="startWorkingDate != null "> and start_working_date = #{startWorkingDate}</if>
+            <if test="accidentProcess != null  and accidentProcess != ''"> and accident_process = #{accidentProcess}</if>
+            <if test="postAccidentActions != null  and postAccidentActions != ''"> and post_accident_actions = #{postAccidentActions}</if>
+            <if test="accidentClassification != null  and accidentClassification != ''"> and accident_classification = #{accidentClassification}</if>
+            <if test="recordDate != null "> and record_date = #{recordDate}</if>
+            <if test="recorder != null  and recorder != ''"> and recorder = #{recorder}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityAccidentProcessRecordsById" parameterType="Long" resultMap="SecurityAccidentProcessRecordsResult">
+        <include refid="selectSecurityAccidentProcessRecordsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityAccidentProcessRecords" parameterType="SecurityAccidentProcessRecords" useGeneratedKeys="true" keyProperty="id">
+        insert into security_accident_process_records
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">accident_name,</if>
+            <if test="location != null and location != ''">location,</if>
+            <if test="accidentCategory != null and accidentCategory != ''">accident_category,</if>
+            <if test="injuredPersonName != null">injured_person_name,</if>
+            <if test="injuredPersonGender != null">injured_person_gender,</if>
+            <if test="injuredPersonAge != null">injured_person_age,</if>
+            <if test="injuredPersonJobTitle != null">injured_person_job_title,</if>
+            <if test="injuredPersonWorkDescription != null">injured_person_work_description,</if>
+            <if test="injuredPart != null">injured_part,</if>
+            <if test="safetyEducationReceivedInjured != null">safety_education_received_injured,</if>
+            <if test="employeeCode != null">employee_code,</if>
+            <if test="homeAddress != null">home_address,</if>
+            <if test="contactNumber != null">contact_number,</if>
+            <if test="idNumber != null">id_number,</if>
+            <if test="workTime != null">work_time,</if>
+            <if test="responsiblePersonName != null">responsible_person_name,</if>
+            <if test="responsiblePersonGender != null">responsible_person_gender,</if>
+            <if test="responsiblePersonAge != null">responsible_person_age,</if>
+            <if test="responsiblePersonJobTitle != null">responsible_person_job_title,</if>
+            <if test="injurySeverity != null">injury_severity,</if>
+            <if test="safetyEducationReceivedResponsible != null">safety_education_received_responsible,</if>
+            <if test="startWorkingDate != null">start_working_date,</if>
+            <if test="accidentProcess != null">accident_process,</if>
+            <if test="postAccidentActions != null">post_accident_actions,</if>
+            <if test="accidentClassification != null">accident_classification,</if>
+            <if test="recordDate != null">record_date,</if>
+            <if test="recorder != null">recorder,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">#{accidentName},</if>
+            <if test="location != null and location != ''">#{location},</if>
+            <if test="accidentCategory != null and accidentCategory != ''">#{accidentCategory},</if>
+            <if test="injuredPersonName != null">#{injuredPersonName},</if>
+            <if test="injuredPersonGender != null">#{injuredPersonGender},</if>
+            <if test="injuredPersonAge != null">#{injuredPersonAge},</if>
+            <if test="injuredPersonJobTitle != null">#{injuredPersonJobTitle},</if>
+            <if test="injuredPersonWorkDescription != null">#{injuredPersonWorkDescription},</if>
+            <if test="injuredPart != null">#{injuredPart},</if>
+            <if test="safetyEducationReceivedInjured != null">#{safetyEducationReceivedInjured},</if>
+            <if test="employeeCode != null">#{employeeCode},</if>
+            <if test="homeAddress != null">#{homeAddress},</if>
+            <if test="contactNumber != null">#{contactNumber},</if>
+            <if test="idNumber != null">#{idNumber},</if>
+            <if test="workTime != null">#{workTime},</if>
+            <if test="responsiblePersonName != null">#{responsiblePersonName},</if>
+            <if test="responsiblePersonGender != null">#{responsiblePersonGender},</if>
+            <if test="responsiblePersonAge != null">#{responsiblePersonAge},</if>
+            <if test="responsiblePersonJobTitle != null">#{responsiblePersonJobTitle},</if>
+            <if test="injurySeverity != null">#{injurySeverity},</if>
+            <if test="safetyEducationReceivedResponsible != null">#{safetyEducationReceivedResponsible},</if>
+            <if test="startWorkingDate != null">#{startWorkingDate},</if>
+            <if test="accidentProcess != null">#{accidentProcess},</if>
+            <if test="postAccidentActions != null">#{postAccidentActions},</if>
+            <if test="accidentClassification != null">#{accidentClassification},</if>
+            <if test="recordDate != null">#{recordDate},</if>
+            <if test="recorder != null">#{recorder},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityAccidentProcessRecords" parameterType="SecurityAccidentProcessRecords">
+        update security_accident_process_records
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">accident_name = #{accidentName},</if>
+            <if test="location != null and location != ''">location = #{location},</if>
+            <if test="accidentCategory != null and accidentCategory != ''">accident_category = #{accidentCategory},</if>
+            <if test="injuredPersonName != null">injured_person_name = #{injuredPersonName},</if>
+            <if test="injuredPersonGender != null">injured_person_gender = #{injuredPersonGender},</if>
+            <if test="injuredPersonAge != null">injured_person_age = #{injuredPersonAge},</if>
+            <if test="injuredPersonJobTitle != null">injured_person_job_title = #{injuredPersonJobTitle},</if>
+            <if test="injuredPersonWorkDescription != null">injured_person_work_description = #{injuredPersonWorkDescription},</if>
+            <if test="injuredPart != null">injured_part = #{injuredPart},</if>
+            <if test="safetyEducationReceivedInjured != null">safety_education_received_injured = #{safetyEducationReceivedInjured},</if>
+            <if test="employeeCode != null">employee_code = #{employeeCode},</if>
+            <if test="homeAddress != null">home_address = #{homeAddress},</if>
+            <if test="contactNumber != null">contact_number = #{contactNumber},</if>
+            <if test="idNumber != null">id_number = #{idNumber},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="responsiblePersonName != null">responsible_person_name = #{responsiblePersonName},</if>
+            <if test="responsiblePersonGender != null">responsible_person_gender = #{responsiblePersonGender},</if>
+            <if test="responsiblePersonAge != null">responsible_person_age = #{responsiblePersonAge},</if>
+            <if test="responsiblePersonJobTitle != null">responsible_person_job_title = #{responsiblePersonJobTitle},</if>
+            <if test="injurySeverity != null">injury_severity = #{injurySeverity},</if>
+            <if test="safetyEducationReceivedResponsible != null">safety_education_received_responsible = #{safetyEducationReceivedResponsible},</if>
+            <if test="startWorkingDate != null">start_working_date = #{startWorkingDate},</if>
+            <if test="accidentProcess != null">accident_process = #{accidentProcess},</if>
+            <if test="postAccidentActions != null">post_accident_actions = #{postAccidentActions},</if>
+            <if test="accidentClassification != null">accident_classification = #{accidentClassification},</if>
+            <if test="recordDate != null">record_date = #{recordDate},</if>
+            <if test="recorder != null">recorder = #{recorder},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityAccidentProcessRecordsById" parameterType="Long">
+        delete from security_accident_process_records where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityAccidentProcessRecordsByIds" parameterType="String">
+        delete from security_accident_process_records where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

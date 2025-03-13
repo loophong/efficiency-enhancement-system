@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecuritySafetyInvestmentPlanMapper">
+    
+    <resultMap type="SecuritySafetyInvestmentPlan" id="SecuritySafetyInvestmentPlanResult">
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="projectId"    column="project_id"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="budgetTotal2024"    column="budget_total_2024"    />
+        <result property="budgetQ12024"    column="budget_q1_2024"    />
+        <result property="budgetQ22024"    column="budget_q2_2024"    />
+        <result property="budgetQ32024"    column="budget_q3_2024"    />
+        <result property="budgetQ42024"    column="budget_q4_2024"    />
+        <result property="budgetBasis"    column="budget_basis"    />
+    </resultMap>
+
+    <sql id="selectSecuritySafetyInvestmentPlanVo">
+        select serial_number, project_id, project_name, budget_total_2024, budget_q1_2024, budget_q2_2024, budget_q3_2024, budget_q4_2024, budget_basis from security_safety_investment_plan
+    </sql>
+
+    <select id="selectSecuritySafetyInvestmentPlanList" parameterType="SecuritySafetyInvestmentPlan" resultMap="SecuritySafetyInvestmentPlanResult">
+        <include refid="selectSecuritySafetyInvestmentPlanVo"/>
+        <where>  
+            <if test="projectId != null "> and project_id = #{projectId}</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat('%', #{projectName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecuritySafetyInvestmentPlanBySerialNumber" parameterType="Long" resultMap="SecuritySafetyInvestmentPlanResult">
+        <include refid="selectSecuritySafetyInvestmentPlanVo"/>
+        where serial_number = #{serialNumber}
+    </select>
+
+    <insert id="insertSecuritySafetyInvestmentPlan" parameterType="SecuritySafetyInvestmentPlan" useGeneratedKeys="true" keyProperty="serialNumber">
+        insert into security_safety_investment_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">project_id,</if>
+            <if test="projectName != null and projectName != ''">project_name,</if>
+            <if test="budgetTotal2024 != null">budget_total_2024,</if>
+            <if test="budgetQ12024 != null">budget_q1_2024,</if>
+            <if test="budgetQ22024 != null">budget_q2_2024,</if>
+            <if test="budgetQ32024 != null">budget_q3_2024,</if>
+            <if test="budgetQ42024 != null">budget_q4_2024,</if>
+            <if test="budgetBasis != null">budget_basis,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="projectId != null">#{projectId},</if>
+            <if test="projectName != null and projectName != ''">#{projectName},</if>
+            <if test="budgetTotal2024 != null">#{budgetTotal2024},</if>
+            <if test="budgetQ12024 != null">#{budgetQ12024},</if>
+            <if test="budgetQ22024 != null">#{budgetQ22024},</if>
+            <if test="budgetQ32024 != null">#{budgetQ32024},</if>
+            <if test="budgetQ42024 != null">#{budgetQ42024},</if>
+            <if test="budgetBasis != null">#{budgetBasis},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecuritySafetyInvestmentPlan" parameterType="SecuritySafetyInvestmentPlan">
+        update security_safety_investment_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="projectName != null and projectName != ''">project_name = #{projectName},</if>
+            <if test="budgetTotal2024 != null">budget_total_2024 = #{budgetTotal2024},</if>
+            <if test="budgetQ12024 != null">budget_q1_2024 = #{budgetQ12024},</if>
+            <if test="budgetQ22024 != null">budget_q2_2024 = #{budgetQ22024},</if>
+            <if test="budgetQ32024 != null">budget_q3_2024 = #{budgetQ32024},</if>
+            <if test="budgetQ42024 != null">budget_q4_2024 = #{budgetQ42024},</if>
+            <if test="budgetBasis != null">budget_basis = #{budgetBasis},</if>
+        </trim>
+        where serial_number = #{serialNumber}
+    </update>
+
+    <delete id="deleteSecuritySafetyInvestmentPlanBySerialNumber" parameterType="Long">
+        delete from security_safety_investment_plan where serial_number = #{serialNumber}
+    </delete>
+
+    <delete id="deleteSecuritySafetyInvestmentPlanBySerialNumbers" parameterType="String">
+        delete from security_safety_investment_plan where serial_number in 
+        <foreach item="serialNumber" collection="array" open="(" separator="," close=")">
+            #{serialNumber}
+        </foreach>
+    </delete>
+</mapper>

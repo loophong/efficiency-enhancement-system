@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityAccidentMeasuresTrackingMapper">
+    
+    <resultMap type="SecurityAccidentMeasuresTracking" id="SecurityAccidentMeasuresTrackingResult">
+        <result property="id"    column="id"    />
+        <result property="accidentName"    column="accident_name"    />
+        <result property="occurrenceTime"    column="occurrence_time"    />
+        <result property="correctiveMeasures"    column="corrective_measures"    />
+        <result property="responsibleUnitPerson"    column="responsible_unit_person"    />
+        <result property="completionStatus"    column="completion_status"    />
+        <result property="completionTime"    column="completion_time"    />
+        <result property="inspector"    column="inspector"    />
+        <result property="inspectionTime"    column="inspection_time"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityAccidentMeasuresTrackingVo">
+        select id, accident_name, occurrence_time, corrective_measures, responsible_unit_person, completion_status, completion_time, inspector, inspection_time, remarks from security_accident_measures_tracking
+    </sql>
+
+    <select id="selectSecurityAccidentMeasuresTrackingList" parameterType="SecurityAccidentMeasuresTracking" resultMap="SecurityAccidentMeasuresTrackingResult">
+        <include refid="selectSecurityAccidentMeasuresTrackingVo"/>
+        <where>  
+            <if test="accidentName != null  and accidentName != ''"> and accident_name like concat('%', #{accidentName}, '%')</if>
+            <if test="occurrenceTime != null "> and occurrence_time like concat('%', #{occurrenceTime}, '%')</if>
+            <if test="correctiveMeasures != null  and correctiveMeasures != ''"> and corrective_measures like concat('%', #{correctiveMeasures}, '%')</if>
+            <if test="inspector != null  and inspector != ''"> and inspector = #{inspector}</if>
+            <if test="inspectionTime != null "> and inspection_time = #{inspectionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityAccidentMeasuresTrackingById" parameterType="Long" resultMap="SecurityAccidentMeasuresTrackingResult">
+        <include refid="selectSecurityAccidentMeasuresTrackingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityAccidentMeasuresTracking" parameterType="SecurityAccidentMeasuresTracking" useGeneratedKeys="true" keyProperty="id">
+        insert into security_accident_measures_tracking
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">accident_name,</if>
+            <if test="occurrenceTime != null">occurrence_time,</if>
+            <if test="correctiveMeasures != null">corrective_measures,</if>
+            <if test="responsibleUnitPerson != null">responsible_unit_person,</if>
+            <if test="completionStatus != null">completion_status,</if>
+            <if test="completionTime != null">completion_time,</if>
+            <if test="inspector != null">inspector,</if>
+            <if test="inspectionTime != null">inspection_time,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">#{accidentName},</if>
+            <if test="occurrenceTime != null">#{occurrenceTime},</if>
+            <if test="correctiveMeasures != null">#{correctiveMeasures},</if>
+            <if test="responsibleUnitPerson != null">#{responsibleUnitPerson},</if>
+            <if test="completionStatus != null">#{completionStatus},</if>
+            <if test="completionTime != null">#{completionTime},</if>
+            <if test="inspector != null">#{inspector},</if>
+            <if test="inspectionTime != null">#{inspectionTime},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityAccidentMeasuresTracking" parameterType="SecurityAccidentMeasuresTracking">
+        update security_accident_measures_tracking
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="accidentName != null and accidentName != ''">accident_name = #{accidentName},</if>
+            <if test="occurrenceTime != null">occurrence_time = #{occurrenceTime},</if>
+            <if test="correctiveMeasures != null">corrective_measures = #{correctiveMeasures},</if>
+            <if test="responsibleUnitPerson != null">responsible_unit_person = #{responsibleUnitPerson},</if>
+            <if test="completionStatus != null">completion_status = #{completionStatus},</if>
+            <if test="completionTime != null">completion_time = #{completionTime},</if>
+            <if test="inspector != null">inspector = #{inspector},</if>
+            <if test="inspectionTime != null">inspection_time = #{inspectionTime},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityAccidentMeasuresTrackingById" parameterType="Long">
+        delete from security_accident_measures_tracking where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityAccidentMeasuresTrackingByIds" parameterType="String">
+        delete from security_accident_measures_tracking where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

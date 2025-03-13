@@ -23,12 +23,12 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 相关方期望Controller
- * 
+ *
  * @author wang
- * @date 2025-02-20
+ * @date 2025-03-11
  */
 @RestController
-@RequestMapping("/security/party1")
+@RequestMapping("/security/RequireExpectParty")
 public class SecurityRequireExpectPartyController extends BaseController
 {
     @Autowired
@@ -37,7 +37,7 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 查询相关方期望列表
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:list')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:list')")
     @GetMapping("/list")
     public TableDataInfo list(SecurityRequireExpectParty securityRequireExpectParty)
     {
@@ -49,7 +49,7 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 导出相关方期望列表
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:export')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:export')")
     @Log(title = "相关方期望", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, SecurityRequireExpectParty securityRequireExpectParty)
@@ -62,7 +62,7 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 获取相关方期望详细信息
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:query')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") Long id)
     {
@@ -72,7 +72,7 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 新增相关方期望
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:add')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:add')")
     @Log(title = "相关方期望", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SecurityRequireExpectParty securityRequireExpectParty)
@@ -83,7 +83,7 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 修改相关方期望
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:edit')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:edit')")
     @Log(title = "相关方期望", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody SecurityRequireExpectParty securityRequireExpectParty)
@@ -94,12 +94,11 @@ public class SecurityRequireExpectPartyController extends BaseController
     /**
      * 删除相关方期望
      */
-    @PreAuthorize("@ss.hasPermi('security:party1:remove')")
+    @PreAuthorize("@ss.hasPermi('security:RequireExpectParty:remove')")
     @Log(title = "相关方期望", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
+    @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityRequireExpectPartyService.deleteSecurityRequireExpectPartyByIds(ids));
     }
 }
-

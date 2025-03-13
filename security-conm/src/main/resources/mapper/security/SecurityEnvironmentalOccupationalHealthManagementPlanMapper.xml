@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEnvironmentalOccupationalHealthManagementPlanMapper">
+    
+    <resultMap type="SecurityEnvironmentalOccupationalHealthManagementPlan" id="SecurityEnvironmentalOccupationalHealthManagementPlanResult">
+        <result property="id"    column="id"    />
+        <result property="uploadDate"    column="upload_date"    />
+        <result property="uploadBy"    column="upload_by"    />
+        <result property="uploadDept"    column="upload_dept"    />
+        <result property="files"    column="files"    />
+        <result property="comment"    column="comment"    />
+    </resultMap>
+
+    <sql id="selectSecurityEnvironmentalOccupationalHealthManagementPlanVo">
+        select id, upload_date, upload_by, upload_dept, files, comment from security_environmental_occupational_health_management_plan
+    </sql>
+
+    <select id="selectSecurityEnvironmentalOccupationalHealthManagementPlanList" parameterType="SecurityEnvironmentalOccupationalHealthManagementPlan" resultMap="SecurityEnvironmentalOccupationalHealthManagementPlanResult">
+        <include refid="selectSecurityEnvironmentalOccupationalHealthManagementPlanVo"/>
+        <where>  
+            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
+            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
+            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="files != null  and files != ''"> and files = #{files}</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEnvironmentalOccupationalHealthManagementPlanById" parameterType="String" resultMap="SecurityEnvironmentalOccupationalHealthManagementPlanResult">
+        <include refid="selectSecurityEnvironmentalOccupationalHealthManagementPlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEnvironmentalOccupationalHealthManagementPlan" parameterType="SecurityEnvironmentalOccupationalHealthManagementPlan" useGeneratedKeys="true" keyProperty="id">
+        insert into security_environmental_occupational_health_management_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date,</if>
+            <if test="uploadBy != null">upload_by,</if>
+            <if test="uploadDept != null">upload_dept,</if>
+            <if test="files != null">files,</if>
+            <if test="comment != null">comment,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">#{uploadDate},</if>
+            <if test="uploadBy != null">#{uploadBy},</if>
+            <if test="uploadDept != null">#{uploadDept},</if>
+            <if test="files != null">#{files},</if>
+            <if test="comment != null">#{comment},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEnvironmentalOccupationalHealthManagementPlan" parameterType="SecurityEnvironmentalOccupationalHealthManagementPlan">
+        update security_environmental_occupational_health_management_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
+            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
+            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
+            <if test="files != null">files = #{files},</if>
+            <if test="comment != null">comment = #{comment},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEnvironmentalOccupationalHealthManagementPlanById" parameterType="String">
+        delete from security_environmental_occupational_health_management_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEnvironmentalOccupationalHealthManagementPlanByIds" parameterType="String">
+        delete from security_environmental_occupational_health_management_plan where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

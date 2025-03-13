@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEquipmentSafetyFacilityLedgerMapper">
+    
+    <resultMap type="SecurityEquipmentSafetyFacilityLedger" id="SecurityEquipmentSafetyFacilityLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="facilityCategory"    column="facility_category"    />
+        <result property="safetyFacilityName"    column="safety_facility_name"    />
+        <result property="quantity"    column="quantity"    />
+        <result property="inspectionCycle"    column="inspection_cycle"    />
+        <result property="nextInspectionDate"    column="next_inspection_date"    />
+        <result property="responsibleUnit"    column="responsible_unit"    />
+        <result property="location"    column="location"    />
+        <result property="personInCharge"    column="person_in_charge"    />
+        <result property="currentStatus"    column="current_status"    />
+    </resultMap>
+
+    <sql id="selectSecurityEquipmentSafetyFacilityLedgerVo">
+        select id, facility_category, safety_facility_name, quantity, inspection_cycle, next_inspection_date, responsible_unit, location, person_in_charge, current_status from security_equipment_safety_facility_ledger
+    </sql>
+
+    <select id="selectSecurityEquipmentSafetyFacilityLedgerList" parameterType="SecurityEquipmentSafetyFacilityLedger" resultMap="SecurityEquipmentSafetyFacilityLedgerResult">
+        <include refid="selectSecurityEquipmentSafetyFacilityLedgerVo"/>
+        <where>  
+            <if test="facilityCategory != null  and facilityCategory != ''"> and facility_category = #{facilityCategory}</if>
+            <if test="safetyFacilityName != null  and safetyFacilityName != ''"> and safety_facility_name like concat('%', #{safetyFacilityName}, '%')</if>
+            <if test="quantity != null "> and quantity = #{quantity}</if>
+            <if test="inspectionCycle != null  and inspectionCycle != ''"> and inspection_cycle = #{inspectionCycle}</if>
+            <if test="nextInspectionDate != null "> and next_inspection_date = #{nextInspectionDate}</if>
+            <if test="responsibleUnit != null  and responsibleUnit != ''"> and responsible_unit = #{responsibleUnit}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="personInCharge != null  and personInCharge != ''"> and person_in_charge = #{personInCharge}</if>
+            <if test="currentStatus != null  and currentStatus != ''"> and current_status = #{currentStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEquipmentSafetyFacilityLedgerById" parameterType="Long" resultMap="SecurityEquipmentSafetyFacilityLedgerResult">
+        <include refid="selectSecurityEquipmentSafetyFacilityLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEquipmentSafetyFacilityLedger" parameterType="SecurityEquipmentSafetyFacilityLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_equipment_safety_facility_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="facilityCategory != null and facilityCategory != ''">facility_category,</if>
+            <if test="safetyFacilityName != null and safetyFacilityName != ''">safety_facility_name,</if>
+            <if test="quantity != null">quantity,</if>
+            <if test="inspectionCycle != null">inspection_cycle,</if>
+            <if test="nextInspectionDate != null">next_inspection_date,</if>
+            <if test="responsibleUnit != null">responsible_unit,</if>
+            <if test="location != null">location,</if>
+            <if test="personInCharge != null">person_in_charge,</if>
+            <if test="currentStatus != null">current_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="facilityCategory != null and facilityCategory != ''">#{facilityCategory},</if>
+            <if test="safetyFacilityName != null and safetyFacilityName != ''">#{safetyFacilityName},</if>
+            <if test="quantity != null">#{quantity},</if>
+            <if test="inspectionCycle != null">#{inspectionCycle},</if>
+            <if test="nextInspectionDate != null">#{nextInspectionDate},</if>
+            <if test="responsibleUnit != null">#{responsibleUnit},</if>
+            <if test="location != null">#{location},</if>
+            <if test="personInCharge != null">#{personInCharge},</if>
+            <if test="currentStatus != null">#{currentStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEquipmentSafetyFacilityLedger" parameterType="SecurityEquipmentSafetyFacilityLedger">
+        update security_equipment_safety_facility_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="facilityCategory != null and facilityCategory != ''">facility_category = #{facilityCategory},</if>
+            <if test="safetyFacilityName != null and safetyFacilityName != ''">safety_facility_name = #{safetyFacilityName},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="inspectionCycle != null">inspection_cycle = #{inspectionCycle},</if>
+            <if test="nextInspectionDate != null">next_inspection_date = #{nextInspectionDate},</if>
+            <if test="responsibleUnit != null">responsible_unit = #{responsibleUnit},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="personInCharge != null">person_in_charge = #{personInCharge},</if>
+            <if test="currentStatus != null">current_status = #{currentStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEquipmentSafetyFacilityLedgerById" parameterType="Long">
+        delete from security_equipment_safety_facility_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEquipmentSafetyFacilityLedgerByIds" parameterType="String">
+        delete from security_equipment_safety_facility_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

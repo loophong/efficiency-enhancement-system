@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.security.mapper.SecurityRiskOpportunityReviewRecordsMapper">
-
+    
     <resultMap type="SecurityRiskOpportunityReviewRecords" id="SecurityRiskOpportunityReviewRecordsResult">
         <result property="id"    column="id"    />
         <result property="reviewFileName"    column="review_file_name"    />
@@ -17,29 +17,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="issueResolutionResults"    column="issue_resolution_results"    />
         <result property="reviewDepartment2"    column="review_department2"    />
         <result property="reviewDepartmentTime2"    column="review_department_time2"    />
+        <result property="status"    column="status"    />
+        <result property="statusTime"    column="status_time"    />
     </resultMap>
 
     <sql id="selectSecurityRiskOpportunityReviewRecordsVo">
-        select id, review_file_name, review_date, review_content, review_conclusion, reviewer, issues_and_solutions, review_department1, review_department_time1, issue_resolution_results, review_department2, review_department_time2 from security_risk_opportunity_review_records
+        select id, review_file_name, review_date, review_content, review_conclusion, reviewer, issues_and_solutions, review_department1, review_department_time1, issue_resolution_results, review_department2, review_department_time2, status, status_time from security_risk_opportunity_review_records
     </sql>
 
     <select id="selectSecurityRiskOpportunityReviewRecordsList" parameterType="SecurityRiskOpportunityReviewRecords" resultMap="SecurityRiskOpportunityReviewRecordsResult">
         <include refid="selectSecurityRiskOpportunityReviewRecordsVo"/>
-        <where>
+        <where>  
             <if test="reviewFileName != null  and reviewFileName != ''"> and review_file_name like concat('%', #{reviewFileName}, '%')</if>
             <if test="reviewDate != null "> and review_date = #{reviewDate}</if>
             <if test="reviewContent != null  and reviewContent != ''"> and review_content like concat('%', #{reviewContent}, '%')</if>
-            <if test="reviewConclusion != null  and reviewConclusion != ''"> and review_conclusion = #{reviewConclusion}</if>
             <if test="reviewer != null  and reviewer != ''"> and reviewer = #{reviewer}</if>
-            <if test="issuesAndSolutions != null  and issuesAndSolutions != ''"> and issues_and_solutions like concat('%', #{issuesAndSolutions}, '%')</if>
             <if test="reviewDepartment1 != null  and reviewDepartment1 != ''"> and review_department1 = #{reviewDepartment1}</if>
-            <if test="reviewDepartmentTime1 != null "> and review_department_time1 = #{reviewDepartmentTime1}</if>
-            <if test="issueResolutionResults != null  and issueResolutionResults != ''"> and issue_resolution_results = #{issueResolutionResults}</if>
             <if test="reviewDepartment2 != null  and reviewDepartment2 != ''"> and review_department2 = #{reviewDepartment2}</if>
-            <if test="reviewDepartmentTime2 != null "> and review_department_time2 = #{reviewDepartmentTime2}</if>
+            <if test="status != null "> and status = #{status}</if>
         </where>
     </select>
-
+    
     <select id="selectSecurityRiskOpportunityReviewRecordsById" parameterType="Long" resultMap="SecurityRiskOpportunityReviewRecordsResult">
         <include refid="selectSecurityRiskOpportunityReviewRecordsVo"/>
         where id = #{id}
@@ -59,6 +57,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issueResolutionResults != null">issue_resolution_results,</if>
             <if test="reviewDepartment2 != null">review_department2,</if>
             <if test="reviewDepartmentTime2 != null">review_department_time2,</if>
+            <if test="status != null">status,</if>
+            <if test="statusTime != null">status_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="reviewFileName != null and reviewFileName != ''">#{reviewFileName},</if>
@@ -72,6 +72,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issueResolutionResults != null">#{issueResolutionResults},</if>
             <if test="reviewDepartment2 != null">#{reviewDepartment2},</if>
             <if test="reviewDepartmentTime2 != null">#{reviewDepartmentTime2},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusTime != null">#{statusTime},</if>
          </trim>
     </insert>
 
@@ -89,6 +91,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issueResolutionResults != null">issue_resolution_results = #{issueResolutionResults},</if>
             <if test="reviewDepartment2 != null">review_department2 = #{reviewDepartment2},</if>
             <if test="reviewDepartmentTime2 != null">review_department_time2 = #{reviewDepartmentTime2},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusTime != null">status_time = #{statusTime},</if>
         </trim>
         where id = #{id}
     </update>
@@ -98,7 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityRiskOpportunityReviewRecordsByIds" parameterType="String">
-        delete from security_risk_opportunity_review_records where id in
+        delete from security_risk_opportunity_review_records where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

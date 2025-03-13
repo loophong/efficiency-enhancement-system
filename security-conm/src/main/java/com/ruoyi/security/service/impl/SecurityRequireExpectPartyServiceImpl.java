@@ -9,19 +9,19 @@ import com.ruoyi.security.service.ISecurityRequireExpectPartyService;
 
 /**
  * 相关方期望Service业务层处理
- * 
+ *
  * @author wang
- * @date 2025-02-20
+ * @date 2025-03-11
  */
 @Service
-public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireExpectPartyService 
+public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireExpectPartyService
 {
     @Autowired
     private SecurityRequireExpectPartyMapper securityRequireExpectPartyMapper;
 
     /**
      * 查询相关方期望
-     * 
+     *
      * @param id 相关方期望主键
      * @return 相关方期望
      */
@@ -33,7 +33,7 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
 
     /**
      * 查询相关方期望列表
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 相关方期望
      */
@@ -45,7 +45,7 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
 
     /**
      * 新增相关方期望
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 结果
      */
@@ -57,7 +57,7 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
 
     /**
      * 修改相关方期望
-     * 
+     *
      * @param securityRequireExpectParty 相关方期望
      * @return 结果
      */
@@ -69,7 +69,7 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
 
     /**
      * 批量删除相关方期望
-     * 
+     *
      * @param ids 需要删除的相关方期望主键
      * @return 结果
      */
@@ -81,7 +81,7 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
 
     /**
      * 删除相关方期望信息
-     * 
+     *
      * @param id 相关方期望主键
      * @return 结果
      */

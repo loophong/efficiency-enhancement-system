@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.AnnualEnvironmentalOccupationalHealthAndSafetyGoalsMapper">
+    
+    <resultMap type="AnnualEnvironmentalOccupationalHealthAndSafetyGoals" id="AnnualEnvironmentalOccupationalHealthAndSafetyGoalsResult">
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="departmentName"    column="department_name"    />
+        <result property="goalItem"    column="goal_item"    />
+        <result property="goalValue"    column="goal_value"    />
+        <result property="evaluationResult"    column="evaluation_result"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="compiler"    column="compiler"    />
+        <result property="auditor"    column="auditor"    />
+        <result property="approver"    column="approver"    />
+        <result property="date"    column="date"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsVo">
+        select serial_number, department_name, goal_item, goal_value, evaluation_result, remarks, compiler, auditor, approver, date, status from annual_environmental_occupational_health_and_safety_goals
+    </sql>
+
+    <select id="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsList" parameterType="AnnualEnvironmentalOccupationalHealthAndSafetyGoals" resultMap="AnnualEnvironmentalOccupationalHealthAndSafetyGoalsResult">
+        <include refid="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsVo"/>
+        <where>  
+            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+            <if test="goalItem != null  and goalItem != ''"> and goal_item = #{goalItem}</if>
+            <if test="goalValue != null  and goalValue != ''"> and goal_value = #{goalValue}</if>
+            <if test="evaluationResult != null  and evaluationResult != ''"> and evaluation_result = #{evaluationResult}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="compiler != null  and compiler != ''"> and compiler = #{compiler}</if>
+            <if test="auditor != null  and auditor != ''"> and auditor = #{auditor}</if>
+            <if test="approver != null  and approver != ''"> and approver = #{approver}</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsBySerialNumber" parameterType="Long" resultMap="AnnualEnvironmentalOccupationalHealthAndSafetyGoalsResult">
+        <include refid="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsVo"/>
+        where serial_number = #{serialNumber}
+    </select>
+
+    <insert id="insertAnnualEnvironmentalOccupationalHealthAndSafetyGoals" parameterType="AnnualEnvironmentalOccupationalHealthAndSafetyGoals" useGeneratedKeys="true" keyProperty="serialNumber">
+        insert into annual_environmental_occupational_health_and_safety_goals
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="departmentName != null and departmentName != ''">department_name,</if>
+            <if test="goalItem != null and goalItem != ''">goal_item,</if>
+            <if test="goalValue != null">goal_value,</if>
+            <if test="evaluationResult != null">evaluation_result,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="compiler != null">compiler,</if>
+            <if test="auditor != null">auditor,</if>
+            <if test="approver != null">approver,</if>
+            <if test="date != null">date,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="departmentName != null and departmentName != ''">#{departmentName},</if>
+            <if test="goalItem != null and goalItem != ''">#{goalItem},</if>
+            <if test="goalValue != null">#{goalValue},</if>
+            <if test="evaluationResult != null">#{evaluationResult},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="compiler != null">#{compiler},</if>
+            <if test="auditor != null">#{auditor},</if>
+            <if test="approver != null">#{approver},</if>
+            <if test="date != null">#{date},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAnnualEnvironmentalOccupationalHealthAndSafetyGoals" parameterType="AnnualEnvironmentalOccupationalHealthAndSafetyGoals">
+        update annual_environmental_occupational_health_and_safety_goals
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="departmentName != null and departmentName != ''">department_name = #{departmentName},</if>
+            <if test="goalItem != null and goalItem != ''">goal_item = #{goalItem},</if>
+            <if test="goalValue != null">goal_value = #{goalValue},</if>
+            <if test="evaluationResult != null">evaluation_result = #{evaluationResult},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="compiler != null">compiler = #{compiler},</if>
+            <if test="auditor != null">auditor = #{auditor},</if>
+            <if test="approver != null">approver = #{approver},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where serial_number = #{serialNumber}
+    </update>
+
+    <delete id="deleteAnnualEnvironmentalOccupationalHealthAndSafetyGoalsBySerialNumber" parameterType="Long">
+        delete from annual_environmental_occupational_health_and_safety_goals where serial_number = #{serialNumber}
+    </delete>
+
+    <delete id="deleteAnnualEnvironmentalOccupationalHealthAndSafetyGoalsBySerialNumbers" parameterType="String">
+        delete from annual_environmental_occupational_health_and_safety_goals where serial_number in 
+        <foreach item="serialNumber" collection="array" open="(" separator="," close=")">
+            #{serialNumber}
+        </foreach>
+    </delete>
+</mapper>
