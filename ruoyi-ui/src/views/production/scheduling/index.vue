@@ -4,23 +4,15 @@
     <!-- 第一步:定义出4个步骤  -->
     <el-steps :active="active" finish-status="success" align-center>
       <el-step title="第一步" description="设置生产日期和产能"/>
-      <el-step title="第二步" description="加急订单排产"/>
+      <el-step title="第二步" description="特殊订单排产"/>
       <el-step title="第三步" description="系统排产"/>
       <el-step title="第四步" description="未排产订单列表"/>
-      <el-step title="第五步" description="预测订单生成"/>
+<!--      <el-step title="第五步" description="预测订单生成"/>-->
       <el-step title="第六步" description="生成日生产计划"/>
     </el-steps>
 
 
-    <!--    第二步:定义form表单-->
-    <!--    <el-form-->
-    <!--        ref="dataForm"-->
-    <!--        :model="temp"-->
-    <!--        :rules="formRules"-->
-    <!--        label-position="left"-->
-    <!--        label-width="100px"-->
-    <!--        style="width: 400px;-->
-    <!--    margin-left: 50px">-->
+
 
     <!-- 第三步:定义4个盒子对象active => 1 到 4-->
     <div v-show="active === 1">
@@ -116,6 +108,7 @@
                 <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
               </template>
             </el-table-column>
+            <el-table-column label="缺件信息" align="center" prop="missingPartRecords"/>
             <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
             <el-table-column label="产能型号" align="center" prop="capacityType"/>
             <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
@@ -391,6 +384,13 @@ const unscheduledList = ref([]);
 
 // 步骤条下一步的方法
 function next() {
+  if(active.value === 1){
+    // 校验日期是否选择
+    if (productionDate.value === '') {
+      proxy.$modal.msgError("请选择排产日期")
+      return
+    }
+  }
   if (active.value < 6) {
     active.value++
   }
@@ -400,6 +400,9 @@ function next() {
   }
   if (active.value === 4) {
     getUnscheduledList()
+  }
+  if (active.value === 5) {
+    active.value++
   }
   console.log("当前active：" + active.value)
 }
@@ -483,8 +486,19 @@ function getOrderList() {
 
     // 从订单列表中划分出一般订单和加急订单
     allOrders.value = response.data
-    urgentList.value = response.data.filter(item => item.isUrgent === 1);
-    standardList.value = response.data.filter(item => item.isUrgent !== 1);
+
+    // urgentList.value = response.data.filter(item => item.isUrgent === 1);
+    // standardList.value = response.data.filter(item => item.isUrgent !== 1);
+
+    // update :3-12 修改，将加急订单改为特殊订单，特殊订单包括 加急订单 和 缺件订单
+    response.data.forEach(item => {
+      if(item.isUrgent === 1 || item.procurementArrivalDate !== null){
+        urgentList.value.push(item)
+      }else {
+        standardList.value.push(item)
+      }
+    })
+
     standardList.value.sort((a, b) => new Date(a.latestOnlineDate) - new Date(b.latestOnlineDate));
 
     // 按车型分类统计未排产订单数
@@ -775,6 +789,7 @@ function submitForm() {
       orderSchedulingList.push({
         'id': item.id,
         'isScheduling': 1,
+        'quantity': item.quantity,
         'onlineDate': date
       })
     }
@@ -800,7 +815,7 @@ function submitForm() {
   })
   console.log("使用的产能为" + JSON.stringify(dailyUsedCapacityList))
 
-  schedulingOrders(orderSchedulingList, dailyUsedCapacityList).then((response) => {
+  schedulingOrders(date,orderSchedulingList, dailyUsedCapacityList).then((response) => {
     console.log("排产结果" + response)
     // 提示用户排产成功
     // proxy.$message({

@@ -88,4 +88,9 @@ public class SpecialCasesEntity implements Serializable {
     @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date uploadDate;
 
+    /**
+     * 处理时间
+     */
+    private String files;
+
 }

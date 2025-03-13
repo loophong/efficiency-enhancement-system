@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecutityLegalRegulationsIdentificationListMapper">
+    
+    <resultMap type="SecutityLegalRegulationsIdentificationList" id="SecutityLegalRegulationsIdentificationListResult">
+        <result property="id"    column="id"    />
+        <result property="regulationName"    column="regulation_name"    />
+        <result property="documentNumber"    column="document_number"    />
+        <result property="issuingUnit"    column="issuing_unit"    />
+        <result property="issuanceRevisionDate"    column="issuance_revision_date"    />
+        <result property="implementationDate"    column="implementation_date"    />
+        <result property="effectiveness"    column="effectiveness"    />
+    </resultMap>
+
+    <sql id="selectSecutityLegalRegulationsIdentificationListVo">
+        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness from secutity_legal_regulations_identification_list
+    </sql>
+
+    <select id="selectSecutityLegalRegulationsIdentificationListList" parameterType="SecutityLegalRegulationsIdentificationList" resultMap="SecutityLegalRegulationsIdentificationListResult">
+        <include refid="selectSecutityLegalRegulationsIdentificationListVo"/>
+        <where>  
+            <if test="regulationName != null  and regulationName != ''"> and regulation_name like concat('%', #{regulationName}, '%')</if>
+            <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
+            <if test="issuingUnit != null  and issuingUnit != ''"> and issuing_unit = #{issuingUnit}</if>
+            <if test="issuanceRevisionDate != null "> and issuance_revision_date = #{issuanceRevisionDate}</if>
+            <if test="implementationDate != null "> and implementation_date = #{implementationDate}</if>
+            <if test="effectiveness != null  and effectiveness != ''"> and effectiveness = #{effectiveness}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecutityLegalRegulationsIdentificationListById" parameterType="Long" resultMap="SecutityLegalRegulationsIdentificationListResult">
+        <include refid="selectSecutityLegalRegulationsIdentificationListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecutityLegalRegulationsIdentificationList" parameterType="SecutityLegalRegulationsIdentificationList" useGeneratedKeys="true" keyProperty="id">
+        insert into secutity_legal_regulations_identification_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">regulation_name,</if>
+            <if test="documentNumber != null">document_number,</if>
+            <if test="issuingUnit != null">issuing_unit,</if>
+            <if test="issuanceRevisionDate != null">issuance_revision_date,</if>
+            <if test="implementationDate != null">implementation_date,</if>
+            <if test="effectiveness != null">effectiveness,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">#{regulationName},</if>
+            <if test="documentNumber != null">#{documentNumber},</if>
+            <if test="issuingUnit != null">#{issuingUnit},</if>
+            <if test="issuanceRevisionDate != null">#{issuanceRevisionDate},</if>
+            <if test="implementationDate != null">#{implementationDate},</if>
+            <if test="effectiveness != null">#{effectiveness},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecutityLegalRegulationsIdentificationList" parameterType="SecutityLegalRegulationsIdentificationList">
+        update secutity_legal_regulations_identification_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regulationName != null and regulationName != ''">regulation_name = #{regulationName},</if>
+            <if test="documentNumber != null">document_number = #{documentNumber},</if>
+            <if test="issuingUnit != null">issuing_unit = #{issuingUnit},</if>
+            <if test="issuanceRevisionDate != null">issuance_revision_date = #{issuanceRevisionDate},</if>
+            <if test="implementationDate != null">implementation_date = #{implementationDate},</if>
+            <if test="effectiveness != null">effectiveness = #{effectiveness},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecutityLegalRegulationsIdentificationListById" parameterType="Long">
+        delete from secutity_legal_regulations_identification_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecutityLegalRegulationsIdentificationListByIds" parameterType="String">
+        delete from secutity_legal_regulations_identification_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

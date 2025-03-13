@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityControlledDocumentDistributionDirectoryMapper">
+    
+    <resultMap type="SecurityControlledDocumentDistributionDirectory" id="SecurityControlledDocumentDistributionDirectoryResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="documentNumber"    column="document_number"    />
+        <result property="receivingUnit"    column="receiving_unit"    />
+    </resultMap>
+
+    <sql id="selectSecurityControlledDocumentDistributionDirectoryVo">
+        select id, file_name, document_number, receiving_unit from security_controlled_document_distribution_directory
+    </sql>
+
+    <select id="selectSecurityControlledDocumentDistributionDirectoryList" parameterType="SecurityControlledDocumentDistributionDirectory" resultMap="SecurityControlledDocumentDistributionDirectoryResult">
+        <include refid="selectSecurityControlledDocumentDistributionDirectoryVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
+            <if test="receivingUnit != null  and receivingUnit != ''"> and receiving_unit = #{receivingUnit}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityControlledDocumentDistributionDirectoryById" parameterType="Long" resultMap="SecurityControlledDocumentDistributionDirectoryResult">
+        <include refid="selectSecurityControlledDocumentDistributionDirectoryVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityControlledDocumentDistributionDirectory" parameterType="SecurityControlledDocumentDistributionDirectory" useGeneratedKeys="true" keyProperty="id">
+        insert into security_controlled_document_distribution_directory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="documentNumber != null">document_number,</if>
+            <if test="receivingUnit != null">receiving_unit,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="documentNumber != null">#{documentNumber},</if>
+            <if test="receivingUnit != null">#{receivingUnit},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityControlledDocumentDistributionDirectory" parameterType="SecurityControlledDocumentDistributionDirectory">
+        update security_controlled_document_distribution_directory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="documentNumber != null">document_number = #{documentNumber},</if>
+            <if test="receivingUnit != null">receiving_unit = #{receivingUnit},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityControlledDocumentDistributionDirectoryById" parameterType="Long">
+        delete from security_controlled_document_distribution_directory where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityControlledDocumentDistributionDirectoryByIds" parameterType="String">
+        delete from security_controlled_document_distribution_directory where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

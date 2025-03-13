@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityEmergencyDrillPlanMapper">
+    
+    <resultMap type="SecurityEmergencyDrillPlan" id="SecurityEmergencyDrillPlanResult">
+        <result property="id"    column="id"    />
+        <result property="level"    column="level"    />
+        <result property="departmentTeam"    column="department_team"    />
+        <result property="drillType"    column="drill_type"    />
+        <result property="plannedDrillTime"    column="planned_drill_time"    />
+        <result property="drillTheme"    column="drill_theme"    />
+        <result property="referenceScenario"    column="reference_scenario"    />
+        <result property="participantsObservers"    column="participants_observers"    />
+        <result property="drillCategory"    column="drill_category"    />
+        <result property="statu"    column="statu"    />
+    </resultMap>
+
+    <sql id="selectSecurityEmergencyDrillPlanVo">
+        select id, level, department_team, drill_type, planned_drill_time, drill_theme, reference_scenario, participants_observers, drill_category, statu from security_emergency_drill_plan
+    </sql>
+
+    <select id="selectSecurityEmergencyDrillPlanList" parameterType="SecurityEmergencyDrillPlan" resultMap="SecurityEmergencyDrillPlanResult">
+        <include refid="selectSecurityEmergencyDrillPlanVo"/>
+        <where>  
+            <if test="level != null  and level != ''"> and level = #{level}</if>
+            <if test="departmentTeam != null  and departmentTeam != ''"> and department_team = #{departmentTeam}</if>
+            <if test="drillType != null  and drillType != ''"> and drill_type = #{drillType}</if>
+            <if test="plannedDrillTime != null "> and planned_drill_time = #{plannedDrillTime}</if>
+            <if test="drillTheme != null  and drillTheme != ''"> and drill_theme = #{drillTheme}</if>
+            <if test="referenceScenario != null  and referenceScenario != ''"> and reference_scenario = #{referenceScenario}</if>
+            <if test="participantsObservers != null  and participantsObservers != ''"> and participants_observers = #{participantsObservers}</if>
+            <if test="drillCategory != null  and drillCategory != ''"> and drill_category = #{drillCategory}</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityEmergencyDrillPlanById" parameterType="Long" resultMap="SecurityEmergencyDrillPlanResult">
+        <include refid="selectSecurityEmergencyDrillPlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityEmergencyDrillPlan" parameterType="SecurityEmergencyDrillPlan" useGeneratedKeys="true" keyProperty="id">
+        insert into security_emergency_drill_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="level != null and level != ''">level,</if>
+            <if test="departmentTeam != null and departmentTeam != ''">department_team,</if>
+            <if test="drillType != null">drill_type,</if>
+            <if test="plannedDrillTime != null">planned_drill_time,</if>
+            <if test="drillTheme != null">drill_theme,</if>
+            <if test="referenceScenario != null">reference_scenario,</if>
+            <if test="participantsObservers != null">participants_observers,</if>
+            <if test="drillCategory != null">drill_category,</if>
+            <if test="statu != null">statu,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="level != null and level != ''">#{level},</if>
+            <if test="departmentTeam != null and departmentTeam != ''">#{departmentTeam},</if>
+            <if test="drillType != null">#{drillType},</if>
+            <if test="plannedDrillTime != null">#{plannedDrillTime},</if>
+            <if test="drillTheme != null">#{drillTheme},</if>
+            <if test="referenceScenario != null">#{referenceScenario},</if>
+            <if test="participantsObservers != null">#{participantsObservers},</if>
+            <if test="drillCategory != null">#{drillCategory},</if>
+            <if test="statu != null">#{statu},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityEmergencyDrillPlan" parameterType="SecurityEmergencyDrillPlan">
+        update security_emergency_drill_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="level != null and level != ''">level = #{level},</if>
+            <if test="departmentTeam != null and departmentTeam != ''">department_team = #{departmentTeam},</if>
+            <if test="drillType != null">drill_type = #{drillType},</if>
+            <if test="plannedDrillTime != null">planned_drill_time = #{plannedDrillTime},</if>
+            <if test="drillTheme != null">drill_theme = #{drillTheme},</if>
+            <if test="referenceScenario != null">reference_scenario = #{referenceScenario},</if>
+            <if test="participantsObservers != null">participants_observers = #{participantsObservers},</if>
+            <if test="drillCategory != null">drill_category = #{drillCategory},</if>
+            <if test="statu != null">statu = #{statu},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityEmergencyDrillPlanById" parameterType="Long">
+        delete from security_emergency_drill_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityEmergencyDrillPlanByIds" parameterType="String">
+        delete from security_emergency_drill_plan where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

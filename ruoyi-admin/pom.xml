@@ -66,6 +66,20 @@
             <artifactId>heli-production</artifactId>
         </dependency>
 
+        <!-- 供应商模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>heli-supplier</artifactId>
+        </dependency>
+
+        <!-- 安全模块-->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>security-conm</artifactId>
+        </dependency>
+
+
+
     </dependencies>
 
     <build>

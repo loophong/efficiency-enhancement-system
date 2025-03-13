@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityRiskOpportunityAssessmentMapper">
+    
+    <resultMap type="SecurityRiskOpportunityAssessment" id="SecurityRiskOpportunityAssessmentResult">
+        <result property="id"    column="id"    />
+        <result property="activity"    column="activity"    />
+        <result property="riskOpportunity"    column="risk_opportunity"    />
+        <result property="consequences"    column="consequences"    />
+        <result property="riskLevel"    column="risk_level"    />
+        <result property="responseMeasures"    column="response_measures"    />
+        <result property="implementationTime"    column="implementation_time"    />
+        <result property="department"    column="department"    />
+        <result property="severity"    column="severity"    />
+        <result property="frequency"    column="frequency"    />
+        <result property="risk"    column="risk"    />
+        <result property="status"    column="status"    />
+        <result property="statusDepartment"    column="status_department"    />
+        <result property="statusTime"    column="status_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityRiskOpportunityAssessmentVo">
+        select id, activity, risk_opportunity, consequences, risk_level, response_measures, implementation_time, department, severity, frequency, risk, status, status_department, status_time from security_risk_opportunity_assessment
+    </sql>
+
+    <select id="selectSecurityRiskOpportunityAssessmentList" parameterType="SecurityRiskOpportunityAssessment" resultMap="SecurityRiskOpportunityAssessmentResult">
+        <include refid="selectSecurityRiskOpportunityAssessmentVo"/>
+        <where>  
+            <if test="activity != null  and activity != ''"> and activity = #{activity}</if>
+            <if test="riskOpportunity != null  and riskOpportunity != ''"> and risk_opportunity = #{riskOpportunity}</if>
+            <if test="consequences != null  and consequences != ''"> and consequences = #{consequences}</if>
+            <if test="riskLevel != null  and riskLevel != ''"> and risk_level = #{riskLevel}</if>
+            <if test="responseMeasures != null  and responseMeasures != ''"> and response_measures = #{responseMeasures}</if>
+            <if test="implementationTime != null "> and implementation_time = #{implementationTime}</if>
+            <if test="department != null  and department != ''"> and department = #{department}</if>
+            <if test="severity != null  and severity != ''"> and severity = #{severity}</if>
+            <if test="frequency != null  and frequency != ''"> and frequency = #{frequency}</if>
+            <if test="risk != null  and risk != ''"> and risk = #{risk}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="statusDepartment != null  and statusDepartment != ''"> and status_department = #{statusDepartment}</if>
+            <if test="statusTime != null "> and status_time = #{statusTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityRiskOpportunityAssessmentById" parameterType="Long" resultMap="SecurityRiskOpportunityAssessmentResult">
+        <include refid="selectSecurityRiskOpportunityAssessmentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityRiskOpportunityAssessment" parameterType="SecurityRiskOpportunityAssessment">
+        insert into security_risk_opportunity_assessment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="activity != null and activity != ''">activity,</if>
+            <if test="riskOpportunity != null and riskOpportunity != ''">risk_opportunity,</if>
+            <if test="consequences != null">consequences,</if>
+            <if test="riskLevel != null">risk_level,</if>
+            <if test="responseMeasures != null">response_measures,</if>
+            <if test="implementationTime != null">implementation_time,</if>
+            <if test="department != null">department,</if>
+            <if test="severity != null">severity,</if>
+            <if test="frequency != null">frequency,</if>
+            <if test="risk != null">risk,</if>
+            <if test="status != null">status,</if>
+            <if test="statusDepartment != null">status_department,</if>
+            <if test="statusTime != null">status_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="activity != null and activity != ''">#{activity},</if>
+            <if test="riskOpportunity != null and riskOpportunity != ''">#{riskOpportunity},</if>
+            <if test="consequences != null">#{consequences},</if>
+            <if test="riskLevel != null">#{riskLevel},</if>
+            <if test="responseMeasures != null">#{responseMeasures},</if>
+            <if test="implementationTime != null">#{implementationTime},</if>
+            <if test="department != null">#{department},</if>
+            <if test="severity != null">#{severity},</if>
+            <if test="frequency != null">#{frequency},</if>
+            <if test="risk != null">#{risk},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusDepartment != null">#{statusDepartment},</if>
+            <if test="statusTime != null">#{statusTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityRiskOpportunityAssessment" parameterType="SecurityRiskOpportunityAssessment">
+        update security_risk_opportunity_assessment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="activity != null and activity != ''">activity = #{activity},</if>
+            <if test="riskOpportunity != null and riskOpportunity != ''">risk_opportunity = #{riskOpportunity},</if>
+            <if test="consequences != null">consequences = #{consequences},</if>
+            <if test="riskLevel != null">risk_level = #{riskLevel},</if>
+            <if test="responseMeasures != null">response_measures = #{responseMeasures},</if>
+            <if test="implementationTime != null">implementation_time = #{implementationTime},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="severity != null">severity = #{severity},</if>
+            <if test="frequency != null">frequency = #{frequency},</if>
+            <if test="risk != null">risk = #{risk},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusDepartment != null">status_department = #{statusDepartment},</if>
+            <if test="statusTime != null">status_time = #{statusTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityRiskOpportunityAssessmentById" parameterType="Long">
+        delete from security_risk_opportunity_assessment where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityRiskOpportunityAssessmentByIds" parameterType="String">
+        delete from security_risk_opportunity_assessment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

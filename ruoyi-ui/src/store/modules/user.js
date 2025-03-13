@@ -3,6 +3,8 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 import { isHttp, isEmpty } from "@/utils/validate"
 import defAva from '@/assets/images/profile.jpg'
 
+import { initWebSocket, closeWebSocket } from '@/store/modules/WebSocket';
+
 const useUserStore = defineStore(
   'user',
   {
@@ -30,6 +32,8 @@ const useUserStore = defineStore(
             reject(error)
           })
         })
+
+
       },
       // 获取用户信息
       getInfo() {
@@ -50,6 +54,9 @@ const useUserStore = defineStore(
             this.name = user.userName
             this.avatar = avatar
             resolve(res)
+
+            // 创建websocket连接
+            initWebSocket(this.token)
           }).catch(error => {
             reject(error)
           })
@@ -64,6 +71,9 @@ const useUserStore = defineStore(
             this.permissions = []
             removeToken()
             resolve()
+
+            // 关闭websocket连接
+            closeWebSocket()
           }).catch(error => {
             reject(error)
           })

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityOccupationalHealthProtectiveEquipmentLedgerMapper">
+    
+    <resultMap type="SecurityOccupationalHealthProtectiveEquipmentLedger" id="SecurityOccupationalHealthProtectiveEquipmentLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="panjinHeliSapMaterialNumber"    column="panjin_heli_sap_material_number"    />
+        <result property="materialName"    column="material_name"    />
+        <result property="specifications"    column="specifications"    />
+        <result property="brand"    column="brand"    />
+        <result property="unit"    column="unit"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo">
+        select id, panjin_heli_sap_material_number, material_name, specifications, brand, unit, remarks from security_occupational_health_protective_equipment_ledger
+    </sql>
+
+    <select id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerList" parameterType="SecurityOccupationalHealthProtectiveEquipmentLedger" resultMap="SecurityOccupationalHealthProtectiveEquipmentLedgerResult">
+        <include refid="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo"/>
+        <where>  
+            <if test="panjinHeliSapMaterialNumber != null  and panjinHeliSapMaterialNumber != ''"> and panjin_heli_sap_material_number = #{panjinHeliSapMaterialNumber}</if>
+            <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
+            <if test="specifications != null  and specifications != ''"> and specifications = #{specifications}</if>
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="unit != null  and unit != ''"> and unit = #{unit}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerById" parameterType="Long" resultMap="SecurityOccupationalHealthProtectiveEquipmentLedgerResult">
+        <include refid="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityOccupationalHealthProtectiveEquipmentLedger" parameterType="SecurityOccupationalHealthProtectiveEquipmentLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_occupational_health_protective_equipment_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="panjinHeliSapMaterialNumber != null and panjinHeliSapMaterialNumber != ''">panjin_heli_sap_material_number,</if>
+            <if test="materialName != null and materialName != ''">material_name,</if>
+            <if test="specifications != null">specifications,</if>
+            <if test="brand != null">brand,</if>
+            <if test="unit != null">unit,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="panjinHeliSapMaterialNumber != null and panjinHeliSapMaterialNumber != ''">#{panjinHeliSapMaterialNumber},</if>
+            <if test="materialName != null and materialName != ''">#{materialName},</if>
+            <if test="specifications != null">#{specifications},</if>
+            <if test="brand != null">#{brand},</if>
+            <if test="unit != null">#{unit},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityOccupationalHealthProtectiveEquipmentLedger" parameterType="SecurityOccupationalHealthProtectiveEquipmentLedger">
+        update security_occupational_health_protective_equipment_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="panjinHeliSapMaterialNumber != null and panjinHeliSapMaterialNumber != ''">panjin_heli_sap_material_number = #{panjinHeliSapMaterialNumber},</if>
+            <if test="materialName != null and materialName != ''">material_name = #{materialName},</if>
+            <if test="specifications != null">specifications = #{specifications},</if>
+            <if test="brand != null">brand = #{brand},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityOccupationalHealthProtectiveEquipmentLedgerById" parameterType="Long">
+        delete from security_occupational_health_protective_equipment_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityOccupationalHealthProtectiveEquipmentLedgerByIds" parameterType="String">
+        delete from security_occupational_health_protective_equipment_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

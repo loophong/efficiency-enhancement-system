@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityHazardousMaterialsSafetyInspectionMapper">
+    
+    <resultMap type="SecurityHazardousMaterialsSafetyInspection" id="SecurityHazardousMaterialsSafetyInspectionResult">
+        <result property="id"    column="id"    />
+        <result property="inspectionItem"    column="inspection_item"    />
+        <result property="inspectionStandard"    column="inspection_standard"    />
+        <result property="inspectionRecord"    column="inspection_record"    />
+        <result property="inspecter"    column="inspecter"    />
+        <result property="inspectionTime"    column="inspection_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityHazardousMaterialsSafetyInspectionVo">
+        select id, inspection_item, inspection_standard, inspection_record, inspecter, inspection_time from security_hazardous_materials_safety_inspection
+    </sql>
+
+    <select id="selectSecurityHazardousMaterialsSafetyInspectionList" parameterType="SecurityHazardousMaterialsSafetyInspection" resultMap="SecurityHazardousMaterialsSafetyInspectionResult">
+        <include refid="selectSecurityHazardousMaterialsSafetyInspectionVo"/>
+        <where>  
+            <if test="inspectionItem != null  and inspectionItem != ''"> and inspection_item = #{inspectionItem}</if>
+            <if test="inspectionStandard != null  and inspectionStandard != ''"> and inspection_standard = #{inspectionStandard}</if>
+            <if test="inspectionRecord != null  and inspectionRecord != ''"> and inspection_record = #{inspectionRecord}</if>
+            <if test="inspecter != null  and inspecter != ''"> and inspecter = #{inspecter}</if>
+            <if test="inspectionTime != null "> and inspection_time = #{inspectionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityHazardousMaterialsSafetyInspectionById" parameterType="Long" resultMap="SecurityHazardousMaterialsSafetyInspectionResult">
+        <include refid="selectSecurityHazardousMaterialsSafetyInspectionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityHazardousMaterialsSafetyInspection" parameterType="SecurityHazardousMaterialsSafetyInspection" useGeneratedKeys="true" keyProperty="id">
+        insert into security_hazardous_materials_safety_inspection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="inspectionItem != null and inspectionItem != ''">inspection_item,</if>
+            <if test="inspectionStandard != null">inspection_standard,</if>
+            <if test="inspectionRecord != null">inspection_record,</if>
+            <if test="inspecter != null">inspecter,</if>
+            <if test="inspectionTime != null">inspection_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="inspectionItem != null and inspectionItem != ''">#{inspectionItem},</if>
+            <if test="inspectionStandard != null">#{inspectionStandard},</if>
+            <if test="inspectionRecord != null">#{inspectionRecord},</if>
+            <if test="inspecter != null">#{inspecter},</if>
+            <if test="inspectionTime != null">#{inspectionTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityHazardousMaterialsSafetyInspection" parameterType="SecurityHazardousMaterialsSafetyInspection">
+        update security_hazardous_materials_safety_inspection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="inspectionItem != null and inspectionItem != ''">inspection_item = #{inspectionItem},</if>
+            <if test="inspectionStandard != null">inspection_standard = #{inspectionStandard},</if>
+            <if test="inspectionRecord != null">inspection_record = #{inspectionRecord},</if>
+            <if test="inspecter != null">inspecter = #{inspecter},</if>
+            <if test="inspectionTime != null">inspection_time = #{inspectionTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityHazardousMaterialsSafetyInspectionById" parameterType="Long">
+        delete from security_hazardous_materials_safety_inspection where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityHazardousMaterialsSafetyInspectionByIds" parameterType="String">
+        delete from security_hazardous_materials_safety_inspection where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

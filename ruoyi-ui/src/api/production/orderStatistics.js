@@ -1,5 +1,8 @@
 import request from '@/utils/request'
 
+
+
+
 // 查询历史订单统计列表
 export function listOrderStatistics(query) {
     return request({
@@ -65,5 +68,14 @@ export function charData(charParams) {
         url: '/production/orderStatistics/charData',
         method: 'post',
         data: charParams
+    })
+}
+
+// 根据产能预测订单
+export function forecast(forecastParams) {
+    return request({
+        url: '/production/orderStatistics/forecast',
+        method: 'post',
+        data: forecastParams
     })
 }

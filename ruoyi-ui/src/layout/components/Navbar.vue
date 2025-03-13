@@ -1,39 +1,48 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav" />
-    <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
+    <hamburger id="hamburger-container" :is-active="appStore.sidebar.opened" class="hamburger-container"
+               @toggleClick="toggleSideBar"/>
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!settingsStore.topNav"/>
+    <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav"/>
 
     <div class="right-menu">
       <template v-if="appStore.device !== 'mobile'">
-        <header-search id="header-search" class="right-menu-item" />
+        <header-search id="header-search" class="right-menu-item"/>
+
+        <el-tooltip :content="noticeContent" effect="dark" placement="bottom">
+          <el-badge :value="noticeCount" class="right-menu-item hover-effect" :class="{'badge-custom':noticeCount>0}">
+            <i class="el-icon-message-solid" @click="toNoticePage"></i>
+          </el-badge>
+        </el-tooltip>
 
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
+          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect"/>
         </el-tooltip>
 
         <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect" />
+          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect"/>
         </el-tooltip>
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
+        <screenfull id="screenfull" class="right-menu-item hover-effect"/>
 
         <el-tooltip content="主题模式" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
-            <svg-icon v-if="settingsStore.isDark" icon-class="sunny" />
-            <svg-icon v-if="!settingsStore.isDark" icon-class="moon" />
+            <svg-icon v-if="settingsStore.isDark" icon-class="sunny"/>
+            <svg-icon v-if="!settingsStore.isDark" icon-class="moon"/>
           </div>
         </el-tooltip>
 
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
+          <size-select id="size-select" class="right-menu-item hover-effect"/>
         </el-tooltip>
       </template>
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
-            <img :src="userStore.avatar" class="user-avatar" />
-            <el-icon><caret-bottom /></el-icon>
+            <img :src="userStore.avatar" class="user-avatar"/>
+            <el-icon>
+              <caret-bottom/>
+            </el-icon>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -55,7 +64,7 @@
 </template>
 
 <script setup>
-import { ElMessageBox } from 'element-plus'
+import {ElMessageBox} from 'element-plus'
 import Breadcrumb from '@/components/Breadcrumb'
 import TopNav from '@/components/TopNav'
 import Hamburger from '@/components/Hamburger'
@@ -67,6 +76,7 @@ import RuoYiDoc from '@/components/RuoYi/Doc'
 import useAppStore from '@/store/modules/app'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
+import {listNotice} from "@/api/system/notice";
 
 const appStore = useAppStore()
 const userStore = useUserStore()
@@ -98,10 +108,12 @@ function logout() {
     userStore.logOut().then(() => {
       location.href = '/index';
     })
-  }).catch(() => { });
+  }).catch(() => {
+  });
 }
 
 const emits = defineEmits(['setLayout'])
+
 function setLayout() {
   emits('setLayout');
 }
@@ -109,6 +121,19 @@ function setLayout() {
 function toggleTheme() {
   settingsStore.toggleTheme()
 }
+
+
+// 轮询通知
+const data = reactive({
+  noticeContent: '',
+  noticeCount: 0,
+  intervalId: null
+});
+const {noticeContent, noticeCount, intervalId} = toRefs(data);
+
+onMounted(() => {
+});
+
 </script>
 
 <style lang='scss' scoped>
@@ -179,7 +204,7 @@ function toggleTheme() {
 
         svg {
           transition: transform 0.3s;
-          
+
           &:hover {
             transform: scale(1.15);
           }
@@ -210,6 +235,24 @@ function toggleTheme() {
         }
       }
     }
+
+    .el-tooltip :deep(.el-badge__content) {
+      margin-top: 9px !important;
+      margin-right: 20px !important;
+    }
+
+    .badge-custom {
+      animation: blink-animation 0.5s infinite alternate;
+    }
+
+    @keyframes blink-animation {
+      0% { opacity: 1; } /* 定义动画起始状态 */
+      100% { opacity: 0.1; } /* 定义动画结束状态 */
+    }
+
+
   }
 }
+
+
 </style>

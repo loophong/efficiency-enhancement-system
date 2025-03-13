@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecuritySpecialOperationsPersonnelInfoMapper">
+    
+    <resultMap type="SecuritySpecialOperationsPersonnelInfo" id="SecuritySpecialOperationsPersonnelInfoResult">
+        <result property="id"    column="id"    />
+        <result property="department"    column="department"    />
+        <result property="name"    column="name"    />
+        <result property="gender"    column="gender"    />
+        <result property="issuingAuthority"    column="issuing_authority"    />
+        <result property="certificateType"    column="certificate_type"    />
+        <result property="operationCategory"    column="operation_category"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="certificateNumber"    column="certificate_number"    />
+        <result property="issuanceDate"    column="issuance_date"    />
+        <result property="firstExpirationDate"    column="first_expiration_date"    />
+        <result property="firstRenewalDate"    column="first_renewal_date"    />
+        <result property="secondExpirationDate"    column="second_expiration_date"    />
+        <result property="secondRenewalDate"    column="second_renewal_date"    />
+        <result property="thirdExpirationDate"    column="third_expiration_date"    />
+        <result property="thirdRenewalDate"    column="third_renewal_date"    />
+        <result property="remarks"    column="remarks"    />
+    </resultMap>
+
+    <sql id="selectSecuritySpecialOperationsPersonnelInfoVo">
+        select id, department, name, gender, issuing_authority, certificate_type, operation_category, id_number, certificate_number, issuance_date, first_expiration_date, first_renewal_date, second_expiration_date, second_renewal_date, third_expiration_date, third_renewal_date, remarks from security_special_operations_personnel_info
+    </sql>
+
+    <select id="selectSecuritySpecialOperationsPersonnelInfoList" parameterType="SecuritySpecialOperationsPersonnelInfo" resultMap="SecuritySpecialOperationsPersonnelInfoResult">
+        <include refid="selectSecuritySpecialOperationsPersonnelInfoVo"/>
+        <where>  
+            <if test="department != null  and department != ''"> and department = #{department}</if>
+            <if test="name != null  and name != ''"> and name = #{name}</if>
+            <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
+            <if test="issuingAuthority != null  and issuingAuthority != ''"> and issuing_authority = #{issuingAuthority}</if>
+            <if test="certificateType != null  and certificateType != ''"> and certificate_type = #{certificateType}</if>
+            <if test="operationCategory != null  and operationCategory != ''"> and operation_category like concat('%', #{operationCategory}, '%')</if>
+            <if test="idNumber != null  and idNumber != ''"> and id_number = #{idNumber}</if>
+            <if test="certificateNumber != null  and certificateNumber != ''"> and certificate_number = #{certificateNumber}</if>
+            <if test="issuanceDate != null "> and issuance_date = #{issuanceDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecuritySpecialOperationsPersonnelInfoById" parameterType="Long" resultMap="SecuritySpecialOperationsPersonnelInfoResult">
+        <include refid="selectSecuritySpecialOperationsPersonnelInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecuritySpecialOperationsPersonnelInfo" parameterType="SecuritySpecialOperationsPersonnelInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into security_special_operations_personnel_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="department != null and department != ''">department,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="gender != null and gender != ''">gender,</if>
+            <if test="issuingAuthority != null">issuing_authority,</if>
+            <if test="certificateType != null">certificate_type,</if>
+            <if test="operationCategory != null">operation_category,</if>
+            <if test="idNumber != null">id_number,</if>
+            <if test="certificateNumber != null">certificate_number,</if>
+            <if test="issuanceDate != null">issuance_date,</if>
+            <if test="firstExpirationDate != null">first_expiration_date,</if>
+            <if test="firstRenewalDate != null">first_renewal_date,</if>
+            <if test="secondExpirationDate != null">second_expiration_date,</if>
+            <if test="secondRenewalDate != null">second_renewal_date,</if>
+            <if test="thirdExpirationDate != null">third_expiration_date,</if>
+            <if test="thirdRenewalDate != null">third_renewal_date,</if>
+            <if test="remarks != null">remarks,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="department != null and department != ''">#{department},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="issuingAuthority != null">#{issuingAuthority},</if>
+            <if test="certificateType != null">#{certificateType},</if>
+            <if test="operationCategory != null">#{operationCategory},</if>
+            <if test="idNumber != null">#{idNumber},</if>
+            <if test="certificateNumber != null">#{certificateNumber},</if>
+            <if test="issuanceDate != null">#{issuanceDate},</if>
+            <if test="firstExpirationDate != null">#{firstExpirationDate},</if>
+            <if test="firstRenewalDate != null">#{firstRenewalDate},</if>
+            <if test="secondExpirationDate != null">#{secondExpirationDate},</if>
+            <if test="secondRenewalDate != null">#{secondRenewalDate},</if>
+            <if test="thirdExpirationDate != null">#{thirdExpirationDate},</if>
+            <if test="thirdRenewalDate != null">#{thirdRenewalDate},</if>
+            <if test="remarks != null">#{remarks},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecuritySpecialOperationsPersonnelInfo" parameterType="SecuritySpecialOperationsPersonnelInfo">
+        update security_special_operations_personnel_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="department != null and department != ''">department = #{department},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="issuingAuthority != null">issuing_authority = #{issuingAuthority},</if>
+            <if test="certificateType != null">certificate_type = #{certificateType},</if>
+            <if test="operationCategory != null">operation_category = #{operationCategory},</if>
+            <if test="idNumber != null">id_number = #{idNumber},</if>
+            <if test="certificateNumber != null">certificate_number = #{certificateNumber},</if>
+            <if test="issuanceDate != null">issuance_date = #{issuanceDate},</if>
+            <if test="firstExpirationDate != null">first_expiration_date = #{firstExpirationDate},</if>
+            <if test="firstRenewalDate != null">first_renewal_date = #{firstRenewalDate},</if>
+            <if test="secondExpirationDate != null">second_expiration_date = #{secondExpirationDate},</if>
+            <if test="secondRenewalDate != null">second_renewal_date = #{secondRenewalDate},</if>
+            <if test="thirdExpirationDate != null">third_expiration_date = #{thirdExpirationDate},</if>
+            <if test="thirdRenewalDate != null">third_renewal_date = #{thirdRenewalDate},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecuritySpecialOperationsPersonnelInfoById" parameterType="Long">
+        delete from security_special_operations_personnel_info where id = #{id}
+    </delete>
+
+    <delete id="deleteSecuritySpecialOperationsPersonnelInfoByIds" parameterType="String">
+        delete from security_special_operations_personnel_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

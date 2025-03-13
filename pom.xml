@@ -199,6 +199,22 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- 供应商模块 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>heli-supplier</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+            <!-- 安全模块-->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>security-conm</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+
+
         </dependencies>
     </dependencyManagement>
 
@@ -211,6 +227,8 @@
         <module>ruoyi-common</module>
         <module>heli-device</module>
         <module>heli-production</module>
+        <module>security-conm</module>
+        <module>heli-supplier</module>
     </modules>
     <packaging>pom</packaging>
 

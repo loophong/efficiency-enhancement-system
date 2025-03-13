@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityRelatedPartyPreManagementMapper">
+    
+    <resultMap type="SecurityRelatedPartyPreManagement" id="SecurityRelatedPartyPreManagementResult">
+        <result property="id"    column="id"    />
+        <result property="uploadDate"    column="upload_date"    />
+        <result property="uploadBy"    column="upload_by"    />
+        <result property="uploadDept"    column="upload_dept"    />
+        <result property="files"    column="files"    />
+        <result property="comment"    column="comment"    />
+    </resultMap>
+
+    <sql id="selectSecurityRelatedPartyPreManagementVo">
+        select id, upload_date, upload_by, upload_dept, files, comment from security_related_party_pre_management
+    </sql>
+
+    <select id="selectSecurityRelatedPartyPreManagementList" parameterType="SecurityRelatedPartyPreManagement" resultMap="SecurityRelatedPartyPreManagementResult">
+        <include refid="selectSecurityRelatedPartyPreManagementVo"/>
+        <where>  
+            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
+            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
+            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="files != null  and files != ''"> and files = #{files}</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityRelatedPartyPreManagementById" parameterType="String" resultMap="SecurityRelatedPartyPreManagementResult">
+        <include refid="selectSecurityRelatedPartyPreManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityRelatedPartyPreManagement" parameterType="SecurityRelatedPartyPreManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into security_related_party_pre_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date,</if>
+            <if test="uploadBy != null">upload_by,</if>
+            <if test="uploadDept != null">upload_dept,</if>
+            <if test="files != null">files,</if>
+            <if test="comment != null">comment,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uploadDate != null">#{uploadDate},</if>
+            <if test="uploadBy != null">#{uploadBy},</if>
+            <if test="uploadDept != null">#{uploadDept},</if>
+            <if test="files != null">#{files},</if>
+            <if test="comment != null">#{comment},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityRelatedPartyPreManagement" parameterType="SecurityRelatedPartyPreManagement">
+        update security_related_party_pre_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
+            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
+            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
+            <if test="files != null">files = #{files},</if>
+            <if test="comment != null">comment = #{comment},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityRelatedPartyPreManagementById" parameterType="String">
+        delete from security_related_party_pre_management where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityRelatedPartyPreManagementByIds" parameterType="String">
+        delete from security_related_party_pre_management where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

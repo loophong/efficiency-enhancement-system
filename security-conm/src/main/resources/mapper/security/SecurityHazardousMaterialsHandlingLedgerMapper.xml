@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityHazardousMaterialsHandlingLedgerMapper">
+    
+    <resultMap type="SecurityHazardousMaterialsHandlingLedger" id="SecurityHazardousMaterialsHandlingLedgerResult">
+        <result property="id"    column="id"    />
+        <result property="handlingTime"    column="handling_time"    />
+        <result property="chemicalName"    column="chemical_name"    />
+        <result property="userInCharge"    column="user_in_charge"    />
+        <result property="handlingQuantity"    column="handling_quantity"    />
+        <result property="handlingMethod"    column="handling_method"    />
+        <result property="isCompliant"    column="is_compliant"    />
+        <result property="handler"    column="handler"    />
+    </resultMap>
+
+    <sql id="selectSecurityHazardousMaterialsHandlingLedgerVo">
+        select id, handling_time, chemical_name, user_in_charge, handling_quantity, handling_method, is_compliant, handler from security_hazardous_materials_handling_ledger
+    </sql>
+
+    <select id="selectSecurityHazardousMaterialsHandlingLedgerList" parameterType="SecurityHazardousMaterialsHandlingLedger" resultMap="SecurityHazardousMaterialsHandlingLedgerResult">
+        <include refid="selectSecurityHazardousMaterialsHandlingLedgerVo"/>
+        <where>  
+            <if test="handlingTime != null "> and handling_time = #{handlingTime}</if>
+            <if test="chemicalName != null  and chemicalName != ''"> and chemical_name like concat('%', #{chemicalName}, '%')</if>
+            <if test="userInCharge != null  and userInCharge != ''"> and user_in_charge = #{userInCharge}</if>
+            <if test="handlingQuantity != null "> and handling_quantity = #{handlingQuantity}</if>
+            <if test="handlingMethod != null  and handlingMethod != ''"> and handling_method = #{handlingMethod}</if>
+            <if test="isCompliant != null "> and is_compliant = #{isCompliant}</if>
+            <if test="handler != null  and handler != ''"> and handler = #{handler}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityHazardousMaterialsHandlingLedgerById" parameterType="Long" resultMap="SecurityHazardousMaterialsHandlingLedgerResult">
+        <include refid="selectSecurityHazardousMaterialsHandlingLedgerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityHazardousMaterialsHandlingLedger" parameterType="SecurityHazardousMaterialsHandlingLedger" useGeneratedKeys="true" keyProperty="id">
+        insert into security_hazardous_materials_handling_ledger
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="handlingTime != null">handling_time,</if>
+            <if test="chemicalName != null and chemicalName != ''">chemical_name,</if>
+            <if test="userInCharge != null">user_in_charge,</if>
+            <if test="handlingQuantity != null">handling_quantity,</if>
+            <if test="handlingMethod != null">handling_method,</if>
+            <if test="isCompliant != null">is_compliant,</if>
+            <if test="handler != null">handler,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="handlingTime != null">#{handlingTime},</if>
+            <if test="chemicalName != null and chemicalName != ''">#{chemicalName},</if>
+            <if test="userInCharge != null">#{userInCharge},</if>
+            <if test="handlingQuantity != null">#{handlingQuantity},</if>
+            <if test="handlingMethod != null">#{handlingMethod},</if>
+            <if test="isCompliant != null">#{isCompliant},</if>
+            <if test="handler != null">#{handler},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityHazardousMaterialsHandlingLedger" parameterType="SecurityHazardousMaterialsHandlingLedger">
+        update security_hazardous_materials_handling_ledger
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="handlingTime != null">handling_time = #{handlingTime},</if>
+            <if test="chemicalName != null and chemicalName != ''">chemical_name = #{chemicalName},</if>
+            <if test="userInCharge != null">user_in_charge = #{userInCharge},</if>
+            <if test="handlingQuantity != null">handling_quantity = #{handlingQuantity},</if>
+            <if test="handlingMethod != null">handling_method = #{handlingMethod},</if>
+            <if test="isCompliant != null">is_compliant = #{isCompliant},</if>
+            <if test="handler != null">handler = #{handler},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityHazardousMaterialsHandlingLedgerById" parameterType="Long">
+        delete from security_hazardous_materials_handling_ledger where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityHazardousMaterialsHandlingLedgerByIds" parameterType="String">
+        delete from security_hazardous_materials_handling_ledger where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

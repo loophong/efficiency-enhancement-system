@@ -1,9 +1,13 @@
 package com.heli.production.controller;
 
+import com.heli.production.domain.dto.SpecialHandleDTO;
 import com.heli.production.domain.entity.SpecialCasesEntity;
 import com.heli.production.service.ISpecialCasesService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+
+import com.ruoyi.framework.websocket.WebSocketServer;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +38,8 @@ import java.util.List;
 public class SpecialCasesController extends BaseController {
     @Autowired
     private ISpecialCasesService specialCasesService;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     /**
      * 查询特殊情况列表
@@ -73,6 +80,8 @@ public class SpecialCasesController extends BaseController {
     @Log(title = "特殊情况", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody SpecialCasesEntity specialCases) {
+        webSocketServer.sendMessage(1L, "您有新的特殊情况，请及时处理");
+
         return toAjax(specialCasesService.insertSpecialCases(specialCases));
     }
 
@@ -82,8 +91,16 @@ public class SpecialCasesController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:special:edit')")
     @Log(title = "特殊情况", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody SpecialCasesEntity specialCases) {
-        return toAjax(specialCasesService.updateSpecialCases(specialCases));
+    public AjaxResult edit(@RequestBody SpecialHandleDTO dto) {
+        List<Long> notifyUserList = dto.getNotifyUserList();
+        if(notifyUserList != null ){
+            for (Long id : notifyUserList) {
+                webSocketServer.sendMessage(id, "生产有重要特殊情况处理，请及时查看");
+            }
+        }
+        SpecialCasesEntity specialCasesEntity = new SpecialCasesEntity();
+        BeanUtils.copyProperties(dto, specialCasesEntity);
+        return toAjax(specialCasesService.updateSpecialCases(specialCasesEntity));
     }
 
     /**
@@ -93,6 +110,7 @@ public class SpecialCasesController extends BaseController {
     @Log(title = "特殊情况", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
-        return toAjax(specialCasesService.deleteSpecialCasesByIds(ids));
+        return toAjax(specialCasesService.removeByIds(Arrays.asList(ids)));
+
     }
 }
