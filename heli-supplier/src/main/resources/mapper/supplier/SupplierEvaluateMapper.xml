@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierEvaluateMapper">
+    
+    <resultMap type="SupplierEvaluate" id="SupplierEvaluateResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="qualityIncident"    column="quality_incident"    />
+        <result property="firstInspectionPassrate"    column="first_inspection_passRate"    />
+        <result property="zeroKilometerFailurerate"    column="zero_kilometer_failureRate"    />
+        <result property="qualityNotificationOrderrate"    column="quality_notification_orderRate"    />
+        <result property="feedbackOrderletterTimeliness"    column="feedback_orderLetter_timeliness"    />
+        <result property="warrantyperiodRepairrate"    column="warrantyPeriod_repairRate"    />
+        <result property="threepackageComponentRepairrate"    column="threePackage_component_repairRate"    />
+        <result property="secondpartyAuditscore"    column="secondParty_auditScore"    />
+        <result property="selfinspectionReportaccuracy"    column="selfInspection_reportAccuracy"    />
+        <result property="productmaterialParametersizeChange"    column="productMaterial_parameterSize_Change"    />
+        <result property="weight"    column="weight"    />
+        <result property="businessRisk"    column="business_risk"    />
+        <result property="supplyGuarantee"    column="supply_guarantee"    />
+        <result property="priceCompetitiveness"    column="price_competitiveness"    />
+        <result property="costreductionSupport"    column="costReduction_support"    />
+        <result property="serviceAndCoordination"    column="service_and_coordination"    />
+        <result property="priceIntegrity"    column="price_integrity"    />
+        <result property="paymentRestrictionconditions"    column="payment_restrictionConditions"    />
+        <result property="newproductDevelopmentCooperationdegree"    column="newProduct_development_cooperationDegree"    />
+        <result property="producttechnologyproblemImprovementtimeliness"    column="productTechnologyProblem_improvementTimeliness"    />
+        <result property="totalScore"    column="total_score"    />
+        <result property="happenTime"    column="happen_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="one"    column="one"    />
+        <result property="two"    column="two"    />
+        <result property="three"    column="three"    />
+        <result property="storageFlag"    column="storage_flag"    />
+    </resultMap>
+
+    <sql id="selectSupplierEvaluateVo">
+        select id, supplier_code, supplier_name, quality_incident, first_inspection_passRate, zero_kilometer_failureRate, quality_notification_orderRate, feedback_orderLetter_timeliness, warrantyPeriod_repairRate, threePackage_component_repairRate, secondParty_auditScore, selfInspection_reportAccuracy, productMaterial_parameterSize_Change, weight, business_risk, supply_guarantee, price_competitiveness, costReduction_support, service_and_coordination, price_integrity, payment_restrictionConditions, newProduct_development_cooperationDegree, productTechnologyProblem_improvementTimeliness, total_score, happen_time, end_time, one, two, three, storage_flag from supplier_evaluate
+    </sql>
+
+    <select id="selectSupplierEvaluateList" parameterType="SupplierEvaluate" resultMap="SupplierEvaluateResult">
+        <include refid="selectSupplierEvaluateVo"/>
+        <where>  
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="qualityIncident != null "> and quality_incident = #{qualityIncident}</if>
+            <if test="firstInspectionPassrate != null "> and first_inspection_passRate = #{firstInspectionPassrate}</if>
+            <if test="zeroKilometerFailurerate != null "> and zero_kilometer_failureRate = #{zeroKilometerFailurerate}</if>
+            <if test="qualityNotificationOrderrate != null "> and quality_notification_orderRate = #{qualityNotificationOrderrate}</if>
+            <if test="feedbackOrderletterTimeliness != null "> and feedback_orderLetter_timeliness = #{feedbackOrderletterTimeliness}</if>
+            <if test="warrantyperiodRepairrate != null "> and warrantyPeriod_repairRate = #{warrantyperiodRepairrate}</if>
+            <if test="threepackageComponentRepairrate != null "> and threePackage_component_repairRate = #{threepackageComponentRepairrate}</if>
+            <if test="secondpartyAuditscore != null "> and secondParty_auditScore = #{secondpartyAuditscore}</if>
+            <if test="selfinspectionReportaccuracy != null "> and selfInspection_reportAccuracy = #{selfinspectionReportaccuracy}</if>
+            <if test="productmaterialParametersizeChange != null "> and productMaterial_parameterSize_Change = #{productmaterialParametersizeChange}</if>
+            <if test="weight != null "> and weight = #{weight}</if>
+            <if test="businessRisk != null "> and business_risk = #{businessRisk}</if>
+            <if test="supplyGuarantee != null "> and supply_guarantee = #{supplyGuarantee}</if>
+            <if test="priceCompetitiveness != null "> and price_competitiveness = #{priceCompetitiveness}</if>
+            <if test="costreductionSupport != null "> and costReduction_support = #{costreductionSupport}</if>
+            <if test="serviceAndCoordination != null "> and service_and_coordination = #{serviceAndCoordination}</if>
+            <if test="priceIntegrity != null "> and price_integrity = #{priceIntegrity}</if>
+            <if test="paymentRestrictionconditions != null "> and payment_restrictionConditions = #{paymentRestrictionconditions}</if>
+            <if test="newproductDevelopmentCooperationdegree != null "> and newProduct_development_cooperationDegree = #{newproductDevelopmentCooperationdegree}</if>
+            <if test="producttechnologyproblemImprovementtimeliness != null "> and productTechnologyProblem_improvementTimeliness = #{producttechnologyproblemImprovementtimeliness}</if>
+            <if test="totalScore != null "> and total_score = #{totalScore}</if>
+            <if test="happenTime != null "> and happen_time = #{happenTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="one != null  and one != ''"> and one = #{one}</if>
+            <if test="two != null "> and two = #{two}</if>
+            <if test="three != null  and three != ''"> and three = #{three}</if>
+            <if test="storageFlag != null "> and storage_flag = #{storageFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectSupplierEvaluateById" parameterType="String" resultMap="SupplierEvaluateResult">
+        <include refid="selectSupplierEvaluateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierEvaluate" parameterType="SupplierEvaluate">
+        insert into supplier_evaluate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="qualityIncident != null">quality_incident,</if>
+            <if test="firstInspectionPassrate != null">first_inspection_passRate,</if>
+            <if test="zeroKilometerFailurerate != null">zero_kilometer_failureRate,</if>
+            <if test="qualityNotificationOrderrate != null">quality_notification_orderRate,</if>
+            <if test="feedbackOrderletterTimeliness != null">feedback_orderLetter_timeliness,</if>
+            <if test="warrantyperiodRepairrate != null">warrantyPeriod_repairRate,</if>
+            <if test="threepackageComponentRepairrate != null">threePackage_component_repairRate,</if>
+            <if test="secondpartyAuditscore != null">secondParty_auditScore,</if>
+            <if test="selfinspectionReportaccuracy != null">selfInspection_reportAccuracy,</if>
+            <if test="productmaterialParametersizeChange != null">productMaterial_parameterSize_Change,</if>
+            <if test="weight != null">weight,</if>
+            <if test="businessRisk != null">business_risk,</if>
+            <if test="supplyGuarantee != null">supply_guarantee,</if>
+            <if test="priceCompetitiveness != null">price_competitiveness,</if>
+            <if test="costreductionSupport != null">costReduction_support,</if>
+            <if test="serviceAndCoordination != null">service_and_coordination,</if>
+            <if test="priceIntegrity != null">price_integrity,</if>
+            <if test="paymentRestrictionconditions != null">payment_restrictionConditions,</if>
+            <if test="newproductDevelopmentCooperationdegree != null">newProduct_development_cooperationDegree,</if>
+            <if test="producttechnologyproblemImprovementtimeliness != null">productTechnologyProblem_improvementTimeliness,</if>
+            <if test="totalScore != null">total_score,</if>
+            <if test="happenTime != null">happen_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="one != null">one,</if>
+            <if test="two != null">two,</if>
+            <if test="three != null">three,</if>
+            <if test="storageFlag != null">storage_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="qualityIncident != null">#{qualityIncident},</if>
+            <if test="firstInspectionPassrate != null">#{firstInspectionPassrate},</if>
+            <if test="zeroKilometerFailurerate != null">#{zeroKilometerFailurerate},</if>
+            <if test="qualityNotificationOrderrate != null">#{qualityNotificationOrderrate},</if>
+            <if test="feedbackOrderletterTimeliness != null">#{feedbackOrderletterTimeliness},</if>
+            <if test="warrantyperiodRepairrate != null">#{warrantyperiodRepairrate},</if>
+            <if test="threepackageComponentRepairrate != null">#{threepackageComponentRepairrate},</if>
+            <if test="secondpartyAuditscore != null">#{secondpartyAuditscore},</if>
+            <if test="selfinspectionReportaccuracy != null">#{selfinspectionReportaccuracy},</if>
+            <if test="productmaterialParametersizeChange != null">#{productmaterialParametersizeChange},</if>
+            <if test="weight != null">#{weight},</if>
+            <if test="businessRisk != null">#{businessRisk},</if>
+            <if test="supplyGuarantee != null">#{supplyGuarantee},</if>
+            <if test="priceCompetitiveness != null">#{priceCompetitiveness},</if>
+            <if test="costreductionSupport != null">#{costreductionSupport},</if>
+            <if test="serviceAndCoordination != null">#{serviceAndCoordination},</if>
+            <if test="priceIntegrity != null">#{priceIntegrity},</if>
+            <if test="paymentRestrictionconditions != null">#{paymentRestrictionconditions},</if>
+            <if test="newproductDevelopmentCooperationdegree != null">#{newproductDevelopmentCooperationdegree},</if>
+            <if test="producttechnologyproblemImprovementtimeliness != null">#{producttechnologyproblemImprovementtimeliness},</if>
+            <if test="totalScore != null">#{totalScore},</if>
+            <if test="happenTime != null">#{happenTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="one != null">#{one},</if>
+            <if test="two != null">#{two},</if>
+            <if test="three != null">#{three},</if>
+            <if test="storageFlag != null">#{storageFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSupplierEvaluate" parameterType="SupplierEvaluate">
+        update supplier_evaluate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="qualityIncident != null">quality_incident = #{qualityIncident},</if>
+            <if test="firstInspectionPassrate != null">first_inspection_passRate = #{firstInspectionPassrate},</if>
+            <if test="zeroKilometerFailurerate != null">zero_kilometer_failureRate = #{zeroKilometerFailurerate},</if>
+            <if test="qualityNotificationOrderrate != null">quality_notification_orderRate = #{qualityNotificationOrderrate},</if>
+            <if test="feedbackOrderletterTimeliness != null">feedback_orderLetter_timeliness = #{feedbackOrderletterTimeliness},</if>
+            <if test="warrantyperiodRepairrate != null">warrantyPeriod_repairRate = #{warrantyperiodRepairrate},</if>
+            <if test="threepackageComponentRepairrate != null">threePackage_component_repairRate = #{threepackageComponentRepairrate},</if>
+            <if test="secondpartyAuditscore != null">secondParty_auditScore = #{secondpartyAuditscore},</if>
+            <if test="selfinspectionReportaccuracy != null">selfInspection_reportAccuracy = #{selfinspectionReportaccuracy},</if>
+            <if test="productmaterialParametersizeChange != null">productMaterial_parameterSize_Change = #{productmaterialParametersizeChange},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="businessRisk != null">business_risk = #{businessRisk},</if>
+            <if test="supplyGuarantee != null">supply_guarantee = #{supplyGuarantee},</if>
+            <if test="priceCompetitiveness != null">price_competitiveness = #{priceCompetitiveness},</if>
+            <if test="costreductionSupport != null">costReduction_support = #{costreductionSupport},</if>
+            <if test="serviceAndCoordination != null">service_and_coordination = #{serviceAndCoordination},</if>
+            <if test="priceIntegrity != null">price_integrity = #{priceIntegrity},</if>
+            <if test="paymentRestrictionconditions != null">payment_restrictionConditions = #{paymentRestrictionconditions},</if>
+            <if test="newproductDevelopmentCooperationdegree != null">newProduct_development_cooperationDegree = #{newproductDevelopmentCooperationdegree},</if>
+            <if test="producttechnologyproblemImprovementtimeliness != null">productTechnologyProblem_improvementTimeliness = #{producttechnologyproblemImprovementtimeliness},</if>
+            <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="happenTime != null">happen_time = #{happenTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="one != null">one = #{one},</if>
+            <if test="two != null">two = #{two},</if>
+            <if test="three != null">three = #{three},</if>
+            <if test="storageFlag != null">storage_flag = #{storageFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierEvaluateById" parameterType="String">
+        delete from supplier_evaluate where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierEvaluateByIds" parameterType="String">
+        delete from supplier_evaluate where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
