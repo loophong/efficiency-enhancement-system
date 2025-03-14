@@ -1,10 +1,14 @@
 package com.heli.supplier.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +25,7 @@ import com.heli.supplier.domain.SupplierReturnRate;
 import com.heli.supplier.service.ISupplierReturnRateService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 售后返修率Controller
@@ -36,6 +41,23 @@ public class SupplierReturnRateController extends BaseController
     @Autowired
     private ISupplierReturnRateService supplierReturnRateService;
 
+
+    @Log(title = "[返修率表]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    @Transactional
+    public void importTable(MultipartFile excelFile, Date uploadMonth) {
+        log.info("传入的参数为 " +excelFile);
+        log.info("传入的参数为 " +uploadMonth);
+//        log.info("传入的uploadMonth为 " + uploadMonth);
+//        MultipartFile excelFile = uploadFileDTO.getExcelFile();
+//        Date uploadMonth = uploadFileDTO.getUploadMonth();
+        try {
+            supplierReturnRateService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
     /**
      * 查询售后返修率列表
      */

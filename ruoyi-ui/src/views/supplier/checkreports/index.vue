@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商编码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -17,13 +17,21 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
+      <!-- <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
         <el-date-picker clearable
           v-model="queryParams.responsibilityJudgmentTime"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择判定责任时间点">
         </el-date-picker>
+      </el-form-item>
+      <el-form-item label="具体内容" prop="specificContent">
+        <el-input
+          v-model="queryParams.specificContent"
+          placeholder="请输入具体内容"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
       <el-form-item label="发生时间" prop="happenTime">
         <el-date-picker clearable
@@ -40,7 +48,7 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -105,7 +113,10 @@
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="填报人" align="center" prop="reporter" />
+      <!-- <el-table-column label="填报人" align="center" prop="reporter" /> -->
+      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="备选1" align="center" prop="one" />
+      <el-table-column label="备选2" align="center" prop="two" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:checkreports:edit']">修改</el-button>
@@ -124,7 +135,7 @@
 
     <!-- 添加或修改自检报告对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="checkreportsRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="checkreportsRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商编码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商编码" />
         </el-form-item>
@@ -139,8 +150,8 @@
             placeholder="请选择判定责任时间点">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="具体内容">
-          <editor v-model="form.specificContent" :min-height="192"/>
+        <el-form-item label="具体内容" prop="specificContent">
+          <el-input v-model="form.specificContent" placeholder="请输入具体内容" />
         </el-form-item>
         <el-form-item label="发生时间" prop="happenTime">
           <el-date-picker clearable
@@ -150,9 +161,9 @@
             placeholder="请选择发生时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="填报人" prop="reporter">
+        <!-- <el-form-item label="填报人" prop="reporter">
           <el-input v-model="form.reporter" placeholder="请输入填报人" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

@@ -61,9 +61,24 @@ public class SupplierPriceTrust implements Serializable
     @ExcelProperty(value = "具体内容")
     private String specificContent;
 
+    /** 发生次数 */
+    @Excel(name = "发生次数")
+    @ExcelProperty(value = "发生次数")
+    private Long happenNumber;
+
+    /** 得分 */
+    @Excel(name = "得分")
+    @ExcelProperty(value = "得分")
+    private Double score;
+
     /** 填报人 */
     @Excel(name = "填报人")
     @ExcelProperty(value = "填报人")
     private String uploadName;
 
+    /** 备选 */
+    @ExcelIgnore
+    @Excel(name = "备选")
+    @ExcelProperty(value = "备选")
+    private String one;
 }

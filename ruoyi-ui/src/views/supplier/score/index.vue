@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="不符合项1" prop="notTrue1">
+      <!-- <el-form-item label="不符合项1" prop="notTrue1">
         <el-input
           v-model="queryParams.notTrue1"
           placeholder="请输入不符合项1"
@@ -56,7 +56,7 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="得分" prop="score">
         <el-input
           v-model="queryParams.score"
@@ -73,14 +73,14 @@
           placeholder="请选择上传时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="填报人" prop="uploadName">
+      <!-- <el-form-item label="填报人" prop="uploadName">
         <el-input
           v-model="queryParams.uploadName"
           placeholder="请输入填报人"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -131,7 +131,7 @@
 
     <el-table v-loading="loading" :data="scoreList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
+      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="不符合项1" align="center" prop="notTrue1" />
@@ -145,7 +145,7 @@
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="填报人" align="center" prop="uploadName" />
+      <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:score:edit']">修改</el-button>
@@ -164,7 +164,7 @@
 
     <!-- 添加或修改二方审核得分对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="scoreRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="scoreRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
@@ -186,9 +186,9 @@
         <el-form-item label="不符合项5" prop="notTrue5">
           <el-input v-model="form.notTrue5" placeholder="请输入不符合项5" />
         </el-form-item>
-        <el-form-item label="得分" prop="score">
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="上传时间" prop="time">
           <el-date-picker clearable
             v-model="form.time"
@@ -197,9 +197,9 @@
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="填报人" prop="uploadName">
+        <!-- <el-form-item label="填报人" prop="uploadName">
           <el-input v-model="form.uploadName" placeholder="请输入填报人" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="记录时间" prop="time">
+      <el-form-item label="记录时间" prop="time" style="width: 300px;">
         <el-date-picker clearable
           v-model="queryParams.time"
           type="date"
@@ -25,7 +25,7 @@
           placeholder="请选择记录时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" prop="letter">
+      <!-- <el-form-item label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" prop="letter">
         <el-select v-model="queryParams.letter" placeholder="请选择供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" clearable>
           <el-option
             v-for="dict in supplier_performance_services_collaboration_one"
@@ -54,7 +54,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="得分" prop="score">
         <el-input
           v-model="queryParams.score"

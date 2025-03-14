@@ -229,4 +229,38 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         calendar.add(Calendar.YEAR, -1);
         return calendar.getTime();
     }
+
+    /**
+     *  获取本月第一天
+     * @param happenTime
+     * @return
+     */
+    public static Date getMonthFirstDay(Date happenTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(happenTime);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        return calendar.getTime();
+    }
+
+    /**
+     *  获取上个月的最后一天
+     * @param endTime
+     * @return
+     */
+    public static Date getLastMonthEndDay(Date endTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endTime);
+        // 设置为当前月份的第一天
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        // 将月份减去1，表示上个月
+        calendar.add(Calendar.MONTH, -1);
+        // 设置为最后一秒（23:59:59.999）
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        // 设置为上个月的最后一天
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        return calendar.getTime();
+    }
 }

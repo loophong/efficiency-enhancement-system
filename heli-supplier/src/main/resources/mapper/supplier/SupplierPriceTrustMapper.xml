@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.supplier.mapper.SupplierPriceTrustMapper">
-    
+
     <resultMap type="SupplierPriceTrust" id="SupplierPriceTrustResult">
         <result property="id"    column="id"    />
         <result property="supplierCode"    column="supplier_code"    />
@@ -11,25 +11,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="invoiceNumber"    column="invoice_number"    />
         <result property="time"    column="time"    />
         <result property="specificContent"    column="specific_content"    />
+        <result property="happenNumber"    column="happen_number"    />
+        <result property="score"    column="score"    />
         <result property="uploadName"    column="upload_name"    />
+        <result property="one"    column="one"    />
     </resultMap>
 
     <sql id="selectSupplierPriceTrustVo">
-        select id, supplier_code, supplier_name, invoice_number, time, specific_content, upload_name from supplier_price_trust
+        select id, supplier_code, supplier_name, invoice_number, time, specific_content, happen_number, score, upload_name, one from supplier_price_trust
     </sql>
+    <!-- 在 SupplierPriceTrustMapper.xml 中添加 -->
+    <select id="selectBySupplierCode" resultType="com.heli.supplier.domain.SupplierPriceTrust">
+        SELECT * FROM supplier_price_trust WHERE supplier_code = #{supplierCode}
+    </select>
 
     <select id="selectSupplierPriceTrustList" parameterType="SupplierPriceTrust" resultMap="SupplierPriceTrustResult">
         <include refid="selectSupplierPriceTrustVo"/>
-        <where>  
+        <where>
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
-            <if test="invoiceNumber != null "> and invoice_number = #{invoiceNumber}</if>
+            <if test="invoiceNumber != null  and invoiceNumber != ''"> and invoice_number = #{invoiceNumber}</if>
             <if test="time != null "> and time = #{time}</if>
             <if test="specificContent != null  and specificContent != ''"> and specific_content = #{specificContent}</if>
+            <if test="happenNumber != null "> and happen_number = #{happenNumber}</if>
+            <if test="score != null "> and score = #{score}</if>
             <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>
+            <if test="one != null  and one != ''"> and one = #{one}</if>
         </where>
     </select>
-    
+
     <select id="selectSupplierPriceTrustById" parameterType="String" resultMap="SupplierPriceTrustResult">
         <include refid="selectSupplierPriceTrustVo"/>
         where id = #{id}
@@ -43,16 +53,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="invoiceNumber != null">invoice_number,</if>
             <if test="time != null">time,</if>
             <if test="specificContent != null">specific_content,</if>
+            <if test="happenNumber != null">happen_number,</if>
+            <if test="score != null">score,</if>
             <if test="uploadName != null">upload_name,</if>
-         </trim>
+            <if test="one != null">one,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="invoiceNumber != null">#{invoiceNumber},</if>
             <if test="time != null">#{time},</if>
             <if test="specificContent != null">#{specificContent},</if>
+            <if test="happenNumber != null">#{happenNumber},</if>
+            <if test="score != null">#{score},</if>
             <if test="uploadName != null">#{uploadName},</if>
-         </trim>
+            <if test="one != null">#{one},</if>
+        </trim>
     </insert>
 
     <update id="updateSupplierPriceTrust" parameterType="SupplierPriceTrust">
@@ -63,7 +79,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="invoiceNumber != null">invoice_number = #{invoiceNumber},</if>
             <if test="time != null">time = #{time},</if>
             <if test="specificContent != null">specific_content = #{specificContent},</if>
+            <if test="happenNumber != null">happen_number = #{happenNumber},</if>
+            <if test="score != null">score = #{score},</if>
             <if test="uploadName != null">upload_name = #{uploadName},</if>
+            <if test="one != null">one = #{one},</if>
         </trim>
         where id = #{id}
     </update>
@@ -73,7 +92,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSupplierPriceTrustByIds" parameterType="String">
-        delete from supplier_price_trust where id in 
+        delete from supplier_price_trust where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

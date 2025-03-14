@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="供应商代码" prop="supplierCode">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="供应商代码" prop="supplierCode" style="width: 320px;">
         <el-input
           v-model="queryParams.supplierCode"
           placeholder="请输入供应商代码"
@@ -9,7 +9,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="供应商名称" prop="supplierName">
+      <el-form-item label="供应商名称" prop="supplierName"  style="width: 320px;">
         <el-input
           v-model="queryParams.supplierName"
           placeholder="请输入供应商名称"
@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="数据合格率" prop="quantityPassRate">
+      <el-form-item label="数据合格率" prop="quantityPassRate"  style="width: 320px;">
         <el-input
           v-model="queryParams.quantityPassRate"
           placeholder="请输入数据合格率"
@@ -25,7 +25,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="上次月份" prop="updateMonth">
+      <el-form-item label="上传月份" prop="updateMonth" style="width: 320px;">
         <el-date-picker clearable
           v-model="queryParams.updateMonth"
           type="date"
@@ -33,14 +33,14 @@
           placeholder="请选择上次月份">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="填报人" prop="addName">
+      <!-- <el-form-item label="填报人" prop="addName">
         <el-input
           v-model="queryParams.addName"
           placeholder="请输入填报人"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -101,12 +101,15 @@
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="数据合格率" align="center" prop="quantityPassRate" />
-      <el-table-column label="上次月份" align="center" prop="updateMonth" width="180">
+      <el-table-column label="上传月份" align="center" prop="updateMonth" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.updateMonth, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.updateMonth, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="填报人" align="center" prop="addName" />
+      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="备选1" align="center" prop="one" />
+      <el-table-column label="备选2" align="center" prop="two" /> -->
+      <!-- <el-table-column label="填报人" align="center" prop="addName" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:onetimesimple:edit']">修改</el-button>
@@ -125,7 +128,7 @@
 
     <!-- 添加或修改一次交检合格率-简化版对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="onetimesimpleRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="onetimesimpleRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
@@ -135,7 +138,7 @@
         <el-form-item label="数据合格率" prop="quantityPassRate">
           <el-input v-model="form.quantityPassRate" placeholder="请输入数据合格率" />
         </el-form-item>
-        <el-form-item label="上次月份" prop="updateMonth">
+        <el-form-item label="上传月份" prop="updateMonth">
           <!-- <el-date-picker clearable
             v-model="form.updateMonth"
                       type="month"
@@ -145,12 +148,14 @@
           <el-date-picker
           v-model="form.updateMonth"
           type="month"
+        
           placeholder="Pick a month"
         />
         </el-form-item>
-        <el-form-item label="填报人" prop="addName">
+        
+        <!-- <el-form-item label="填报人" prop="addName">
           <el-input v-model="form.addName" placeholder="请输入填报人" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -217,7 +222,9 @@ const isLoading = ref(false);
 const inputFile = ref(null);
 
 const data = reactive({
-  form: {},
+  form: {
+    // files: [] // 添加一个数组来存储文件  修改
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -232,6 +239,14 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// // 定义 parseTime 函数
+// function parseTime(time, format) {
+//   if (time == null || time === '') {
+//     return '';
+//   }
+//   return dayjs(time).format(format);
+// }
 
 /** 查询一次交检合格率-简化版列表 */
 function getList() {
@@ -397,6 +412,8 @@ function uploadFile() {
   }
 }
 
+
+
 /** 检查文件是否为excel */
 function checkFile() {
   const file = inputFile.value.files[0];
@@ -406,9 +423,11 @@ function checkFile() {
   if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
     proxy.$modal.msgError("只能上传 Excel 文件！");
     resetUpload();
-  }
+  // }else {//修改
+  //   data.form.files.push(file); // 将文件添加到数组中
+  // }
 }
-
+}
 /** excel文件上传 */
 // function uploadFile() {
 //   console.log('开始上传文件');

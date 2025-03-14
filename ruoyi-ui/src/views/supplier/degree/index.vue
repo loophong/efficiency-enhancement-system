@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -17,15 +17,15 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="具体内容" prop="specificContent">
+      <!-- <el-form-item label="具体内容" prop="specificContent">
         <el-input
           v-model="queryParams.specificContent"
           placeholder="请输入具体内容"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="配合程度" prop="cooperationDegree">
+      </el-form-item> -->
+      <el-form-item label="配合程度" prop="cooperationDegree" style="width: 280px;">
         <el-select v-model="queryParams.cooperationDegree" placeholder="请选择配合程度" clearable>
           <el-option
             v-for="dict in supplier_cooperation_degree"
@@ -35,31 +35,31 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="上传时间" prop="month">
+      <!-- <el-form-item label="上传时间" prop="month">
         <el-date-picker clearable
           v-model="queryParams.month"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item label="得分" prop="score">
+      </el-form-item> -->
+      <!-- <el-form-item label="得分" prop="score">
         <el-input
           v-model="queryParams.score"
           placeholder="请输入得分"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="填报人" prop="uploadName">
+      </el-form-item> -->
+      <!-- <el-form-item label="填报人" prop="uploadName">
         <el-input
           v-model="queryParams.uploadName"
           placeholder="请输入填报人"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item>
+      </el-form-item> -->
+      <el-form-item >
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
@@ -124,7 +124,7 @@
         </template>
       </el-table-column>
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="填报人" align="center" prop="uploadName" />
+      <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:degree:edit']">修改</el-button>
@@ -143,7 +143,7 @@
 
     <!-- 添加或修改新产品研发配合程度对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="degreeRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="degreeRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
@@ -171,12 +171,12 @@
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="得分" prop="score">
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
         <el-form-item label="填报人" prop="uploadName">
           <el-input v-model="form.uploadName" placeholder="请输入填报人" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

@@ -1,15 +1,21 @@
 package com.heli.supplier.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.heli.supplier.domain.SuppliersQualified;
-import com.heli.supplier.mapper.SuppliersQualifiedMapper;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.heli.supplier.listener.OnetimeSimpleListener;
+import com.heli.supplier.listener.ReturnRateListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.supplier.mapper.SupplierReturnRateMapper;
 import com.heli.supplier.domain.SupplierReturnRate;
 import com.heli.supplier.service.ISupplierReturnRateService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 售后返修率Service业务层处理
@@ -18,6 +24,7 @@ import com.heli.supplier.service.ISupplierReturnRateService;
  * @date 2025-02-27
  */
 @Service
+@Slf4j
 public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRateMapper, SupplierReturnRate> implements ISupplierReturnRateService
 {
     @Autowired
@@ -94,4 +101,38 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     {
         return supplierReturnRateMapper.deleteSupplierReturnRateById(id);
     }
+    @Override
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
+        try {
+            // 清空表单
+            this.remove(new QueryWrapper<>());
+
+//            this.remove(new LambdaQueryWrapper<SuppliersQualified>()
+//                    .eq(SuppliersQualified::getDate,date));
+
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+
+            try {
+
+                EasyExcel.read(excelFile.getInputStream(), SupplierReturnRate.class, new ReturnRateListener(supplierReturnRateMapper,uploadMonth)).
+                        sheet().doRead();
+//                EasyExcel.read(excelFile.getInputStream(), HistoryOrderEntity.class, new HistoryOrderListener(historyOrderMapper, date)).sheet().doRead();
+                log.info("读取文件成功: {}", fileName);
+
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+
+//            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+//            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
+
+
+
+
 }

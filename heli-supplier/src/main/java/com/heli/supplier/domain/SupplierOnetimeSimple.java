@@ -61,8 +61,8 @@ public class SupplierOnetimeSimple implements Serializable {
      * 上次月份
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上次月份", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上次月份")
+    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
+    @ExcelProperty(value = "上传月份")
     private Date updateMonth;
 
     /**
@@ -71,5 +71,20 @@ public class SupplierOnetimeSimple implements Serializable {
     @Excel(name = "填报人")
     @ExcelProperty(value = "填报人")
     private String addName;
+
+    /** 分数 */
+    @Excel(name = "分数")
+    private Double score;
+
+    /** 备选1 */
+    @Excel(name = "备选1")
+    @ExcelIgnore
+    private String one;
+
+    /** 备选2 */
+    @Excel(name = "备选2")
+    @ExcelIgnore
+    private String two;
+
 
 }

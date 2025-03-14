@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="供应商代码" prop="supplierCode">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="供应商代码" prop="supplierCode" style="width: 240px;">
         <el-input
           v-model="queryParams.supplierCode"
           placeholder="请输入供应商代码"
@@ -9,7 +9,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="供应商名称" prop="supplierName">
+      <el-form-item label="供应商名称" prop="supplierName" style="width: 240px;">
         <el-input
           v-model="queryParams.supplierName"
           placeholder="请输入供应商名称"
@@ -17,30 +17,46 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="发票号" prop="invoiceNumber">
+      <el-form-item label="发生次数" prop="happenNumber" style="width: 230px;">
+        <el-input
+          v-model="queryParams.happenNumber"
+          placeholder="请输入发生次数"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="得分" prop="score" style="width: 230px;">
+        <el-input
+          v-model="queryParams.score"
+          placeholder="请输入得分"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <!-- <el-form-item label="发票号" prop="invoiceNumber">
         <el-input
           v-model="queryParams.invoiceNumber"
           placeholder="请输入发票号"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="日期" prop="time">
+      </el-form-item> -->
+      <!-- <el-form-item label="日期" prop="time">
         <el-date-picker clearable
           v-model="queryParams.time"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择日期">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item label="填报人" prop="uploadName">
+      </el-form-item> -->
+      <!-- <el-form-item label="填报人" prop="uploadName">
         <el-input
           v-model="queryParams.uploadName"
           placeholder="请输入填报人"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -101,7 +117,10 @@
         </template>
       </el-table-column>
       <el-table-column label="具体内容" align="center" prop="specificContent" />
+      <el-table-column label="发生次数" align="center" prop="happenNumber" />
+      <el-table-column label="得分" align="center" prop="score" />
       <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
+      <!-- <el-table-column label="备选" align="center" prop="one" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:pricetrust:edit']">修改</el-button>
@@ -119,8 +138,8 @@
     />
 
     <!-- 添加或修改价格诚信对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="pricetrustRef" :model="form" :rules="rules" label-width="80px">
+     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+      <el-form ref="pricetrustRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
@@ -138,12 +157,21 @@
             placeholder="请选择日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="具体内容">
-          <editor v-model="form.specificContent" :min-height="192"/>
+        <el-form-item label="具体内容" prop="specificContent">
+          <el-input v-model="form.specificContent" placeholder="请输入具体内容" />
         </el-form-item>
-        <el-form-item label="填报人" prop="uploadName">
+        <!-- <el-form-item label="发生次数" prop="happenNumber">
+          <el-input v-model="form.happenNumber" placeholder="请输入发生次数" />
+        </el-form-item> -->
+        <!-- <el-form-item label="得分" prop="score">
+          <el-input v-model="form.score" placeholder="请输入得分" />
+        </el-form-item> -->
+        <!-- <el-form-item label="填报人" prop="uploadName">
           <el-input v-model="form.uploadName" placeholder="请输入填报人" />
         </el-form-item>
+        <el-form-item label="备选" prop="one">
+          <el-input v-model="form.one" placeholder="请输入备选" />
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -296,3 +324,12 @@ function handleExport() {
 
 getList();
 </script>
+
+
+<style scoped>
+.max-two-rows {
+  max-height: 48px; /* 根据字体大小和行高调整高度 */
+  overflow-y: auto; /* 添加滚动条以便查看超出两行的内容 */
+  line-height: 1.5; /* 调整行高 */
+}
+</style>

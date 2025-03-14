@@ -1,7 +1,10 @@
 package com.heli.supplier.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierTwoReviewScore;
+import com.heli.supplier.domain.SuppliersQualified;
 
 /**
  * 二方审核得分Service接口
@@ -9,7 +12,7 @@ import com.heli.supplier.domain.SupplierTwoReviewScore;
  * @author wll
  * @date 2025-03-06
  */
-public interface ISupplierTwoReviewScoreService 
+public interface ISupplierTwoReviewScoreService extends IService<SupplierTwoReviewScore>
 {
     /**
      * 查询二方审核得分
