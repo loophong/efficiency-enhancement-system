@@ -7,9 +7,8 @@
       <el-form-item label="目标值" prop="indicatorTarget">
         <el-input v-model="queryParams.indicatorTarget" placeholder="请输入目标值" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="日期" style="width: 308px">
-        <el-date-picker v-model="daterangeIndicatorTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
-          start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+      <el-form-item label="年份" prop="indicatorTime">
+        <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="一月数据" prop="indicatorJan">
         <el-input v-model="queryParams.indicatorJan" placeholder="请输入一月数据" clearable @keyup.enter="handleQuery" />
@@ -284,6 +283,7 @@
 <script setup name="Count">
 import { listCount, getCount, delCount, addCount, updateCount, uploadFile } from "@/api/device/maintenanceTable/count";
 import countChart from "./countChart.vue"
+import * as XLSX from "xlsx";
 //导出为word
 import JSZip from 'pizzip'
 import Docxtemplater from 'docxtemplater'
@@ -300,6 +300,7 @@ const chartRef = ref(null);
 
 const { proxy } = getCurrentInstance();
 const countList = ref([]);
+const exportList = ref([]);
 const open = ref(false);
 const openChart = ref(false);
 const showDialog = ref(false);
@@ -715,6 +716,64 @@ function fileSend() {
         });
     }
   })
+}
+
+//导出为excel
+async function exportAll() {
+  let exportParams = queryParams.value
+  exportParams.pageSize = 10000
+  exportParams.params = {};
+  // if (null != daterangeIndicatorTime && '' != daterangeIndicatorTime) {
+  //   queryParams.value.params["beginIndicatorTime"] = daterangeIndicatorTime.value[0];
+  //   queryParams.value.params["endIndicatorTime"] = daterangeIndicatorTime.value[1];
+  // }
+  await listCount(exportParams).then(response => {
+    exportList.value = response.rows;
+  });
+  const promises = exportList.value.map((tableRow, index) => {
+    return {
+      序号: index + 1,
+      项目名: tableRow.indicatorName,
+      年份: tableRow.indicatorTime,
+      目标值: tableRow.indicatorTarget,
+      目标值上限: tableRow.indicatorUp,
+      目标值下限: tableRow.indicatorDown,
+      一月: tableRow.indicatorJan,
+      二月: tableRow.indicatorFeb,
+      三月: tableRow.indicatorMar,
+      四月: tableRow.indicatorApr,
+      五月: tableRow.indicatorMay,
+      六月: tableRow.indicatorJun,
+      七月: tableRow.indicatorJul,
+      八月: tableRow.indicatorAug,
+      九月: tableRow.indicatorSep,
+      十月: tableRow.indicatorOct,
+      十一月: tableRow.indicatorNov,
+      十二月: tableRow.indicatorDec,
+    };
+  });
+  // console.log({ promises })
+  Promise.all(promises)
+    .then((data) => {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "项目列表");
+
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      saveAs(
+        new Blob([wbout], { type: "application/octet-stream" }),
+        "故障记录表.xlsx"
+      );
+      // // 提交数据到Vuex Store
+      // this.updateExportedData(data);
+    })
+    // .finally(() => {
+    //   loadingInstance.close();
+    // })
+    .catch((error) => {
+      console.error("导出失败:", error);
+      // loadingInstance.close();
+    });
 }
 
 /** 导出按钮操作 */

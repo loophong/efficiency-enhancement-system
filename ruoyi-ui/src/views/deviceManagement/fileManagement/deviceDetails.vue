@@ -75,7 +75,7 @@
         </el-dialog>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
+        <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['file:details:export']">导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -179,6 +179,9 @@
 <script setup name="Details">
 import { listDetails, getDetails, delDetails, addDetails, updateDetails, uploadFile } from "@/api/device/fileTable/details";
 import { ElMessage } from 'element-plus'
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+
 const { proxy } = getCurrentInstance();
 
 const detailsList = ref([]);
@@ -187,6 +190,7 @@ const loading = ref(true);
 const buttonLoading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
+const exportList = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
@@ -245,7 +249,6 @@ function getList() {
   loading.value = true;
   queryParams.value.params = {};
   if (null != daterangeFinancialDate && '' != daterangeFinancialDate && Array.isArray(daterangeFinancialDate.value)) {
-    console.log('进入')
     queryParams.value.params["beginFinancialDate"] = daterangeFinancialDate.value[0];
     queryParams.value.params["endFinancialDate"] = daterangeFinancialDate.value[1];
   }
@@ -420,7 +423,67 @@ function fileSend() {
     });
 }
 
+// 导出
+async function exportAll() {
+  let exportParams = queryParams.value
+  exportParams.pageSize = 10000
+  exportParams.params = {};
+  if (null != daterangeFinancialDate && '' != daterangeFinancialDate && Array.isArray(daterangeFinancialDate.value)) {
+    exportParams.params["beginFinancialDate"] = daterangeFinancialDate.value[0];
+    exportParams.params["endFinancialDate"] = daterangeFinancialDate.value[1];
+  }
+  await listDetails(exportParams).then(response => {
+    exportList.value = response.rows;
+    // console.log(exportList.value)
+  });
+  // const loadingInstance = Loading.service({
+  //   lock: true,
+  //   text: "正在导出，请稍后...",
+  //   spinner: "el-icon-loading",
+  //   background: "rgba(0, 0, 0, 0.7)",
+  // });
+  const promises = exportList.value.map((tableRow, index) => {
+    return {
+      序号: index + 1,
+      资本化日期: tableRow.financialDate,
+      存货号: tableRow.inventoryNum,
+      故障次数: tableRow.faultCount,
+      固定资产名称: tableRow.fixedAssetName,
+      班组: tableRow.detailsGroup,
+      设备状态: tableRow.deviceStatus,
+      设备类别: tableRow.deviceType,
+      重点设备标注: tableRow.ifKey,
+      保管使用单位: tableRow.storageUnit,
+      责任成本中心: tableRow.costCenter,
+      使用年限: tableRow.usedYear,
+      资产原值: tableRow.assetOrigin,
+      品牌: tableRow.brand,
+      吨位: tableRow.tonnage,
+    };
+  });
+  // console.log({ promises })
+  Promise.all(promises)
+    .then((data) => {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "项目列表");
 
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      saveAs(
+        new Blob([wbout], { type: "application/octet-stream" }),
+        "设备台账表.xlsx"
+      );
+      // // 提交数据到Vuex Store
+      // this.updateExportedData(data);
+    })
+    // .finally(() => {
+    //   loadingInstance.close();
+    // })
+    .catch((error) => {
+      console.error("导出失败:", error);
+      // loadingInstance.close();
+    });
+}
 
 /** 导出按钮操作 */
 function handleExport() {

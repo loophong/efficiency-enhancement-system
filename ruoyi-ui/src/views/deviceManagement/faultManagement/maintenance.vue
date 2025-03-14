@@ -82,7 +82,7 @@
         </el-dialog>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
+        <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['system:table:export']">导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -200,15 +200,15 @@
 <script setup name="Maintenance">
 import { listTable, getTable, delTable, addTable, updateTable, uploadFile } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
-
-
-
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const { proxy } = getCurrentInstance();
 const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
 
 
 const tableList = ref([]);
+const exportList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const buttonLoading = ref(false);
@@ -458,6 +458,66 @@ function fileSend() {
     });
 }
 
+//导出为excel
+async function exportAll() {
+  let exportParams = queryParams.value
+  exportParams.pageSize = 100000
+  exportParams.params = {};
+  if (null != daterangeReportedTime && '' != daterangeReportedTime && Array.isArray(daterangeReportedTime.value)) {
+    exportParams.params["beginReportedTime"] = daterangeReportedTime.value[0];
+    exportParams.params["endReportedTime"] = daterangeReportedTime.value[1];
+  }
+  if (null != daterangeResolutionTime && '' != daterangeResolutionTime && Array.isArray(daterangeResolutionTime.value)) {
+    exportParams.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
+    exportParams.params["endResolutionTime"] = daterangeResolutionTime.value[1];
+  }
+  await listTable(exportParams).then(response => {
+    exportList.value = response.rows;
+  });
+  const promises = exportList.value.map((tableRow, index) => {
+    return {
+      序号: index + 1,
+      设备编号: tableRow.deviceNum,
+      设备名称: tableRow.deviceName,
+      工单状态: tableRow.workStatus,
+      问题类型: tableRow.issueType,
+      故障类型: tableRow.faultType,
+      申请人: tableRow.applyBy,
+      申请部门: tableRow.applyDepartment,
+      维修人员: tableRow.maintenancePeople,
+      故障现象: tableRow.faultPhenomenon,
+      维修分析: tableRow.maintenanceAnalysis,
+      维修内容: tableRow.maintenanceContent,
+      报修时间: tableRow.reportedTime,
+      处理时间: tableRow.resolutionTime,
+      故障时长: tableRow.faultDuration,
+      维修费用: tableRow.maintenanceCast,
+      是否停机: tableRow.ifDown,
+    };
+  });
+  // console.log({ promises })
+  Promise.all(promises)
+    .then((data) => {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "项目列表");
+
+      const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+      saveAs(
+        new Blob([wbout], { type: "application/octet-stream" }),
+        "故障记录表.xlsx"
+      );
+      // // 提交数据到Vuex Store
+      // this.updateExportedData(data);
+    })
+    // .finally(() => {
+    //   loadingInstance.close();
+    // })
+    .catch((error) => {
+      console.error("导出失败:", error);
+      // loadingInstance.close();
+    });
+}
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download('system/table/export', {
