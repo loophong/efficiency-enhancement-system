@@ -16,7 +16,7 @@
         <el-input v-model="queryParams.remarks" placeholder="请输入备注信息" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
 
-      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate">
+      <el-form-item label="采购回复到货时间" prop="procurementArrivalDate" label-width="130px" >
         <el-date-picker clearable v-model="queryParams.procurementArrivalDate" type="date" value-format="YYYY-MM-DD" placeholder="请选择采购回复到货时间">
         </el-date-picker>
       </el-form-item>
@@ -28,18 +28,18 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:scheduling:add']">新增
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:scheduling:edit']">修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:scheduling:remove']">删除
-        </el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:scheduling:add']">新增-->
+<!--        </el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:scheduling:edit']">修改-->
+<!--        </el-button>-->
+<!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:scheduling:remove']">删除-->
+<!--        </el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:scheduling:export']">导出
         </el-button>
@@ -62,16 +62,16 @@
         </template>
       </el-table-column>
       <el-table-column label="缺件信息" align="center" prop="missingPartRecords"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                     v-hasPermi="['production:scheduling:edit']">修改
-          </el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                     v-hasPermi="['production:scheduling:remove']">删除
-          </el-button>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
+<!--        <template #default="scope">-->
+<!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"-->
+<!--                     v-hasPermi="['production:scheduling:edit']">修改-->
+<!--          </el-button>-->
+<!--          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"-->
+<!--                     v-hasPermi="['production:scheduling:remove']">删除-->
+<!--          </el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
 
     <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList"/>
@@ -292,9 +292,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('production/scheduling/export', {
+  proxy.download('production/scheduling/exportMissingParts', {
     ...queryParams.value
-  }, `scheduling_${new Date().getTime()}.xlsx`)
+  }, `缺件订单表_${new Date().getTime()}.xlsx`)
 }
 
 getList();

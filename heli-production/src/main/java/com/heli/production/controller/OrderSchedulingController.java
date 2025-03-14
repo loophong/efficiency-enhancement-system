@@ -12,6 +12,8 @@ import com.heli.production.service.IDailyPlanService;
 import com.heli.production.service.IDailyUsedCapacityService;
 import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.service.IWorkdayService;
+import com.ruoyi.common.utils.poi.ExcelUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -265,10 +267,29 @@ public class OrderSchedulingController extends BaseController {
     @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
     @GetMapping("/listMissingParts")
     public TableDataInfo listMissingParts(OrderSchedulingEntity orderSchedulingEntity) {
+        log.info("查询缺件订单列表，参数为: {}", orderSchedulingEntity);
         startPage();
         List<OrderSchedulingEntity> list = orderSchedulingService.selectMissingPartsList(orderSchedulingEntity);
         return getDataTable(list);
     }
+
+    /**
+     * @description: 导出缺件订单表
+     * @author: hong
+     * @date: 2025/3/14 13:18
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:export')")
+    @Log(title = "缺件订单表导出", businessType = BusinessType.EXPORT)
+    @PostMapping("/exportMissingParts")
+    public void exportMissingParts(HttpServletResponse response, OrderSchedulingEntity orderSchedulingEntity) {
+        List<OrderSchedulingEntity> list = orderSchedulingService.selectMissingPartsList(orderSchedulingEntity);
+        log.info("缺件订单列表:{}", list);
+        ExcelUtil<OrderSchedulingEntity> util = new ExcelUtil<OrderSchedulingEntity>(OrderSchedulingEntity.class);
+        util.exportExcel(response, list, "缺件订单数据");
+    }
+
+
 
     /**
      * @description: 延期订单数据分析
@@ -282,6 +303,22 @@ public class OrderSchedulingController extends BaseController {
         startPage();
         List<OrderSchedulingEntity> list = orderSchedulingService.selectDataAnalysis(orderSchedulingEntity);
         return getDataTable(list);
+    }
+
+    /**
+     * @description: 导出订单数据分析
+     * @author: hong
+     * @date: 2025/3/14 13:40
+     * @version: 1.0
+     */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:export')")
+    @Log(title = "数据分析表导出", businessType = BusinessType.EXPORT)
+    @PostMapping("/exportDataAnalysis")
+    public void exportDataAnalysis(HttpServletResponse response, OrderSchedulingEntity orderSchedulingEntity) {
+        List<OrderSchedulingEntity> list = orderSchedulingService.selectDataAnalysis(orderSchedulingEntity);
+        log.info("数据分析订单列表:{}", list);
+        ExcelUtil<OrderSchedulingEntity> util = new ExcelUtil<OrderSchedulingEntity>(OrderSchedulingEntity.class);
+        util.exportExcel(response, list, "数据分析订单数据");
     }
 
 
