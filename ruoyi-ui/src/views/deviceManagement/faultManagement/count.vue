@@ -88,7 +88,7 @@
         </el-dialog>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
+        <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['device:count:export']">导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -762,7 +762,7 @@ async function exportAll() {
       const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
       saveAs(
         new Blob([wbout], { type: "application/octet-stream" }),
-        "故障记录表.xlsx"
+        "指标分析表.xlsx"
       );
       // // 提交数据到Vuex Store
       // this.updateExportedData(data);
@@ -790,7 +790,6 @@ watch(openChart, async (newVal) => {
     setTimeout(() => {  // 需要短暂延迟确保图表完成渲染
       if (chartRef.value) {
         currentBase64.value = chartRef.value.getChartBase64();
-        console.log('当前图表 Base64:', currentBase64.value);
       }
     }, 300);  // 200-500ms 根据实际性能调整
   }

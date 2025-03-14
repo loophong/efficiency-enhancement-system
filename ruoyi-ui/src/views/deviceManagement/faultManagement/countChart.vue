@@ -76,7 +76,6 @@ const initChart = () => {
 
 const updateChart = () => {
     if (!myChart) return;
-    myChart = echarts.init(chart.value);
 
     const option = {
         animation: false,
