@@ -44,9 +44,12 @@ export function delCapacity(id) {
 }
 
 // 获取全部产能
-export function all() {
+export function all(date) {
     return request({
         url: '/production/capacity/all',
-        method: 'get'
+        method: 'get',
+        params: {
+            'date': date
+        }
     })
 }

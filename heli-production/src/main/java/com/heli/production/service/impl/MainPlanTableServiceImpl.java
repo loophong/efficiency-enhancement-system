@@ -115,6 +115,30 @@ public class MainPlanTableServiceImpl extends ServiceImpl<MainPlanTableMapper, M
 //            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
         }
     }
+
+    @Override
+    public void checkTableData(String fileName, MultipartFile excelFile, Date uploadDate) {
+        try {
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+//            this.remove(new LambdaQueryWrapper<MainPlanTableEntity>().eq(MainPlanTableEntity::getUploadDate, uploadDate));
+
+            try {
+
+                EasyExcel.read(excelFile.getInputStream(), MainPlanTableEntity.class, new MainPlanTableListener(mainPlanTableMapper, uploadDate)).sheet().doRead();
+                log.info("读取文件成功: {}", fileName);
+
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+
+//            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+//            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
 }
 
 

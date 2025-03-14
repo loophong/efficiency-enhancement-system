@@ -14,6 +14,7 @@ import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.service.IWorkdayService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -159,13 +160,13 @@ public class OrderSchedulingController extends BaseController {
                     dailyPlanEntity.setValvePlate(String.valueOf(convertor(c)));
                     // 配置信息需要转换
                     String tmp = "";
-                    if (orderSchedulingEntity.getAirFilter() != null){
+                    if (orderSchedulingEntity.getAirFilter() != null) {
                         tmp += orderSchedulingEntity.getAirFilter();
                     }
-                    if (orderSchedulingEntity.getTires() != null){
+                    if (orderSchedulingEntity.getTires() != null) {
                         tmp += orderSchedulingEntity.getTires();
                     }
-                    if (orderSchedulingEntity.getConfiguration() != null){
+                    if (orderSchedulingEntity.getConfiguration() != null) {
                         tmp += orderSchedulingEntity.getConfiguration();
                     }
                     dailyPlanEntity.setDescriptiveConfigurationInfo(tmp);
@@ -223,10 +224,24 @@ public class OrderSchedulingController extends BaseController {
      */
     @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
     @GetMapping("/getOrderList")
-    public AjaxResult getOrderList() {
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    public AjaxResult getOrderList(@RequestParam(required = false) Date date) {
+        log.info("date: {}", date);
+        // 查询未排产订单
         List<OrderSchedulingEntity> list = orderSchedulingService.list(
                 new LambdaQueryWrapper<OrderSchedulingEntity>()
                         .eq(OrderSchedulingEntity::getIsScheduling, 0));
+        // 查询已排产订单
+        if (date != null) {
+            List<OrderSchedulingEntity> schedulingList = orderSchedulingService.list(
+                    new LambdaQueryWrapper<OrderSchedulingEntity>()
+                            .eq(OrderSchedulingEntity::getIsScheduling, 1)
+                            .eq(OrderSchedulingEntity::getOnlineDate, date));
+            if (!schedulingList.isEmpty()) {
+                log.info("当日已排产，订单列表如下: {}", schedulingList);
+                list.addAll(schedulingList);
+            }
+        }
         return success(list);
     }
 

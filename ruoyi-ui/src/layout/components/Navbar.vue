@@ -9,21 +9,27 @@
       <template v-if="appStore.device !== 'mobile'">
         <header-search id="header-search" class="right-menu-item"/>
 
-        <el-tooltip :content="noticeContent" effect="dark" placement="bottom">
-          <el-badge :value="noticeCount" class="right-menu-item hover-effect" :class="{'badge-custom':noticeCount>0}">
-            <i class="el-icon-message-solid" @click="toNoticePage"></i>
-          </el-badge>
+<!--        <el-tooltip :content="noticeContent" effect="dark" placement="bottom">-->
+<!--          <el-badge :value="noticeCount" class="right-menu-item hover-effect" :class="{'badge-custom':noticeCount>0}">-->
+<!--            <i class="el-icon-message-solid" @click="toNoticePage"></i>-->
+<!--          </el-badge>-->
+<!--        </el-tooltip>-->
+
+        <el-tooltip content="通知" effect="dark" placement="bottom">
+          <div class="right-menu-item hover-effect theme-switch-wrapper" @click="routerNotice">
+            <svg-icon  icon-class="email"/>
+          </div>
         </el-tooltip>
 
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
-          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect"/>
-        </el-tooltip>
+<!--        <el-tooltip content="源码地址" effect="dark" placement="bottom">-->
+<!--          <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect"/>-->
+<!--        </el-tooltip>-->
 
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
-          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect"/>
-        </el-tooltip>
+<!--        <el-tooltip content="文档地址" effect="dark" placement="bottom">-->
+<!--          <ruo-yi-doc id="ruoyi-doc" class="right-menu-item hover-effect"/>-->
+<!--        </el-tooltip>-->
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect"/>
+<!--        <screenfull id="screenfull" class="right-menu-item hover-effect"/>-->
 
         <el-tooltip content="主题模式" effect="dark" placement="bottom">
           <div class="right-menu-item hover-effect theme-switch-wrapper" @click="toggleTheme">
@@ -78,6 +84,10 @@ import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
 import {listNotice} from "@/api/system/notice";
 
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -120,6 +130,10 @@ function setLayout() {
 
 function toggleTheme() {
   settingsStore.toggleTheme()
+}
+
+function routerNotice(){
+  router.push({path: '/system/notice'})
 }
 
 

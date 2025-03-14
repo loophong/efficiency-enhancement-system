@@ -7,11 +7,9 @@
       <el-step title="第二步" description="特殊订单排产"/>
       <el-step title="第三步" description="系统排产"/>
       <el-step title="第四步" description="未排产订单列表"/>
-<!--      <el-step title="第五步" description="预测订单生成"/>-->
+      <!--      <el-step title="第五步" description="预测订单生成"/>-->
       <el-step title="第六步" description="生成日生产计划"/>
     </el-steps>
-
-
 
 
     <!-- 第三步:定义4个盒子对象active => 1 到 4-->
@@ -33,7 +31,7 @@
 
         <div style="display: flex; align-items: center;">
           <el-row :gutter="20">
-            <el-col :span="8">添加</el-col>
+            <el-col :span="8">修改排产计划</el-col>
             <el-col :span="8">添加</el-col>
             <el-col :span="8">添加</el-col>
           </el-row>
@@ -355,7 +353,7 @@ import dayjs from 'dayjs';
 
 import useTagsViewStore from "@/store/modules/tagsView";
 
-const route  = useRoute(); // 获取路由实例
+const route = useRoute(); // 获取路由实例
 const router = useRouter();
 
 const {proxy} = getCurrentInstance();
@@ -384,7 +382,7 @@ const unscheduledList = ref([]);
 
 // 步骤条下一步的方法
 function next() {
-  if(active.value === 1){
+  if (active.value === 1) {
     // 校验日期是否选择
     if (productionDate.value === '') {
       proxy.$modal.msgError("请选择排产日期")
@@ -394,10 +392,15 @@ function next() {
   if (active.value < 6) {
     active.value++
   }
-  if (active.value === 3) {
-    autoScheduling()
+
+  if (active.value === 2) {
     updateSelectionStatus()
   }
+
+  if (active.value === 3) {
+    updateSelectionStatus()
+  }
+
   if (active.value === 4) {
     getUnscheduledList()
   }
@@ -412,6 +415,7 @@ function pre() {
   if (active.value > 1) {
     active.value--
   }
+
   if (active.value === 3) {
     updateSelectionStatus()
   }
@@ -427,42 +431,49 @@ function getUnscheduledList() {
   })
 }
 
-/** 初始化时，获取产能列表 */
+/** 初始化时，获取产能列表 和 当日使用的产能 */
 function getCapacityList() {
-  all().then(response => {
-    // 从
-    //  response.data中解析出车型 和 产量
-    response.data.capacityEntities.forEach(item => {
-      capacity.value.push({
-        'capacityType': item.capacityType,
-        'productionQuantity': item.productionQuantity,
-        'requiredQuantity': 0
+  all(productionDate.value).then(response => {
+    console.log("产能列表：" + response.data)
+    if (response.data.dailyUsedCapacityEntities === null || response.data.dailyUsedCapacityEntities === '') {
+      console.log("当日没有排产")
+    } else {
+      console.log("当日已排产")
+      response.data.capacityEntities.forEach(item => {
+        let a = response.data.dailyUsedCapacityEntities.find(used => used.capacityType === item.capacityType)
+        console.log("当日已排产：" + JSON.stringify(a))
+        if (a !== undefined) {
+          capacity.value.push({
+            'capacityType': item.capacityType,
+            'productionQuantity': a.quantitySettings,
+            'requiredQuantity': 0
+          })
+          usedCapacity.value.push({
+            'capacityType': item.capacityType,
+            'productionQuantity': a.productionQuantity
+          })
+          requiredCapacity.value.push({
+            'capacityType': item.capacityType,
+            'productionQuantity': 0
+          })
+        }
       })
-      usedCapacity.value.push({
-        'capacityType': item.capacityType,
-        'productionQuantity': 0
-      })
-      requiredCapacity.value.push({
-        'capacityType': item.capacityType,
-        'productionQuantity': 0
-      })
-    })
-    console.log("初始化产能" + JSON.stringify(capacity.value))
+    }
   })
 }
 
 // 使用 onMounted 钩子在组件挂载时调用 getCapacityList
 onMounted(() => {
-
   const dateParam = route.query.date; // 假设 date 参数在 query 中
   if (dateParam) {
     productionDate.value = dateParam;
   }
 
-
   getCapacityList();
-  // getUrgentOrderList();
+
   getOrderList();
+
+
 });
 
 function getCapacity(capacityType) {
@@ -470,36 +481,29 @@ function getCapacity(capacityType) {
   return used ? used.productionQuantity : 0;
 }
 
-// 获取加急订单列表
-// function getUrgentOrderList() {
-//   // 获取加急订单
-//   getUrgentOrder().then(response => {
-//     console.log("加急订单：" + JSON.stringify(response.data))
-//     urgentList.value = response.data;
-//   })
-// }
 
 // 获取总的订单列表
 function getOrderList() {
-  getOrders().then(response => {
-    console.log("一般订单：" + JSON.stringify(response.data))
+  getOrders(productionDate.value).then(response => {
+    // console.log("一般订单：" + JSON.stringify(response.data))
 
     // 从订单列表中划分出一般订单和加急订单
     allOrders.value = response.data
 
-    // urgentList.value = response.data.filter(item => item.isUrgent === 1);
-    // standardList.value = response.data.filter(item => item.isUrgent !== 1);
-
     // update :3-12 修改，将加急订单改为特殊订单，特殊订单包括 加急订单 和 缺件订单
     response.data.forEach(item => {
-      if(item.isUrgent === 1 || item.procurementArrivalDate !== null){
+      if (item.isUrgent === 1 || item.procurementArrivalDate !== null) {
         urgentList.value.push(item)
-      }else {
+      } else {
         standardList.value.push(item)
       }
     })
 
     standardList.value.sort((a, b) => new Date(a.latestOnlineDate) - new Date(b.latestOnlineDate));
+
+    console.log("urgentList：" + JSON.stringify(urgentList.value))
+    console.log("standardList：" + JSON.stringify(standardList.value))
+
 
     // 按车型分类统计未排产订单数
     capacity.value.forEach(item => {
@@ -508,17 +512,38 @@ function getOrderList() {
     })
 
     console.log("需要的产能为：" + JSON.stringify(requiredCapacity))
-
     usedCapacity.value.forEach(item => {
       // 从allOrders订单中统计已使用产能
       item.productionQuantity = getUsedCapacity(item.capacityType, allOrders);
     })
+    setInitialSelection();
   })
 }
 
+let disableSelectionChange = ref(false);
+
+function setInitialSelection() {
+  disableSelectionChange.value = true;
+  allOrders.value.forEach(item => {
+    if (item.isScheduling === 1) {
+      urgentList.value.forEach(order => {
+        if (item.id === order.id) {
+          proxy.$refs.urgentTable.toggleRowSelection(order, true);
+        }
+      });
+      standardList.value.forEach(order => {
+        if (item.id === order.id) {
+          proxy.$refs.standardTable.toggleRowSelection(order, true);
+        }
+      });
+    }
+  });
+  disableSelectionChange.value = false;
+}
 
 // 多选框选中加急排产数据
 function handleUrgentSelectionChange(selection) {
+  if (disableSelectionChange.value) return;
   console.log('selection', selection);
   // 检查当前型号是否进行排产
   selection.forEach((item, index) => {
@@ -573,6 +598,7 @@ function handleUrgentSelectionChange(selection) {
 
 // 多选框选中一般排产数据
 function handleStandardSelectionChange(selection) {
+  if (disableSelectionChange.value) return;
   console.log('selection', selection);
   // 检查当前型号是否进行排产
   selection.forEach((item, index) => {
@@ -627,6 +653,7 @@ function handleStandardSelectionChange(selection) {
 }
 
 function handleUnscheduledSelectionChange(selection) {
+  if (disableSelectionChange.value) return;
   console.log('selection', selection);
   // 检查当前型号是否进行排产
   selection.forEach((item, index) => {
@@ -721,57 +748,60 @@ function getRequiredCapacity(capacityType, list) {
 // 根据allOrders中排产状态，更新selection状态
 function updateSelectionStatus() {
   console.log("更新selection状态")
+  console.log("allOrders", allOrders.value)
   allOrders.value.forEach(item => {
+    console.log("item", item)
     if (item.isScheduling === 1) {
-      // 检查属于哪个表
-      if (item.isUrgent === 1) {
-        // 紧急订单
-        urgentList.value.forEach(order => {
-          if (item.id === order.id) {
-            proxy.$refs.urgentTable.toggleRowSelection(order, true);
+      console.log("item.isScheduling", item)
 
-          }
-        })
-      } else {
-        // 一般订单
-        standardList.value.forEach(order => {
-          if (item.id === order.id) {
-            proxy.$refs.standardTable.toggleRowSelection(order, true);
-          }
-        })
-      }
+      // 紧急订单
+      urgentList.value.forEach(order => {
+        if (item.id === order.id) {
+          proxy.$refs.urgentTable.toggleRowSelection(order, true);
+
+        }
+      })
+
+      // 一般订单
+      standardList.value.forEach(order => {
+        if (item.id === order.id) {
+          proxy.$refs.standardTable.toggleRowSelection(order, true);
+        }
+      })
     }
   })
 }
+
 
 /**
  *  自动排产，遍历standardList，判断当前车型产能是否用尽，如果还有产能则进行排产，并更新selection状态
  * */
-function autoScheduling() {
-  console.log("自动排产")
-  standardList.value.forEach(item => {
-    // 判断当前车型是否用尽
-    const capacityType = item.capacityType;
-    // 如果capacityType 为null，则跳过剩余操作
-    if (capacityType === null) {
-      return;
-    }
-    let used = usedCapacity.value.find(item => item.capacityType === capacityType)
-    let required = capacity.value.find(item => item.capacityType === capacityType)
-    // console.log("capacityType排产车型" + capacityType + "已使用产能" + used + "需要产能" + required)
-    console.log("capacityType排产车型" + capacityType)
-    console.log("已使用产能" + JSON.stringify(used))
-    console.log("需要产能" + JSON.stringify(required))
+// function autoScheduling() {
+//   console.log("自动排产")
+//   standardList.value.forEach(item => {
+//     // 判断当前车型是否用尽
+//     const capacityType = item.capacityType;
+//     // 如果capacityType 为null，则跳过剩余操作
+//     if (capacityType === null) {
+//       return;
+//     }
+//     let used = usedCapacity.value.find(item => item.capacityType === capacityType)
+//     let required = capacity.value.find(item => item.capacityType === capacityType)
+//     // console.log("capacityType排产车型" + capacityType + "已使用产能" + used + "需要产能" + required)
+//     console.log("capacityType排产车型" + capacityType)
+//     console.log("已使用产能" + JSON.stringify(used))
+//     console.log("需要产能" + JSON.stringify(required))
+//
+//     if (used.productionQuantity < required.productionQuantity) {
+//       // 进行排产
+//       item.isScheduling = 1;
+//     }
+//     countUsedCapacity()
+//     updateSelectionStatus()
+//   })
+//   console.log("自动排产完成" + JSON.stringify(usedCapacity.value))
+// }
 
-    if (used.productionQuantity < required.productionQuantity) {
-      // 进行排产
-      item.isScheduling = 1;
-    }
-    countUsedCapacity()
-    updateSelectionStatus()
-  })
-  console.log("自动排产完成" + JSON.stringify(usedCapacity.value))
-}
 
 // const useTagsStore = useTagsViewStore()
 // const currentTag = router.currentRoute.value;
@@ -779,20 +809,18 @@ function submitForm() {
   // productionDate
   // 格式化date
   // date转入后端少了一天
-
-
   let date = dayjs(productionDate.value).format("YYYY-MM-DD");
   console.log("格式化之后的时间" + date)
   let orderSchedulingList = []
   allOrders.value.forEach(item => {
-    if (item.isScheduling === 1) {
+    // if (item.isScheduling === 1) {
       orderSchedulingList.push({
         'id': item.id,
-        'isScheduling': 1,
+        'isScheduling': item.isScheduling,
         'quantity': item.quantity,
         'onlineDate': date
       })
-    }
+    // }
   });
   console.log("排产订单列表" + JSON.stringify(orderSchedulingList))
   // console.log("提交表单" + JSON.stringify(ids))
@@ -815,7 +843,7 @@ function submitForm() {
   })
   console.log("使用的产能为" + JSON.stringify(dailyUsedCapacityList))
 
-  schedulingOrders(date,orderSchedulingList, dailyUsedCapacityList).then((response) => {
+  schedulingOrders(date, orderSchedulingList, dailyUsedCapacityList).then((response) => {
     console.log("排产结果" + response)
     // 提示用户排产成功
     // proxy.$message({

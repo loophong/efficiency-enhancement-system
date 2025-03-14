@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,20 +75,20 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
     }
 
     @Override
-    public void updateOrderData(Date date) {
+    public List<OrderSchedulingEntity> updateOrderData(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<OrderSchedulingEntity> unexistList = new ArrayList<OrderSchedulingEntity>();
 
         List<MainPlanTableEntity> list = mainPlanTableService.list(new LambdaQueryWrapper<MainPlanTableEntity>().eq(MainPlanTableEntity::getUploadDate, date));
 
         for (MainPlanTableEntity mainPlanTableEntity : list) {
+            log.info("订单号: {}", mainPlanTableEntity.getOrderNumber());
             CycleEntity cycle = cycleService.getOne(new LambdaQueryWrapper<CycleEntity>().eq(CycleEntity::getVehicleModel, mainPlanTableEntity.getVehicleModel()));
+            log.info("生产周期: {}", cycle);
 
             OrderSchedulingEntity orderSchedulingEntity = new OrderSchedulingEntity();
             BeanUtils.copyProperties(mainPlanTableEntity, orderSchedulingEntity);
 
-//            log.info("orderSchedulingEntity: {}", orderSchedulingEntity);
-//            log.info("mainPlanTableEntity: {}", mainPlanTableEntity);
-//            log.info("cycle: {}", cycle);
             // 逻辑处理 统计信息
             if (cycle != null) {
                 // 设置生产周期
@@ -116,6 +117,10 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
                 }
                 // 设置产能类型
                 orderSchedulingEntity.setCapacityType(cycle.getCapacityVehicleModel());
+            }else{
+                log.info("不存在该车型");
+                unexistList.add(orderSchedulingEntity);
+                continue;
             }
 
             OrderSchedulingEntity exist = this.getOne(new LambdaQueryWrapper<OrderSchedulingEntity>().eq(OrderSchedulingEntity::getOrderNumber, mainPlanTableEntity.getOrderNumber()));
@@ -130,6 +135,7 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
             }
             this.saveOrUpdate(orderSchedulingEntity);
         }
+        return unexistList;
     }
 
     /**

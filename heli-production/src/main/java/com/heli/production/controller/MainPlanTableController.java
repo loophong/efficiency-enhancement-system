@@ -1,9 +1,11 @@
 package com.heli.production.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.heli.production.domain.entity.MainPlanTableEntity;
+import com.heli.production.domain.entity.OrderSchedulingEntity;
 import com.heli.production.service.IOrderSchedulingService;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -47,19 +49,25 @@ public class MainPlanTableController extends BaseController {
 //    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
     @PostMapping("/import")
     @Transactional
-    public void importTable(Date date, MultipartFile excelFile) {
+    public AjaxResult importTable(Date date, MultipartFile excelFile) {
         log.info("传入的date为 " + date);
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {
-
             mainPlanTableService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, date);
-
-            orderSchedulingService.updateOrderData(date);
-
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
             throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
         }
+        List<OrderSchedulingEntity> orderSchedulingEntities = orderSchedulingService.updateOrderData(date);
+        List<String> list = new ArrayList<>();
+        for (OrderSchedulingEntity entity : orderSchedulingEntities) {
+            //先去重
+            if (list.contains(entity.getVehicleModel())) {
+                continue;
+            }
+            list.add(entity.getVehicleModel());
+        }
+        return AjaxResult.success(list);
     }
 
     /**

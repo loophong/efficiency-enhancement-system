@@ -2,25 +2,23 @@ package com.heli.production.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.production.domain.entity.CapacityEntity;
+import com.heli.production.domain.entity.DailyUsedCapacityEntity;
+import com.heli.production.domain.vo.CapacityVO;
 import com.heli.production.service.ICapacityService;
+import com.heli.production.service.IDailyUsedCapacityService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,22 +27,36 @@ import java.util.List;
  * @author hong
  * @date 2025-01-09
  */
+@Slf4j
 @RestController
 @RequestMapping("/production/capacity")
 public class CapacityController extends BaseController {
     @Autowired
     private ICapacityService capacityService;
+    @Autowired
+    private IDailyUsedCapacityService dailyUsedCapacityService;
 
     /**
-     * @description: 排产时，获取产能列表
+     * @description: 排产时，获取产能列表  和 已使用的产能
      * @author: hong
      * @date: 2025/1/18 14:51
      * @version: 1.0
      */
     @GetMapping("/all")
-    public AjaxResult getAllCapacity() {
+    public AjaxResult getAllCapacity(@RequestParam(required = false) Date date) {
+        log.info("date: {}", date);
+        CapacityVO capacityVO = new CapacityVO();
+
+        // 查询产能列表
         List<CapacityEntity> list = capacityService.list(new LambdaQueryWrapper<CapacityEntity>());
-        return AjaxResult.success(list);
+        capacityVO.setCapacityEntities(list);
+        // 查询使用的产能列表
+        if(date != null){
+            List<DailyUsedCapacityEntity> dailyUsedCapacityList = dailyUsedCapacityService.list(new LambdaQueryWrapper<DailyUsedCapacityEntity>()
+                    .eq(DailyUsedCapacityEntity::getProductionDate, date));
+            capacityVO.setDailyUsedCapacityEntities(dailyUsedCapacityList);
+        }
+        return AjaxResult.success(capacityVO);
     }
 
     /**

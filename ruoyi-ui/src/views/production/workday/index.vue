@@ -11,7 +11,7 @@
               <span v-if="isRestDay(data.day)" class="rest">休</span>
             </div>
             <div style="display: flex; justify-content: center;">
-              <el-tag v-if="isProduction(data.day)" type="success">已排产</el-tag>
+              <el-tag v-if="isProduction(data.day)" type="success" size="large">已排产</el-tag>
             </div>
           </div>
         </template>
@@ -20,6 +20,7 @@
 
     <div id="contextmenu" v-show="menuVisible" class="menu">
       <div class="contextmenu__item" @click="funcOrderScheduling">订单排产</div>
+      <div class="contextmenu__item" @click="funcUpdateScheduling">修改排产计划</div>
       <div class="contextmenu__item" @click="funcCancelScheduling">取消排产</div>
       <div class="contextmenu__item" @click="workdayConvert">设置工作日/休息日</div>
     </div>
@@ -203,10 +204,20 @@ function handleCalendarDateChange(val) {
  * 取消排产
  */
 function funcCancelScheduling() {
-  console.log("date" + selectDate)
-  cancelScheduling(selectDate).then(response => {
-    proxy.$modal.msgSuccess("取消排产成功");
-    handleCalendarDateChange(calendarDate.value);
+  // 提示用户是否取消排产
+  proxy.$confirm('是否取消排产？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    cancelScheduling(selectDate).then(response => {
+      proxy.$modal.msgSuccess("取消排产成功");
+      menuVisible.value = false;
+      handleCalendarDateChange(calendarDate.value);
+    })
+  }).catch(() => {
+    // 取消操作,将当前选中的数据取消选中
+    console.log('selection-before', selection);
   })
 }
 
@@ -227,20 +238,32 @@ function funcOrderScheduling() {
     }
   });
 }
-// getList();
+
+/**
+ * 修改当日排产的订单
+ */
+function funcUpdateScheduling() {
+  // 检查当前日期是否排产，如果排产则提示用户已排产
+  getWorkday(selectDate).then(response => {
+    console.log("response", response)
+    if (response.data.productStatus !== 1) {
+      proxy.$modal.msgError("当前日期未排产，无法修改排产计划");
+    }else {
+      // 跳转进入排产页面
+      proxy.$router.push({path: '/production/scheduling/update', query: {date: selectDate}})
+    }
+  });
+}
+
 
 </script>
 
 
+
+
 <style>
-
-.is-selected {
-  color: #1989fa;
-}
-
-
 .date-content {
-  height: 70px;
+  height: 40px;
   display: flex;
   align-items: center;
   font-size: 14px;
