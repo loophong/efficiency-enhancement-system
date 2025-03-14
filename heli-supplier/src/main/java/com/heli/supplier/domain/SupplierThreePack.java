@@ -79,4 +79,15 @@ public class SupplierThreePack implements Serializable {
     @ExcelProperty(value = "填报人")
     private String reporter;
 
+    /** 分数 */
+    @Excel(name = "分数")
+    private Double score;
+
+    /** 备选1 */
+    @Excel(name = "备选1")
+    private String one;
+
+    /** 备选2 */
+    @Excel(name = "备选2")
+    private String two;
 }

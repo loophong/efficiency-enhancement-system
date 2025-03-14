@@ -39,6 +39,10 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
         this.uploadMonth = uploadMonth;
     }
 
+
+
+
+
     /**
      * 批量读取Excel写入DB
      *
@@ -54,17 +58,16 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setUpdateMonth(uploadMonth);
 
-//            registerInfoExcel.setXXX(date);
+            // 将供应商编码的前缀0去掉
+            registerInfoExcel.setSupplierCode(registerInfoExcel.getSupplierCode().replaceFirst("^0+", ""));
+            // 计算分数
+            double score = calculateScore(registerInfoExcel.getQuantityPassRate());
+            registerInfoExcel.setScore(score);
 
-//            if (registerInfoExcel.getControlSystem() == null) {
-//                registerInfoExcel.setControlSystem(cacheDataList.get(currentRow - 1).getControlSystem());
-//
-//            }
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
         }
-
         // 批量处理缓存的数据
         if (cacheDataList.size() >= BATCH_COUNT) {
             saveToDB();
@@ -90,6 +93,31 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
         log.info("开始写入数据库");
 //        supplierOnetimeSimpleMapper.insert(cacheDataList);
         supplierOnetimeSimpleMapper.insert(cacheDataList);
+    }
+
+
+    /**
+     * 计算分数
+     * @param quantityPassRate 合格率（字符串格式，如 "98.5%" 或 "98"）
+     * @return 计算后的得分
+     */
+    private double calculateScore(String quantityPassRate) {
+        if (quantityPassRate == null || quantityPassRate.isEmpty()) {
+            return 0; // 为空时默认 0 分
+        }
+
+        try {
+            // 去掉可能存在的 "%" 符号，并转换为 double
+            double qualifiedRate = Double.parseDouble(quantityPassRate.replace("%", "").trim());
+
+            double baseScore = 100; // 基础分 100 分
+            double deduction = 20 * (100 - qualifiedRate); // 每下降 1% 扣 20 分
+            double finalScore = Math.max(0, baseScore - deduction); // 最低为 0 分
+            return finalScore * 0.02; // 乘以 2% 作为模块得分
+        } catch (NumberFormatException e) {
+            log.error("合格率格式错误: {}", quantityPassRate);
+            return 0; // 格式错误时默认 0 分
+        }
     }
 
 }

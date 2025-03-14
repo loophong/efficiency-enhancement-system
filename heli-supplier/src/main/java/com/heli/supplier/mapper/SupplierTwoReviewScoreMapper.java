@@ -1,7 +1,10 @@
 package com.heli.supplier.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.supplier.domain.SupplierTwoReviewScore;
+import com.heli.supplier.domain.SuppliersQualified;
 
 /**
  * 二方审核得分Mapper接口
@@ -9,7 +12,7 @@ import com.heli.supplier.domain.SupplierTwoReviewScore;
  * @author wll
  * @date 2025-03-06
  */
-public interface SupplierTwoReviewScoreMapper 
+public interface SupplierTwoReviewScoreMapper extends BaseMapper<SupplierTwoReviewScore>
 {
     /**
      * 查询二方审核得分

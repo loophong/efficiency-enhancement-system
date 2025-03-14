@@ -61,4 +61,7 @@ public interface SupplierPriceTrustMapper extends BaseMapper<SupplierPriceTrust>
      * @return 结果
      */
     public int deleteSupplierPriceTrustByIds(String[] ids);
+    // 在 SupplierPriceTrustMapper 接口中增加此方法
+    SupplierPriceTrust selectBySupplierCode(String supplierCode);
+
 }

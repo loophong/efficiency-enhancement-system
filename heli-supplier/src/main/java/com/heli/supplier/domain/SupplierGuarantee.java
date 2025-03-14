@@ -31,8 +31,8 @@ public class SupplierGuarantee implements Serializable
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
+    @Serial
     @ExcelIgnore
-    @TableId(type = IdType.AUTO)
     private String id;
 
     /** 供应商代码 */

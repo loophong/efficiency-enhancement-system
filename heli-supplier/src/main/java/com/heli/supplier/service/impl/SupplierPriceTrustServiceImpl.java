@@ -58,6 +58,21 @@ public class SupplierPriceTrustServiceImpl  extends ServiceImpl<SupplierPriceTru
     @Override
     public int insertSupplierPriceTrust(SupplierPriceTrust supplierPriceTrust)
     {
+        // 根据供应商代码查询是否已存在该供应商
+        SupplierPriceTrust existingRecord = supplierPriceTrustMapper.selectBySupplierCode(supplierPriceTrust.getSupplierCode());
+
+        if (existingRecord != null) {
+            // 如果记录已存在，更新次数并计算新的分数
+            Long happenNumber = existingRecord.getHappenNumber() + 1;  // 发生次数+1
+            existingRecord.setHappenNumber(happenNumber);
+
+            // 计算新的分数
+            calculateAndSetScore(existingRecord);
+        } else {
+            // 如果记录不存在，则新增记录
+            supplierPriceTrust.setHappenNumber(1L);  // 设置首次发生次数为1
+            calculateAndSetScore(supplierPriceTrust); // 计算得分
+        }
         return supplierPriceTrustMapper.insertSupplierPriceTrust(supplierPriceTrust);
     }
 
@@ -70,7 +85,15 @@ public class SupplierPriceTrustServiceImpl  extends ServiceImpl<SupplierPriceTru
     @Override
     public int updateSupplierPriceTrust(SupplierPriceTrust supplierPriceTrust)
     {
+//        // 获取当前发生次数
+//        Long happenNumber = supplierPriceTrust.getHappenNumber();
+//
+//        // 计算并设置得分
+//        calculateAndSetScore(supplierPriceTrust);
+//
+//        // 更新数据
         return supplierPriceTrustMapper.updateSupplierPriceTrust(supplierPriceTrust);
+//        return supplierPriceTrustMapper.updateSupplierPriceTrust(supplierPriceTrust);
     }
 
     /**
@@ -96,4 +119,23 @@ public class SupplierPriceTrustServiceImpl  extends ServiceImpl<SupplierPriceTru
     {
         return supplierPriceTrustMapper.deleteSupplierPriceTrustById(id);
     }
+    private void calculateAndSetScore(SupplierPriceTrust supplierPriceTrust) {
+        // 基础分为 100
+        double baseScore = 100.0;
+
+        // 每发生一次扣减 20 分
+        long happenNumber = supplierPriceTrust.getHappenNumber();
+        double score = baseScore - (happenNumber * 20);
+
+        // 模块得分为基础分的 5%
+        double moduleScore = baseScore * 0.05;
+
+        // 总分 = 模块得分
+        score = moduleScore;
+
+        // 设置得分
+        supplierPriceTrust.setScore(score);
+    }
+
+
 }

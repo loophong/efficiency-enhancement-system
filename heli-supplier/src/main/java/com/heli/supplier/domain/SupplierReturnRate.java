@@ -52,8 +52,28 @@ public class SupplierReturnRate implements Serializable
 
     /** 月份 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "月份", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "月份")
+    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
+    @ExcelProperty(value = "上传月份")
     private Date month;
+
+    /** 备选1 */
+    @Excel(name = "备选1")
+    @ExcelProperty(value = "备选1")
+    @ExcelIgnore
+    private String one;
+
+    /** 2 */
+    @Excel(name = "2")
+    @ExcelProperty(value = "2")
+    @ExcelIgnore
+    private String two;
+
+    /** 3 */
+    @Excel(name = "3")
+    @ExcelProperty(value = "3")
+    @ExcelIgnore
+    private String three;
+
+
 
 }

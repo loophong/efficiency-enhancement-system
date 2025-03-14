@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
+      <!-- <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
         <el-date-picker clearable
           v-model="queryParams.responsibilityJudgmentTime"
           type="date"
@@ -56,7 +56,7 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -126,12 +126,15 @@
         </template>
       </el-table-column>
       <el-table-column label="具体三包事项" align="center" prop="specificWarrantyItems" />
+      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="备选1" align="center" prop="one" />
+      <el-table-column label="备选2" align="center" prop="two" />
       <el-table-column label="填报时间" align="center" prop="happenTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="填报人" align="center" prop="reporter" />
+      <el-table-column label="填报人" align="center" prop="reporter" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:threepack:edit']">修改</el-button>

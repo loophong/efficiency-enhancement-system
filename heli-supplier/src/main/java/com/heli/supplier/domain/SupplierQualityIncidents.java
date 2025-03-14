@@ -23,7 +23,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value = "supplier_quality_incidents")
-public class SupplierQualityIncidents extends BaseEntity
+public class SupplierQualityIncidents
 {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -38,8 +38,8 @@ public class SupplierQualityIncidents extends BaseEntity
     /**
      * 供应商代码
      */
-    @Excel(name = "供应商代码")
-    @ExcelProperty(value = "供应商代码")
+    @Excel(name = "供应商编码")
+    @ExcelProperty(value = "供应商编码")
     private String supplierCode;
 
     /**
@@ -60,9 +60,9 @@ public class SupplierQualityIncidents extends BaseEntity
     /**
      * 填报人
      */
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private Long uploadId;
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private Long uploadId;
 
     /**
      * 事故描述
@@ -71,5 +71,21 @@ public class SupplierQualityIncidents extends BaseEntity
     @ExcelProperty(value = "事故描述")
     private String incidentDescription;
 
+    /** 分数 */
+    @Excel(name = "分数")
+    private Double score;
 
+    /** 填报人 */
+    @Excel(name = "填报人")
+    private String uploadName;
+
+    /** 备选1 */
+    @ExcelIgnore
+    @Excel(name = "备选1")
+    private String one;
+
+    /** 备选2 */
+    @ExcelIgnore
+    @Excel(name = "备选2")
+    private String two;
 }

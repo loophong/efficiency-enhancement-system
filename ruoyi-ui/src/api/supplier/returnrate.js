@@ -42,3 +42,15 @@ export function delReturnrate(id) {
     method: 'delete'
   })
 }
+
+// 上传主计划表
+export function importFile(formData) {
+  return request({
+    url: '/supplier/returnrate/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+  }
+  })
+}

@@ -1,24 +1,25 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input v-model="queryParams.supplierCode" placeholder="请输入供应商代码" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="供应商名称" prop="supplierName">
         <el-input v-model="queryParams.supplierName" placeholder="请输入供应商名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="质量事故发生时间" prop="uploadTime">
+
+      <el-form-item label="发生时间" prop="uploadTime">
         <el-date-picker clearable v-model="queryParams.uploadTime" type="date" value-format="YYYY-MM-DD"
           placeholder="请选择质量事故发生时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="填报人" prop="uploadId">
-        <el-input v-model="queryParams.uploadId" placeholder="请输入填报人" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="事故描述" prop="incidentDescription">
+      <!-- <el-form-item label="填报人" prop="uploadName">
+        <el-input v-model="queryParams.uploadName" placeholder="请输入填报人" clearable @keyup.enter="handleQuery" />
+      </el-form-item> -->
+      <!-- <el-form-item label="事故描述" prop="incidentDescription">
         <el-input v-model="queryParams.incidentDescription" placeholder="请输入事故描述" clearable
           @keyup.enter="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -55,8 +56,11 @@
           <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="填报人" align="center" prop="uploadId" />
       <el-table-column label="事故描述" align="center" prop="incidentDescription" />
+      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="填报人" align="center" prop="uploadName" />
+      <el-table-column label="备选1" align="center" prop="one" />
+      <el-table-column label="备选2" align="center" prop="two" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -72,7 +76,7 @@
 
     <!-- 添加或修改质量事故对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="incidentsRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="incidentsRef" :model="form" :rules="rules" label-width="100px">
 
         <el-form-item label="供应商代码" prop="supplierCode">
             <el-input v-model="form.supplierCode" disabled placeholder="请输入供应商代码" />
@@ -84,13 +88,13 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="质量事故发生时间" prop="uploadTime">
+        <el-form-item label="发生时间" prop="uploadTime">
           <el-date-picker clearable v-model="form.uploadTime" type="date" value-format="YYYY-MM-DD"
             placeholder="请选择质量事故发生时间">
           </el-date-picker>
         </el-form-item>
-        <!-- <el-form-item label="填报人" prop="uploadId">
-          <el-input v-model="form.uploadId" placeholder="请输入填报人" />
+        <!-- <el-form-item label="填报人" prop="uploadName">
+          <el-input v-model="form.uploadName" placeholder="请输入填报人" />
         </el-form-item> -->
         <el-form-item label="事故描述" prop="incidentDescription">
           <el-input v-model="form.incidentDescription" placeholder="请输入事故描述" />
@@ -134,7 +138,7 @@ const data = reactive({
     supplierCode: null,
     supplierName: null,
     uploadTime: null,
-    uploadId: null,
+    uploadName: null,
     incidentDescription: null
   },
   rules: {
@@ -166,7 +170,7 @@ function reset() {
     supplierCode: null,
     supplierName: null,
     uploadTime: null,
-    uploadId: null,
+    uploadName: null,
     incidentDescription: null
   };
   proxy.resetForm("incidentsRef");

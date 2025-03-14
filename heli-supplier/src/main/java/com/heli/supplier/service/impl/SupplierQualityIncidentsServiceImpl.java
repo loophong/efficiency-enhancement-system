@@ -97,4 +97,6 @@ public class SupplierQualityIncidentsServiceImpl extends ServiceImpl<SupplierQua
     {
         return supplierQualityIncidentsMapper.deleteSupplierQualityIncidentsById(id);
     }
+
+
 }
