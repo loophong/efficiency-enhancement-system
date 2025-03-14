@@ -2,10 +2,14 @@
   <div class="index">
     <!-- 确保给容器一个明确的高度和宽度 -->
     <div ref="chartContainer" id="main" style="width: 100%; height: 600px;"></div>
+    <!-- Tooltip for displaying detailed information -->
+    <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
+      style="position:absolute;white-space:nowrap;background-color:#f9f9f9;border:1px solid #d3d3d3;padding:5px;display:none;z-index:1000;">
+    </div>
   </div>
 </template>
 
-<script setup>
+<script setup name="faultChart">
 import * as echarts from 'echarts';
 import { onMounted } from 'vue';
 
@@ -62,6 +66,8 @@ console.log('treeData----->', treeData.value)
 const chartContainer = ref(null);
 
 onMounted(() => {
+
+
   // 确认DOM元素存在
   const container = chartContainer.value;
   if (container) {
@@ -78,6 +84,70 @@ onMounted(() => {
       console.log('完整路径:', getNodePath(params));
     }
   });
+  // 修改mouseover事件处理
+  myChart.value.on('mouseover', function (params) {
+    const tooltip = document.getElementById('tooltip');
+    tooltip.style.display = 'block';
+
+    const resultData = {
+      "申请人": params.data['applyBy'],
+      "申请部门": params.data['applyDepartment'],
+      "设备名称": params.data['deviceName'],
+      "故障时长": params.data['faultDuration'],
+      "故障现象": params.data['faultPhenomenon'],
+      "故障类型": params.data['faultType'],
+      "是否停机": params.data['ifDown'],
+      "问题类型": params.data['issueType'],
+      "维修分析": params.data['maintenanceAnalysis'],
+      "维修费用": params.data['maintenanceCast'],
+      "维修内容": params.data['maintenanceContent'],
+      "维修人员": params.data['maintenancePeople'],
+      "报告时间": params.data['reportedTime'],
+      "解决时间": params.data['resolutionTime'],
+      "工作状态": params.data['workStatus']
+    };
+    // 格式化JSON数据为带换行的HTML
+    const formattedData = JSON.stringify(resultData, null, 2)
+      .replace(/"/g, '')
+      .replace(/\n/g, '<br>')
+      .replace(/ /g, '&nbsp;');
+
+    tooltip.innerHTML = `
+    <div style="font-size:12px; line-height:1.5">
+      <strong>详细信息:</strong><br>
+      ${formattedData}
+    </div>
+  `;
+
+    // 强制回流确保获取正确尺寸
+    void tooltip.offsetWidth;
+
+    const { clientX, clientY } = params.event.event;
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    // 动态计算最大可用空间
+    const maxLeft = window.innerWidth - tooltipRect.width - 10;
+    const maxTop = window.innerHeight - tooltipRect.height - 10;
+
+    // 智能定位逻辑
+    tooltip.style.left = `${Math.min(Math.max(clientX + 10, 10), maxLeft)}px`;
+    tooltip.style.top = `${Math.min(Math.max(clientY + 10, 10), maxTop)}px`;
+
+  });
+
+  // 添加mouseout事件监听器来隐藏tooltip
+  myChart.value.on('mouseout', function () {
+    document.getElementById('tooltip').style.display = 'none';
+  });
+
+  // 在tooltip显示时暂时禁用图表滚动
+  myChart.value.off('mousewheel');
+  // 隐藏后恢复
+  tooltip.addEventListener('mouseleave', () => {
+    myChart.value.on('mousewheel', myChart.value._mousewheel);
+  });
+
+
 });
 
 function initChart() {
@@ -187,5 +257,17 @@ function handleToAnalysis(row, module, destination) {
 .index #main {
   width: 100%;
   height: 100%;
+}
+
+#tooltip {
+  /* 移除滚动条相关样式 */
+  white-space: normal !important;
+  pointer-events: auto !important;
+  word-break: break-word;
+  max-width: 400px;
+  /* 关键修改：禁用滚动条 */
+  overflow-y: hidden !important;
+  /* 自动高度 */
+  height: auto;
 }
 </style>
