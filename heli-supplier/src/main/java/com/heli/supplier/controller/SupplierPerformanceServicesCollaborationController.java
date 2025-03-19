@@ -1,9 +1,14 @@
 package com.heli.supplier.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +25,7 @@ import com.heli.supplier.domain.SupplierPerformanceServicesCollaboration;
 import com.heli.supplier.service.ISupplierPerformanceServicesCollaborationService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 服务与协作Controller
@@ -28,12 +34,26 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2025-03-05
  */
 @RestController
+@Slf4j
 @RequestMapping("/supplier/collaboration")
 public class SupplierPerformanceServicesCollaborationController extends BaseController
 {
     @Autowired
     private ISupplierPerformanceServicesCollaborationService supplierPerformanceServicesCollaborationService;
+    @Log(title = "[服务于协作表]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    @Transactional
+    public void importTable(MultipartFile excelFile, Date uploadMonth) {
+        log.info("传入的参数为 " +excelFile);
+        log.info("传入的参数为 " +uploadMonth);
+        try {
+            supplierPerformanceServicesCollaborationService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
 
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
     /**
      * 查询服务与协作列表
      */

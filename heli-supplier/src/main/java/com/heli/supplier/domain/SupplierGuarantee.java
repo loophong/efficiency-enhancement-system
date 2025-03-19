@@ -1,7 +1,6 @@
 package com.heli.supplier.domain;
 
 import java.io.Serial;
-import java.io.Serializable;
 import java.util.Date;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
@@ -11,8 +10,6 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
@@ -24,16 +21,22 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value = "supplier_guarantee")
-public class SupplierGuarantee implements Serializable
+/**
+ * 供货保障对象 supplier_guarantee
+ *
+ * @author wll
+ * @date 2025-03-19
+ */
+public class SupplierGuarantee extends BaseEntity
 {
     @Serial
     @ExcelIgnore
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
-    @Serial
     @ExcelIgnore
-    private String id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /** 供应商代码 */
     @Excel(name = "供应商代码")
@@ -55,20 +58,25 @@ public class SupplierGuarantee implements Serializable
     @ExcelProperty(value = "及时条目数")
     private Long timelyNumber;
 
+    /** 不及时条目数 */
+    @Excel(name = "不及时条目数")
+    @ExcelProperty(value = "不及时条目数")
+    private Long notTimely;
+
     /** 供货及时率 */
     @Excel(name = "供货及时率")
     @ExcelProperty(value = "供货及时率")
-    private Long timelyDeliveryRate;
+    private String timelyDeliveryRate;
 
     /** 及时率得分 */
     @Excel(name = "及时率得分")
     @ExcelProperty(value = "及时率得分")
-    private Long timelyRateScore;
+    private Double timelyRateScore;
 
     /** 模型得分 */
     @Excel(name = "模型得分")
     @ExcelProperty(value = "模型得分")
-    private Long modelScore;
+    private Double modelScore;
 
     /** 上传月份 */
     @JsonFormat(pattern = "yyyy-MM-dd")

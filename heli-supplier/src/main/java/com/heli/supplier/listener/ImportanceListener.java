@@ -3,13 +3,12 @@ package com.heli.supplier.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.heli.supplier.domain.SupplierReturnRate;
-import com.heli.supplier.mapper.SupplierReturnRateMapper;
+import com.heli.supplier.domain.SupplierImportance;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.heli.supplier.mapper.SupplierImportanceMapper;
+import com.heli.supplier.mapper.SupplierOnetimeSimpleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Date;
 import java.util.List;
 
@@ -23,25 +22,28 @@ import java.util.List;
  * @Version 1.0
  */
 @Slf4j
-
-public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
+public class ImportanceListener implements ReadListener<SupplierImportance> {
 
     private static final int BATCH_COUNT = 200;
 
     private int currentRow = 0;
 
     @Autowired
-    private SupplierReturnRateMapper supplierReturnRateMapper;
+    private SupplierImportanceMapper supplierImportanceMapper;
 
     private Date date;
-    private Date month;
+    private Date uploadMonth;
 
-    private List<SupplierReturnRate> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<SupplierImportance> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public ReturnRateListener(SupplierReturnRateMapper supplierReturnRateMapper, Date month) {
-        this.supplierReturnRateMapper = supplierReturnRateMapper;
-        this.month = month;
+    public ImportanceListener(SupplierImportanceMapper supplierImportanceMapper, Date uploadMonth) {
+        this.supplierImportanceMapper = supplierImportanceMapper;
+        this.uploadMonth = uploadMonth;
     }
+
+
+
+
 
     /**
      * 批量读取Excel写入DB
@@ -50,18 +52,17 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
      * @param analysisContext   读取到的Excel内容
      */
     @Override
-    public void invoke(SupplierReturnRate registerInfoExcel, AnalysisContext analysisContext) {
+    public void invoke(SupplierImportance registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
         log.info("当前读取的数据为:" + registerInfoExcel);
 
         // 数据处理
         if(registerInfoExcel.getSupplierCode() != null){
-            registerInfoExcel.setMonth(month);
+            registerInfoExcel.setUploadTime(uploadMonth);
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
         }
-
         // 批量处理缓存的数据
         if (cacheDataList.size() >= BATCH_COUNT) {
             saveToDB();
@@ -85,7 +86,6 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-        supplierReturnRateMapper.insert(cacheDataList);
+        supplierImportanceMapper.insert(cacheDataList);
     }
-
 }

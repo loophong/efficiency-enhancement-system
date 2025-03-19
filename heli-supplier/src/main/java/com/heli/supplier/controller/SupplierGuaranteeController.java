@@ -1,10 +1,14 @@
 package com.heli.supplier.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,12 +25,13 @@ import com.heli.supplier.domain.SupplierGuarantee;
 import com.heli.supplier.service.ISupplierGuaranteeService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 供货保障Controller
- * 
+ *
  * @author wll
- * @date 2025-02-27
+ * @date 2025-03-19
  */
 @Slf4j
 @RestController
@@ -35,6 +40,22 @@ public class SupplierGuaranteeController extends BaseController
 {
     @Autowired
     private ISupplierGuaranteeService supplierGuaranteeService;
+
+    @Log(title = "[供货保障表]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    @Transactional
+    public void importTable(MultipartFile excelFile, Date uploadMonth) {
+        log.info("传入的参数为 " +excelFile);
+        log.info("传入的参数为 " +uploadMonth);
+        try {
+            supplierGuaranteeService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
+
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
+
 
     /**
      * 查询供货保障列表
@@ -66,7 +87,7 @@ public class SupplierGuaranteeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('supplier:guarantee:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
+    public AjaxResult getInfo(@PathVariable("id") Long id)
     {
         return success(supplierGuaranteeService.selectSupplierGuaranteeById(id));
     }
@@ -98,8 +119,8 @@ public class SupplierGuaranteeController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('supplier:guarantee:remove')")
     @Log(title = "供货保障", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable String[] ids)
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(supplierGuaranteeService.deleteSupplierGuaranteeByIds(ids));
     }

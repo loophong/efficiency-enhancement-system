@@ -1,9 +1,14 @@
 package com.heli.supplier.controller;
 
+import java.util.Date;
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,6 +25,7 @@ import com.heli.supplier.domain.SupplierImportance;
 import com.heli.supplier.service.ISupplierImportanceService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 重要度Controller
@@ -28,11 +34,29 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2025-03-07
  */
 @RestController
+@Slf4j
 @RequestMapping("/supplier/importance")
 public class SupplierImportanceController extends BaseController
 {
     @Autowired
     private ISupplierImportanceService supplierImportanceService;
+
+
+    @Log(title = "[重要度表]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    @Transactional
+    public void importTable(MultipartFile excelFile, Date uploadMonth) {
+//        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        log.info("传入的参数为 " +excelFile);
+        log.info("传入的参数为 " +uploadMonth);
+        try {
+            supplierImportanceService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
+
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
 
     /**
      * 查询重要度列表

@@ -3,44 +3,32 @@ package com.heli.supplier.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.heli.supplier.domain.SupplierReturnRate;
-import com.heli.supplier.mapper.SupplierReturnRateMapper;
+import com.heli.supplier.domain.SupplierGuarantee;
+import com.heli.supplier.domain.SupplierRisk;
+import com.heli.supplier.mapper.SupplierGuaranteeMapper;
+import com.heli.supplier.mapper.SupplierRiskMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-/**
- * ClassName: OnetimeSimpleListener
- * Package: com.heli.supplier.listener
- * Description:
- *
- * @Author
- * @Create 2025/2/21 15:29
- * @Version 1.0
- */
 @Slf4j
-
-public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
-
+public class GuaranteeListener implements ReadListener<SupplierGuarantee> {
     private static final int BATCH_COUNT = 200;
 
     private int currentRow = 0;
 
     @Autowired
-    private SupplierReturnRateMapper supplierReturnRateMapper;
+    private SupplierGuaranteeMapper supplierGuaranteeMapper;
 
     private Date date;
-    private Date month;
+    private Date uploadMonth;
 
-    private List<SupplierReturnRate> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+    private List<SupplierGuarantee> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public ReturnRateListener(SupplierReturnRateMapper supplierReturnRateMapper, Date month) {
-        this.supplierReturnRateMapper = supplierReturnRateMapper;
-        this.month = month;
+    public GuaranteeListener(SupplierGuaranteeMapper supplierGuaranteeMapper,Date uploadMonth) {
+        this.supplierGuaranteeMapper = supplierGuaranteeMapper;
+        this.uploadMonth = uploadMonth;
     }
 
     /**
@@ -50,13 +38,12 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
      * @param analysisContext   读取到的Excel内容
      */
     @Override
-    public void invoke(SupplierReturnRate registerInfoExcel, AnalysisContext analysisContext) {
+    public void invoke(SupplierGuarantee registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
         log.info("当前读取的数据为:" + registerInfoExcel);
-
         // 数据处理
         if(registerInfoExcel.getSupplierCode() != null){
-            registerInfoExcel.setMonth(month);
+            registerInfoExcel.setUploadMonth(uploadMonth);
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
@@ -85,7 +72,7 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-        supplierReturnRateMapper.insert(cacheDataList);
+        supplierGuaranteeMapper.insert(cacheDataList);
     }
 
 }

@@ -1,6 +1,9 @@
 package com.heli.supplier.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.domain.SupplierPerformanceServicesCollaboration;
 
 /**
@@ -9,7 +12,7 @@ import com.heli.supplier.domain.SupplierPerformanceServicesCollaboration;
  * @author wll
  * @date 2025-03-05
  */
-public interface SupplierPerformanceServicesCollaborationMapper 
+public interface SupplierPerformanceServicesCollaborationMapper extends BaseMapper<SupplierPerformanceServicesCollaboration>
 {
     /**
      * 查询服务与协作

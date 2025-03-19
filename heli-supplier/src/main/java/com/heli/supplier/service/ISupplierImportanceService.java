@@ -1,7 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierImportance;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 重要度Service接口
@@ -9,7 +14,7 @@ import com.heli.supplier.domain.SupplierImportance;
  * @author wll
  * @date 2025-03-07
  */
-public interface ISupplierImportanceService 
+public interface ISupplierImportanceService extends IService<SupplierImportance>
 {
     /**
      * 查询重要度
@@ -58,4 +63,6 @@ public interface ISupplierImportanceService
      * @return 结果
      */
     public int deleteSupplierImportanceById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }
