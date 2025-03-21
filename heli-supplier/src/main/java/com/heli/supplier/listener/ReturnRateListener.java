@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -57,6 +58,9 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
         // 数据处理
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setMonth(month);
+            // 计算分数
+            double score = calculateScore(registerInfoExcel.getReturnRate());
+            registerInfoExcel.setScore(score);
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
@@ -86,6 +90,36 @@ public class ReturnRateListener implements ReadListener<SupplierReturnRate> {
     private void saveToDB() {
         log.info("开始写入数据库");
         supplierReturnRateMapper.insert(cacheDataList);
+    }
+
+
+
+    /**
+     * 根据返修率计算最终得分
+     * @param returnRate 返修率（字符串格式，如 "85.5%"）
+     * @return 最终得分（BigDecimal 格式）
+     */
+    private double calculateScore(String returnRate) {
+        if (returnRate == null || !returnRate.endsWith("%")) {
+            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
+        }
+
+        // 去掉百分号并转换为数值
+        double rate = Double.parseDouble(returnRate.replace("%", "").trim());
+
+        // 计算基础分
+        double baseScore;
+        if (rate < 80) {
+            baseScore = 0;
+        } else if (rate < 90) {
+            baseScore = 30;
+        } else if (rate < 100) {
+            baseScore = 60;
+        } else {
+            baseScore = 100;
+        }
+        // 计算最终得分
+        return baseScore * 0.08;
     }
 
 }

@@ -13,7 +13,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author wll
  * @date 2025-03-07
  */
-public class SupplierHappen extends BaseEntity
+public class SupplierHappen
 {
     private static final long serialVersionUID = 1L;
 

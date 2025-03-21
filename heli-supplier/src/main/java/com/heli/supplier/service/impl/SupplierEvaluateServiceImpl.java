@@ -1,6 +1,7 @@
 package com.heli.supplier.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.supplier.mapper.SupplierEvaluateMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 评分表Service业务层处理
@@ -127,23 +129,28 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * @return
      */
     @Override
+    @Transactional
     public int calculateScore(Date happenTime, Date endTime) {
         List<SuppliersQualified> list = suppliersQualifiedService.list();
+        // 检查当前周期是否计算，如果已经计算则清空计算数据
+//        int size = this.list(new LambdaQueryWrapper<SupplierEvaluate>().
+//                eq(SupplierEvaluate::getHappenTime, happenTime).
+//                eq(SupplierEvaluate::getEndTime, endTime)).size();
+        int size = this.list(new LambdaQueryWrapper<SupplierEvaluate>()).size();
+        if(size > 0){
+            //this.remove(new LambdaQueryWrapper<SupplierEvaluate>().eq(SupplierEvaluate::getHappenTime, happenTime).eq(SupplierEvaluate::getEndTime, endTime));
+            this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
+                    );
+        }
         list.forEach(item -> {
-            SupplierEvaluate supplierEvaluate = this.getOne(new LambdaQueryWrapper<SupplierEvaluate>()
-                    .eq(SupplierEvaluate::getSupplierCode, item.getSupplierCode())
-                    .eq(SupplierEvaluate::getHappenTime, happenTime)
-                    .eq(SupplierEvaluate::getEndTime, endTime));
-//            SupplierEvaluate supplierEvaluate = new SupplierEvaluate();
-            // 如果 supplierEvaluate 为 null，则初始化一个新的 SupplierEvaluate 对象
-            if (supplierEvaluate == null) {
-                supplierEvaluate = new SupplierEvaluate();
-            }
+
+            SupplierEvaluate supplierEvaluate = new SupplierEvaluate();
 
             supplierEvaluate.setSupplierCode(item.getSupplierCode());
             supplierEvaluate.setSupplierName(item.getSupplierName());
             supplierEvaluate.setHappenTime(happenTime);
             supplierEvaluate.setEndTime(endTime);
+
             // 质量绩效
             boolean b = qualityIncident(happenTime, endTime, item.getSupplierCode());
             supplierEvaluate.setQualityIncident(BigDecimal.valueOf(0));
@@ -159,11 +166,11 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
                 supplierEvaluate.setProductmaterialParametersizeChange(BigDecimal.valueOf(0));
             } else {
                 supplierEvaluate.setFirstInspectionPassrate(firstInspectionPassrate(happenTime, endTime, item.getSupplierCode()));
-
-//                supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(happenTime, endTime, item.getSupplierCode()));
-//                supplierEvaluate.setQualityNotificationOrderrate(qualityNotificationOrderrate(happenTime, endTime, item.getSupplierCode()));
-//                supplierEvaluate.setFeedbackOrderletterTimeliness(feedbackOrderletterTimeliness(happenTime, endTime, item.getSupplierCode()));
-//                supplierEvaluate.setWarrantyperiodRepairrate(warrantyperiodRepairrate(happenTime, endTime, item.getSupplierCode()));
+                //supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(//happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setZeroKilometerFailurerate(BigDecimal.valueOf(0));
+                supplierEvaluate.setQualityNotificationOrderrate(BigDecimal.valueOf(0));
+                supplierEvaluate.setFeedbackOrderletterTimeliness(BigDecimal.valueOf(0));
+                supplierEvaluate.setWarrantyperiodRepairrate(warrantyperiodRepairrate(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setThreepackageComponentRepairrate(threePackageComponentRepairrate(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setSecondpartyAuditscore(secondpartyAuditscore(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setSelfinspectionReportaccuracy(selfInspectionAccuracy(happenTime, endTime, item.getSupplierCode()));
@@ -176,7 +183,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 
 
             //保存计算结果
-            this.saveOrUpdate(supplierEvaluate);
+            this.save(supplierEvaluate);
 
         });
         return 1;
@@ -216,37 +223,51 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         }else{
             bigDecimal = new BigDecimal(2);
         }
-        log.info("一次交检合格率:{},供应商编号：{}", bigDecimal,supplierCode);
-        log.info("list:{}",list);
+//        log.info("一次交检合格率:{},供应商编号：{}", bigDecimal,supplierCode);
+//        log.info("list:{}",list);
         return bigDecimal;
     }
     /**
-     * 3.1.3零公里故障率
+     * 3.1.3零公里故障率   不会做
      */
-//    BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierCode) {
-//        BigDecimal bigDecimal = new BigDecimal(0);
+    BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierCode) {
+        BigDecimal bigDecimal = new BigDecimal(0);
 //        happenTime = DateUtils.getMonthFirstDay(happenTime);
 //        endTime = DateUtils.getLastMonthEndDay(endTime);
 //        List<SupplierOnetimeSimple> list = onetimeSimpleService.list(
 //                new LambdaQueryWrapper<SupplierOnetimeSimple>()
 //                        .eq(SupplierOnetimeSimple::getSupplierCode, supplierCode)
-//        );
-//        return bigDecimal;
-//    }
+//                       );
+        return bigDecimal;
+    }
 
     /**
      * 3.1.4质量通知单及时率
      */
-//    BigDecimal qualityNotificationOrderrate(Date happenTime, Date endTime, String supplierCode) {
-//        BigDecimal bigDecimal = new BigDecimal(0);
-//        happenTime = DateUtils.getMonthFirstDay(happenTime);
-//        endTime = DateUtils.getLastMonthEndDay(endTime);
-//        List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
-//                new LambdaQueryWrapper<SupplierTwoReviewScore>()
-//                        .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
-//        );
-//        return bigDecimal;
-//    }
+    BigDecimal qualityNotificationOrderrate(Date happenTime, Date endTime, String supplierCode) {
+        BigDecimal bigDecimal = new BigDecimal(0);
+        happenTime = DateUtils.getMonthFirstDay(happenTime);
+        endTime = DateUtils.getLastMonthEndDay(endTime);
+        List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
+                new LambdaQueryWrapper<SupplierTwoReviewScore>()
+                        .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
+        );
+        return bigDecimal;
+    }
+
+    /**
+     * 3.1.5 反馈单回函及时率
+     */
+    BigDecimal feedbackOrderletterTimeliness(Date happenTime, Date endTime, String supplierCode) {
+        BigDecimal bigDecimal = new BigDecimal(0);
+        happenTime = DateUtils.getMonthFirstDay(happenTime);
+        endTime = DateUtils.getLastMonthEndDay(endTime);
+        List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
+                new LambdaQueryWrapper<SupplierTwoReviewScore>()
+                        .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
+        );
+        return bigDecimal;
+    }
 
     /**
      * 3.1.6保修期内市场售后返修率
@@ -259,7 +280,16 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
                 new LambdaQueryWrapper<SupplierReturnRate>()
                         .eq(SupplierReturnRate::getSupplierCode, supplierCode)
                         .between(SupplierReturnRate::getMonth, happenTime, endTime));
-
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
+            }
+            bigDecimal.divide(new BigDecimal(list.size()));
+        }else{
+            bigDecimal = new BigDecimal(8);
+        }
+//        log.info("一次交检合格率:{},供应商编号：{}", bigDecimal,supplierCode);
+//        log.info("list:{}",list);
         return bigDecimal;
     }
 
@@ -267,21 +297,31 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * 3.1.7三包配件发货及时率
      */
     BigDecimal threePackageComponentRepairrate(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(3);
+        BigDecimal bigDecimal = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierThreePack> list = supplierThreePackService.list(
                 new LambdaQueryWrapper<SupplierThreePack>()
                         .eq(SupplierThreePack::getSupplierCode, supplierCode)
-                        .between(SupplierThreePack::getHappenTime, happenTime, endTime));
-
-        for (SupplierThreePack supplierThreePack : list) {
-            if (supplierThreePack.getActualDeliveryTime().after(supplierThreePack.getPlannedDeliveryTime())) {
-                bigDecimal = BigDecimal.ZERO;
-                break;
+                        .between(SupplierThreePack::getResponsibilityJudgmentTime, happenTime, endTime));
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
             }
+            bigDecimal.divide(new BigDecimal(list.size()));
+        }else{
+            bigDecimal = new BigDecimal(3);
         }
+//        log.info("一次交检合格率:{},供应商编号：{}", bigDecimal,supplierCode);
+//        log.info("list:{}",list);
         return bigDecimal;
+//        for (SupplierThreePack supplierThreePack : list) {
+//            if (supplierThreePack.getActualDeliveryTime().after(supplierThreePack.getPlannedDeliveryTime())) {
+//                bigDecimal = BigDecimal.ZERO;
+//                break;
+//            }
+//        }
+//        return bigDecimal;
     }
     /**
      * 3.1.8二方审核得分
@@ -314,33 +354,42 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
             }
         }
         // 根据不符合项数量来计算得分
-        if (notTrueCount > 3) {
-            return BigDecimal.ZERO; // 不符合项超过3条，得分为0
-        } else {
-            return BigDecimal.ONE; // 不符合项不超过3条，得分为1
-        }
+//        if (notTrueCount > 3) {
+//            return BigDecimal.ZERO; // 不符合项超过3条，得分为0
+//        } else {
+//            return BigDecimal.ONE; // 不符合项不超过3条，得分为1
+//        }
+        return notTrueCount > 3 ? BigDecimal.ZERO : BigDecimal.ONE;
     }
     /**
      * 3.1.9 自检报告准确率
      */
     BigDecimal selfInspectionAccuracy(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(2);
+        BigDecimal bigDecimal = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierSelfTestReports> list = supplierSelfTestReportsService.list(
                 new LambdaQueryWrapper<SupplierSelfTestReports>()
                         .eq(SupplierSelfTestReports::getSupplierCode, supplierCode)
-                        .between(SupplierSelfTestReports::getHappenTime, happenTime, endTime));
-        boolean isFraudDetected = false; // 标志是否检测到造假行为
-        for (SupplierSelfTestReports supplierSelfTestReports : list) {
-            // 检查 specificContent 是否为空
-            if (supplierSelfTestReports.getSpecificContent() == null || supplierSelfTestReports.getSpecificContent().isEmpty()) {
-                isFraudDetected = true;
-                break; // 发现造假行为后直接退出循环
+                        .between(SupplierSelfTestReports::getResponsibilityJudgmentTime, happenTime, endTime));
+//        boolean isFraudDetected = false; // 标志是否检测到造假行为
+//        for (SupplierSelfTestReports supplierSelfTestReports : list) {
+//            // 检查 specificContent 是否为空
+//            if (supplierSelfTestReports.getSpecificContent() == null || supplierSelfTestReports.getSpecificContent().isEmpty()) {
+//                isFraudDetected = true;
+//                break; // 发现造假行为后直接退出循环
+//            }
+//        }
+//        if (isFraudDetected) {
+//            bigDecimal = BigDecimal.ZERO; // 如果存在造假行为，得分为0
+//        }
+        if (list.size() > 0) {
+            for (int i = 0; i < list.size(); i++) {
+                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
             }
-        }
-        if (isFraudDetected) {
-            bigDecimal = BigDecimal.ZERO; // 如果存在造假行为，得分为0
+            bigDecimal.divide(new BigDecimal(list.size()));
+        }else{
+            bigDecimal = new BigDecimal(2);
         }
         return bigDecimal;
     }
@@ -348,28 +397,27 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * 3.1.10 擅自变更产品材质参数尺寸
      */
     BigDecimal productmaterialParametersizeChange(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal baseScore = new BigDecimal(100);
-        BigDecimal score = baseScore;
+        BigDecimal bigDecimal = new BigDecimal(100);
         // 查询该供应商的所有变更记录
         List<SupplierChange> list = supplierChangeService.list(
                 new LambdaQueryWrapper<SupplierChange>()
                         .eq(SupplierChange::getSupplierCode, supplierCode)
                         .between(SupplierChange::getHappenTime, happenTime, endTime));
-        if (list.isEmpty()) {
-            return baseScore.multiply(new BigDecimal(0.03)); // 没有变更记录，得分=100×3%
+        int time = list.size();
+        if (time > 0) {
+            // 假设 formLeibie 是 SupplierChange 对象的一个属性
+            long formLeibie = list.get(0).getFormLeibie(); // 获取第一个记录的供应商类别
+            if (formLeibie == 20) { // 股份共有供应商
+//                    bigDecimal = BigDecimal.valueOf(100-time * 20);
+                bigDecimal = 100 - time * 20 > 0 ? BigDecimal.valueOf(100 - time * 20) : BigDecimal.ZERO;
+            } else if (formLeibie == 40) { // 自主供应商
+//                    bigDecimal = BigDecimal.valueOf(100-time * 40);
+                bigDecimal = 100 - time * 40 > 0 ? BigDecimal.valueOf(100 - time * 40) : BigDecimal.ZERO;
+            } else {
+                bigDecimal = new BigDecimal(100);
+            }
         }
-        // 取该供应商的供应商类型（假设所有记录的 formLeibie 值都相同）
-        long supplierType = list.get(0).getFormLeibie();
-        // 统计变更次数
-        int changeCount = list.size();
-        // 根据供应商类型扣分
-        if (supplierType == 20) { // 股份供应商
-            score = score.subtract(new BigDecimal(20 * changeCount));
-        } else if (supplierType == 40) { // 自主供应商
-            score = score.subtract(new BigDecimal(40 * changeCount));
-        }
-        // 计算最终得分（基础分 100 的 3%），确保不低于 0
-        return score.multiply(new BigDecimal(0.03)).max(BigDecimal.ZERO);
+        return bigDecimal.multiply(new BigDecimal(0.03));
     }
 
     // 其他方法保持不变

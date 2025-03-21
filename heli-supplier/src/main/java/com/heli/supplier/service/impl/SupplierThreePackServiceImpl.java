@@ -1,5 +1,6 @@
 package com.heli.supplier.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -56,6 +57,7 @@ public class SupplierThreePackServiceImpl  extends ServiceImpl<SupplierThreePack
     @Override
     public int insertSupplierThreePack(SupplierThreePack supplierThreePack)
     {
+        supplierThreePack.setScore(calculateThreePackScore(supplierThreePack.getPlannedDeliveryTime(), supplierThreePack.getActualDeliveryTime()));
         return supplierThreePackMapper.insertSupplierThreePack(supplierThreePack);
     }
 
@@ -68,6 +70,7 @@ public class SupplierThreePackServiceImpl  extends ServiceImpl<SupplierThreePack
     @Override
     public int updateSupplierThreePack(SupplierThreePack supplierThreePack)
     {
+        supplierThreePack.setScore(calculateThreePackScore(supplierThreePack.getPlannedDeliveryTime(), supplierThreePack.getActualDeliveryTime()));
         return supplierThreePackMapper.updateSupplierThreePack(supplierThreePack);
     }
 
@@ -94,4 +97,21 @@ public class SupplierThreePackServiceImpl  extends ServiceImpl<SupplierThreePack
     {
         return supplierThreePackMapper.deleteSupplierThreePackById(id);
     }
+
+
+    /**
+     * 计算三包发货及时率得分
+     * @param plannedDeliveryTime 计划发货时间
+     * @param actualDeliveryTime 实际发货时间
+     * @return 最终得分（3分或0分）
+     */
+    private double calculateThreePackScore(Date plannedDeliveryTime, Date actualDeliveryTime) {
+        if (plannedDeliveryTime == null || actualDeliveryTime == null) {
+            throw new IllegalArgumentException("计划发货时间点和实际发货时间点不能为空");
+        }
+
+        // 如果实际发货时间晚于计划发货时间，则得分为0，否则为3
+        return actualDeliveryTime.after(plannedDeliveryTime) ? 0.0 : 3.0;
+    }
+
 }

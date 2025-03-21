@@ -10,13 +10,13 @@
         <result property="supplierName"    column="supplier_name"    />
         <result property="returnRate"    column="return_rate"    />
         <result property="month"    column="month"    />
-        <result property="one"    column="one"    />
+        <result property="score"    column="score"    />
         <result property="two"    column="two"    />
         <result property="three"    column="three"    />
     </resultMap>
 
     <sql id="selectSupplierReturnRateVo">
-        select id, supplier_code, supplier_name, return_rate, month, one, two, three from supplier_return_rate
+        select id, supplier_code, supplier_name, return_rate, month, score, two, three from supplier_return_rate
     </sql>
 
     <select id="selectSupplierReturnRateList" parameterType="SupplierReturnRate" resultMap="SupplierReturnRateResult">
@@ -26,7 +26,7 @@
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="returnRate != null  and returnRate != ''"> and return_rate = #{returnRate}</if>
             <if test="month != null "> and month = #{month}</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
+            <if test="score != null  and score != ''"> and score = #{score}</if>
             <if test="two != null  and two != ''"> and two = #{two}</if>
             <if test="three != null  and three != ''"> and three = #{three}</if>
         </where>
@@ -44,7 +44,7 @@
             <if test="supplierName != null">supplier_name,</if>
             <if test="returnRate != null">return_rate,</if>
             <if test="month != null">month,</if>
-            <if test="one != null">one,</if>
+            <if test="score != null">score,</if>
             <if test="two != null">two,</if>
             <if test="three != null">three,</if>
         </trim>
@@ -53,7 +53,7 @@
             <if test="supplierName != null">#{supplierName},</if>
             <if test="returnRate != null">#{returnRate},</if>
             <if test="month != null">#{month},</if>
-            <if test="one != null">#{one},</if>
+            <if test="score != null">#{score},</if>
             <if test="two != null">#{two},</if>
             <if test="three != null">#{three},</if>
         </trim>
@@ -66,7 +66,7 @@
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="returnRate != null">return_rate = #{returnRate},</if>
             <if test="month != null">month = #{month},</if>
-            <if test="one != null">one = #{one},</if>
+            <if test="score != null">score = #{score},</if>
             <if test="two != null">two = #{two},</if>
             <if test="three != null">three = #{three},</if>
         </trim>

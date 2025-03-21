@@ -69,12 +69,14 @@ public class SupplierThreePack implements Serializable {
     private String specificWarrantyItems;
 
     /** 填报时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelProperty(value = "填报时间")
     private Date happenTime;
 
     /** 填报人 */
+    @ExcelIgnore
     @Excel(name = "填报人")
     @ExcelProperty(value = "填报人")
     private String reporter;
@@ -84,10 +86,12 @@ public class SupplierThreePack implements Serializable {
     private Double score;
 
     /** 备选1 */
+    @ExcelIgnore
     @Excel(name = "备选1")
     private String one;
 
     /** 备选2 */
+    @ExcelIgnore
     @Excel(name = "备选2")
     private String two;
 }

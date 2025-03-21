@@ -23,7 +23,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value = "supplier_price_compete")
-public class SupplierCooperationDegree extends BaseEntity
+public class SupplierCooperationDegree
 {
     @Serial
     @ExcelIgnore

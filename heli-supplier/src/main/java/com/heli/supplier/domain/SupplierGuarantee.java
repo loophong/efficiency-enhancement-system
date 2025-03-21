@@ -27,7 +27,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author wll
  * @date 2025-03-19
  */
-public class SupplierGuarantee extends BaseEntity
+public class SupplierGuarantee
 {
     @Serial
     @ExcelIgnore

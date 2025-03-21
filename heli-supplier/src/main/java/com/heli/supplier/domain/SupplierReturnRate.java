@@ -57,10 +57,10 @@ public class SupplierReturnRate implements Serializable
     private Date month;
 
     /** 备选1 */
-    @Excel(name = "备选1")
-    @ExcelProperty(value = "备选1")
+    @Excel(name = "分数")
+    @ExcelProperty(value = "分数")
     @ExcelIgnore
-    private String one;
+    private Double score;
 
     /** 2 */
     @Excel(name = "2")

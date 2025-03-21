@@ -25,22 +25,15 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="主要供货范围" prop="mainSupplyrange">
+      <!-- <el-form-item label="主要供货范围" prop="mainSupplyrange">
         <el-input
           v-model="queryParams.mainSupplyrange"
           placeholder="请输入主要供货范围"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="备注" prop="remarks">
-        <el-input
-          v-model="queryParams.remarks"
-          placeholder="请输入备注"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
+      </el-form-item> -->
+      
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -149,11 +142,11 @@
 
 
         <!-- 文件上传弹窗 -->
-        <el-dialog title="导入车辆分类信息" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+        <el-dialog title="导入合格供应商信息" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
 
           <el-form :model="form" ref="form" label-width="90px">
             <el-form-item label="上传表类：">
-              <span style="color: rgb(68, 140, 39);">车辆分类表</span>
+              <span style="color: rgb(68, 140, 39);">合格供应商表</span>
               <br>
             </el-form-item>
             <el-form-item label="上传文件：">

@@ -83,6 +83,8 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
     @Override
     public int updateSupplierOnetimeSimple(SupplierOnetimeSimple supplierOnetimeSimple)
     {
+        double score = calculateScore(supplierOnetimeSimple.getQuantityPassRate());
+        supplierOnetimeSimple.setScore(score);
         return supplierOnetimeSimpleMapper.updateSupplierOnetimeSimple(supplierOnetimeSimple);
     }
 

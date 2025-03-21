@@ -23,7 +23,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value = "supplier_performance_services_collaboration")
-public class SupplierPerformanceServicesCollaboration extends BaseEntity
+public class SupplierPerformanceServicesCollaboration
 {
     @Serial
     @ExcelIgnore

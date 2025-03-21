@@ -14,7 +14,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author wll
  * @date 2025-03-06
  */
-public class SupplierReduceSupport extends BaseEntity
+public class SupplierReduceSupport
 {
     private static final long serialVersionUID = 1L;
 

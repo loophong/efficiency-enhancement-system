@@ -63,6 +63,8 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     @Override
     public int insertSupplierReturnRate(SupplierReturnRate supplierReturnRate)
     {
+        double score = calculateScore(supplierReturnRate.getReturnRate());
+        supplierReturnRate.setScore(score);
         return supplierReturnRateMapper.insertSupplierReturnRate(supplierReturnRate);
     }
 
@@ -75,6 +77,8 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     @Override
     public int updateSupplierReturnRate(SupplierReturnRate supplierReturnRate)
     {
+        double score = calculateScore(supplierReturnRate.getReturnRate());
+        supplierReturnRate.setScore(score);
         return supplierReturnRateMapper.updateSupplierReturnRate(supplierReturnRate);
     }
 
@@ -122,7 +126,33 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
         }
     }
 
+    /**
+     * 根据返修率计算最终得分
+     * @param returnRate 返修率（字符串格式，如 "85.5%"）
+     * @return 最终得分（BigDecimal 格式）
+     */
+    private double calculateScore(String returnRate) {
+        if (returnRate == null || !returnRate.endsWith("%")) {
+            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
+        }
 
+        // 去掉百分号并转换为数值
+        double rate = Double.parseDouble(returnRate.replace("%", "").trim());
+
+        // 计算基础分
+        double baseScore;
+        if (rate < 80) {
+            baseScore = 0;
+        } else if (rate < 90) {
+            baseScore = 30;
+        } else if (rate < 100) {
+            baseScore = 60;
+        } else {
+            baseScore = 100;
+        }
+        // 计算最终得分
+        return baseScore * 0.08;
+    }
 
 
 }

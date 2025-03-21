@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.month, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="备选1" align="center" prop="one" /> -->
+      <el-table-column label="分数" align="center" prop="score" />
       <!-- <el-table-column label="2" align="center" prop="two" /> -->
       <!-- <el-table-column label="3" align="center" prop="three" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -253,7 +253,7 @@ const data = reactive({
     supplierName: null,
     returnRate: null,
     month: null,
-    one: null,
+    score: null,
     two: null,
     three: null
   },
@@ -287,7 +287,7 @@ function reset() {
     supplierName: null,
     returnRate: null,
     month: null,
-    one: null,
+    score: null,
     two: null,
     three: null
   };
