@@ -48,8 +48,13 @@
     <el-table v-loading="loading" :data="planCoSignList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="会签编号" align="center" prop="id"/>
-      <el-table-column label="会签人编号" align="center" prop="reviewerId"/>
-      <el-table-column label="会签人" align="center" prop="reviewerName"/>
+<!--      <el-table-column label="会签人编号" align="center" prop="reviewerId"/>-->
+<!--      <el-table-column label="会签人" align="center" prop="reviewerName"/>-->
+      <el-table-column label="会签人" align="center" prop="reviewerId">
+        <template #default="scope">
+          {{ getReviewerName(scope.row.reviewerId) }}
+        </template>
+      </el-table-column>
       <el-table-column label="会签状态" align="center" prop="reviewStatus">
         <template #default="scope">
           <dict-tag :options="production_plan_co_sign_status" :value="scope.row.reviewStatus"/>
@@ -88,11 +93,17 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="planCoSignRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="会签人编号" prop="reviewerId">
-          <el-input v-model="form.reviewerId" placeholder="请输入会签人编号"/>
+<!--          <el-input v-model="form.reviewerId" placeholder="请输入会签人编号"/>-->
+          <el-select v-model="form.reviewerId" placeholder="请选择会签人" clearable style="width: 200px">
+            <el-option v-for="item in userAndDeptList" :key="item.userId" :label="item.nickName" :value="item.userId"/>
+          </el-select>
         </el-form-item>
-        <el-form-item label="会签人" prop="reviewerName">
-          <el-input v-model="form.reviewerName" placeholder="请输入会签人"/>
-        </el-form-item>
+<!--        <el-form-item label="会签人" prop="reviewerName">-->
+<!--&lt;!&ndash;          <el-input v-model="form.reviewerName" placeholder="请输入会签人"/>&ndash;&gt;-->
+<!--          <el-select v-model="form.reviewerName" placeholder="请选择会签人" clearable style="width: 200px">-->
+<!--            <el-option v-for="item in userAndDeptList" :key="item.userId" :label="item.nickName" :value="item.userId"/>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
         <!--        <el-form-item label="会签状态" prop="reviewStatus">-->
         <!--          <el-radio-group v-model="form.reviewStatus">-->
         <!--            <el-radio v-for="dict in production_plan_co_sign_status" :key="dict.value" :label="dict.value">{{dict.label}}</el-radio>-->
@@ -109,9 +120,9 @@
                           placeholder="请选择上线日期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="评审意见" prop="comments">
-          <el-input v-model="form.comments" type="textarea" placeholder="请输入内容"/>
-        </el-form-item>
+<!--        <el-form-item label="评审意见" prop="comments">-->
+<!--          <el-input v-model="form.comments" type="textarea" placeholder="请输入内容"/>-->
+<!--        </el-form-item>-->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -202,7 +213,7 @@ import {
   updatePlanCoSign,
   getCoSignAndDailyPlan
 } from "@/api/production/planCoSign";
-
+import {listUserAndDept} from "@/api/system/user.js"
 const {proxy} = getCurrentInstance();
 const {production_plan_co_sign_status} = proxy.useDict('production_plan_co_sign_status');
 
@@ -441,6 +452,21 @@ function submitCoSign(row) {
 
   });
 
+}
+// 初始化页面时调用
+const userAndDeptList = ref([]);
+onMounted(() => {
+  listUserAndDept().then(response => {
+    console.log(response)
+    userAndDeptList.value = response.data;
+    console.log(userAndDeptList.value)
+  });
+});
+
+
+function getReviewerName(id) {
+  const user = userAndDeptList.value.find(item => item.userId === id);
+  return user ? user.nickName : '';
 }
 </script>
 
