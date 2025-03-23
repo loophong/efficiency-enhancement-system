@@ -23,7 +23,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  */
 @Data
 @TableName(value = "supplier_change")
-public class SupplierChange extends BaseEntity
+public class SupplierChange
 {
     @Serial
     @ExcelIgnore
@@ -60,16 +60,28 @@ public class SupplierChange extends BaseEntity
     @ExcelProperty(value = "具体内容")
     private String specificContent;
 
+    /** 得分 */
+    @ExcelIgnore
+    @Excel(name = "得分")
+    @ExcelProperty(value = "得分")
+    private Double score;
+
+
+
+    /** 发生次数 */
+    @ExcelIgnore
+    @Excel(name = "发生次数")
+    @ExcelProperty(value = "发生次数")
+    private Long happenNumber;
+
+
     /** 发生时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "发生时间", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelProperty(value = "发生时间")
     private Date happenTime;
 
-    /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
-    private Long score;
 
     /** 填报人 */
     @ExcelIgnore
@@ -77,10 +89,7 @@ public class SupplierChange extends BaseEntity
     @ExcelProperty(value = "填报人")
     private String reporter;
 
-    /** 备选1 */
-    @ExcelIgnore
-    @Excel(name = "备选1")
-    private String one;
+
 
     /** 备选2 */
     @ExcelIgnore

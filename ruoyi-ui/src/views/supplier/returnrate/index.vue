@@ -25,14 +25,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="月份" prop="month">
+      <!-- <el-form-item label="月份" prop="month">
         <el-date-picker clearable
           v-model="queryParams.month"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择月份">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="备选1" prop="one">
         <el-input
           v-model="queryParams.one"
@@ -123,7 +123,7 @@
           <span>{{ parseTime(scope.row.month, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="备选1" align="center" prop="one" /> -->
+      <el-table-column label="分数" align="center" prop="score" />
       <!-- <el-table-column label="2" align="center" prop="two" /> -->
       <!-- <el-table-column label="3" align="center" prop="three" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -144,7 +144,7 @@
 
     <!-- 添加或修改售后返修率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="returnrateRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="returnrateRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商编码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商编码" />
         </el-form-item>
@@ -155,12 +155,18 @@
           <el-input v-model="form.returnRate" placeholder="请输入售后返修率" />
         </el-form-item>
         <el-form-item label="月份" prop="month">
-          <el-date-picker
+          <!-- <el-date-picker
           v-model="form.month"
           type="month"
         
           placeholder="Pick a month"
-        />
+        /> -->
+        <el-date-picker clearable
+            v-model="form.uploadMonth"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择上传月份">
+          </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="备选1" prop="one">
           <el-input v-model="form.one" placeholder="请输入备选1" />
@@ -247,7 +253,7 @@ const data = reactive({
     supplierName: null,
     returnRate: null,
     month: null,
-    one: null,
+    score: null,
     two: null,
     three: null
   },
@@ -281,7 +287,7 @@ function reset() {
     supplierName: null,
     returnRate: null,
     month: null,
-    one: null,
+    score: null,
     two: null,
     three: null
   };
@@ -393,20 +399,13 @@ function uploadFile() {
     const file = inputFile.value.files[0];
     console.log(inputFile.value);
     console.log(file);
-    // let date = XXXdate;
-    // const formData = new FormData();
-    // formData.append('excelFile', file);
-
-
     console.log("上传时间"+uploadDate.value);
     let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
-    // formData.append('uploadMonth',date );
-
-    // formData.append('date', date);
     let uploadFileDTO = {
       'uploadMonth': date,
       'excelFile': file
     }
+
     importFile(uploadFileDTO).then(() => {
       proxy.$modal.msgSuccess("导入成功");
       getList();
@@ -423,8 +422,6 @@ function uploadFile() {
   }
 }
 
-
-
 /** 检查文件是否为excel */
 function checkFile() {
   const file = inputFile.value.files[0];
@@ -434,11 +431,7 @@ function checkFile() {
   if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
     proxy.$modal.msgError("只能上传 Excel 文件！");
     resetUpload();
-  // }else {//修改
-  //   data.form.files.push(file); // 将文件添加到数组中
-  // }
+  }
 }
-}
-
 
 </script>

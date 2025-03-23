@@ -57,12 +57,14 @@ public class SupplierSelfTestReports implements Serializable {
     private String specificContent;
 
     /** 发生时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "发生时间", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelProperty(value = "发生时间")
     private Date happenTime;
 
     /** 填报人 */
+    @ExcelIgnore
     @Excel(name = "填报人")
     @ExcelProperty(value = "填报人")
     private String reporter;

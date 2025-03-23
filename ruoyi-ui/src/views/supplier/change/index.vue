@@ -155,16 +155,16 @@
         </template>
       </el-table-column>
       <el-table-column label="具体内容" align="center" prop="specificContent" />
-      <el-table-column label="发生时间" align="center" prop="happenTime" width="180">
+      <!-- <el-table-column label="发生时间" align="center" prop="happenTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="得分" align="center" prop="score" />
+      </el-table-column> -->
+      <!-- <el-table-column label="得分" align="center" prop="score" /> -->
       <!-- <el-table-column label="填报人" align="center" prop="reporter" /> -->
-      <!-- <el-table-column label="备选1" align="center" prop="one" />
-      <el-table-column label="备选2" align="center" prop="two" />
-      <el-table-column label="备选3" align="center" prop="three" /> -->
+      <!-- <el-table-column label="发生次数" align="center" prop="happenNumber" /> -->
+      <!-- <el-table-column label="备选2" align="center" prop="two" /> -->
+      <!-- <el-table-column label="备选3" align="center" prop="three" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:change:edit']">修改</el-button>
@@ -210,24 +210,17 @@
         <el-form-item label="具体内容" prop="specificContent">
           <el-input v-model="form.specificContent" placeholder="请输入具体内容" />
         </el-form-item>
-        <el-form-item label="发生时间" prop="happenTime">
-          <el-date-picker clearable
-            v-model="form.happenTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择发生时间">
-          </el-date-picker>
-        </el-form-item>
+
         <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
         <el-form-item label="填报人" prop="reporter">
           <el-input v-model="form.reporter" placeholder="请输入填报人" />
-        </el-form-item>
-        <el-form-item label="备选1" prop="one">
-          <el-input v-model="form.one" placeholder="请输入备选1" />
-        </el-form-item>
-        <el-form-item label="备选2" prop="two">
+        </el-form-item> -->
+        <!-- <el-form-item label="发生次数" prop="happenNumber">
+          <el-input v-model="form.one" placeholder="请输入发生次数" />
+        </el-form-item> -->
+        <!-- <el-form-item label="备选2" prop="two">
           <el-input v-model="form.two" placeholder="请输入备选2" />
         </el-form-item>
         <el-form-item label="备选3" prop="three">

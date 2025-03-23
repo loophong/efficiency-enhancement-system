@@ -42,3 +42,14 @@ export function delCollaboration(id) {
     method: 'delete'
   })
 }
+// 上传
+export function importFile(formData) {
+  return request({
+    url: '/supplier/collaboration/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+  }
+  })
+}

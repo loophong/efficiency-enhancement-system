@@ -6,6 +6,7 @@ import java.io.Serializable;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -31,7 +32,6 @@ public class DeviceDetails extends BaseEntity
 
     /** 资本化日期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-
     @ExcelProperty(value = "资本化日期")
     private String financialDate;
 

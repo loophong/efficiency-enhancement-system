@@ -43,7 +43,7 @@ export function delReturnrate(id) {
   })
 }
 
-// 上传主计划表
+// 上传
 export function importFile(formData) {
   return request({
     url: '/supplier/returnrate/import',

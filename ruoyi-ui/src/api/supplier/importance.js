@@ -42,3 +42,15 @@ export function delImportance(id) {
     method: 'delete'
   })
 }
+
+// 上传
+export function importFile(formData) {
+  return request({
+    url: '/supplier/importance/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

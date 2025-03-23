@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
             v-model="queryParams.supplierCode"
@@ -17,222 +17,7 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="质量事故" prop="qualityIncident">
-        <el-input
-            v-model="queryParams.qualityIncident"
-            placeholder="请输入质量事故"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="一次交检合格率" prop="firstInspectionPassrate">
-        <el-input
-            v-model="queryParams.firstInspectionPassrate"
-            placeholder="请输入一次交检合格率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="零公里故障指标完成率" prop="zeroKilometerFailurerate">
-        <el-input
-            v-model="queryParams.zeroKilometerFailurerate"
-            placeholder="请输入零公里故障指标完成率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="质量通知单发生" prop="qualityNotificationOrderrate">
-        <el-input
-            v-model="queryParams.qualityNotificationOrderrate"
-            placeholder="请输入质量通知单发生"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="反馈单回函及时率" prop="feedbackOrderletterTimeliness">
-        <el-input
-            v-model="queryParams.feedbackOrderletterTimeliness"
-            placeholder="请输入反馈单回函及时率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="保修期内市场售后返修率" prop="warrantyperiodRepairrate">
-        <el-input
-            v-model="queryParams.warrantyperiodRepairrate"
-            placeholder="请输入保修期内市场售后返修率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="三包配件发货及时率" prop="threepackageComponentRepairrate">
-        <el-input
-            v-model="queryParams.threepackageComponentRepairrate"
-            placeholder="请输入三包配件发货及时率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="二方审核得分" prop="secondpartyAuditscore">
-        <el-input
-            v-model="queryParams.secondpartyAuditscore"
-            placeholder="请输入二方审核得分"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="自检报告准确率" prop="selfinspectionReportaccuracy">
-        <el-input
-            v-model="queryParams.selfinspectionReportaccuracy"
-            placeholder="请输入自检报告准确率"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="擅自变更产品材质参数尺寸" prop="productmaterialParametersizeChange">
-        <el-input
-            v-model="queryParams.productmaterialParametersizeChange"
-            placeholder="请输入擅自变更产品材质参数尺寸"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="重要度" prop="weight">
-        <el-input
-            v-model="queryParams.weight"
-            placeholder="请输入重要度"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="经营风险" prop="businessRisk">
-        <el-input
-            v-model="queryParams.businessRisk"
-            placeholder="请输入经营风险"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="供货保障" prop="supplyGuarantee">
-        <el-input
-            v-model="queryParams.supplyGuarantee"
-            placeholder="请输入供货保障"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="价格竞争力" prop="priceCompetitiveness">
-        <el-input
-            v-model="queryParams.priceCompetitiveness"
-            placeholder="请输入价格竞争力"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="降本支持" prop="costreductionSupport">
-        <el-input
-            v-model="queryParams.costreductionSupport"
-            placeholder="请输入降本支持"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="服务与协作" prop="serviceAndCoordination">
-        <el-input
-            v-model="queryParams.serviceAndCoordination"
-            placeholder="请输入服务与协作"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="价格诚信" prop="priceIntegrity">
-        <el-input
-            v-model="queryParams.priceIntegrity"
-            placeholder="请输入价格诚信"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="付款限制条件" prop="paymentRestrictionconditions">
-        <el-input
-            v-model="queryParams.paymentRestrictionconditions"
-            placeholder="请输入付款限制条件"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="新产品研发配合程度" prop="newproductDevelopmentCooperationdegree">
-        <el-input
-            v-model="queryParams.newproductDevelopmentCooperationdegree"
-            placeholder="请输入新产品研发配合程度"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="产品技术问题整改及时性" prop="producttechnologyproblemImprovementtimeliness">
-        <el-input
-            v-model="queryParams.producttechnologyproblemImprovementtimeliness"
-            placeholder="请输入产品技术问题整改及时性"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="总分" prop="totalScore">
-        <el-input
-            v-model="queryParams.totalScore"
-            placeholder="请输入总分"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="开始时间" prop="happenTime">
-        <el-date-picker clearable
-                        v-model="queryParams.happenTime"
-                        type="date"
-                        value-format="YYYY-MM-DD"
-                        placeholder="请选择开始时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="结束时间" prop="endTime">
-        <el-date-picker clearable
-                        v-model="queryParams.endTime"
-                        type="date"
-                        value-format="YYYY-MM-DD"
-                        placeholder="请选择结束时间">
-        </el-date-picker>
-      </el-form-item>
-      <!-- <el-form-item label="备2" prop="2">
-        <el-input
-          v-model="queryParams.2"
-          placeholder="请输入备2"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="备3" prop="3">
-        <el-date-picker clearable
-          v-model="queryParams.3"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择备3">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="备4" prop="4">
-        <el-input
-          v-model="queryParams.4"
-          placeholder="请输入备4"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item> -->
-      <!-- <el-form-item label="入库标识符" prop="storageFlag">
-        <el-input
-          v-model="queryParams.storageFlag"
-          placeholder="请输入入库标识符"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item> -->
+      
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -290,32 +75,32 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
+    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" width="50">
+      <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="" align="center" prop="id" /> -->
-      <el-table-column label="供应商代码" align="center" prop="supplierCode"/>
-      <el-table-column label="供应商名称" align="center" prop="supplierName"/>
-      <el-table-column label="质量事故" align="center" prop="qualityIncident"/>
-      <el-table-column label="一次交检合格率" align="center" prop="firstInspectionPassrate"/>
-      <el-table-column label="零公里故障指标完成率" align="center" prop="zeroKilometerFailurerate"/>
-      <el-table-column label="质量通知单发生" align="center" prop="qualityNotificationOrderrate"/>
-      <el-table-column label="反馈单回函及时率" align="center" prop="feedbackOrderletterTimeliness"/>
-      <el-table-column label="保修期内市场售后返修率" align="center" prop="warrantyperiodRepairrate"/>
-      <el-table-column label="三包配件发货及时率" align="center" prop="threepackageComponentRepairrate"/>
-      <el-table-column label="二方审核得分" align="center" prop="secondpartyAuditscore"/>
-      <el-table-column label="自检报告准确率" align="center" prop="selfinspectionReportaccuracy"/>
-      <el-table-column label="擅自变更产品材质参数尺寸" align="center" prop="productmaterialParametersizeChange"/>
-      <el-table-column label="重要度" align="center" prop="weight"/>
-      <el-table-column label="经营风险" align="center" prop="businessRisk"/>
-      <el-table-column label="供货保障" align="center" prop="supplyGuarantee"/>
-      <el-table-column label="价格竞争力" align="center" prop="priceCompetitiveness"/>
-      <el-table-column label="降本支持" align="center" prop="costreductionSupport"/>
-      <el-table-column label="服务与协作" align="center" prop="serviceAndCoordination"/>
-      <el-table-column label="价格诚信" align="center" prop="priceIntegrity"/>
-      <el-table-column label="付款限制条件" align="center" prop="paymentRestrictionconditions"/>
-      <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree"/>
-      <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness"/>
-      <el-table-column label="总分" align="center" prop="totalScore"/>
+      <el-table-column label="供应商代码" align="center" prop="supplierCode" />
+      <el-table-column label="供应商名称" align="center" prop="supplierName" width="150"/>
+      <el-table-column label="质量事故" align="center" prop="qualityIncident" width="50"/>
+      <el-table-column label="一次交检合格率" align="center" prop="firstInspectionPassrate" width="70"/>
+      <el-table-column label="零公里故障指标完成率" align="center" prop="zeroKilometerFailurerate" width="50"/>
+      <el-table-column label="质量通知单发生" align="center" prop="qualityNotificationOrderrate" width="50"/>
+      <el-table-column label="反馈单回函及时率" align="center" prop="feedbackOrderletterTimeliness" width="50"/>
+      <el-table-column label="保修期内市场售后返修率" align="center" prop="warrantyperiodRepairrate" width="50"/>
+      <el-table-column label="三包配件发货及时率" align="center" prop="threepackageComponentRepairrate" width="50"/>
+      <el-table-column label="二方审核得分" align="center" prop="secondpartyAuditscore" width="50"/>
+      <el-table-column label="自检报告准确率" align="center" prop="selfinspectionReportaccuracy" width="50"/>
+      <el-table-column label="擅自变更产品材质参数尺寸" align="center" prop="productmaterialParametersizeChange" width="50"/>
+      <el-table-column label="重要度" align="center" prop="weight" width="50"/>
+      <el-table-column label="经营风险" align="center" prop="businessRisk" width="50"/>
+      <el-table-column label="供货保障" align="center" prop="supplyGuarantee" width="50"/>
+      <el-table-column label="价格竞争力" align="center" prop="priceCompetitiveness" width="50"/>
+      <el-table-column label="降本支持" align="center" prop="costreductionSupport" width="50"/>
+      <el-table-column label="服务与协作" align="center" prop="serviceAndCoordination" width="50"/>
+      <el-table-column label="价格诚信" align="center" prop="priceIntegrity" width="50"/>
+      <el-table-column label="付款限制条件" align="center" prop="paymentRestrictionconditions" width="50"/>
+      <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree" width="50"/>
+      <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness" width="50"/>
+      <el-table-column label="总分" align="center" prop="totalScore" width="50"/>
       <!-- <el-table-column label="开始时间" align="center" prop="happenTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
@@ -426,7 +211,7 @@
         <el-form-item label="总分" prop="totalScore">
           <el-input v-model="form.totalScore" placeholder="请输入总分"/>
         </el-form-item>
-        <el-form-item label="开始时间" prop="happenTime">
+        <!-- <el-form-item label="开始时间" prop="happenTime">
           <el-date-picker clearable
                           v-model="form.happenTime"
                           type="date"
@@ -441,7 +226,7 @@
                           value-format="YYYY-MM-DD"
                           placeholder="请选择结束时间">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="备2" prop="2">
           <el-input v-model="form.2" placeholder="请输入备2" />
         </el-form-item>
@@ -456,9 +241,9 @@
         <el-form-item label="备4" prop="4">
           <el-input v-model="form.4" placeholder="请输入备4" />
         </el-form-item> -->
-        <el-form-item label="入库标识符" prop="storageFlag">
+        <!-- <el-form-item label="入库标识符" prop="storageFlag">
           <el-input v-model="form.storageFlag" placeholder="请输入入库标识符"/>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -695,7 +480,11 @@ function handleCalculate() {
 
 function calculate() {
   calculateScore(form.value).then(response => {
-    console.log(response)
-  })
+    console.log(response);
+    proxy.$modal.msgSuccess("计算成功"); // 弹窗提醒
+    calculateVisible.value = false; // 关闭对话框
+  }).catch(error => {
+    proxy.$modal.msgError("计算失败"); // 弹窗提醒
+  });
 }
 </script>

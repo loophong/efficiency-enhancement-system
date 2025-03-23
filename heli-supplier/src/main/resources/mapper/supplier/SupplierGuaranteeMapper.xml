@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.supplier.mapper.SupplierGuaranteeMapper">
-    
+
     <resultMap type="SupplierGuarantee" id="SupplierGuaranteeResult">
         <result property="id"    column="id"    />
         <result property="supplierCode"    column="supplier_code"    />
         <result property="supplierName"    column="supplier_name"    />
         <result property="totalNumber"    column="total_number"    />
         <result property="timelyNumber"    column="timely_number"    />
+        <result property="notTimely"    column="not_timely"    />
         <result property="timelyDeliveryRate"    column="timely_delivery_rate"    />
         <result property="timelyRateScore"    column="timely_rate_score"    />
         <result property="modelScore"    column="model_score"    />
@@ -17,24 +18,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSupplierGuaranteeVo">
-        select id, supplier_code, supplier_name, total_number, timely_number, timely_delivery_rate, timely_rate_score, model_score, upload_month from supplier_guarantee
+        select id, supplier_code, supplier_name, total_number, timely_number, not_timely, timely_delivery_rate, timely_rate_score, model_score, upload_month from supplier_guarantee
     </sql>
 
     <select id="selectSupplierGuaranteeList" parameterType="SupplierGuarantee" resultMap="SupplierGuaranteeResult">
         <include refid="selectSupplierGuaranteeVo"/>
-        <where>  
+        <where>
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="totalNumber != null "> and total_number = #{totalNumber}</if>
             <if test="timelyNumber != null "> and timely_number = #{timelyNumber}</if>
-            <if test="timelyDeliveryRate != null "> and timely_delivery_rate = #{timelyDeliveryRate}</if>
+            <if test="notTimely != null "> and not_timely = #{notTimely}</if>
+            <if test="timelyDeliveryRate != null  and timelyDeliveryRate != ''"> and timely_delivery_rate = #{timelyDeliveryRate}</if>
             <if test="timelyRateScore != null "> and timely_rate_score = #{timelyRateScore}</if>
             <if test="modelScore != null "> and model_score = #{modelScore}</if>
             <if test="uploadMonth != null "> and upload_month = #{uploadMonth}</if>
         </where>
     </select>
-    
-    <select id="selectSupplierGuaranteeById" parameterType="String" resultMap="SupplierGuaranteeResult">
+
+    <select id="selectSupplierGuaranteeById" parameterType="Long" resultMap="SupplierGuaranteeResult">
         <include refid="selectSupplierGuaranteeVo"/>
         where id = #{id}
     </select>
@@ -46,21 +48,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierName != null">supplier_name,</if>
             <if test="totalNumber != null">total_number,</if>
             <if test="timelyNumber != null">timely_number,</if>
+            <if test="notTimely != null">not_timely,</if>
             <if test="timelyDeliveryRate != null">timely_delivery_rate,</if>
             <if test="timelyRateScore != null">timely_rate_score,</if>
             <if test="modelScore != null">model_score,</if>
             <if test="uploadMonth != null">upload_month,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="totalNumber != null">#{totalNumber},</if>
             <if test="timelyNumber != null">#{timelyNumber},</if>
+            <if test="notTimely != null">#{notTimely},</if>
             <if test="timelyDeliveryRate != null">#{timelyDeliveryRate},</if>
             <if test="timelyRateScore != null">#{timelyRateScore},</if>
             <if test="modelScore != null">#{modelScore},</if>
             <if test="uploadMonth != null">#{uploadMonth},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSupplierGuarantee" parameterType="SupplierGuarantee">
@@ -70,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="totalNumber != null">total_number = #{totalNumber},</if>
             <if test="timelyNumber != null">timely_number = #{timelyNumber},</if>
+            <if test="notTimely != null">not_timely = #{notTimely},</if>
             <if test="timelyDeliveryRate != null">timely_delivery_rate = #{timelyDeliveryRate},</if>
             <if test="timelyRateScore != null">timely_rate_score = #{timelyRateScore},</if>
             <if test="modelScore != null">model_score = #{modelScore},</if>
@@ -78,12 +83,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </update>
 
-    <delete id="deleteSupplierGuaranteeById" parameterType="String">
+    <delete id="deleteSupplierGuaranteeById" parameterType="Long">
         delete from supplier_guarantee where id = #{id}
     </delete>
 
     <delete id="deleteSupplierGuaranteeByIds" parameterType="String">
-        delete from supplier_guarantee where id in 
+        delete from supplier_guarantee where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

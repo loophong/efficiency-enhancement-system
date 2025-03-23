@@ -11,6 +11,9 @@
       <el-form-item label="设备名称" prop="deviceName">
         <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <el-form-item label="档案类型" prop="fileType">
+        <el-input v-model="queryParams.fileType" placeholder="请输入档案类型" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
       <!-- <el-form-item label="上传日期" prop="upTime">
         <el-date-picker clearable v-model="queryParams.upTime" type="date" value-format="YYYY-MM-DD"
           placeholder="请选择上传日期">
@@ -58,7 +61,7 @@
       <!-- <el-table-column label="关联维修id" align="center" prop="basicCombineRepair" /> -->
       <el-table-column label="设备编号" align="center" prop="deviceNum" width="160" />
       <el-table-column label="设备名称" align="center" prop="deviceName" width="160" />
-      <!-- <el-table-column label="档案类型" align="center" prop="fileType" /> -->
+      <el-table-column label="档案类型" align="center" prop="fileType" width="160" />
       <el-table-column label="文件信息" align="center" prop="fileInfoRepair">
         <template #default="scope">
           <span v-html="formatFileInfo(scope.row.fileInfoRepair)"></span>
@@ -377,9 +380,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('maintenanceTable/file/export', {
+  proxy.download('file/basic/export', {
     ...queryParams.value
-  }, `file_${new Date().getTime()}.xlsx`)
+  }, `基础_${new Date().getTime()}.xlsx`)
 }
 
 getList();

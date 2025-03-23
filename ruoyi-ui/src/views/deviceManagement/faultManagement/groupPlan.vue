@@ -62,10 +62,10 @@
               </span>
             </el-dialog>
           </el-col>
-          <el-col :span="1.5">
+          <!-- <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
-          </el-col>
+          </el-col> -->
           <el-badge :value="listForTip.length" class="item" color="green">
             <el-button @click="openMessage = true">消息详情</el-button>
           </el-badge>

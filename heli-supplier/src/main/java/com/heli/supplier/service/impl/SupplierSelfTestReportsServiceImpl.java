@@ -56,6 +56,11 @@ public class SupplierSelfTestReportsServiceImpl extends ServiceImpl<SupplierSelf
     @Override
     public int insertSupplierSelfTestReports(SupplierSelfTestReports supplierSelfTestReports)
     {
+        // 计算分数
+        double score = calculateScore(supplierSelfTestReports.getSpecificContent());
+
+        // 设置计算后的分数
+        supplierSelfTestReports.setScore(score);
         return supplierSelfTestReportsMapper.insertSupplierSelfTestReports(supplierSelfTestReports);
     }
 
@@ -68,6 +73,11 @@ public class SupplierSelfTestReportsServiceImpl extends ServiceImpl<SupplierSelf
     @Override
     public int updateSupplierSelfTestReports(SupplierSelfTestReports supplierSelfTestReports)
     {
+        // 计算分数
+        double score = calculateScore(supplierSelfTestReports.getSpecificContent());
+
+        // 设置计算后的分数
+        supplierSelfTestReports.setScore(score);
         return supplierSelfTestReportsMapper.updateSupplierSelfTestReports(supplierSelfTestReports);
     }
 
@@ -94,4 +104,22 @@ public class SupplierSelfTestReportsServiceImpl extends ServiceImpl<SupplierSelf
     {
         return supplierSelfTestReportsMapper.deleteSupplierSelfTestReportsById(id);
     }
+
+    /**
+     * 计算分数的方法
+     */
+    private double calculateScore(String specificContent) {
+        // 默认得分 2 分
+        double score = 2.0;
+
+        // 判断是否有数据造假情况
+        if (specificContent != null || !specificContent.isEmpty()) {
+           // if (specificContent.contains("尺寸造假") || specificContent.contains("性能造假")) {
+                score = 0.0; // 如果有数据造假，分数为 0
+           // }
+        }
+
+        return score;
+    }
+
 }

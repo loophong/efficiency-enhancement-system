@@ -44,7 +44,7 @@
           v-hasPermi="['maintenanceTable:file:export']">导出</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="Info" plain icon="Refresh" @click="resetGetList"
+        <el-button type="info" plain icon="Refresh" @click="resetGetList"
           v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -373,9 +373,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('maintenanceTable/file/export', {
+  proxy.download('file/sop/export', {
     ...queryParams.value
-  }, `file_${new Date().getTime()}.xlsx`)
+  }, `Sop_${new Date().getTime()}.xlsx`)
 }
 
 getList();

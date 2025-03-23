@@ -83,6 +83,8 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
     @Override
     public int updateSupplierOnetimeSimple(SupplierOnetimeSimple supplierOnetimeSimple)
     {
+        double score = calculateScore(supplierOnetimeSimple.getQuantityPassRate());
+        supplierOnetimeSimple.setScore(score);
         return supplierOnetimeSimpleMapper.updateSupplierOnetimeSimple(supplierOnetimeSimple);
     }
 
@@ -122,7 +124,9 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
 
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
-            EasyExcel.read(excelFile.getInputStream(), SupplierOnetimeSimple.class, new OnetimeSimpleListener(supplierOnetimeSimpleMapper, uploadMonth)).sheet().doRead();
+            EasyExcel.read(excelFile.getInputStream(), SupplierOnetimeSimple.class,
+                    new OnetimeSimpleListener(supplierOnetimeSimpleMapper, uploadMonth))
+                    .sheet().doRead();
 
             log.info("读取文件成功: {}", fileName);
 

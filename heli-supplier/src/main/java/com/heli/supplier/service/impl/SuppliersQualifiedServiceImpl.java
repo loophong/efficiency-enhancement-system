@@ -101,13 +101,12 @@ public class SuppliersQualifiedServiceImpl extends ServiceImpl<SuppliersQualifie
 
 //            this.remove(new LambdaQueryWrapper<SuppliersQualified>()
 //                    .eq(SuppliersQualified::getDate,date));
-
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
-
             try {
-
-                EasyExcel.read(excelFile.getInputStream(), SuppliersQualified.class, new QualifiedListener(suppliersQualifiedMapper))
+                EasyExcel.read(excelFile.getInputStream(),
+                                SuppliersQualified.class,
+                                new QualifiedListener(suppliersQualifiedMapper))
                         .sheet("合格供应商名录")
 //                        .sheet(1)
                         .headRowNumber(4)
@@ -118,11 +117,9 @@ public class SuppliersQualifiedServiceImpl extends ServiceImpl<SuppliersQualifie
 //                        .headRowNumber(4)
 //                        .doRead();
                 log.info("读取文件成功: {}", fileName);
-
             } catch (Exception e) {
                 log.info("读取文件失败: {}", e.getMessage());
             }
-
 //            return R.ok("读取" + fileName + "文件成功");
         } catch (Exception e) {
             e.printStackTrace();

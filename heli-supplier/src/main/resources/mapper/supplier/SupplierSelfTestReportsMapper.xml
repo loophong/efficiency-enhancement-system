@@ -36,7 +36,7 @@
         </where>
     </select>
 
-    <select id="selectSupplierSelfTestReportsById" parameterType="String" resultMap="SupplierSelfTestReportsResult">
+    <select id="selectSupplierSelfTestReportsById" parameterType="Long" resultMap="SupplierSelfTestReportsResult">
         <include refid="selectSupplierSelfTestReportsVo"/>
         where id = #{id}
     </select>
@@ -85,11 +85,11 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteSupplierSelfTestReportsById" parameterType="String">
+    <delete id="deleteSupplierSelfTestReportsById" parameterType="Long">
         delete from supplier_self_test_reports where id = #{id}
     </delete>
 
-    <delete id="deleteSupplierSelfTestReportsByIds" parameterType="String">
+    <delete id="deleteSupplierSelfTestReportsByIds" parameterType="Long">
         delete from supplier_self_test_reports where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}

@@ -36,8 +36,8 @@ public class SupplierReturnRate implements Serializable
     private String id;
 
     /** 供应商编码 */
-    @Excel(name = "供应商编码")
-    @ExcelProperty(value = "供应商编码")
+    @Excel(name = "供应商代码")
+    @ExcelProperty(value = "供应商代码")
     private String supplierCode;
 
     /** 供应商名称 */
@@ -46,8 +46,8 @@ public class SupplierReturnRate implements Serializable
     private String supplierName;
 
     /** 售后返修率 */
-    @Excel(name = "售后返修率")
-    @ExcelProperty(value = "售后返修率")
+    @Excel(name = "月度售后反馈率")
+    @ExcelProperty(value = "月度售后反馈率")
     private String returnRate;
 
     /** 月份 */
@@ -57,10 +57,10 @@ public class SupplierReturnRate implements Serializable
     private Date month;
 
     /** 备选1 */
-    @Excel(name = "备选1")
-    @ExcelProperty(value = "备选1")
+    @Excel(name = "分数")
+    @ExcelProperty(value = "分数")
     @ExcelIgnore
-    private String one;
+    private Double score;
 
     /** 2 */
     @Excel(name = "2")

@@ -1,6 +1,8 @@
 package com.heli.device.fileTable.domain;
 
 import java.util.Date;
+
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -21,7 +23,7 @@ public class DeviceSopFile extends BaseEntity
     private String sopFileId;
 
     /** 关联id */
-    @Excel(name = "关联id")
+//    @Excel(name = "关联id")
     private Long sopCombineId;
 
     /** 设备编号 */
@@ -41,12 +43,12 @@ public class DeviceSopFile extends BaseEntity
     private String sopRepair;
 
     /** 上传时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date upTime;
 
     /** 是否是历史版本 */
-    @Excel(name = "是否是历史版本")
+//    @Excel(name = "是否是历史版本")
     private String ifHistory;
 
     public void setSopFileId(String sopFileId)

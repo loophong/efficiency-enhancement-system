@@ -5,6 +5,8 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.supplier.domain.SupplierChange;
 import com.heli.supplier.domain.SuppliersQualified;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * 擅自变更产品材质参数尺寸Mapper接口
@@ -61,4 +63,7 @@ public interface SupplierChangeMapper extends BaseMapper<SupplierChange>
      * @return 结果
      */
     public int deleteSupplierChangeByIds(String[] ids);
+
+//    public int countOccurrencesBySupplierCode(String supplierCode);
+
 }

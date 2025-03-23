@@ -21,11 +21,11 @@ public class DeviceBasicFile extends BaseEntity
     private String basicFileId;
 
     /** 关联保养id */
-    @Excel(name = "关联保养id")
+//    @Excel(name = "关联保养id")
     private Long basicCombineMaintenance;
 
     /** 关联维修id（多个） */
-    @Excel(name = "关联维修id", readConverterExp = "多=个")
+//    @Excel(name = "关联维修id", readConverterExp = "多=个")
     private String basicCombineRepair;
 
     /** 设备编号 */
@@ -37,16 +37,16 @@ public class DeviceBasicFile extends BaseEntity
     private String deviceName;
 
     /** 档案类型 */
-    @Excel(name = "档案类型")
+//    @Excel(name = "档案类型")
     private String fileType;
 
     /** 上传日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传日期", width = 30, dateFormat = "yyyy-MM-dd")
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "上传日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date upTime;
 
     /** 版本号 */
-    @Excel(name = "版本号")
+//    @Excel(name = "版本号")
     private String versionId;
 
     /** 保养文件信息 */
@@ -58,7 +58,7 @@ public class DeviceBasicFile extends BaseEntity
     private String fileInfoRepair;
 
     /** 是否是历史版本 */
-    @Excel(name = "是否是历史版本")
+//    @Excel(name = "是否是历史版本")
     private String ifHistory;
 
     public void setBasicFileId(String basicFileId)

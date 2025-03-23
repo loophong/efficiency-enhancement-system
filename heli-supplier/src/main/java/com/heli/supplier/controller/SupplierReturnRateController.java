@@ -48,9 +48,6 @@ public class SupplierReturnRateController extends BaseController
     public void importTable(MultipartFile excelFile, Date uploadMonth) {
         log.info("传入的参数为 " +excelFile);
         log.info("传入的参数为 " +uploadMonth);
-//        log.info("传入的uploadMonth为 " + uploadMonth);
-//        MultipartFile excelFile = uploadFileDTO.getExcelFile();
-//        Date uploadMonth = uploadFileDTO.getUploadMonth();
         try {
             supplierReturnRateService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
         } catch (Exception e) {

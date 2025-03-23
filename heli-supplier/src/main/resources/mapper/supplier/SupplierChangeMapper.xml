@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.supplier.mapper.SupplierChangeMapper">
-    
+
     <resultMap type="SupplierChange" id="SupplierChangeResult">
         <result property="id"    column="id"    />
         <result property="supplierCode"    column="supplier_code"    />
@@ -13,19 +13,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="specificContent"    column="specific_content"    />
         <result property="happenTime"    column="happen_time"    />
         <result property="score"    column="score"    />
+        <result property="happenNumber"    column="happen_number"    />
         <result property="reporter"    column="reporter"    />
-        <result property="one"    column="one"    />
         <result property="two"    column="two"    />
         <result property="three"    column="three"    />
     </resultMap>
 
     <sql id="selectSupplierChangeVo">
-        select id, supplier_code, supplier_name, form_leibie, responsibility_judgment_time, specific_content, happen_time, score, reporter, one, two, three from supplier_change
+        select id, supplier_code, supplier_name, form_leibie, responsibility_judgment_time, specific_content, happen_time, score, happen_number, reporter, two, three from supplier_change
     </sql>
 
     <select id="selectSupplierChangeList" parameterType="SupplierChange" resultMap="SupplierChangeResult">
         <include refid="selectSupplierChangeVo"/>
-        <where>  
+        <where>
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="formLeibie != null "> and form_leibie = #{formLeibie}</if>
@@ -33,13 +33,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specificContent != null  and specificContent != ''"> and specific_content = #{specificContent}</if>
             <if test="happenTime != null "> and happen_time = #{happenTime}</if>
             <if test="score != null "> and score = #{score}</if>
+            <if test="happenNumber != null "> and happen_number = #{happenNumber}</if>
             <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
             <if test="two != null  and two != ''"> and two = #{two}</if>
             <if test="three != null  and three != ''"> and three = #{three}</if>
         </where>
     </select>
-    
+
     <select id="selectSupplierChangeById" parameterType="String" resultMap="SupplierChangeResult">
         <include refid="selectSupplierChangeVo"/>
         where id = #{id}
@@ -55,11 +55,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specificContent != null">specific_content,</if>
             <if test="happenTime != null">happen_time,</if>
             <if test="score != null">score,</if>
+            <if test="happenNumber != null">happen_number,</if>
             <if test="reporter != null">reporter,</if>
-            <if test="one != null">one,</if>
             <if test="two != null">two,</if>
             <if test="three != null">three,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
@@ -68,11 +68,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specificContent != null">#{specificContent},</if>
             <if test="happenTime != null">#{happenTime},</if>
             <if test="score != null">#{score},</if>
+            <if test="happenNumber != null">#{happenNumber},</if>
             <if test="reporter != null">#{reporter},</if>
-            <if test="one != null">#{one},</if>
             <if test="two != null">#{two},</if>
             <if test="three != null">#{three},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSupplierChange" parameterType="SupplierChange">
@@ -85,8 +85,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="specificContent != null">specific_content = #{specificContent},</if>
             <if test="happenTime != null">happen_time = #{happenTime},</if>
             <if test="score != null">score = #{score},</if>
+            <if test="happenNumber != null">happen_number = #{happenNumber},</if>
             <if test="reporter != null">reporter = #{reporter},</if>
-            <if test="one != null">one = #{one},</if>
             <if test="two != null">two = #{two},</if>
             <if test="three != null">three = #{three},</if>
         </trim>
@@ -98,7 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSupplierChangeByIds" parameterType="String">
-        delete from supplier_change where id in 
+        delete from supplier_change where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

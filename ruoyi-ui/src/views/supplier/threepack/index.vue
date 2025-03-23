@@ -17,46 +17,6 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
-        <el-date-picker clearable
-          v-model="queryParams.responsibilityJudgmentTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择判定责任时间点">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="计划发货时间点" prop="plannedDeliveryTime">
-        <el-date-picker clearable
-          v-model="queryParams.plannedDeliveryTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择计划发货时间点">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="实际发货时间点" prop="actualDeliveryTime">
-        <el-date-picker clearable
-          v-model="queryParams.actualDeliveryTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择实际发货时间点">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="填报时间" prop="happenTime">
-        <el-date-picker clearable
-          v-model="queryParams.happenTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择填报时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="填报人" prop="reporter">
-        <el-input
-          v-model="queryParams.reporter"
-          placeholder="请输入填报人"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -153,7 +113,7 @@
 
     <!-- 添加或修改三包发货及时率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="threepackRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="threepackRef" :model="form" :rules="rules" label-width="115px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
@@ -186,17 +146,6 @@
         </el-form-item>
         <el-form-item label="具体三包事项" prop="specificWarrantyItems">
           <el-input v-model="form.specificWarrantyItems" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="填报时间" prop="happenTime">
-          <el-date-picker clearable
-            v-model="form.happenTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择填报时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="填报人" prop="reporter">
-          <el-input v-model="form.reporter" placeholder="请输入填报人" />
         </el-form-item>
       </el-form>
       <template #footer>

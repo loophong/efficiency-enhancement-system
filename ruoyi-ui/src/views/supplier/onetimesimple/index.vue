@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="数据合格率" prop="quantityPassRate"  style="width: 320px;">
+      <!-- <el-form-item label="数据合格率" prop="quantityPassRate"  style="width: 320px;">
         <el-input
           v-model="queryParams.quantityPassRate"
           placeholder="请输入数据合格率"
@@ -32,7 +32,7 @@
           value-format="YYYY-MM-DD"
           placeholder="请选择上次月份">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="填报人" prop="addName">
         <el-input
           v-model="queryParams.addName"
@@ -126,7 +126,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改一次交检合格率-简化版对话框 -->
+    <!-- 添加或修改一次交检合格率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="onetimesimpleRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
@@ -300,7 +300,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加一次交检合格率-简化版";
+  title.value = "添加一次交检合格率";
 }
 
 /** 修改按钮操作 */
@@ -310,7 +310,7 @@ function handleUpdate(row) {
   getOnetimesimple(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改一次交检合格率-简化版";
+    title.value = "修改一次交检合格率";
   });
 }
 
@@ -338,7 +338,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除一次交检合格率-简化版编号为"' + _ids + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除一次交检合格率编号为"' + _ids + '"的数据项？').then(function() {
     return delOnetimesimple(_ids);
   }).then(() => {
     getList();

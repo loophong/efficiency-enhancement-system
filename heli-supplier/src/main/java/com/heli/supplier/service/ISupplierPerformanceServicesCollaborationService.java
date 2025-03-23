@@ -1,7 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.domain.SupplierPerformanceServicesCollaboration;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 服务与协作Service接口
@@ -9,7 +14,7 @@ import com.heli.supplier.domain.SupplierPerformanceServicesCollaboration;
  * @author wll
  * @date 2025-03-05
  */
-public interface ISupplierPerformanceServicesCollaborationService 
+public interface ISupplierPerformanceServicesCollaborationService extends IService<SupplierPerformanceServicesCollaboration>
 {
     /**
      * 查询服务与协作
@@ -58,4 +63,6 @@ public interface ISupplierPerformanceServicesCollaborationService
      * @return 结果
      */
     public int deleteSupplierPerformanceServicesCollaborationById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }
