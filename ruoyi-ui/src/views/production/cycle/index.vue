@@ -39,11 +39,11 @@
                    v-hasPermi="['production:cycle:remove']">删除
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:cycle:export']">
-          导出
-        </el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:cycle:export']">-->
+<!--          导出-->
+<!--        </el-button>-->
+<!--      </el-col>-->
 
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['production:cycle:import']">导入
