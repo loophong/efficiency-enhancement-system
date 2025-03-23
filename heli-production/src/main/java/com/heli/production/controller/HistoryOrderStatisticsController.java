@@ -158,12 +158,10 @@ public class HistoryOrderStatisticsController extends BaseController {
                         OrderSchedulingEntity orderSchedulingEntity = new OrderSchedulingEntity();
                         orderSchedulingEntity.setQuantity(orderNum);
                         orderSchedulingEntity.setVehicleModel(historyOrderStatisticsEntity.getVehicleModel());
+                        orderSchedulingEntity.setMast(historyOrderStatisticsEntity.getMastHeight());
                         orderSchedulingEntity.setRemarks("预测订单");
                         orderSchedulingEntity.setCapacityType(historyOrderStatisticsEntity.getCapacityType());
 
-//                        VehicleTypeEntity vehicleType = vehicleTypeService.getOne(new LambdaQueryWrapper<VehicleTypeEntity>().eq(VehicleTypeEntity::getVehicleType, historyOrderStatisticsEntity.getVehicleModel()));
-
-//                        orderSchedulingEntity.set
                         orderSchedulingEntities.add(orderSchedulingEntity);
                     }
 

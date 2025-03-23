@@ -10,6 +10,7 @@
         <result property="orderNumber" column="order_number"/>
         <result property="orderDate" column="order_date"/>
         <result property="vehicleModel" column="vehicle_model"/>
+        <result property="mastHeight" column="mast_height"/>
         <result property="quantity" column="quantity"/>
         <result property="orderYear" column="order_year"/>
         <result property="capacityType" column="capacity_type"/>
@@ -21,6 +22,7 @@
                order_number,
                order_date,
                vehicle_model,
+               mast_height,
                quantity,
                order_year,
                capacity_type
@@ -34,6 +36,7 @@
             <if test="orderNumber != null  and orderNumber != ''">and order_number = #{orderNumber}</if>
             <if test="orderDate != null ">and order_date = #{orderDate}</if>
             <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
+            <if test="mastHeight != null  and mastHeight != ''">and mast_height = #{mastHeight}</if>
             <if test="quantity != null ">and quantity = #{quantity}</if>
             <if test="orderYear != null ">and order_year = #{orderYear}</if>
             <if test="capacityType != null ">and capacity_type = #{capacityType}</if>
@@ -48,14 +51,15 @@
 
     <!--  统计订单数据  -->
     <select id="statistics" resultType="com.heli.production.domain.entity.HistoryOrderStatisticsEntity">
-        select vehicleModel, quantity, capacity_vehicle_model as capacityType
+        select vehicleModel, mastHeight, quantity, capacity_vehicle_model as capacityType
         from (
                  select vehicle_model as vehicleModel,
+                        mast_height as mastHeight,
                         sum(quantity) as quantity
                  from production_history_order
                  where YEAR(order_date) = YEAR(#{date})
                    and MONTH(order_date) = MONTH(#{date})
-                 group by vehicle_model
+                 group by vehicle_model, mast_height
              ) as vMq
         left join production_cycle as pc on vMq.vehicleModel = pc.vehicle_model
     </select>
@@ -70,6 +74,7 @@
             <if test="orderNumber != null">order_number,</if>
             <if test="orderDate != null">order_date,</if>
             <if test="vehicleModel != null">vehicle_model,</if>
+            <if test="mastHeight != null">mast_height,</if>
             <if test="quantity != null">quantity,</if>
             <if test="orderYear != null">order_year,</if>
             <if test="capacityType != null">capacity_type,</if>
@@ -79,6 +84,7 @@
             <if test="orderNumber != null">#{orderNumber},</if>
             <if test="orderDate != null">#{orderDate},</if>
             <if test="vehicleModel != null">#{vehicleModel},</if>
+            <if test="mastHeight != null">#{mastHeight},</if>
             <if test="quantity != null">#{quantity},</if>
             <if test="orderYear != null">#{orderYear},</if>
             <if test="capacityType != null">#{capacityType},</if>
@@ -87,10 +93,10 @@
 
 
     <insert id="batchInsert" parameterType="list">
-        insert into production_history_order(branch, order_number, order_date, vehicle_model, quantity, order_year)
+        insert into production_history_order(branch, order_number, order_date, vehicle_model,mast_height, quantity, order_year)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.branch}, #{item.orderNumber}, #{item.orderDate}, #{item.vehicleModel}, #{item.quantity},
+            (#{item.branch}, #{item.orderNumber}, #{item.orderDate}, #{item.vehicleModel}, #{item.mastHeight}, #{item.quantity},
             #{item.orderYear})
         </foreach>
     </insert>
@@ -127,6 +133,7 @@
             <if test="orderNumber != null">order_number = #{orderNumber},</if>
             <if test="orderDate != null">order_date = #{orderDate},</if>
             <if test="vehicleModel != null">vehicle_model = #{vehicleModel},</if>
+            <if test="mastHeight != null">mast_height = #{mastHeight},</if>
             <if test="quantity != null">quantity = #{quantity},</if>
             <if test="orderYear != null">order_year = #{orderYear},</if>
             <if test="capacityType != null">capacity_type = #{capacityType},</if>

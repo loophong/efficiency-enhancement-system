@@ -8,12 +8,13 @@
         <result property="id"    column="id"    />
         <result property="yearAndMonth"    column="year_and_month"    />
         <result property="vehicleModel"    column="vehicle_model"    />
+        <result property="mastHeight"    column="mast_height"    />
         <result property="quantity"    column="quantity"    />
         <result property="capacityType"    column="capacity_type"    />
     </resultMap>
 
     <sql id="selectHistoryOrderStatisticsEntityVo">
-        select id, year_and_month, vehicle_model, quantity, capacity_type from production_history_order_statistics
+        select id, year_and_month, vehicle_model, mast_height, quantity, capacity_type from production_history_order_statistics
     </sql>
 
     <select id="selectHistoryOrderStatisticsEntityList" parameterType="HistoryOrderStatisticsEntity" resultMap="HistoryOrderStatisticsEntityResult">
@@ -21,6 +22,7 @@
         <where>
             <if test="yearAndMonth != null "> and year_and_month = #{yearAndMonth}</if>
             <if test="vehicleModel != null  and vehicleModel != ''"> and vehicle_model = #{vehicleModel}</if>
+            <if test="mastHeight != null  and mastHeight != ''"> and mast_height = #{mastHeight}</if>
             <if test="quantity != null "> and quantity = #{quantity}</if>
             <if test="capacityType != null  and capacityType != ''"> and capacity_type = #{capacityType}</if>
         </where>

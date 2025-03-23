@@ -56,6 +56,12 @@ public class HistoryOrderEntity implements Serializable {
     private String vehicleModel;
 
     /**
+     * 门架
+     */
+    @ExcelProperty(value = "门架")
+    private String mastHeight;
+
+    /**
      * 数量
      */
     @ExcelProperty(value = "数量")

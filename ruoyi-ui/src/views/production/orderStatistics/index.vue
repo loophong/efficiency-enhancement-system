@@ -54,6 +54,7 @@
         </template>
       </el-table-column>
       <el-table-column label="车型" align="center" prop="vehicleModel"/>
+      <el-table-column label="门架" align="center" prop="mastHeight"/>
       <el-table-column label="数量" align="center" prop="quantity"/>
       <el-table-column label="产能类型" align="center" prop="capacityType"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">

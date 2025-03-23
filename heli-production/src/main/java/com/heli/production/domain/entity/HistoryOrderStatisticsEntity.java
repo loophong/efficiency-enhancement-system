@@ -42,6 +42,11 @@ public class HistoryOrderStatisticsEntity implements Serializable {
     private String vehicleModel;
 
     /**
+     * 门架
+     */
+    private String mastHeight;
+
+    /**
      * 数量
      */
     private Long quantity;

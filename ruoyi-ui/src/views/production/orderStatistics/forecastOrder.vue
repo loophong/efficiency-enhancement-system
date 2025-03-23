@@ -32,6 +32,7 @@
           <!--        </template>-->
           <!--      </el-table-column>-->
           <el-table-column label="车型" align="center" prop="vehicleModel" />
+          <el-table-column label="门架" align="center" prop="mast" />
           <el-table-column label="数量" align="center" prop="quantity"/>
           <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
           <el-table-column label="备注信息" align="center" prop="remarks" />
@@ -133,6 +134,7 @@ function handleUnscheduledSelectionChange(selection) {
 
 const exportData = ref([{
   '车型': '',
+  '门架': '',
   '数量': '',
   '备注信息': '',
   '产能类型': ''
@@ -142,6 +144,7 @@ const exportData = ref([{
 function transformDataForExport(data) {
   return data.map(item => ({
     '车型': item.vehicleModel,
+    '门架': item.mast,
     '数量': item.quantity,
     '备注信息': item.remarks,
     '产能类型': item.capacityType

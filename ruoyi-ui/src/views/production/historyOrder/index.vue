@@ -15,6 +15,9 @@
       <el-form-item label="车型" prop="vehicleModel">
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
+      <el-form-item label="门架" prop="mastHeight">
+        <el-input v-model="queryParams.mastHeight" placeholder="请输入门架" clearable @keyup.enter="handleQuery"/>
+      </el-form-item>
       <el-form-item label="数量" prop="quantity">
         <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
@@ -68,6 +71,7 @@
         </template>
       </el-table-column>
       <el-table-column label="车型" align="center" prop="vehicleModel"/>
+      <el-table-column label="门架" align="center" prop="mastHeight"/>
       <el-table-column label="数量" align="center" prop="quantity"/>
       <el-table-column label="订单年份" align="center" prop="orderYear" width="180">
         <template #default="scope">
@@ -105,6 +109,9 @@
         </el-form-item>
         <el-form-item label="车型" prop="vehicleModel">
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
+        </el-form-item>
+        <el-form-item label="门架" prop="mastHeight">
+          <el-input v-model="form.mastHeight" placeholder="请输入门架"/>
         </el-form-item>
         <el-form-item label="数量" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入数量"/>
@@ -192,6 +199,7 @@ const data = reactive({
     orderNumber: null,
     orderDate: null,
     vehicleModel: null,
+    mastHeight: null,
     quantity: null,
     orderYear: null
   },
