@@ -44,7 +44,13 @@
       <!-- <el-table-column label="次数" align="center" prop="count" width="140" /> -->
       <el-table-column label="维修时间" align="center" prop="faultDuration" width="140" />
       <el-table-column label="故障现象" align="center" prop="faultPhenomenon" />
-      <el-table-column label="原因分析" align="center" prop="maintenanceAnalysis" />
+      <el-table-column label="原因分析" align="center" prop="maintenanceAnalysis">
+        <template #default="scope">
+          <el-button @click="handlePreview(scope.row)"
+            v-if="scope.row.maintenanceAnalysis && scope.row.maintenanceAnalysis.includes('upload')">预览</el-button>
+          <span v-else>{{ scope.row.maintenanceAnalysis }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="记录日期" align="center" prop="reportedTime" width="180">
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -89,6 +95,10 @@
         </div>
       </template>
     </el-dialog>
+
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
+      <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
+    </el-drawer>
   </div>
 </template>
 
@@ -102,12 +112,17 @@ import JSZip from 'pizzip'
 import Docxtemplater from 'docxtemplater'
 import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
+import { ElMessageBox } from 'element-plus'
+
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
 
 const { proxy } = getCurrentInstance();
 const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
 
 const analysisList = ref([]);
 const open = ref(false);
+const openDrawer = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -117,6 +132,8 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const drawerTitle = ref("");
+const drawerUrl = ref("");
 const daterangeAnalysisRecordTime = ref([]);
 const tableList = ref([]);
 const resultsReason = reactive({})
@@ -177,6 +194,14 @@ const handleRouteParams = () => {
 
 handleRouteParams();
 
+function handlePreview(input) {
+  console.log({ input })
+  const firstFaultFile = input.maintenanceAnalysis.split(',')[0].trim();
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${input.faultTypeName}  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
 
 // 解析输入的时间字符串
 function convertToYearMonth(inputDateTime) {

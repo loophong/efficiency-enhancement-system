@@ -64,7 +64,18 @@
       <el-table-column label="档案类型" align="center" prop="fileType" width="160" />
       <el-table-column label="文件信息" align="center" prop="fileInfoRepair">
         <template #default="scope">
-          <span v-html="formatFileInfo(scope.row.fileInfoRepair)"></span>
+          <!-- 调用 formatFileInfo 处理文件信息 -->
+          <div v-if="scope.row.fileInfoRepair && scope.row.fileInfoRepair !== ''">
+            <!-- 遍历格式化后的文件信息 -->
+            <div v-for="(file, index) in parseFileInfo(scope.row.fileInfoRepair)" :key="index">
+              <el-button
+                @click="handlePreview(scope.row.fileInfoRepair, index, scope.row.deviceNum, scope.row.deviceName)"
+                style="margin-bottom: 5px; display: block;">
+                {{ file }}
+              </el-button>
+            </div>
+          </div>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="版本号" align="center" prop="versionId" width="120" />
@@ -131,6 +142,14 @@
         </div>
       </template>
     </el-dialog>
+
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
+      <vue-office-docx v-if="showDocx" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
+        @error="errorHandler" />
+      <vue-office-excel v-if="showExcel" :src="drawerUrl" style="height: 100vh;" />
+      <vue-office-pdf v-if="showPdf" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
+        @error="errorHandler" />
+    </el-drawer>
   </div>
 </template>
 
@@ -140,10 +159,20 @@ import { getInfo } from "@/api/login";
 import { ElMessage } from 'element-plus'
 import { format } from 'date-fns';
 
+import VueOfficeDocx from '@vue-office/docx'
+import VueOfficeExcel from '@vue-office/excel'
+import VueOfficePdf from '@vue-office/pdf'
+import '@vue-office/docx/lib/index.css'
+import '@vue-office/excel/lib/index.css'
+
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
 const open = ref(false);
+const openDrawer = ref(false);
+const showDocx = ref(false);
+const showExcel = ref(false);
+const showPdf = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -151,6 +180,8 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const drawerTitle = ref("");
+const drawerUrl = ref("");
 const currentStatus = ref("默认");
 const currentUserName = ref("");
 const currentUserId = ref(0);
@@ -202,6 +233,30 @@ function resetGetList() {
     getList();
 }
 
+function handlePreview(input, index, num, name) {
+  showDocx.value = false
+  showExcel.value = false
+  showPdf.value = false
+  const firstFaultFile = input.split(',')[index].trim();
+  if (firstFaultFile && firstFaultFile.includes('doc')) {
+    showDocx.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('xl')) {
+    showExcel.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('pdf')) {
+    showPdf.value = true
+  }
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${name}(${num})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
+
+function parseFileInfo(fileInfo) {
+  // 调用 formatFileInfo 格式化文件信息
+  const formattedInfo = formatFileInfo(fileInfo);
+  // 将格式化后的字符串按 <br> 拆分为数组
+  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
+}
 
 getInfo().then(result => {
   currentUserId.value = result.user.userId

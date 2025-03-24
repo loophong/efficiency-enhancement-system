@@ -100,7 +100,12 @@
       <el-table-column label="申请部门" align="center" prop="applyDepartment" />
       <el-table-column label="维修人员" align="center" prop="maintenancePeople" />
       <el-table-column label="故障现象" align="center" prop="faultPhenomenon" />
-      <el-table-column label="故障现象文件" align="center" prop="faultFile" />
+      <el-table-column label="故障现象文件" align="center" prop="faultFile">
+        <template #default="scope">
+          <el-button @click="handlePreview(scope.row)" v-if="scope.row.faultFile">预览</el-button>
+          <span v-else>-</span>
+        </template>
+      </el-table-column>
       <el-table-column label="维修分析" align="center" prop="maintenanceAnalysis" />
       <el-table-column label="维修内容" align="center" prop="maintenanceContent" />
       <el-table-column label="报修时间" align="center" prop="reportedTime" width="180">
@@ -193,6 +198,10 @@
       </template>
     </el-dialog>
 
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :direction="direction" :before-close="handleClose">
+      <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
+    </el-drawer>
+
   </div>
 </template>
 
@@ -203,13 +212,20 @@ import { ElMessage } from 'element-plus';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
+import { ElMessageBox } from 'element-plus'
+
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
+
 const { proxy } = getCurrentInstance();
 const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
+
 
 
 const tableList = ref([]);
 const exportList = ref([]);
 const open = ref(false);
+const openDrawer = ref(false);
 const loading = ref(true);
 const buttonLoading = ref(false);
 const showSearch = ref(true);
@@ -218,11 +234,23 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const drawerTitle = ref("");
+const drawerUrl = ref("");
 const router = useRouter();
 const route = useRoute();
 const showDialog = ref(false);
 const daterangeReportedTime = ref([]);
 const daterangeResolutionTime = ref([]);
+
+
+function handlePreview(input) {
+  const firstFaultFile = input.faultFile.split(',')[0].trim();
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${input.deviceName}(${input.deviceNum})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
+
 
 
 const data = reactive({
@@ -337,6 +365,8 @@ function handleSelectionChange(selection) {
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
+
+
 
 /** 新增按钮操作 */
 function handleAdd() {
@@ -527,3 +557,20 @@ function handleExport() {
 
 // getList();
 </script>
+
+<style>
+/* 基础样式 */
+.preview-wrapper {
+  min-height: 80vh;
+}
+
+/* 调整文档预览样式 */
+.docx-wrapper {
+  background: #fff !important;
+  padding: 20px !important;
+}
+
+.docx {
+  max-width: 100% !important;
+}
+</style>

@@ -47,6 +47,9 @@
         <el-button type="info" plain icon="Refresh" @click="resetGetList"
           v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
       </el-col>
+      <el-button @click="openDrawer = true" type="primary" style="margin-left: 16px;">
+        点我打开
+      </el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -56,12 +59,25 @@
       <el-table-column label="设备名称" align="center" prop="sopName" width="160" />
       <el-table-column label="保养文件" align="center" prop="sopMaintenance">
         <template #default="scope">
-          <span v-html="formatFileInfo(scope.row.sopMaintenance)"></span>
+          <el-button @click="handlePreview(scope.row)" v-if="scope.row.sopMaintenance">
+            {{ formatFileInfo(scope.row.sopMaintenance) }}
+          </el-button>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="维修文件" align="center" prop="sopRepair">
         <template #default="scope">
-          <span v-html="formatFileInfo(scope.row.sopRepair)"></span>
+          <!-- 调用 formatFileInfo 处理文件信息 -->
+          <div v-if="scope.row.sopRepair && scope.row.sopRepair !== ''">
+            <!-- 遍历格式化后的文件信息 -->
+            <div v-for="(file, index) in parseFileInfo(scope.row.sopRepair)" :key="index">
+              <el-button @click="handlePreview2(scope.row.sopRepair, index, scope.row.sopNum, scope.row.sopName)"
+                style="margin-bottom: 5px; display: block;">
+                {{ file }}
+              </el-button>
+            </div>
+          </div>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="修改人" align="center" prop="updateBy" v-if="currentStatus == '历史'" width="120" />
@@ -113,6 +129,14 @@
         </div>
       </template>
     </el-dialog>
+
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :before-close="handleClose">
+      <vue-office-docx v-if="showDocx" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
+        @error="errorHandler" />
+      <vue-office-excel v-if="showExcel" :src="drawerUrl" style="height: 100vh;" />
+      <vue-office-pdf v-if="showPdf" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
+        @error="errorHandler" />
+    </el-drawer>
   </div>
 </template>
 
@@ -121,11 +145,22 @@ import { listFile, getFile, delFile, addFile, updateFile } from "@/api/device/fi
 import { getInfo } from "@/api/login";
 import { ElMessage } from 'element-plus'
 import { format } from 'date-fns';
+import { ElMessageBox } from 'element-plus'
+
+import VueOfficeDocx from '@vue-office/docx'
+import VueOfficeExcel from '@vue-office/excel'
+import VueOfficePdf from '@vue-office/pdf'
+import '@vue-office/docx/lib/index.css'
+import '@vue-office/excel/lib/index.css'
 
 const { proxy } = getCurrentInstance();
 
 const fileList = ref([]);
 const open = ref(false);
+const openDrawer = ref(false);
+const showDocx = ref(false);
+const showExcel = ref(false);
+const showPdf = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -133,8 +168,11 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const drawerTitle = ref("");
+const drawerUrl = ref("");
 const currentStatus = ref("默认");
 const daterangeUpTime = ref([]);
+const multiButton = ref([]);
 const route = useRoute();
 const router = useRouter();
 const currentUserName = ref("");
@@ -173,6 +211,63 @@ const handleRouteParams = () => {
   }
 };
 
+function handlePreview(input) {
+  showDocx.value = false
+  showExcel.value = false
+  showPdf.value = false
+  const firstFaultFile = input.sopMaintenance.split(',')[0].trim();
+  if (firstFaultFile && firstFaultFile.includes('doc')) {
+    showDocx.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('xl')) {
+    showExcel.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('pdf')) {
+    showPdf.value = true
+  }
+
+
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${input.sopName}(${input.sopNum})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
+
+function handlePreview2(input, index, num, name) {
+  console.log({ input })
+  console.log({ index })
+  showDocx.value = false
+  showExcel.value = false
+  showPdf.value = false
+  const firstFaultFile = input.split(',')[index].trim();
+  if (firstFaultFile && firstFaultFile.includes('doc')) {
+    showDocx.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('xl')) {
+    showExcel.value = true
+  } else if (firstFaultFile && firstFaultFile.includes('pdf')) {
+    showPdf.value = true
+  }
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${name}(${num})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
+
+// docx作为参数通过父组件传参
+const renderedHandler = () => {
+  console.log("渲染完成")
+}
+const errorHandler = () => {
+  console.log("渲染失败")
+}
+
+function handleClose(done) {
+  ElMessageBox.confirm(`确认关闭吗?`)
+    .then(() => {
+      openDrawer.value = false
+    })
+    .catch(() => {
+      // catch error
+    })
+}
 
 onMounted(() => {
   handleRouteParams();
@@ -216,12 +311,17 @@ function formatFileInfo(fileInfo) {
       // 组合上传日期
       formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
     }
-
     // 返回格式化后的字符串，用 [] 括起来
     return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
   }).join('<br>'); // 如果有多个文件
-
   return formattedInfo;
+}
+
+function parseFileInfo(fileInfo) {
+  // 调用 formatFileInfo 格式化文件信息
+  const formattedInfo = formatFileInfo(fileInfo);
+  // 将格式化后的字符串按 <br> 拆分为数组
+  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
 }
 
 /** 查询SOP文件管理列表 */

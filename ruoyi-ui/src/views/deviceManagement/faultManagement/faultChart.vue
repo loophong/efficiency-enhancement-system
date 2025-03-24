@@ -1,7 +1,6 @@
 <template>
   <div class="index">
-    <!-- 确保给容器一个明确的高度和宽度 -->
-    <div ref="chartContainer" id="main" style="width: 100%; height: 600px;"></div>
+    <div ref="chartContainer" id="main" style="width: 100%; height: 1600px;"></div>
     <!-- Tooltip for displaying detailed information -->
     <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
       style="position:absolute;white-space:nowrap;background-color:#f9f9f9;border:1px solid #d3d3d3;padding:5px;display:none;z-index:1000;">
@@ -67,7 +66,6 @@ const chartContainer = ref(null);
 
 onMounted(() => {
 
-
   // 确认DOM元素存在
   const container = chartContainer.value;
   if (container) {
@@ -76,6 +74,11 @@ onMounted(() => {
     });
   }
   initChart();
+  handleChart();
+
+});
+
+function handleChart() {
   myChart.value.on('click', function (params) {
     console.log('任意点击事件:', params);
     if (!params.data.children) {
@@ -140,15 +143,12 @@ onMounted(() => {
     document.getElementById('tooltip').style.display = 'none';
   });
 
-  // 在tooltip显示时暂时禁用图表滚动
-  myChart.value.off('mousewheel');
   // 隐藏后恢复
   tooltip.addEventListener('mouseleave', () => {
     myChart.value.on('mousewheel', myChart.value._mousewheel);
   });
 
-
-});
+}
 
 function initChart() {
   if (!chartContainer.value) {
@@ -195,13 +195,15 @@ function initChart() {
           backgroundColor: '#fff',
           position: 'left',
           verticalAlign: 'middle',
-          align: 'right'
+          align: 'right',
+          fontSize: 16,
         },
         leaves: {
           label: {
             position: 'right',
             verticalAlign: 'middle',
-            align: 'left'
+            align: 'left',
+            fontSize: 16,
           }
         },
         emphasis: {
@@ -240,13 +242,18 @@ const getNodePath = (params) => {
   return path.join(' -> ');
 };
 
-// 组件卸载时的清理
-// onBeforeUnmount(() => {
-//   if (myChart) {
-//     myChart.off('click'); // 移除事件监听
-//     myChart.dispose();
-//   }
-// });
+watch(() => props.chartData, (newVal) => {
+  if (newVal) {
+    console.log('chartData changed:', newVal);
+    parseChartData(newVal.data[0]);
+    if (myChart.value) {
+      myChart.value.dispose();
+    }
+    initChart();
+    handleChart();
+  }
+}, { deep: true }
+);
 
 function handleToAnalysis(row, module, destination) {
   router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { faultType: row.faultType, yearAndMonth: row.reportedTime } });
@@ -260,12 +267,10 @@ function handleToAnalysis(row, module, destination) {
 }
 
 #tooltip {
-  /* 移除滚动条相关样式 */
   white-space: normal !important;
   pointer-events: auto !important;
   word-break: break-word;
   max-width: 400px;
-  /* 关键修改：禁用滚动条 */
   overflow-y: hidden !important;
   /* 自动高度 */
   height: auto;

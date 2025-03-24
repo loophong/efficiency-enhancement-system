@@ -103,7 +103,8 @@
             <el-option label="驳回" value="驳回"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="审核意见" prop="maintenanceExamineComment" v-if="form.maintenanceExamineStatus == '驳回'">
+        <el-form-item label="审核意见" prop="maintenanceExamineComment"
+          v-if="form.maintenanceExamineStatus == '驳回' || status.includes('驳回')">
           <el-input v-model="form.maintenanceExamineComment" type="textarea" autosize placeholder="请输入内容" />
         </el-form-item>
         <!-- <el-form-item label="截止时间" prop="maintenanceDeadline">

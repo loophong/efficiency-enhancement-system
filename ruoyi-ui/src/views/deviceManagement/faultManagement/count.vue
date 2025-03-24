@@ -188,7 +188,8 @@
       </el-table-column>
       <el-table-column label="分析文档" align="center" prop="indicatorFile">
         <template #default="scope">
-          <span v-html="formatFileInfo(scope.row.indicatorFile)"></span>
+          <el-button @click="handlePreview(scope.row)" v-if="scope.row.indicatorFile">预览</el-button>
+          <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -277,6 +278,10 @@
     <el-dialog :title="chartTitle" v-model="openChart" width="1000px" append-to-body>
       <count-chart ref="chartRef" :chartData="chartData"></count-chart>
     </el-dialog>
+
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
+      <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
+    </el-drawer>
   </div>
 </template>
 
@@ -289,7 +294,10 @@ import JSZip from 'pizzip'
 import Docxtemplater from 'docxtemplater'
 import JSZipUtils from 'jszip-utils'
 import { saveAs } from 'file-saver'
+import { ElMessageBox } from 'element-plus'
 
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
 import { ElMessage } from 'element-plus'
 import { format } from 'date-fns';
 
@@ -302,6 +310,7 @@ const { proxy } = getCurrentInstance();
 const countList = ref([]);
 const exportList = ref([]);
 const open = ref(false);
+const openDrawer = ref(false);
 const openChart = ref(false);
 const showDialog = ref(false);
 const loading = ref(true);
@@ -312,8 +321,10 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const drawerTitle = ref("");
 const currentBase64 = ref("");
 const chartTitle = ref("");
+const drawerUrl = ref("");
 const daterangeIndicatorTime = ref([]);
 const chartData = reactive({})
 
@@ -653,7 +664,16 @@ function handleDelete(row) {
     proxy.$modal.msgSuccess("删除成功");
   }).catch(() => { });
 }
-
+//预览word文档
+function handlePreview(input) {
+  console.log({ input })
+  const firstFaultFile = input.indicatorFile.split(',')[0].trim();
+  // 提取上传日期
+  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+  drawerTitle.value = `${input.indicatorName}(${input.indicatorTime}) 上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
+  openDrawer.value = true
+}
 
 // 导入excel，检查文件类型
 function checkFile() {

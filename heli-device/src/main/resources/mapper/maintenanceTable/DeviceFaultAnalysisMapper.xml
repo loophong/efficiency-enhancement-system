@@ -45,9 +45,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateDeviceFaultAnalysis" parameterType="DeviceFaultAnalysis">
         update device_fault_analysis
         <trim prefix="SET" suffixOverrides=",">
-            <if test="analysisName != null and analysisName != ''">analysis_name = #{analysisName},</if>
+            <if test="analysisName != null ">analysis_name = #{analysisName},</if>
             <if test="analysisRecordTime != null">analysis_record_time = #{analysisRecordTime},</if>
-            <if test="maintenanceAnalysis != null and maintenanceAnalysis != ''">analysis_reason = #{maintenanceAnalysis},</if>
+            <if test="maintenanceAnalysis != null">maintenance_analysis = #{maintenanceAnalysis},</if>
         </trim>
         where analysis_id = #{analysisId}
     </update>

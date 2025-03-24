@@ -1,6 +1,7 @@
 package com.heli.device.maintenanceTable.service.impl;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,18 +113,21 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
                                 }).collect(Collectors.toList());
 
 
-                                double timeCount = maintenanceItems.stream()
-                                        .mapToDouble(item -> {
+                                BigDecimal timeCount = maintenanceItems.stream()
+                                        .map(item -> {
                                             String faultDurationStr = (String) item.get("faultDuration");
                                             if (faultDurationStr == null) {
-                                                return 0; // 如果faultDuration是null，则视为0
+                                                return BigDecimal.ZERO;
                                             }
                                             try {
-                                                return Double.parseDouble(faultDurationStr.trim()); // 去除首尾空格
+                                                // 使用 BigDecimal 精确计算
+                                                return new BigDecimal(faultDurationStr.trim());
                                             } catch (NumberFormatException e) {
-                                                return 0;
+                                                return BigDecimal.ZERO;
                                             }
-                                        }).sum();
+                                        })
+                                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
                                 faultTypeMap.put("timeSum", timeCount);
 
                                 int count = maintenanceItems.size();
