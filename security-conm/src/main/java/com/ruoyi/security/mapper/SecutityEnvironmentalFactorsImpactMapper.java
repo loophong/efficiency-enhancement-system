@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecutityEnvironmentalFactorsImpact;
  * 环境因素清单Mapper接口
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 public interface SecutityEnvironmentalFactorsImpactMapper 
 {

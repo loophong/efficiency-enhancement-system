@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 环境因素清单对象 secutity_environmental_factors_impact
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 public class SecutityEnvironmentalFactorsImpact extends BaseEntity
 {
@@ -52,7 +52,7 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
 
     /** 审批状态 */
     @Excel(name = "审批状态")
-    private Long statu;
+    private String statu;
 
     public void setId(Long id) 
     {
@@ -135,12 +135,12 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
     {
         return controlMeasures;
     }
-    public void setStatu(Long statu) 
+    public void setStatu(String statu) 
     {
         this.statu = statu;
     }
 
-    public Long getStatu() 
+    public String getStatu() 
     {
         return statu;
     }

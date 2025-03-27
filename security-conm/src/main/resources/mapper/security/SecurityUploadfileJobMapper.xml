@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityUploadfileJobMapper">
+    
+    <resultMap type="SecurityUploadfileJob" id="SecurityUploadfileJobResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="file"    column="file"    />
+        <result property="text"    column="text"    />
+    </resultMap>
+
+    <sql id="selectSecurityUploadfileJobVo">
+        select id, file_name, file, text from security_uploadfile_job
+    </sql>
+
+    <select id="selectSecurityUploadfileJobList" parameterType="SecurityUploadfileJob" resultMap="SecurityUploadfileJobResult">
+        <include refid="selectSecurityUploadfileJobVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityUploadfileJobById" parameterType="Long" resultMap="SecurityUploadfileJobResult">
+        <include refid="selectSecurityUploadfileJobVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityUploadfileJob" parameterType="SecurityUploadfileJob" useGeneratedKeys="true" keyProperty="id">
+        insert into security_uploadfile_job
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="file != null">file,</if>
+            <if test="text != null">text,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="file != null">#{file},</if>
+            <if test="text != null">#{text},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityUploadfileJob" parameterType="SecurityUploadfileJob">
+        update security_uploadfile_job
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="text != null">text = #{text},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityUploadfileJobById" parameterType="Long">
+        delete from security_uploadfile_job where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityUploadfileJobByIds" parameterType="String">
+        delete from security_uploadfile_job where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

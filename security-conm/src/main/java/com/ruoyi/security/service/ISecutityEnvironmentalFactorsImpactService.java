@@ -2,12 +2,13 @@ package com.ruoyi.security.service;
 
 import java.util.List;
 import com.ruoyi.security.domain.SecutityEnvironmentalFactorsImpact;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 环境因素清单Service接口
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 public interface ISecutityEnvironmentalFactorsImpactService 
 {
@@ -58,4 +59,6 @@ public interface ISecutityEnvironmentalFactorsImpactService
      * @return 结果
      */
     public int deleteSecutityEnvironmentalFactorsImpactById(Long id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
 }

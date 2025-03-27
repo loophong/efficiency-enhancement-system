@@ -35,7 +35,6 @@ public class HazardousMaterialsSafetyInspectioListener implements ReadListener<S
         }
 
     }
-
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         log.info("读取完毕");
