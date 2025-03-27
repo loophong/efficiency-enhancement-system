@@ -64,6 +64,8 @@ public class SupplierGuaranteeServiceImpl extends ServiceImpl<SupplierGuaranteeM
     @Override
     public int insertSupplierGuarantee(SupplierGuarantee supplierGuarantee)
     {
+        double score = calculateScore(supplierGuarantee.getTimelyDeliveryRate());
+        supplierGuarantee.setTimelyRateScore(score);
         return supplierGuaranteeMapper.insertSupplierGuarantee(supplierGuarantee);
     }
 
@@ -76,6 +78,8 @@ public class SupplierGuaranteeServiceImpl extends ServiceImpl<SupplierGuaranteeM
     @Override
     public int updateSupplierGuarantee(SupplierGuarantee supplierGuarantee)
     {
+        double score = calculateScore(supplierGuarantee.getTimelyDeliveryRate());
+        supplierGuarantee.setTimelyRateScore(score);
         return supplierGuaranteeMapper.updateSupplierGuarantee(supplierGuarantee);
     }
 
@@ -126,5 +130,14 @@ public class SupplierGuaranteeServiceImpl extends ServiceImpl<SupplierGuaranteeM
         }
     }
 
+
+    private double calculateScore(String guarantee) {
+        if (guarantee == null || !guarantee.endsWith("%")) {
+            throw new IllegalArgumentException("供货及时率格式错误，必须是百分比字符串，如 '85.5%'");
+        }
+        // 去掉百分号并转换为数值
+        double rate = Double.parseDouble(guarantee.replace("%", "").trim());
+        return rate;
+    }
 
 }

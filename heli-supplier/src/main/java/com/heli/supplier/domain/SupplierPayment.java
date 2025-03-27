@@ -16,67 +16,90 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 价格竞争力对象 supplier_price_compete
+ * 付款限制条件对象 supplier_payment
  * 
  * @author wll
- * @date 2025-03-05
+ * @date 2025-03-25
  */
 @Data
-@TableName(value = "supplier_price_compete")
-public class SupplierPriceCompete
-{
+@TableName(value = "supplier_payment")
+public class SupplierPayment{
+
     @Serial
     @ExcelIgnore
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     @ExcelIgnore
     @TableId(type = IdType.AUTO)
     private String id;
 
-    /** 供应商代码 */
+    /**
+     * 供应商代码
+     */
     @Excel(name = "供应商代码")
     @ExcelProperty(value = "供应商代码")
     private String supplierCode;
 
-    /** 供应商名称 */
+    /**
+     * 供应商名称
+     */
     @Excel(name = "供应商名称")
     @ExcelProperty(value = "供应商名称")
     private String supplierName;
 
-    /** 记录时间 */
-    @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "记录时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "记录时间")
-    private Date time;
+    /**
+     * 付款条件
+     */
+    @Excel(name = "付款条件")
+    @ExcelProperty(value = "付款条件")
+    private String paymentTerms;
 
-    /** 价格类型 */
-    @Excel(name = "价格类型")
-    @ExcelProperty(value = "价格类型")
-    private String priceType;
+    /**
+     *  备注
+     */
+    @Excel(name = "备注")
+    @ExcelProperty(value = "备注")
+    private String remark;
 
-    /** 上传时间 */
+    /**
+     * 得分
+     */
+    @Excel(name = "得分")
+    @ExcelProperty(value = "得分")
+    private Double score;
+
+    /**
+     * 模型得分
+     */
+    @Excel(name = "模型得分")
+    @ExcelProperty(value = "模型得分")
+    private Double modelScore;
+
+    /**
+     * 上传时间
+     */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
-    /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
-    private Long score;
-
-    /** 模型得分 */
-    @Excel(name = "模型得分")
-    @ExcelProperty(value = "模型得分")
-    private Long modelScore;
-
-    /** 填报人 */
+    /**
+     * 备注1
+     */
     @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String uploadName;
+    @Excel(name = "备注1")
+    @ExcelProperty(value = "备注1")
+    private String one;
 
+    /**
+     * 备注2
+     */
+    @ExcelIgnore
+    @Excel(name = "备注2")
+    @ExcelProperty(value = "备注2")
+    private String two;
 
 }

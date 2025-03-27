@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierZeroKilometerFailureRateMapper">
+
+    <resultMap type="SupplierZeroKilometerFailureRate" id="SupplierZeroKilometerFailureRateResult">
+        <result property="id"    column="id"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="componentType"    column="component_type"    />
+        <result property="targetPpm"    column="target_ppm"    />
+        <result property="failureDescription"    column="failure_description"    />
+        <result property="failureCount"    column="failure_count"    />
+        <result property="installedVehicles"    column="installed_vehicles"    />
+        <result property="ppmValue"    column="ppm_value"    />
+        <result property="cumulativePpm"    column="cumulative_ppm"    />
+        <result property="zeroFailureRate"    column="zero_failure_rate"    />
+        <result property="score"    column="score"    />
+        <result property="uploadMonth"    column="upload_month"    />
+        <result property="two"    column="two"    />
+    </resultMap>
+
+    <sql id="selectSupplierZeroKilometerFailureRateVo">
+        select id, supplier_name, component_type, target_ppm, failure_description, failure_count, installed_vehicles, ppm_value, cumulative_ppm, zero_failure_rate, score, upload_month, two from supplier_zero_kilometer_failure_rate
+    </sql>
+
+    <select id="selectSupplierZeroKilometerFailureRateList" parameterType="SupplierZeroKilometerFailureRate" resultMap="SupplierZeroKilometerFailureRateResult">
+        <include refid="selectSupplierZeroKilometerFailureRateVo"/>
+        <where>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="componentType != null  and componentType != ''"> and component_type = #{componentType}</if>
+            <if test="targetPpm != null  and targetPpm != ''"> and target_ppm = #{targetPpm}</if>
+            <if test="failureDescription != null  and failureDescription != ''"> and failure_description = #{failureDescription}</if>
+            <if test="failureCount != null  and failureCount != ''"> and failure_count = #{failureCount}</if>
+            <if test="installedVehicles != null  and installedVehicles != ''"> and installed_vehicles = #{installedVehicles}</if>
+            <if test="ppmValue != null  and ppmValue != ''"> and ppm_value = #{ppmValue}</if>
+            <if test="cumulativePpm != null  and cumulativePpm != ''"> and cumulative_ppm = #{cumulativePpm}</if>
+            <if test="zeroFailureRate != null  and zeroFailureRate != ''"> and zero_failure_rate = #{zeroFailureRate}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="uploadMonth != null "> and upload_month = #{uploadMonth}</if>
+            <if test="two != null  and two != ''"> and two = #{two}</if>
+        </where>
+    </select>
+
+    <select id="selectSupplierZeroKilometerFailureRateById" parameterType="String" resultMap="SupplierZeroKilometerFailureRateResult">
+        <include refid="selectSupplierZeroKilometerFailureRateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierZeroKilometerFailureRate" parameterType="SupplierZeroKilometerFailureRate" useGeneratedKeys="true" keyProperty="id">
+        insert into supplier_zero_kilometer_failure_rate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="componentType != null">component_type,</if>
+            <if test="targetPpm != null">target_ppm,</if>
+            <if test="failureDescription != null">failure_description,</if>
+            <if test="failureCount != null">failure_count,</if>
+            <if test="installedVehicles != null">installed_vehicles,</if>
+            <if test="ppmValue != null">ppm_value,</if>
+            <if test="cumulativePpm != null">cumulative_ppm,</if>
+            <if test="zeroFailureRate != null">zero_failure_rate,</if>
+            <if test="score != null">score,</if>
+            <if test="uploadMonth != null">upload_month,</if>
+            <if test="two != null">two,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="componentType != null">#{componentType},</if>
+            <if test="targetPpm != null">#{targetPpm},</if>
+            <if test="failureDescription != null">#{failureDescription},</if>
+            <if test="failureCount != null">#{failureCount},</if>
+            <if test="installedVehicles != null">#{installedVehicles},</if>
+            <if test="ppmValue != null">#{ppmValue},</if>
+            <if test="cumulativePpm != null">#{cumulativePpm},</if>
+            <if test="zeroFailureRate != null">#{zeroFailureRate},</if>
+            <if test="score != null">#{score},</if>
+            <if test="uploadMonth != null">#{uploadMonth},</if>
+            <if test="two != null">#{two},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSupplierZeroKilometerFailureRate" parameterType="SupplierZeroKilometerFailureRate">
+        update supplier_zero_kilometer_failure_rate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="componentType != null">component_type = #{componentType},</if>
+            <if test="targetPpm != null">target_ppm = #{targetPpm},</if>
+            <if test="failureDescription != null">failure_description = #{failureDescription},</if>
+            <if test="failureCount != null">failure_count = #{failureCount},</if>
+            <if test="installedVehicles != null">installed_vehicles = #{installedVehicles},</if>
+            <if test="ppmValue != null">ppm_value = #{ppmValue},</if>
+            <if test="cumulativePpm != null">cumulative_ppm = #{cumulativePpm},</if>
+            <if test="zeroFailureRate != null">zero_failure_rate = #{zeroFailureRate},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="uploadMonth != null">upload_month = #{uploadMonth},</if>
+            <if test="two != null">two = #{two},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierZeroKilometerFailureRateById" parameterType="String">
+        delete from supplier_zero_kilometer_failure_rate where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierZeroKilometerFailureRateByIds" parameterType="String">
+        delete from supplier_zero_kilometer_failure_rate where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

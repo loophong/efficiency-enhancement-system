@@ -138,21 +138,18 @@
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
-      <el-table-column label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" align="center" prop="letter">
-        <template #default="scope">
+      <el-table-column label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" align="center" prop="letter"/>
+        
+      <el-table-column label="供应商如受到相关方处罚" align="center" prop="punish"/>
+        <!-- <template #default="scope">
           {{ scope.row.letter }}
         </template>
-      </el-table-column>
-      <el-table-column label="供应商如受到相关方处罚" align="center" prop="punish">
-        <template #default="scope">
+      </el-table-column> -->
+      <el-table-column label="供应商如对采购员需求反馈不及时" align="center" prop="feedbackNotTimely"/>
+        <!-- <template #default="scope">
           {{ scope.row.letter }}
         </template>
-      </el-table-column>
-      <el-table-column label="供应商如对采购员需求反馈不及时" align="center" prop="feedbackNotTimely">
-        <template #default="scope">
-          {{ scope.row.letter }}
-        </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="得分" align="center" prop="score" />
       <el-table-column label="记录时间" align="center" prop="time" width="180">
         <template #default="scope">
@@ -187,38 +184,38 @@
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
         <el-form-item label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" prop="letter">
-          <el-select v-model="form.letter" placeholder="请选择供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作">
-            <el-option
+          <el-input v-model="form.letter" placeholder="请选择供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" />
+            <!-- <el-option
               v-for="dict in supplier_performance_services_collaboration_one"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.label)"
             ></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="供应商如受到相关方处罚" prop="punish">
-          <el-select v-model="form.punish" placeholder="请选择供应商如受到相关方处罚">
-            <el-option
+          <el-input v-model="form.punish" placeholder="请选择供应商如受到相关方处罚" />
+            <!-- <el-option
               v-for="dict in supplier_performance_services_collaboration_two"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.label)"
             ></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
-        <el-form-item label="供应商如对采购员需求反馈不及时" prop="feedbackNotTimely">
-          <el-select v-model="form.feedbackNotTimely" placeholder="请选择供应商如对采购员需求反馈不及时">
-            <el-option
+        <el-form-item label="供应商如对采购员需求反馈不及时" prop="feedbackNotTimely" >
+          <el-input v-model="form.feedbackNotTimely" placeholder="请选择供应商如对采购员需求反馈不及时" />
+            <!-- <el-option
               v-for="dict in supplier_performance_services_collaboration_three"
               :key="dict.value"
               :label="dict.label"
               :value="parseInt(dict.label)"
             ></el-option>
-          </el-select>
+          </el-select> -->
         </el-form-item>
-        <el-form-item label="得分" prop="score">
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="记录时间" prop="time">
           <!-- <el-date-picker clearable
             v-model="form.time"

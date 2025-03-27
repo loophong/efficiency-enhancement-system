@@ -62,8 +62,8 @@ public class SupplierPriceTrust implements Serializable
     private String specificContent;
 
     /** 发生次数 */
-    @Excel(name = "发生次数")
-    @ExcelProperty(value = "发生次数")
+    @Excel(name = "价格诚信")
+    @ExcelProperty(value = "价格诚信")
     private Long happenNumber;
 
     /** 得分 */

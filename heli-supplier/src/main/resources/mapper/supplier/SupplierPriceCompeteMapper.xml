@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.supplier.mapper.SupplierPriceCompeteMapper">
-    
+
     <resultMap type="SupplierPriceCompete" id="SupplierPriceCompeteResult">
         <result property="id"    column="id"    />
         <result property="supplierCode"    column="supplier_code"    />
         <result property="supplierName"    column="supplier_name"    />
         <result property="time"    column="time"    />
-        <result property="specialRebatePolicy"    column="special_rebate_policy"    />
-        <result property="selfPickup"    column="self_pickup"    />
-        <result property="regularPrice"    column="regular_price"    />
-        <result property="singleNoPrice"    column="single_no_price"    />
-        <result property="regularNoPrice"    column="regular_no_price"    />
+        <result property="priceType"    column="price_type"    />
         <result property="uploadTime"    column="upload_time"    />
         <result property="score"    column="score"    />
         <result property="modelScore"    column="model_score"    />
@@ -21,27 +17,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSupplierPriceCompeteVo">
-        select id, supplier_code, supplier_name, time, special_rebate_policy, self_pickup, regular_price, single_no_price, regular_no_price, upload_time, score, model_score, upload_name from supplier_price_compete
+        select id, supplier_code, supplier_name, time, price_type, upload_time, score, model_score, upload_name from supplier_price_compete
     </sql>
 
     <select id="selectSupplierPriceCompeteList" parameterType="SupplierPriceCompete" resultMap="SupplierPriceCompeteResult">
         <include refid="selectSupplierPriceCompeteVo"/>
-        <where>  
+        <where>
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="time != null "> and time = #{time}</if>
-            <if test="specialRebatePolicy != null "> and special_rebate_policy = #{specialRebatePolicy}</if>
-            <if test="selfPickup != null "> and self_pickup = #{selfPickup}</if>
-            <if test="regularPrice != null "> and regular_price = #{regularPrice}</if>
-            <if test="singleNoPrice != null "> and single_no_price = #{singleNoPrice}</if>
-            <if test="regularNoPrice != null "> and regular_no_price = #{regularNoPrice}</if>
+            <if test="priceType != null "> and price_type = #{priceType}</if>
             <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
             <if test="score != null "> and score = #{score}</if>
             <if test="modelScore != null "> and model_score = #{modelScore}</if>
             <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>
         </where>
     </select>
-    
+
     <select id="selectSupplierPriceCompeteById" parameterType="String" resultMap="SupplierPriceCompeteResult">
         <include refid="selectSupplierPriceCompeteVo"/>
         where id = #{id}
@@ -53,30 +45,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code,</if>
             <if test="supplierName != null">supplier_name,</if>
             <if test="time != null">time,</if>
-            <if test="specialRebatePolicy != null">special_rebate_policy,</if>
-            <if test="selfPickup != null">self_pickup,</if>
-            <if test="regularPrice != null">regular_price,</if>
-            <if test="singleNoPrice != null">single_no_price,</if>
-            <if test="regularNoPrice != null">regular_no_price,</if>
+            <if test="priceType != null">price_type,</if>
             <if test="uploadTime != null">upload_time,</if>
             <if test="score != null">score,</if>
             <if test="modelScore != null">model_score,</if>
             <if test="uploadName != null">upload_name,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="time != null">#{time},</if>
-            <if test="specialRebatePolicy != null">#{specialRebatePolicy},</if>
-            <if test="selfPickup != null">#{selfPickup},</if>
-            <if test="regularPrice != null">#{regularPrice},</if>
-            <if test="singleNoPrice != null">#{singleNoPrice},</if>
-            <if test="regularNoPrice != null">#{regularNoPrice},</if>
+            <if test="priceType != null">#{priceType},</if>
             <if test="uploadTime != null">#{uploadTime},</if>
             <if test="score != null">#{score},</if>
             <if test="modelScore != null">#{modelScore},</if>
             <if test="uploadName != null">#{uploadName},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateSupplierPriceCompete" parameterType="SupplierPriceCompete">
@@ -85,11 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="time != null">time = #{time},</if>
-            <if test="specialRebatePolicy != null">special_rebate_policy = #{specialRebatePolicy},</if>
-            <if test="selfPickup != null">self_pickup = #{selfPickup},</if>
-            <if test="regularPrice != null">regular_price = #{regularPrice},</if>
-            <if test="singleNoPrice != null">single_no_price = #{singleNoPrice},</if>
-            <if test="regularNoPrice != null">regular_no_price = #{regularNoPrice},</if>
+            <if test="priceType != null">price_type = #{priceType},</if>
             <if test="uploadTime != null">upload_time = #{uploadTime},</if>
             <if test="score != null">score = #{score},</if>
             <if test="modelScore != null">model_score = #{modelScore},</if>
@@ -103,7 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSupplierPriceCompeteByIds" parameterType="String">
-        delete from supplier_price_compete where id in 
+        delete from supplier_price_compete where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

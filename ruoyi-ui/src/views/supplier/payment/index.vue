@@ -17,56 +17,6 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="记录时间" prop="time">
-        <el-date-picker clearable
-          v-model="queryParams.time"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择记录时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="价格类型" prop="priceType">
-        <el-select v-model="queryParams.priceType" placeholder="请选择价格类型" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_price_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
-        <el-date-picker clearable
-          v-model="queryParams.uploadTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="得分" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="模型得分" prop="modelScore">
-        <el-input
-          v-model="queryParams.modelScore"
-          placeholder="请输入模型得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="填报人" prop="uploadName">
-        <el-input
-          v-model="queryParams.uploadName"
-          placeholder="请输入填报人"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -80,7 +30,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['supplier:pricecompete:add']"
+          v-hasPermi="['supplier:payment:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -90,7 +40,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['supplier:pricecompete:edit']"
+          v-hasPermi="['supplier:payment:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -100,7 +50,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['supplier:pricecompete:remove']"
+          v-hasPermi="['supplier:payment:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -109,44 +59,38 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['supplier:pricecompete:export']"
+          v-hasPermi="['supplier:payment:export']"
         >导出</el-button>
       </el-col>
+
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:pricecompete:import']">导入
+                         v-hasPermi="['production:payment:import']">导入
               </el-button>
             </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="pricecompeteList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="paymentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
-      <!-- <el-table-column label="记录时间" align="center" prop="time" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column label="价格类型" align="center" prop="priceType">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_price_type" :value="scope.row.priceType"/>
-        </template>
-      </el-table-column> -->
+      <el-table-column label="付款条件" align="center" prop="paymentTerms" />
+      <el-table-column label="备注" align="center" prop="remark" />
+      <el-table-column label="得分" align="center" prop="score" />
+      <el-table-column label="模型得分" align="center" prop="modelScore" />
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
-      <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
+      <!-- <el-table-column label="备注1" align="center" prop="one" /> -->
+      <!-- <el-table-column label="备注2" align="center" prop="two" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:pricecompete:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['supplier:pricecompete:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:payment:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['supplier:payment:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -159,32 +103,26 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改价格竞争力对话框 -->
+    <!-- 添加或修改付款限制条件对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="pricecompeteRef" :model="form" :rules="rules" label-width="100px">
+      <el-form ref="paymentRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
-        <!-- <el-form-item label="记录时间" prop="time">
-          <el-date-picker clearable
-            v-model="form.time"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择记录时间">
-          </el-date-picker>
-        </el-form-item> -->
-        <!-- <el-form-item label="价格类型" prop="priceType">
-          <el-select v-model="form.priceType" placeholder="请选择价格类型">
-            <el-option
-              v-for="dict in supplier_price_compete_price_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.label"
-            ></el-option>
-          </el-select>
+        <el-form-item label="付款条件" prop="paymentTerms">
+          <el-input v-model="form.paymentTerms" placeholder="请输入付款条件" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+        <!-- <el-form-item label="得分" prop="score">
+          <el-input v-model="form.score" placeholder="请输入得分" />
+        </el-form-item>
+        <el-form-item label="模型得分" prop="modelScore">
+          <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
         </el-form-item> -->
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
@@ -194,14 +132,11 @@
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="得分" prop="score">
-          <el-input v-model="form.score" placeholder="请输入得分" />
+        <!-- <el-form-item label="备注1" prop="one">
+          <el-input v-model="form.one" placeholder="请输入备注1" />
         </el-form-item>
-        <el-form-item label="模型得分" prop="modelScore">
-          <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
-        </el-form-item>
-        <!-- <el-form-item label="填报人" prop="uploadName">
-          <el-input v-model="form.uploadName" placeholder="请输入填报人" />
+        <el-form-item label="备注2" prop="two">
+          <el-input v-model="form.two" placeholder="请输入备注2" />
         </el-form-item> -->
       </el-form>
       <template #footer>
@@ -212,12 +147,13 @@
       </template>
     </el-dialog>
 
- <!-- 文件上传弹窗 -->
- <el-dialog title="导入价格竞争力" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+
+<!-- 文件上传弹窗 -->
+<el-dialog title="导入付款限制条件" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
 
 <el-form :model="form" ref="form" label-width="90px">
   <el-form-item label="上传表类：">
-    <span style="color: rgb(68, 140, 39);">价格竞争力</span>
+    <span style="color: rgb(68, 140, 39);">付款限制条件</span>
     <br>
   </el-form-item>
 
@@ -248,13 +184,12 @@
   </div>
 </template>
 
-<script setup name="Pricecompete">
-import { listPricecompete, getPricecompete, delPricecompete, addPricecompete, updatePricecompete,importFile } from "@/api/supplier/pricecompete";
+<script setup name="Payment">
+import { listPayment, getPayment, delPayment, addPayment, updatePayment,importFile } from "@/api/supplier/payment";
 import dayjs from 'dayjs';
 const { proxy } = getCurrentInstance();
-const { supplier_price_compete_price_type } = proxy.useDict('supplier_price_compete_price_type');
 
-const pricecompeteList = ref([]);
+const paymentList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -264,14 +199,11 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
-
 const uploadDate = ref("");
-
 // 导入参数
 const uploadDialogVisible = ref(false);
 const isLoading = ref(false);
 const inputFile = ref(null);
-
 
 const data = reactive({
   form: {},
@@ -280,12 +212,12 @@ const data = reactive({
     pageSize: 10,
     supplierCode: null,
     supplierName: null,
-    time: null,
-    priceType: null,
-    uploadTime: null,
+    paymentTerms: null,
     score: null,
     modelScore: null,
-    uploadName: null
+    uploadTime: null,
+    one: null,
+    two: null
   },
   rules: {
   }
@@ -293,11 +225,11 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询价格竞争力列表 */
+/** 查询付款限制条件列表 */
 function getList() {
   loading.value = true;
-  listPricecompete(queryParams.value).then(response => {
-    pricecompeteList.value = response.rows;
+  listPayment(queryParams.value).then(response => {
+    paymentList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -315,14 +247,15 @@ function reset() {
     id: null,
     supplierCode: null,
     supplierName: null,
-    time: null,
-    priceType: null,
-    uploadTime: null,
+    paymentTerms: null,
+    remark: null,
     score: null,
     modelScore: null,
-    uploadName: null
+    uploadTime: null,
+    one: null,
+    two: null
   };
-  proxy.resetForm("pricecompeteRef");
+  proxy.resetForm("paymentRef");
 }
 
 /** 搜索按钮操作 */
@@ -348,32 +281,32 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加价格竞争力";
+  title.value = "添加付款限制条件";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getPricecompete(_id).then(response => {
+  getPayment(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改价格竞争力";
+    title.value = "修改付款限制条件";
   });
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["pricecompeteRef"].validate(valid => {
+  proxy.$refs["paymentRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updatePricecompete(form.value).then(response => {
+        updatePayment(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addPricecompete(form.value).then(response => {
+        addPayment(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -386,8 +319,8 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除价格竞争力编号为"' + _ids + '"的数据项？').then(function() {
-    return delPricecompete(_ids);
+  proxy.$modal.confirm('是否确认删除付款限制条件编号为"' + _ids + '"的数据项？').then(function() {
+    return delPayment(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -396,12 +329,14 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('supplier/pricecompete/export', {
+  proxy.download('supplier/payment/export', {
     ...queryParams.value
-  }, `pricecompete_${new Date().getTime()}.xlsx`)
+  }, `payment_${new Date().getTime()}.xlsx`)
 }
 
 getList();
+
+
 /** 导入按钮操作 */
 function handleImport() {
   resetUpload();
@@ -421,7 +356,6 @@ function cancelUpload() {
   resetUpload();
 }
 
-
 /** excel文件上传 */
 function uploadFile() {
   if (inputFile.value && inputFile.value.files.length > 0) {
@@ -435,11 +369,6 @@ function uploadFile() {
     // formData.append('excelFile', file);
     // // formData.append('date', date);
     console.log("上传时间"+uploadDate.value);
-
-
-
-
-
     let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
     // formData.append('uploadMonth',date );
 
@@ -463,7 +392,6 @@ function uploadFile() {
   }else {
     proxy.$modal.msgError("请选择文件");
   }
-
 }
 
 /** 检查文件是否为excel */
@@ -477,4 +405,5 @@ function checkFile() {
     resetUpload();
   }
 }
+
 </script>

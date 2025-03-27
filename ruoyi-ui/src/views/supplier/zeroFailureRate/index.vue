@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
-      <el-form-item label="供应商代码" prop="supplierCode">
-        <el-input
-          v-model="queryParams.supplierCode"
-          placeholder="请输入供应商代码"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="供应商名称" prop="supplierName">
         <el-input
           v-model="queryParams.supplierName"
@@ -17,56 +9,6 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="记录时间" prop="time">
-        <el-date-picker clearable
-          v-model="queryParams.time"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择记录时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="价格类型" prop="priceType">
-        <el-select v-model="queryParams.priceType" placeholder="请选择价格类型" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_price_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
-        <el-date-picker clearable
-          v-model="queryParams.uploadTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="得分" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="模型得分" prop="modelScore">
-        <el-input
-          v-model="queryParams.modelScore"
-          placeholder="请输入模型得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="填报人" prop="uploadName">
-        <el-input
-          v-model="queryParams.uploadName"
-          placeholder="请输入填报人"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -80,7 +22,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['supplier:pricecompete:add']"
+          v-hasPermi="['supplier:zeroFailureRate:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -90,7 +32,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['supplier:pricecompete:edit']"
+          v-hasPermi="['supplier:zeroFailureRate:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -100,7 +42,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['supplier:pricecompete:remove']"
+          v-hasPermi="['supplier:zeroFailureRate:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -109,44 +51,43 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['supplier:pricecompete:export']"
+          v-hasPermi="['supplier:zeroFailureRate:export']"
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:pricecompete:import']">导入
+                         v-hasPermi="['production:zeroFailureRate:import']">零公里故障指标完成率(PPM)导入
               </el-button>
             </el-col>
+            <el-col :span="1.5">
+              <el-button @click="handleImport" type="success" plain icon="Upload"
+                         v-hasPermi="['production:zeroFailureRate:import']">产品过程故障率导入
+              </el-button>
+            </el-col>
+
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="pricecompeteList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="zeroFailureRateList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
-      <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
-      <!-- <el-table-column label="记录时间" align="center" prop="time" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column label="价格类型" align="center" prop="priceType">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_price_type" :value="scope.row.priceType"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <!-- <el-table-column label="部件类别" align="center" prop="componentType" /> -->
+      <!-- <el-table-column label="2024年指标值" align="center" prop="2024TargetPpm" /> -->
+      <!-- <el-table-column label="故障描述" align="center" prop="failureDescription" /> -->
+      <!-- <el-table-column label="故障数" align="center" prop="failureCount" />
+      <el-table-column label="装车数" align="center" prop="installedVehicles" /> -->
+      <el-table-column label="PPM值" align="center" prop="ppmValue" />
+      <el-table-column label="季度累计PPM值" align="center" prop="cumulativePpm" />
+      <el-table-column label="零公里故障率" align="center" prop="zeroFailureRate" />
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
-      <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
+      <el-table-column label="上传月份" align="center" prop="uploadMonth" />
+      <!-- <el-table-column label="备选1" align="center" prop="two" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:pricecompete:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['supplier:pricecompete:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:zeroFailureRate:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['supplier:zeroFailureRate:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -159,49 +100,41 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改价格竞争力对话框 -->
+    <!-- 添加或修改零公里故障指标完成率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="pricecompeteRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商代码" prop="supplierCode">
-          <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
-        </el-form-item>
+      <el-form ref="zeroFailureRateRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
-        <!-- <el-form-item label="记录时间" prop="time">
-          <el-date-picker clearable
-            v-model="form.time"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择记录时间">
-          </el-date-picker>
+        <!-- <el-form-item label="2024年指标值" prop="2024TargetPpm">
+          <el-input v-model="form.TargetPpm" placeholder="请输入2024年指标值" />
+        </el-form-item>
+        <el-form-item label="故障描述" prop="failureDescription">
+          <el-input v-model="form.failureDescription" placeholder="请输入故障描述" />
+        </el-form-item>
+        <el-form-item label="故障数" prop="failureCount">
+          <el-input v-model="form.failureCount" placeholder="请输入故障数" />
+        </el-form-item>
+        <el-form-item label="装车数" prop="installedVehicles">
+          <el-input v-model="form.installedVehicles" placeholder="请输入装车数" />
         </el-form-item> -->
-        <!-- <el-form-item label="价格类型" prop="priceType">
-          <el-select v-model="form.priceType" placeholder="请选择价格类型">
-            <el-option
-              v-for="dict in supplier_price_compete_price_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.label"
-            ></el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="上传时间" prop="uploadTime">
-          <el-date-picker clearable
-            v-model="form.uploadTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择上传时间">
-          </el-date-picker>
+        <el-form-item label="PPM值" prop="ppmValue">
+          <el-input v-model="form.ppmValue" placeholder="请输入PPM值" />
+        </el-form-item>
+        <el-form-item label="季度累计PPM值" prop="cumulativePpm">
+          <el-input v-model="form.cumulativePpm" placeholder="请输入季度累计PPM值" />
+        </el-form-item>
+        <el-form-item label="零公里故障率" prop="zeroFailureRate">
+          <el-input v-model="form.zeroFailureRate" placeholder="请输入零公里故障率" />
         </el-form-item>
         <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
-        <el-form-item label="模型得分" prop="modelScore">
-          <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
+        <!-- <el-form-item label="上传月份" prop="uploadmonth">
+          <el-input v-model="form.uploadmonth" placeholder="请输入备选" />
         </el-form-item>
-        <!-- <el-form-item label="填报人" prop="uploadName">
-          <el-input v-model="form.uploadName" placeholder="请输入填报人" />
+        <el-form-item label="备选1" prop="two">
+          <el-input v-model="form.two" placeholder="请输入备选1" />
         </el-form-item> -->
       </el-form>
       <template #footer>
@@ -212,26 +145,27 @@
       </template>
     </el-dialog>
 
- <!-- 文件上传弹窗 -->
- <el-dialog title="导入价格竞争力" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+
+      <!-- 文件上传弹窗 -->
+      <el-dialog title="导入表单" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
 
 <el-form :model="form" ref="form" label-width="90px">
   <el-form-item label="上传表类：">
-    <span style="color: rgb(68, 140, 39);">价格竞争力</span>
+    <span style="color: rgb(68, 140, 39);">表单</span>
     <br>
   </el-form-item>
 
   <el-form-item label="时间">
-<el-date-picker
-    v-model="uploadDate"
-    type="month"
-    placeholder="Pick a day"
-    date-format="yyyy-MM-dd"
-    :size="size"
-  />
-<br>
-</el-form-item>
-
+    <el-date-picker
+        v-model="uploadDate"
+        type="month"
+        placeholder="Pick a day"
+        date-format="yyyy-MM-dd"
+        :size="size"
+      />
+    <br>
+  </el-form-item>
+  
   <el-form-item label="上传文件：">
     <input type="file" ref="inputFile" @change="checkFile"/>
     <br>
@@ -245,16 +179,16 @@
 </el-dialog>
 
 
+
   </div>
 </template>
 
-<script setup name="Pricecompete">
-import { listPricecompete, getPricecompete, delPricecompete, addPricecompete, updatePricecompete,importFile } from "@/api/supplier/pricecompete";
+<script setup name="ZeroFailureRate">
+import { listZeroFailureRate, getZeroFailureRate, delZeroFailureRate, addZeroFailureRate, updateZeroFailureRate,importFile } from "@/api/supplier/zeroFailureRate";
 import dayjs from 'dayjs';
 const { proxy } = getCurrentInstance();
-const { supplier_price_compete_price_type } = proxy.useDict('supplier_price_compete_price_type');
 
-const pricecompeteList = ref([]);
+const zeroFailureRateList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -263,29 +197,29 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-
-
 const uploadDate = ref("");
-
 // 导入参数
 const uploadDialogVisible = ref(false);
 const isLoading = ref(false);
 const inputFile = ref(null);
-
 
 const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    supplierCode: null,
     supplierName: null,
-    time: null,
-    priceType: null,
-    uploadTime: null,
+    componentType: null,
+    TargetPpm: null,
+    failureDescription: null,
+    failureCount: null,
+    installedVehicles: null,
+    ppmValue: null,
+    cumulativePpm: null,
+    zeroFailureRate: null,
     score: null,
-    modelScore: null,
-    uploadName: null
+    uploadmonth: null,
+    two: null
   },
   rules: {
   }
@@ -293,11 +227,11 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询价格竞争力列表 */
+/** 查询零公里故障指标完成率列表 */
 function getList() {
   loading.value = true;
-  listPricecompete(queryParams.value).then(response => {
-    pricecompeteList.value = response.rows;
+  listZeroFailureRate(queryParams.value).then(response => {
+    zeroFailureRateList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -313,16 +247,20 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    supplierCode: null,
     supplierName: null,
-    time: null,
-    priceType: null,
-    uploadTime: null,
+    componentType: null,
+    TargetPpm: null,
+    failureDescription: null,
+    failureCount: null,
+    installedVehicles: null,
+    ppmValue: null,
+    cumulativePpm: null,
+    zeroFailureRate: null,
     score: null,
-    modelScore: null,
-    uploadName: null
+    uploadmonth: null,
+    two: null
   };
-  proxy.resetForm("pricecompeteRef");
+  proxy.resetForm("zeroFailureRateRef");
 }
 
 /** 搜索按钮操作 */
@@ -348,32 +286,32 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加价格竞争力";
+  title.value = "添加零公里故障指标完成率";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getPricecompete(_id).then(response => {
+  getZeroFailureRate(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改价格竞争力";
+    title.value = "修改零公里故障指标完成率";
   });
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["pricecompeteRef"].validate(valid => {
+  proxy.$refs["zeroFailureRateRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updatePricecompete(form.value).then(response => {
+        updateZeroFailureRate(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addPricecompete(form.value).then(response => {
+        addZeroFailureRate(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -386,8 +324,8 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除价格竞争力编号为"' + _ids + '"的数据项？').then(function() {
-    return delPricecompete(_ids);
+  proxy.$modal.confirm('是否确认删除零公里故障指标完成率编号为"' + _ids + '"的数据项？').then(function() {
+    return delZeroFailureRate(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -396,12 +334,14 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('supplier/pricecompete/export', {
+  proxy.download('supplier/zeroFailureRate/export', {
     ...queryParams.value
-  }, `pricecompete_${new Date().getTime()}.xlsx`)
+  }, `zeroFailureRate_${new Date().getTime()}.xlsx`)
 }
 
 getList();
+
+
 /** 导入按钮操作 */
 function handleImport() {
   resetUpload();
@@ -421,7 +361,6 @@ function cancelUpload() {
   resetUpload();
 }
 
-
 /** excel文件上传 */
 function uploadFile() {
   if (inputFile.value && inputFile.value.files.length > 0) {
@@ -431,15 +370,10 @@ function uploadFile() {
     console.log(file);
     // let date = XXXdate;
     // const formData = new FormData();
-
     // formData.append('excelFile', file);
-    // // formData.append('date', date);
+
+
     console.log("上传时间"+uploadDate.value);
-
-
-
-
-
     let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
     // formData.append('uploadMonth',date );
 
@@ -448,7 +382,6 @@ function uploadFile() {
       'uploadMonth': date,
       'excelFile': file
     }
-
     importFile(uploadFileDTO).then(() => {
       proxy.$modal.msgSuccess("导入成功");
       getList();
@@ -463,8 +396,9 @@ function uploadFile() {
   }else {
     proxy.$modal.msgError("请选择文件");
   }
-
 }
+
+
 
 /** 检查文件是否为excel */
 function checkFile() {
@@ -475,6 +409,10 @@ function checkFile() {
   if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
     proxy.$modal.msgError("只能上传 Excel 文件！");
     resetUpload();
-  }
+  // }else {//修改
+  //   data.form.files.push(file); // 将文件添加到数组中
+  // }
 }
+}
+
 </script>
