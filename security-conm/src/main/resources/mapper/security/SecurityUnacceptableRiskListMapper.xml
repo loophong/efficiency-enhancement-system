@@ -12,10 +12,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="processEquipmentPersonnel"    column="process_equipment_personnel"    />
         <result property="controlMethods"    column="control_methods"    />
         <result property="departmentProcess"    column="department_process"    />
+        <result property="statu"    column="statu"    />
     </resultMap>
 
     <sql id="selectSecurityUnacceptableRiskListVo">
-        select id, hazard_source, significant_hazard, accident_health_hazards, process_equipment_personnel, control_methods, department_process from security_unacceptable_risk_list
+        select id, hazard_source, significant_hazard, accident_health_hazards, process_equipment_personnel, control_methods, department_process, statu from security_unacceptable_risk_list
     </sql>
 
     <select id="selectSecurityUnacceptableRiskListList" parameterType="SecurityUnacceptableRiskList" resultMap="SecurityUnacceptableRiskListResult">
@@ -27,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="processEquipmentPersonnel != null  and processEquipmentPersonnel != ''"> and process_equipment_personnel like concat('%', #{processEquipmentPersonnel}, '%')</if>
             <if test="controlMethods != null  and controlMethods != ''"> and control_methods like concat('%', #{controlMethods}, '%')</if>
             <if test="departmentProcess != null  and departmentProcess != ''"> and department_process like concat('%', #{departmentProcess}, '%')</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
         </where>
     </select>
     
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="processEquipmentPersonnel != null">process_equipment_personnel,</if>
             <if test="controlMethods != null">control_methods,</if>
             <if test="departmentProcess != null">department_process,</if>
+            <if test="statu != null">statu,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="hazardSource != null and hazardSource != ''">#{hazardSource},</if>
@@ -52,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="processEquipmentPersonnel != null">#{processEquipmentPersonnel},</if>
             <if test="controlMethods != null">#{controlMethods},</if>
             <if test="departmentProcess != null">#{departmentProcess},</if>
+            <if test="statu != null">#{statu},</if>
          </trim>
     </insert>
 
@@ -64,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="processEquipmentPersonnel != null">process_equipment_personnel = #{processEquipmentPersonnel},</if>
             <if test="controlMethods != null">control_methods = #{controlMethods},</if>
             <if test="departmentProcess != null">department_process = #{departmentProcess},</if>
+            <if test="statu != null">statu = #{statu},</if>
         </trim>
         where id = #{id}
     </update>

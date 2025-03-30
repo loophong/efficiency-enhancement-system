@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 公司级重要环境因素清单Controller
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 @RestController
 @RequestMapping("/security/importantfactors")
