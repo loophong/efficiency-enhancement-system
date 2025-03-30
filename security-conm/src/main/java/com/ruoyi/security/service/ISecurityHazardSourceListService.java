@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityHazardSourceList;
  * 危险源清单Service接口
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 public interface ISecurityHazardSourceListService 
 {

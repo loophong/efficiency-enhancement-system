@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 不可接受风险清单对象 security_unacceptable_risk_list
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 public class SecurityUnacceptableRiskList extends BaseEntity
 {
@@ -42,6 +42,10 @@ public class SecurityUnacceptableRiskList extends BaseEntity
     /** 部门/工序 */
     @Excel(name = "部门/工序")
     private String departmentProcess;
+
+    /** 审批状态 */
+    @Excel(name = "审批状态")
+    private String statu;
 
     public void setId(Long id) 
     {
@@ -106,6 +110,15 @@ public class SecurityUnacceptableRiskList extends BaseEntity
     {
         return departmentProcess;
     }
+    public void setStatu(String statu) 
+    {
+        this.statu = statu;
+    }
+
+    public String getStatu() 
+    {
+        return statu;
+    }
 
     @Override
     public String toString() {
@@ -117,6 +130,7 @@ public class SecurityUnacceptableRiskList extends BaseEntity
             .append("processEquipmentPersonnel", getProcessEquipmentPersonnel())
             .append("controlMethods", getControlMethods())
             .append("departmentProcess", getDepartmentProcess())
+            .append("statu", getStatu())
             .toString();
     }
 }

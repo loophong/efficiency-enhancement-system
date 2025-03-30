@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityCompanyImportantEnvironmentalFactors;
  * 公司级重要环境因素清单Service接口
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 public interface ISecurityCompanyImportantEnvironmentalFactorsService 
 {

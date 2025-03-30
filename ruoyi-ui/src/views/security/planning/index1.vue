@@ -49,6 +49,16 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="审批状态" prop="statu">
+        <el-select v-model="queryParams.statu" placeholder="请选择审批状态" clearable>
+          <el-option
+            v-for="dict in security_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -106,6 +116,11 @@
       <el-table-column label="部门/工序/岗位" align="center" prop="departmentProcessPosition" />
       <el-table-column label="时态/状态" align="center" prop="temporalState" />
       <el-table-column label="管控措施" align="center" prop="controlMeasures" />
+      <el-table-column label="审批状态" align="center" prop="statu">
+        <template #default="scope">
+          <dict-tag :options="security_status" :value="scope.row.statu"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:importantfactors:edit']">修改</el-button>
@@ -143,6 +158,16 @@
         <el-form-item label="管控措施" prop="controlMeasures">
           <el-input v-model="form.controlMeasures" placeholder="请输入管控措施" />
         </el-form-item>
+        <el-form-item label="审批状态" prop="statu">
+          <el-select v-model="form.statu" placeholder="请选择审批状态">
+            <el-option
+              v-for="dict in security_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -158,6 +183,7 @@
 import { listImportantfactors, getImportantfactors, delImportantfactors, addImportantfactors, updateImportantfactors } from "@/api/security/importantfactors";
 
 const { proxy } = getCurrentInstance();
+const { security_status } = proxy.useDict('security_status');
 
 const importantfactorsList = ref([]);
 const open = ref(false);
@@ -179,12 +205,10 @@ const data = reactive({
     activityProductService: null,
     departmentProcessPosition: null,
     temporalState: null,
-    controlMeasures: null
+    controlMeasures: null,
+    statu: null
   },
   rules: {
-    id: [
-      { required: true, message: "序号不能为空", trigger: "blur" }
-    ],
     environmentalFactor: [
       { required: true, message: "环境因素不能为空", trigger: "blur" }
     ],
@@ -221,7 +245,8 @@ function reset() {
     activityProductService: null,
     departmentProcessPosition: null,
     temporalState: null,
-    controlMeasures: null
+    controlMeasures: null,
+    statu: null
   };
   proxy.resetForm("importantfactorsRef");
 }

@@ -11,7 +11,7 @@ import com.ruoyi.security.service.ISecurityUnacceptableRiskListService;
  * 不可接受风险清单Service业务层处理
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 @Service
 public class SecurityUnacceptableRiskListServiceImpl implements ISecurityUnacceptableRiskListService 
