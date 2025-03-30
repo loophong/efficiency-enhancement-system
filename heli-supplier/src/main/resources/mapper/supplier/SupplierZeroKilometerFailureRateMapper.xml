@@ -17,11 +17,11 @@
         <result property="zeroFailureRate"    column="zero_failure_rate"    />
         <result property="score"    column="score"    />
         <result property="uploadMonth"    column="upload_month"    />
-        <result property="two"    column="two"    />
+        <result property="time"    column="time"    />
     </resultMap>
 
     <sql id="selectSupplierZeroKilometerFailureRateVo">
-        select id, supplier_name, component_type, target_ppm, failure_description, failure_count, installed_vehicles, ppm_value, cumulative_ppm, zero_failure_rate, score, upload_month, two from supplier_zero_kilometer_failure_rate
+        select id, supplier_name, component_type, target_ppm, failure_description, failure_count, installed_vehicles, ppm_value, cumulative_ppm, zero_failure_rate, score, upload_month, time from supplier_zero_kilometer_failure_rate
     </sql>
 
     <select id="selectSupplierZeroKilometerFailureRateList" parameterType="SupplierZeroKilometerFailureRate" resultMap="SupplierZeroKilometerFailureRateResult">
@@ -38,7 +38,7 @@
             <if test="zeroFailureRate != null  and zeroFailureRate != ''"> and zero_failure_rate = #{zeroFailureRate}</if>
             <if test="score != null "> and score = #{score}</if>
             <if test="uploadMonth != null "> and upload_month = #{uploadMonth}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
+            <if test="time != null "> and time = #{time}</if>
         </where>
     </select>
 
@@ -61,7 +61,7 @@
             <if test="zeroFailureRate != null">zero_failure_rate,</if>
             <if test="score != null">score,</if>
             <if test="uploadMonth != null">upload_month,</if>
-            <if test="two != null">two,</if>
+            <if test="time != null">time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierName != null">#{supplierName},</if>
@@ -75,7 +75,7 @@
             <if test="zeroFailureRate != null">#{zeroFailureRate},</if>
             <if test="score != null">#{score},</if>
             <if test="uploadMonth != null">#{uploadMonth},</if>
-            <if test="two != null">#{two},</if>
+            <if test="time != null">#{time},</if>
         </trim>
     </insert>
 
@@ -93,7 +93,7 @@
             <if test="zeroFailureRate != null">zero_failure_rate = #{zeroFailureRate},</if>
             <if test="score != null">score = #{score},</if>
             <if test="uploadMonth != null">upload_month = #{uploadMonth},</if>
-            <if test="two != null">two = #{two},</if>
+            <if test="time != null">time = #{time},</if>
         </trim>
         where id = #{id}
     </update>

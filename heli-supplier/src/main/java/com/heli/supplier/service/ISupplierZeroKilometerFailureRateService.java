@@ -66,4 +66,6 @@ public interface ISupplierZeroKilometerFailureRateService extends IService<Suppl
 
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
+
+    void readProcessFailuresTableToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }

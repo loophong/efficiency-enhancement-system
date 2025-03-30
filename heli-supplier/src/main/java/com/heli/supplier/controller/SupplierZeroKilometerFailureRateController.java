@@ -42,6 +42,20 @@ public class SupplierZeroKilometerFailureRateController extends BaseController
     private ISupplierZeroKilometerFailureRateService supplierZeroKilometerFailureRateService;
 
 
+    @Log(title = "[产品过程故障率]上传", businessType = BusinessType.IMPORT)
+    @PostMapping("/importProductProcessFailures")
+    @Transactional
+    public void importProductProcessFailuresTable(MultipartFile excelFile, Date uploadMonth) {
+        log.info("传入的参数为 " +excelFile);
+        log.info("传入的参数为 " +uploadMonth);
+        try {
+            supplierZeroKilometerFailureRateService.readProcessFailuresTableToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
+    }
+
     @Log(title = "[零公里故障指标完成率]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

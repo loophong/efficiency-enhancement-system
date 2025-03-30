@@ -60,7 +60,7 @@
               </el-button>
             </el-col>
             <el-col :span="1.5">
-              <el-button @click="handleImport" type="success" plain icon="Upload"
+              <el-button @click="handleImport1" type="success" plain icon="Upload"
                          v-hasPermi="['production:zeroFailureRate:import']">产品过程故障率导入
               </el-button>
             </el-col>
@@ -83,7 +83,7 @@
       <el-table-column label="零公里故障率" align="center" prop="zeroFailureRate" />
       <el-table-column label="得分" align="center" prop="score" />
       <el-table-column label="上传月份" align="center" prop="uploadMonth" />
-      <!-- <el-table-column label="备选1" align="center" prop="two" /> -->
+      <el-table-column label="月份" align="center" prop="time" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:zeroFailureRate:edit']">修改</el-button>
@@ -131,10 +131,10 @@
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
         <!-- <el-form-item label="上传月份" prop="uploadmonth">
-          <el-input v-model="form.uploadmonth" placeholder="请输入备选" />
+          <el-input v-model="form.uploadmonth" placeholder="请输入上传月份" />
         </el-form-item>
-        <el-form-item label="备选1" prop="two">
-          <el-input v-model="form.two" placeholder="请输入备选1" />
+        <el-form-item label="月份" prop="time">
+          <el-input v-model="form.time" placeholder="请输入月份" />
         </el-form-item> -->
       </el-form>
       <template #footer>
@@ -184,7 +184,7 @@
 </template>
 
 <script setup name="ZeroFailureRate">
-import { listZeroFailureRate, getZeroFailureRate, delZeroFailureRate, addZeroFailureRate, updateZeroFailureRate,importFile } from "@/api/supplier/zeroFailureRate";
+import { listZeroFailureRate, getZeroFailureRate, delZeroFailureRate, addZeroFailureRate, updateZeroFailureRate,importFile,importFile1 } from "@/api/supplier/zeroFailureRate";
 import dayjs from 'dayjs';
 const { proxy } = getCurrentInstance();
 
@@ -219,7 +219,7 @@ const data = reactive({
     zeroFailureRate: null,
     score: null,
     uploadmonth: null,
-    two: null
+    time: null
   },
   rules: {
   }
@@ -258,7 +258,7 @@ function reset() {
     zeroFailureRate: null,
     score: null,
     uploadmonth: null,
-    two: null
+    time: null
   };
   proxy.resetForm("zeroFailureRateRef");
 }
@@ -341,13 +341,22 @@ function handleExport() {
 
 getList();
 
-
+// 新增一个响应式变量来存储当前的导入函数
+const currentImportFunction = ref(null);
 /** 导入按钮操作 */
 function handleImport() {
   resetUpload();
   uploadDialogVisible.value = true;
+  currentImportFunction.value = importFile;
 }
 
+
+/** 导入按钮操作1 */
+function handleImport1() {
+  resetUpload();
+  uploadDialogVisible.value = true;
+  currentImportFunction.value = importFile1;
+}
 /** 表单重置 */
 function resetUpload() {
   if (inputFile.value) {
@@ -382,7 +391,7 @@ function uploadFile() {
       'uploadMonth': date,
       'excelFile': file
     }
-    importFile(uploadFileDTO).then(() => {
+    currentImportFunction.value(uploadFileDTO).then(() => {
       proxy.$modal.msgSuccess("导入成功");
       getList();
       uploadDialogVisible.value = false;

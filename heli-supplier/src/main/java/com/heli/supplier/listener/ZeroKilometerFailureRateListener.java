@@ -3,15 +3,12 @@ package com.heli.supplier.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.heli.supplier.domain.SupplierChange;
-import com.heli.supplier.domain.SupplierGuarantee;
-import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.heli.supplier.domain.SupplierZeroKilometerFailureRate;
-import com.heli.supplier.mapper.SupplierOnetimeSimpleMapper;
 import com.heli.supplier.mapper.SupplierZeroKilometerFailureRateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Date;
 import java.util.List;
 
@@ -27,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZeroKilometerFailureRate> {
 
-    private static final int BATCH_COUNT = 200;
+    private static final int BATCH_COUNT = 20000;
 
     private int currentRow = 0;
 
@@ -39,7 +36,8 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
 
     private List<SupplierZeroKilometerFailureRate> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    public ZeroKilometerFailureRateListener(SupplierZeroKilometerFailureRateMapper supplierZeroKilometerFailureRateMapper, Date uploadMonth) {
+    public ZeroKilometerFailureRateListener(SupplierZeroKilometerFailureRateMapper supplierZeroKilometerFailureRateMapper,
+                                            Date uploadMonth) {
         this.supplierZeroKilometerFailureRateMapper = supplierZeroKilometerFailureRateMapper;
         this.uploadMonth = uploadMonth;
     }
@@ -58,24 +56,16 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
 
         // 数据处理
         if (registerInfoExcel.getSupplierName() != null) {
-
             registerInfoExcel.setUploadMonth(uploadMonth);
-
-//            // 将供应商编码的前缀0去掉
-//            registerInfoExcel.setSupplierCode(registerInfoExcel.getSupplierCode().replaceFirst("^0+", ""));
-//            // 计算分数
-//            double score = calculateScore(registerInfoExcel.getQuantityPassRate());
-//            registerInfoExcel.setScore(score);
-
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
         }
         // 批量处理缓存的数据
-        if (cacheDataList.size() >= BATCH_COUNT) {
-            saveToDB();
-            cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-        }
+//        if (cacheDataList.size() >= BATCH_COUNT) {
+//            saveToDB();
+//            cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
+//        }
     }
 
     /**
@@ -87,20 +77,6 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         saveToDB();
         log.info("所有数据解析完成");
-//        cacheDataList.forEach(data -> {
-//            SupplierZeroKilometerFailureRate supplierZeroKilometerFailureRate = supplierZeroKilometerFailureRateMapper.selectOne
-//                    (new QueryWrapper<SupplierZeroKilometerFailureRate>()
-//                            .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierName)
-//                            .eq();
-//                    .eq(SupplierChange::getSupplierCode, supplierCode)
-//            if (supplierGuarantee != null && supplierGuarantee.size() > 0) {
-////                data 是什么导入，ppm
-//                supplierGuarantee.setppm(data.getppm);
-//                supplierGuaranteeMapper.updateById(supplierGuarantee);
-//            }else{
-//                supplierGuaranteeMapper.save(data);
-//            }
-//        });
     }
 
     /**
@@ -109,33 +85,19 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
     private void saveToDB() {
         log.info("开始写入数据库");
 //        supplierOnetimeSimpleMapper.insert(cacheDataList);
-        supplierZeroKilometerFailureRateMapper.insert(cacheDataList);
+//        supplierZeroKilometerFailureRateMapper.insert(cacheDataList);
+        for (SupplierZeroKilometerFailureRate supplierZeroKilometerFailureRate : cacheDataList) {
+            SupplierZeroKilometerFailureRate result = supplierZeroKilometerFailureRateMapper.selectOne(
+                    new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
+                            .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierZeroKilometerFailureRate.getSupplierName())
+                            .eq(SupplierZeroKilometerFailureRate::getUploadMonth, supplierZeroKilometerFailureRate.getUploadMonth()));
+            if (result != null ){
+                result.setPpmValue(supplierZeroKilometerFailureRate.getPpmValue());
+                supplierZeroKilometerFailureRateMapper.updateById(result);
+            }else {
+                supplierZeroKilometerFailureRateMapper.insert(supplierZeroKilometerFailureRate);
+            }
+        }
     }
 
-
-    /**
-     * 计算分数
-     *
-     * @param quantityPassRate 合格率（字符串格式，如 "98.5%" 或 "98"）
-     * @return 计算后的得分
-     */
-    private double calculateScore(String quantityPassRate) {
-//        if (quantityPassRate == null || quantityPassRate.isEmpty()) {
-//            return 0; // 为空时默认 0 分
-//        }
-//
-//        try {
-//            // 去掉可能存在的 "%" 符号，并转换为 double
-//            double qualifiedRate = Double.parseDouble(quantityPassRate.replace("%", "").trim());
-//
-//            double baseScore = 100; // 基础分 100 分
-//            double deduction = 20 * (100 - qualifiedRate); // 每下降 1% 扣 20 分
-//            double finalScore = Math.max(0, baseScore - deduction); // 最低为 0 分
-//            return finalScore * 0.02; // 乘以 2% 作为模块得分
-//        } catch (NumberFormatException e) {
-//            log.error("合格率格式错误: {}", quantityPassRate);
-//            return 0; // 格式错误时默认 0 分
-//        }
-return 0;
-    }
 }

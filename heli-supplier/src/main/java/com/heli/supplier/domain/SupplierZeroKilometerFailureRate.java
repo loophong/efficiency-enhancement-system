@@ -117,8 +117,9 @@ public class SupplierZeroKilometerFailureRate{
     /**
      * 时间
      */
-    @Excel(name = "时间")
-    @ExcelProperty(value = "时间")
-    private String two;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "月份", width = 30, dateFormat = "yyyy-MM-dd")
+    @ExcelProperty(value = "月份")
+    private Date time;
 
 }

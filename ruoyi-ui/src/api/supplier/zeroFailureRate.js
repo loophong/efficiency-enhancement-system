@@ -54,3 +54,14 @@ export function importFile(formData) {
   }
   })
 }
+
+export function importFile1(formData) {
+  return request({
+    url: '/supplier/zeroFailureRate/importProductProcessFailures',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+  }
+  })
+}
