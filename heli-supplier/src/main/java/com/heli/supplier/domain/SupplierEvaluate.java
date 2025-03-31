@@ -92,6 +92,7 @@ public class SupplierEvaluate implements Serializable
     /** 自检报告准确率 */
     @Excel(name = "自检报告准确率")
     @ExcelProperty(value = "自检报告准确率")
+//    @ExcelProperty(index = 0)
     private BigDecimal selfinspectionReportaccuracy;
 
     /** 擅自变更产品材质参数尺寸 */

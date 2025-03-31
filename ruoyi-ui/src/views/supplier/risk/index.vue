@@ -17,30 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="得分" prop="score">
-        <el-input
-          v-model="queryParams.score"
-          placeholder="请输入得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="模型得分" prop="modelScore">
-        <el-input
-          v-model="queryParams.modelScore"
-          placeholder="请输入模型得分"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
-        <el-date-picker clearable
-          v-model="queryParams.uploadTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传时间">
-        </el-date-picker>
-      </el-form-item>
+      
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>

@@ -218,6 +218,9 @@ const data = reactive({
     uploadName: null
   },
   rules: {
+    cooperationDegree: [
+      { required: true, message: '请选择配合程度', trigger: 'change' }
+    ]
   }
 });
 

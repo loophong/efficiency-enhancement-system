@@ -1,15 +1,23 @@
 package com.heli.supplier.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
+import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.heli.supplier.domain.SupplierRisk;
 import com.heli.supplier.domain.SuppliersQualified;
+import com.heli.supplier.listener.PriceCompeteListener;
+import com.heli.supplier.listener.RiskListener;
 import com.heli.supplier.mapper.SuppliersQualifiedMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.supplier.mapper.SupplierPriceCompeteMapper;
 import com.heli.supplier.domain.SupplierPriceCompete;
 import com.heli.supplier.service.ISupplierPriceCompeteService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 价格竞争力Service业务层处理
@@ -18,6 +26,7 @@ import com.heli.supplier.service.ISupplierPriceCompeteService;
  * @date 2025-03-05
  */
 @Service
+@Slf4j
 public class SupplierPriceCompeteServiceImpl extends ServiceImpl<SupplierPriceCompeteMapper, SupplierPriceCompete> implements ISupplierPriceCompeteService
 {
     @Autowired
@@ -93,5 +102,29 @@ public class SupplierPriceCompeteServiceImpl extends ServiceImpl<SupplierPriceCo
     public int deleteSupplierPriceCompeteById(String id)
     {
         return supplierPriceCompeteMapper.deleteSupplierPriceCompeteById(id);
+    }
+
+
+    @Override
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
+        try {
+            // 清空表单
+            this.remove(new QueryWrapper<>());
+            log.info("开始读取文件: {}", fileName);
+            try {
+                EasyExcel.read(excelFile.getInputStream(),
+                                SupplierPriceCompete.class,
+                                new PriceCompeteListener(supplierPriceCompeteMapper,uploadMonth))
+                        .sheet("价格竞争力")
+                        .doRead();
+                log.info("读取文件成功: {}", fileName);
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+
+        }
     }
 }

@@ -12,7 +12,7 @@ import com.heli.supplier.domain.SuppliersQualified;
  * @author wll
  * @date 2025-03-05
  */
-public interface SupplierCooperationDegreeMapper extends BaseMapper<SuppliersQualified>
+public interface SupplierCooperationDegreeMapper extends BaseMapper<SupplierCooperationDegree>
 {
     /**
      * 查询新产品研发配合程度

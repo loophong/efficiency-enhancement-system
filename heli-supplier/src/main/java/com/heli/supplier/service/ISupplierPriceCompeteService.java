@@ -1,10 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierPriceCompete;
 import com.heli.supplier.domain.SuppliersQualified;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 价格竞争力Service接口
@@ -61,4 +63,6 @@ public interface ISupplierPriceCompeteService extends IService<SupplierPriceComp
      * @return 结果
      */
     public int deleteSupplierPriceCompeteById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }

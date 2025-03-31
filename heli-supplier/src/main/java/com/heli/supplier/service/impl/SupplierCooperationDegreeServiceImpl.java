@@ -3,8 +3,10 @@ package com.heli.supplier.service.impl;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.heli.supplier.domain.SupplierChange;
 import com.heli.supplier.domain.SupplierRectificationTimeliness;
 import com.heli.supplier.domain.SuppliersQualified;
+import com.heli.supplier.mapper.SupplierChangeMapper;
 import com.heli.supplier.mapper.SupplierRectificationTimelinessMapper;
 import com.heli.supplier.mapper.SuppliersQualifiedMapper;
 import com.heli.supplier.service.ISupplierRectificationTimelinessService;
@@ -21,7 +23,7 @@ import com.heli.supplier.service.ISupplierCooperationDegreeService;
  * @date 2025-03-05
  */
 @Service
-public class SupplierCooperationDegreeServiceImpl implements ISupplierCooperationDegreeService
+public class SupplierCooperationDegreeServiceImpl extends ServiceImpl<SupplierCooperationDegreeMapper, SupplierCooperationDegree> implements ISupplierCooperationDegreeService
 {
     @Autowired
     private SupplierCooperationDegreeMapper supplierCooperationDegreeMapper;

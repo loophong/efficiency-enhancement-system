@@ -1,10 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierPriceTrust;
 import com.heli.supplier.domain.SuppliersQualified;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 价格诚信Service接口
@@ -61,4 +63,6 @@ public interface ISupplierPriceTrustService extends IService<SupplierPriceTrust>
      * @return 结果
      */
     public int deleteSupplierPriceTrustById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }

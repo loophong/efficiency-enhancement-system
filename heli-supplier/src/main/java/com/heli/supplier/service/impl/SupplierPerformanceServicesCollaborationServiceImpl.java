@@ -66,6 +66,7 @@ public class SupplierPerformanceServicesCollaborationServiceImpl extends Service
     @Override
     public int insertSupplierPerformanceServicesCollaboration(SupplierPerformanceServicesCollaboration supplierPerformanceServicesCollaboration)
     {
+        supplierPerformanceServicesCollaboration.setScore(calculateScore(supplierPerformanceServicesCollaboration));
         return supplierPerformanceServicesCollaborationMapper.insertSupplierPerformanceServicesCollaboration(supplierPerformanceServicesCollaboration);
     }
 
@@ -78,6 +79,7 @@ public class SupplierPerformanceServicesCollaborationServiceImpl extends Service
     @Override
     public int updateSupplierPerformanceServicesCollaboration(SupplierPerformanceServicesCollaboration supplierPerformanceServicesCollaboration)
     {
+        supplierPerformanceServicesCollaboration.setScore(calculateScore(supplierPerformanceServicesCollaboration));
         return supplierPerformanceServicesCollaborationMapper.updateSupplierPerformanceServicesCollaboration(supplierPerformanceServicesCollaboration);
     }
 
@@ -139,6 +141,8 @@ public class SupplierPerformanceServicesCollaborationServiceImpl extends Service
 //
 //        return headList;
 //    }
+
+
     @Override
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
@@ -149,7 +153,7 @@ public class SupplierPerformanceServicesCollaborationServiceImpl extends Service
                 EasyExcel.read(excelFile.getInputStream(),
                                 SupplierPerformanceServicesCollaboration.class,
                                 new PerformanceServicesCollaborationListener(supplierPerformanceServicesCollaborationMapper,uploadMonth))
-                        .sheet("服务与协作")//.head(buildCustomHead())
+                        .sheet("服务与协作")//.headRowNumber(1)//headRowHandler(new CustomHeadRowHandler())//.head(buildCustomHead())
                         .doRead();
                 log.info("读取文件成功: {}", fileName);
             } catch (Exception e) {
@@ -160,6 +164,24 @@ public class SupplierPerformanceServicesCollaborationServiceImpl extends Service
             log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
 
         }
+    }
+
+
+    private Long calculateScore(SupplierPerformanceServicesCollaboration data) {
+        long baseScore = 100;
+        // 如果字段为空，则赋默认值 0
+        long letter = (data.getLetter() != null) ? data.getLetter() : 0;
+        long punish = (data.getPunish() != null) ? data.getPunish() : 0;
+        long feedbackNotTimely = (data.getFeedbackNotTimely() != null) ? data.getFeedbackNotTimely() : 0;
+
+        long deduction = (letter * 20) + (punish* 40) + (feedbackNotTimely * 10);
+        long finalScore = baseScore - deduction;
+
+        // 确保得分不能小于 0
+        finalScore = Math.max(finalScore, 0);
+
+        // 计算得分，确保最终分数也不能小于 0
+        return finalScore;
     }
 
 

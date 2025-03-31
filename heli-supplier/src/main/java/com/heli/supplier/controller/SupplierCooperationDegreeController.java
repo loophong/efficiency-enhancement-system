@@ -1,6 +1,8 @@
 package com.heli.supplier.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.R;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,6 +71,8 @@ public class SupplierCooperationDegreeController extends BaseController
     public AjaxResult getInfo(@PathVariable("id") String id)
     {
         return success(supplierCooperationDegreeService.selectSupplierCooperationDegreeById(id));
+//        return R.ok().setMsg("xxxxxx");
+//        return R.ok().setMsg("bbbbbb");
     }
 
     /**

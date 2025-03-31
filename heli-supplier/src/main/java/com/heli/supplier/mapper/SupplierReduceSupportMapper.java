@@ -1,6 +1,9 @@
 package com.heli.supplier.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.domain.SupplierReduceSupport;
 
 /**
@@ -9,7 +12,7 @@ import com.heli.supplier.domain.SupplierReduceSupport;
  * @author wll
  * @date 2025-03-06
  */
-public interface SupplierReduceSupportMapper 
+public interface SupplierReduceSupportMapper extends BaseMapper<SupplierReduceSupport>
 {
     /**
      * 查询降本支持
