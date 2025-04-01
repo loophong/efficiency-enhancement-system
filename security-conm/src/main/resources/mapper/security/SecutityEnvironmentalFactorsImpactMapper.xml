@@ -32,7 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="tense != null  and tense != ''"> and tense = #{tense}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures = #{controlMeasures}</if>
-            <if test="statu != null "> and statu = #{statu}</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
         </where>
     </select>
     

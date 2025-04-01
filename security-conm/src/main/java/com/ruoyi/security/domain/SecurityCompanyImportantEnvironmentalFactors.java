@@ -9,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 公司级重要环境因素清单对象 security_company_important_environmental_factors
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
 {
@@ -41,6 +41,10 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
     /** 管控措施 */
     @Excel(name = "管控措施")
     private String controlMeasures;
+
+    /** 审批状态 */
+    @Excel(name = "审批状态")
+    private String statu;
 
     public void setId(Long id) 
     {
@@ -105,6 +109,15 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
     {
         return controlMeasures;
     }
+    public void setStatu(String statu) 
+    {
+        this.statu = statu;
+    }
+
+    public String getStatu() 
+    {
+        return statu;
+    }
 
     @Override
     public String toString() {
@@ -116,6 +129,7 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
             .append("departmentProcessPosition", getDepartmentProcessPosition())
             .append("temporalState", getTemporalState())
             .append("controlMeasures", getControlMeasures())
+            .append("statu", getStatu())
             .toString();
     }
 }

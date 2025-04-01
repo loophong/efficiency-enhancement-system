@@ -84,6 +84,20 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/security/menu-tree',
+    component: Layout,
+    hidden: false,
+    meta: { title: '安全系统菜单', icon: 'tree' },
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/security/tree/index'),
+        name: 'SecuritySysMenuTree',
+        meta: { title: '菜单树管理', icon: 'tree', affix: false }
+      }
+    ]
+  }
 ]
 
 // 动态路由，基于用户权限动态去加载

@@ -45,40 +45,16 @@ public class SupplierPriceCompete
     private String supplierName;
 
     /** 记录时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "记录时间", width = 30, dateFormat = "yyyy-MM-dd")
     @ExcelProperty(value = "记录时间")
     private Date time;
 
-    /** 存在专项返利政策 */
-    @ExcelIgnore
-    @Excel(name = "存在专项返利政策")
-    @ExcelProperty(value = "存在专项返利政策")
-    private Long specialRebatePolicy;
-
-    /** 需自主提货 */
-    @ExcelIgnore
-    @Excel(name = "需自主提货")
-    @ExcelProperty(value = "需自主提货")
-    private Long selfPickup;
-
-    /** 常规物料有价格优势 */
-    @ExcelIgnore
-    @Excel(name = "常规物料有价格优势")
-    @ExcelProperty(value = "常规物料有价格优势")
-    private Long regularPrice;
-
-    /** 单一物料无价格优势 */
-
-    @Excel(name = "单一物料无价格优势")
-    @ExcelProperty(value = "单一物料无价格优势")
-    private Long singleNoPrice;
-
-    /** 常规物料无价格优势 */
-
-    @Excel(name = "常规物料无价格优势")
-    @ExcelProperty(value = "常规物料无价格优势")
-    private Long regularNoPrice;
+    /** 价格类型 */
+    @Excel(name = "价格类型")
+    @ExcelProperty(value = "价格类型")
+    private String priceType;
 
     /** 上传时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -97,6 +73,7 @@ public class SupplierPriceCompete
     private Long modelScore;
 
     /** 填报人 */
+    @ExcelIgnore
     @Excel(name = "填报人")
     @ExcelProperty(value = "填报人")
     private String uploadName;

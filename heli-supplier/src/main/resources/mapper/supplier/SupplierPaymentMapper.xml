@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.supplier.mapper.SupplierPaymentMapper">
+    
+    <resultMap type="SupplierPayment" id="SupplierPaymentResult">
+        <result property="id"    column="id"    />
+        <result property="supplierCode"    column="supplier_code"    />
+        <result property="supplierName"    column="supplier_name"    />
+        <result property="paymentTerms"    column="payment_terms"    />
+        <result property="remark"    column="remark"    />
+        <result property="score"    column="score"    />
+        <result property="modelScore"    column="model_score"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="one"    column="one"    />
+        <result property="two"    column="two"    />
+    </resultMap>
+
+    <sql id="selectSupplierPaymentVo">
+        select id, supplier_code, supplier_name, payment_terms, remark, score, model_score, upload_time, one, two from supplier_payment
+    </sql>
+
+    <select id="selectSupplierPaymentList" parameterType="SupplierPayment" resultMap="SupplierPaymentResult">
+        <include refid="selectSupplierPaymentVo"/>
+        <where>  
+            <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
+            <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
+            <if test="paymentTerms != null  and paymentTerms != ''"> and payment_terms = #{paymentTerms}</if>
+            <if test="score != null "> and score = #{score}</if>
+            <if test="modelScore != null "> and model_score = #{modelScore}</if>
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+            <if test="one != null  and one != ''"> and one = #{one}</if>
+            <if test="two != null  and two != ''"> and two = #{two}</if>
+        </where>
+    </select>
+    
+    <select id="selectSupplierPaymentById" parameterType="String" resultMap="SupplierPaymentResult">
+        <include refid="selectSupplierPaymentVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSupplierPayment" parameterType="SupplierPayment" useGeneratedKeys="true" keyProperty="id">
+        insert into supplier_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code,</if>
+            <if test="supplierName != null">supplier_name,</if>
+            <if test="paymentTerms != null">payment_terms,</if>
+            <if test="remark != null">remark,</if>
+            <if test="score != null">score,</if>
+            <if test="modelScore != null">model_score,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="one != null">one,</if>
+            <if test="two != null">two,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="supplierCode != null">#{supplierCode},</if>
+            <if test="supplierName != null">#{supplierName},</if>
+            <if test="paymentTerms != null">#{paymentTerms},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="score != null">#{score},</if>
+            <if test="modelScore != null">#{modelScore},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="one != null">#{one},</if>
+            <if test="two != null">#{two},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSupplierPayment" parameterType="SupplierPayment">
+        update supplier_payment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
+            <if test="supplierName != null">supplier_name = #{supplierName},</if>
+            <if test="paymentTerms != null">payment_terms = #{paymentTerms},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="modelScore != null">model_score = #{modelScore},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="one != null">one = #{one},</if>
+            <if test="two != null">two = #{two},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSupplierPaymentById" parameterType="String">
+        delete from supplier_payment where id = #{id}
+    </delete>
+
+    <delete id="deleteSupplierPaymentByIds" parameterType="String">
+        delete from supplier_payment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,17 +1,22 @@
 package com.ruoyi.security.service.impl;
 
 import java.util.List;
+
+import com.alibaba.excel.EasyExcel;
+import com.ruoyi.security.listener.SecutityEnvironmentalFactorsImpactListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.security.mapper.SecutityEnvironmentalFactorsImpactMapper;
 import com.ruoyi.security.domain.SecutityEnvironmentalFactorsImpact;
 import com.ruoyi.security.service.ISecutityEnvironmentalFactorsImpactService;
-
+import org.springframework.web.multipart.MultipartFile;
+@Slf4j
 /**
  * 环境因素清单Service业务层处理
  * 
  * @author wang
- * @date 2025-02-27
+ * @date 2025-03-26
  */
 @Service
 public class SecutityEnvironmentalFactorsImpactServiceImpl implements ISecutityEnvironmentalFactorsImpactService 
@@ -90,4 +95,30 @@ public class SecutityEnvironmentalFactorsImpactServiceImpl implements ISecutityE
     {
         return secutityEnvironmentalFactorsImpactMapper.deleteSecutityEnvironmentalFactorsImpactById(id);
     }
+
+    public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
+        try {
+            // 读取文件内容
+            log.info("开始读取文件: {}", fileName);
+
+            try {
+
+
+                EasyExcel.read(excelFile.getInputStream(), SecutityEnvironmentalFactorsImpact.class,
+                        new SecutityEnvironmentalFactorsImpactListener(secutityEnvironmentalFactorsImpactMapper)).headRowNumber(1).sheet().doRead();
+
+                log.info("读取文件成功: {}", fileName);
+
+            } catch (Exception e) {
+                log.info("读取文件失败: {}", e.getMessage());
+            }
+
+//            return R.ok("读取" + fileName + "文件成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
+//            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
 }
+

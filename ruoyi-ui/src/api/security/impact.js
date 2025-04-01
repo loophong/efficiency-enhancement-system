@@ -42,3 +42,15 @@ export function delImpact(id) {
     method: 'delete'
   })
 }
+// 上传环境因素清单
+export function importFile(formData) {
+  return request({
+    url: '/security/impact/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+

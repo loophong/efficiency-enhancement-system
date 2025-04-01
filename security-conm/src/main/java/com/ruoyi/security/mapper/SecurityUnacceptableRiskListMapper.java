@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityUnacceptableRiskList;
  * 不可接受风险清单Mapper接口
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 public interface SecurityUnacceptableRiskListMapper 
 {

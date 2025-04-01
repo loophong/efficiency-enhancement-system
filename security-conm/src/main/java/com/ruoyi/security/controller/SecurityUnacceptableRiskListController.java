@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 不可接受风险清单Controller
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 @RestController
 @RequestMapping("/security/unacceptablerisklist")

@@ -2,7 +2,9 @@ package com.heli.supplier.service;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.heli.supplier.domain.SupplierChange;
 import com.heli.supplier.domain.SupplierCooperationDegree;
 import com.heli.supplier.domain.SupplierRectificationTimeliness;
 import com.heli.supplier.domain.SuppliersQualified;
@@ -13,7 +15,7 @@ import com.heli.supplier.domain.SuppliersQualified;
  * @author wll
  * @date 2025-03-05
  */
-public interface ISupplierCooperationDegreeService
+public interface ISupplierCooperationDegreeService extends IService<SupplierCooperationDegree>
 {
     /**
      * 查询新产品研发配合程度
@@ -62,4 +64,5 @@ public interface ISupplierCooperationDegreeService
      * @return 结果
      */
     public int deleteSupplierCooperationDegreeById(String id);
+
 }

@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 危险源清单Controller
  * 
  * @author wang
- * @date 2025-03-01
+ * @date 2025-03-26
  */
 @RestController
 @RequestMapping("/security/risklist")

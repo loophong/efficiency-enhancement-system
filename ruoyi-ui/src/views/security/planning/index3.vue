@@ -113,6 +113,16 @@
           placeholder="请选择时间">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="审批状态" prop="statu">
+        <el-select v-model="queryParams.statu" placeholder="请选择审批状态" clearable>
+          <el-option
+            v-for="dict in security_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -171,7 +181,11 @@
       <el-table-column label="评价方式(LEC)" align="center" prop="evaluationMethod" />
       <el-table-column label="L" align="center" prop="evaluationA" />
       <el-table-column label="E" align="center" prop="evaluationB" />
-      <el-table-column label="C" align="center" prop="evaluationC" />
+      <el-table-column label="C" align="center" prop="evaluationC">
+        <template #default="scope">
+          <dict-tag :options="sys_yes_no" :value="scope.row.evaluationC"/>
+        </template>
+      </el-table-column>
       <el-table-column label="三角形" align="center" prop="evaluationSanjiaoxing" />
       <el-table-column label="风险级别" align="center" prop="riskLevel" />
       <el-table-column label="控制措施" align="center" prop="controlMeasures" />
@@ -180,6 +194,11 @@
       <el-table-column label="时间" align="center" prop="time" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="审批状态" align="center" prop="statu">
+        <template #default="scope">
+          <dict-tag :options="security_status" :value="scope.row.statu"/>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -248,6 +267,16 @@
             placeholder="请选择时间">
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="审批状态" prop="statu">
+          <el-select v-model="form.statu" placeholder="请选择审批状态">
+            <el-option
+              v-for="dict in security_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -263,6 +292,7 @@
 import { listRisklist, getRisklist, delRisklist, addRisklist, updateRisklist } from "@/api/security/risklist";
 
 const { proxy } = getCurrentInstance();
+const { security_status } = proxy.useDict('security_status');
 
 const risklistList = ref([]);
 const open = ref(false);
@@ -292,7 +322,8 @@ const data = reactive({
     controlMeasures: null,
     auditor: null,
     approver: null,
-    time: null
+    time: null,
+    statu: null
   },
   rules: {
     activity: [
@@ -301,6 +332,21 @@ const data = reactive({
     hazardSource: [
       { required: true, message: "危险源不能为空", trigger: "blur" }
     ],
+    riskLevel: [
+      { required: true, message: "风险级别不能为空", trigger: "blur" }
+    ],
+    auditor: [
+      { required: true, message: "审核人不能为空", trigger: "blur" }
+    ],
+    approver: [
+      { required: true, message: "批准人不能为空", trigger: "blur" }
+    ],
+    time: [
+      { required: true, message: "时间不能为空", trigger: "blur" }
+    ],
+    statu: [
+      { required: true, message: "审批状态不能为空", trigger: "change" }
+    ]
   }
 });
 
@@ -339,7 +385,8 @@ function reset() {
     controlMeasures: null,
     auditor: null,
     approver: null,
-    time: null
+    time: null,
+    statu: null
   };
   proxy.resetForm("risklistRef");
 }

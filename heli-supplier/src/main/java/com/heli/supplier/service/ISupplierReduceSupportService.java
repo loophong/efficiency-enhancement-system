@@ -1,7 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.domain.SupplierReduceSupport;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 降本支持Service接口
@@ -9,7 +14,7 @@ import com.heli.supplier.domain.SupplierReduceSupport;
  * @author wll
  * @date 2025-03-06
  */
-public interface ISupplierReduceSupportService 
+public interface ISupplierReduceSupportService extends IService<SupplierReduceSupport>
 {
     /**
      * 查询降本支持
@@ -58,4 +63,6 @@ public interface ISupplierReduceSupportService
      * @return 结果
      */
     public int deleteSupplierReduceSupportById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }

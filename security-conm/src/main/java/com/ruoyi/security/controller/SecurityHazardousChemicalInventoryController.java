@@ -34,14 +34,17 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Slf4j
 @RestController
+
 @RequestMapping("/security/inventory")
 public class SecurityHazardousChemicalInventoryController extends BaseController
 {
     @Autowired
     private ISecurityHazardousChemicalInventoryService securityHazardousChemicalInventoryService;
-
+    /**
+     * 上传危险化学品台账列表
+     */
     @Log(title = "[危险化学物品上传]上传", businessType = BusinessType.IMPORT)
-//    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
     public void importTable( MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");

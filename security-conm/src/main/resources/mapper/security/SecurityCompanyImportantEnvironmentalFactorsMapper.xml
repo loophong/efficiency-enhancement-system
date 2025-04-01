@@ -12,10 +12,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="departmentProcessPosition"    column="department_process_position"    />
         <result property="temporalState"    column="temporal_state"    />
         <result property="controlMeasures"    column="control_measures"    />
+        <result property="statu"    column="statu"    />
     </resultMap>
 
     <sql id="selectSecurityCompanyImportantEnvironmentalFactorsVo">
-        select id, environmental_factor, environmental_impact, activity_product_service, department_process_position, temporal_state, control_measures from security_company_important_environmental_factors
+        select id, environmental_factor, environmental_impact, activity_product_service, department_process_position, temporal_state, control_measures, statu from security_company_important_environmental_factors
     </sql>
 
     <select id="selectSecurityCompanyImportantEnvironmentalFactorsList" parameterType="SecurityCompanyImportantEnvironmentalFactors" resultMap="SecurityCompanyImportantEnvironmentalFactorsResult">
@@ -27,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="departmentProcessPosition != null  and departmentProcessPosition != ''"> and department_process_position like concat('%', #{departmentProcessPosition}, '%')</if>
             <if test="temporalState != null  and temporalState != ''"> and temporal_state like concat('%', #{temporalState}, '%')</if>
             <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures like concat('%', #{controlMeasures}, '%')</if>
+            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
         </where>
     </select>
     
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="departmentProcessPosition != null">department_process_position,</if>
             <if test="temporalState != null">temporal_state,</if>
             <if test="controlMeasures != null">control_measures,</if>
+            <if test="statu != null">statu,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="environmentalFactor != null and environmentalFactor != ''">#{environmentalFactor},</if>
@@ -52,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="departmentProcessPosition != null">#{departmentProcessPosition},</if>
             <if test="temporalState != null">#{temporalState},</if>
             <if test="controlMeasures != null">#{controlMeasures},</if>
+            <if test="statu != null">#{statu},</if>
          </trim>
     </insert>
 
@@ -64,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="departmentProcessPosition != null">department_process_position = #{departmentProcessPosition},</if>
             <if test="temporalState != null">temporal_state = #{temporalState},</if>
             <if test="controlMeasures != null">control_measures = #{controlMeasures},</if>
+            <if test="statu != null">statu = #{statu},</if>
         </trim>
         where id = #{id}
     </update>

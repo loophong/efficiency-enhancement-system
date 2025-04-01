@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="记录时间" prop="time">
+      <!-- <el-form-item label="记录时间" prop="time">
         <el-date-picker clearable
           v-model="queryParams.time"
           type="date"
@@ -25,50 +25,10 @@
           placeholder="请选择记录时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="存在专项返利政策" prop="specialRebatePolicy">
-        <el-select v-model="queryParams.specialRebatePolicy" placeholder="请选择存在专项返利政策" clearable>
+      <el-form-item label="价格类型" prop="priceType">
+        <el-select v-model="queryParams.priceType" placeholder="请选择价格类型" clearable>
           <el-option
-            v-for="dict in supplier_price_compete_policy"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="需自主提货" prop="selfPickup">
-        <el-select v-model="queryParams.selfPickup" placeholder="请选择需自主提货" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_self"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="常规物料有价格优势" prop="regularPrice">
-        <el-select v-model="queryParams.regularPrice" placeholder="请选择常规物料有价格优势" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_regular"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="单一物料无价格优势" prop="singleNoPrice">
-        <el-select v-model="queryParams.singleNoPrice" placeholder="请选择单一物料无价格优势" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_single_no"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="常规物料无价格优势" prop="regularNoPrice">
-        <el-select v-model="queryParams.regularNoPrice" placeholder="请选择常规物料无价格优势" clearable>
-          <el-option
-            v-for="dict in supplier_price_compete_regular_no"
+            v-for="dict in supplier_price_compete_price_type"
             :key="dict.value"
             :label="dict.label"
             :value="dict.value"
@@ -106,7 +66,7 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -152,6 +112,11 @@
           v-hasPermi="['supplier:pricecompete:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+              <el-button @click="handleImport" type="success" plain icon="Upload"
+                         v-hasPermi="['production:pricecompete:import']">导入
+              </el-button>
+            </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -160,44 +125,24 @@
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
-      <el-table-column label="记录时间" align="center" prop="time" width="100">
+      <!-- <el-table-column label="记录时间" align="center" prop="time" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="存在专项返利政策" align="center" prop="specialRebatePolicy" >
+      </el-table-column> -->
+      <!-- <el-table-column label="价格类型" align="center" prop="priceType">
         <template #default="scope">
-          <dict-tag :options="supplier_price_compete_policy" :value="scope.row.specialRebatePolicy"/>
+          <dict-tag :options="supplier_price_compete_price_type" :value="scope.row.priceType"/>
         </template>
-      </el-table-column>
-      <el-table-column label="需自主提货" align="center" prop="selfPickup">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_self" :value="scope.row.selfPickup"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="常规物料有价格优势" align="center" prop="regularPrice">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_regular" :value="scope.row.regularPrice"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="单一物料无价格优势" align="center" prop="singleNoPrice">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_single_no" :value="scope.row.singleNoPrice"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="常规物料无价格优势" align="center" prop="regularNoPrice">
-        <template #default="scope">
-          <dict-tag :options="supplier_price_compete_regular_no" :value="scope.row.regularNoPrice"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="上传时间" align="center" prop="uploadTime" width="100">
+      </el-table-column> -->
+      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="得分" align="center" prop="score" />
       <el-table-column label="模型得分" align="center" prop="modelScore" />
-      <el-table-column label="填报人" align="center" prop="uploadName" />
+      <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:pricecompete:edit']">修改</el-button>
@@ -216,66 +161,31 @@
 
     <!-- 添加或修改价格竞争力对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="pricecompeteRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="pricecompeteRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
-        <el-form-item label="记录时间" prop="time">
+        <!-- <el-form-item label="记录时间" prop="time">
           <el-date-picker clearable
             v-model="form.time"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="请选择记录时间">
           </el-date-picker>
-        </el-form-item>
-        <el-form-item label="存在专项返利政策" prop="specialRebatePolicy">
-          <el-radio-group v-model="form.specialRebatePolicy">
-            <el-radio
-              v-for="dict in supplier_price_compete_policy"
+        </el-form-item> -->
+        <!-- <el-form-item label="价格类型" prop="priceType">
+          <el-select v-model="form.priceType" placeholder="请选择价格类型">
+            <el-option
+              v-for="dict in supplier_price_compete_price_type"
               :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="需自主提货" prop="selfPickup">
-          <el-radio-group v-model="form.selfPickup">
-            <el-radio
-              v-for="dict in supplier_price_compete_self"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="常规物料有价格优势" prop="regularPrice">
-          <el-radio-group v-model="form.regularPrice">
-            <el-radio
-              v-for="dict in supplier_price_compete_regular"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="单一物料无价格优势" prop="singleNoPrice">
-          <el-radio-group v-model="form.singleNoPrice">
-            <el-radio
-              v-for="dict in supplier_price_compete_single_no"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="常规物料无价格优势" prop="regularNoPrice">
-          <el-radio-group v-model="form.regularNoPrice">
-            <el-radio
-              v-for="dict in supplier_price_compete_regular_no"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
+              :label="dict.label"
+              :value="dict.label"
+            ></el-option>
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
             v-model="form.uploadTime"
@@ -290,9 +200,9 @@
         <el-form-item label="模型得分" prop="modelScore">
           <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
         </el-form-item>
-        <el-form-item label="填报人" prop="uploadName">
+        <!-- <el-form-item label="填报人" prop="uploadName">
           <el-input v-model="form.uploadName" placeholder="请输入填报人" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -301,14 +211,48 @@
         </div>
       </template>
     </el-dialog>
+
+ <!-- 文件上传弹窗 -->
+ <el-dialog title="导入价格竞争力" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
+
+<el-form :model="form" ref="form" label-width="90px">
+  <el-form-item label="上传表类：">
+    <span style="color: rgb(68, 140, 39);">价格竞争力</span>
+    <br>
+  </el-form-item>
+
+  <el-form-item label="时间">
+<el-date-picker
+    v-model="uploadDate"
+    type="month"
+    placeholder="Pick a day"
+    date-format="yyyy-MM-dd"
+    :size="size"
+  />
+<br>
+</el-form-item>
+
+  <el-form-item label="上传文件：">
+    <input type="file" ref="inputFile" @change="checkFile"/>
+    <br>
+  </el-form-item>
+</el-form>
+      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
+        <el-button @click="cancelUpload">取 消</el-button>
+        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
+        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
+      </span>
+</el-dialog>
+
+
   </div>
 </template>
 
 <script setup name="Pricecompete">
-import { listPricecompete, getPricecompete, delPricecompete, addPricecompete, updatePricecompete } from "@/api/supplier/pricecompete";
-
+import { listPricecompete, getPricecompete, delPricecompete, addPricecompete, updatePricecompete,importFile } from "@/api/supplier/pricecompete";
+import dayjs from 'dayjs';
 const { proxy } = getCurrentInstance();
-const { supplier_price_compete_regular_no, supplier_price_compete_regular, supplier_price_compete_self, supplier_price_compete_single_no, supplier_price_compete_policy } = proxy.useDict('supplier_price_compete_regular_no', 'supplier_price_compete_regular', 'supplier_price_compete_self', 'supplier_price_compete_single_no', 'supplier_price_compete_policy');
+const { supplier_price_compete_price_type } = proxy.useDict('supplier_price_compete_price_type');
 
 const pricecompeteList = ref([]);
 const open = ref(false);
@@ -320,6 +264,15 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
+
+const uploadDate = ref("");
+
+// 导入参数
+const uploadDialogVisible = ref(false);
+const isLoading = ref(false);
+const inputFile = ref(null);
+
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -328,11 +281,7 @@ const data = reactive({
     supplierCode: null,
     supplierName: null,
     time: null,
-    specialRebatePolicy: null,
-    selfPickup: null,
-    regularPrice: null,
-    singleNoPrice: null,
-    regularNoPrice: null,
+    priceType: null,
     uploadTime: null,
     score: null,
     modelScore: null,
@@ -367,11 +316,7 @@ function reset() {
     supplierCode: null,
     supplierName: null,
     time: null,
-    specialRebatePolicy: null,
-    selfPickup: null,
-    regularPrice: null,
-    singleNoPrice: null,
-    regularNoPrice: null,
+    priceType: null,
     uploadTime: null,
     score: null,
     modelScore: null,
@@ -457,4 +402,79 @@ function handleExport() {
 }
 
 getList();
+/** 导入按钮操作 */
+function handleImport() {
+  resetUpload();
+  uploadDialogVisible.value = true;
+}
+
+/** 表单重置 */
+function resetUpload() {
+  if (inputFile.value) {
+    inputFile.value.value = "";
+  }
+}
+
+/** 取消上传 */
+function cancelUpload() {
+  uploadDialogVisible.value = false;
+  resetUpload();
+}
+
+
+/** excel文件上传 */
+function uploadFile() {
+  if (inputFile.value && inputFile.value.files.length > 0) {
+    isLoading.value = true;
+    const file = inputFile.value.files[0];
+    console.log(inputFile.value);
+    console.log(file);
+    // let date = XXXdate;
+    // const formData = new FormData();
+
+    // formData.append('excelFile', file);
+    // // formData.append('date', date);
+    console.log("上传时间"+uploadDate.value);
+
+
+
+
+
+    let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
+    // formData.append('uploadMonth',date );
+
+    // formData.append('date', date);
+    let uploadFileDTO = {
+      'uploadMonth': date,
+      'excelFile': file
+    }
+
+    importFile(uploadFileDTO).then(() => {
+      proxy.$modal.msgSuccess("导入成功");
+      getList();
+      uploadDialogVisible.value = false;
+      isLoading.value = false;
+    }).catch(() => {
+      proxy.$modal.msgError("导入失败");
+      isLoading.value = false;
+    }).finally(() => {
+      resetUpload();
+    });
+  }else {
+    proxy.$modal.msgError("请选择文件");
+  }
+
+}
+
+/** 检查文件是否为excel */
+function checkFile() {
+  const file = inputFile.value.files[0];
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+
+  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
+    proxy.$modal.msgError("只能上传 Excel 文件！");
+    resetUpload();
+  }
+}
 </script>

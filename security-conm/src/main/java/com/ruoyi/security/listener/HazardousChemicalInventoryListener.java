@@ -27,15 +27,12 @@ public class HazardousChemicalInventoryListener implements ReadListener<Security
     @Override
     public void invoke(SecurityHazardousChemicalInventory registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
-
         log.info("当前读取的数据为:" + registerInfoExcel);
-
         if (registerInfoExcel.getSubstanceName() != null) {
             securityHazardousChemicalInventoryMapper.insertSecurityHazardousChemicalInventory(registerInfoExcel);
         }
 
     }
-
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         log.info("读取完毕");

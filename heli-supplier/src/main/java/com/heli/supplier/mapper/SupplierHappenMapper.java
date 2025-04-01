@@ -1,7 +1,10 @@
 package com.heli.supplier.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.supplier.domain.SupplierHappen;
+import com.heli.supplier.domain.SupplierImportance;
 
 /**
  * 质量通知单Mapper接口
@@ -9,7 +12,7 @@ import com.heli.supplier.domain.SupplierHappen;
  * @author wll
  * @date 2025-03-07
  */
-public interface SupplierHappenMapper 
+public interface SupplierHappenMapper extends BaseMapper<SupplierHappen>
 {
     /**
      * 查询质量通知单

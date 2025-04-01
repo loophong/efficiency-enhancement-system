@@ -1,8 +1,15 @@
 package com.heli.supplier.domain;
 
-import java.math.BigDecimal;
+import java.io.Serial;
 import java.util.Date;
+
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -10,172 +17,104 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 降本支持对象 supplier_reduce_support
- * 
+ *
  * @author wll
- * @date 2025-03-06
+ * @date 2025-03-25
  */
+@Data
+@TableName(value = "supplier_reduce_support")
 public class SupplierReduceSupport
 {
+    @Serial
+    @ExcelIgnore
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
+    @ExcelIgnore
+    @TableId(type = IdType.AUTO)
     private String id;
 
-    /** 供应商代码 */
-    @Excel(name = "供应商代码")
-    private String supplierCode;
+    /** 原供应商代码 */
+    @Excel(name = "原供应商代码")
+    @ExcelProperty(value = "原供应商代码")
+    private String supplierCodePast;
 
-    /** 供应商名称 */
-    @Excel(name = "供应商名称")
-    private String supplierName;
+    /** 原供应商名称 */
+    @Excel(name = "原供应商名称")
+    @ExcelProperty(value = "原供应商名称")
+    private String supplierNamePast;
 
-    /** 单价 */
-    @Excel(name = "单价")
-    private Long singlePrice;
+    /** 新引进供应商代码 */
+    @Excel(name = "（新引进）供应商代码")
+    @ExcelProperty(value = "（新引进）供应商代码")
+    private String supplierCodeNow;
 
-    /** 降本金额 */
-    @Excel(name = "降本金额")
-    private Long reduceMoney;
+    /** 新引进供应商名称 */
+    @Excel(name = "（新引进）供应商名称")
+    @ExcelProperty(value = "（新引进）供应商名称")
+    private String supplierNameNow;
+
+    /** 降幅 */
+    @Excel(name = "降幅")
+    @ExcelProperty(value = "降幅")
+    private Double decrease;
 
     /** 总采购量 */
     @Excel(name = "总采购量")
+    @ExcelProperty(value = "总采购量")
     private Long totalPurchases;
 
+    /** 降本金额 */
+    @Excel(name = "降本金额")
+//    @ExcelProperty(value = "降本金额")
+    @ExcelProperty(index = 14)
+    private Double reduceMoney;
+
+    /** 单价 */
+    @Excel(name = "2023年调整单价不含税")
+//    @ExcelProperty(value = "2023年调整单价不含税")
+    @ExcelProperty(index = 9)
+    private Double price;
+
+
     /** 供货金额=单价*总采购量 */
-    @Excel(name = "供货金额=单价*总采购量")
-    private Long supplyAmount;
+    @Excel(name = "供货金额")
+    @ExcelProperty(value = "供货金额")
+    private Double supplyAmount;
 
     /** 降本占比 */
     @Excel(name = "降本占比")
-    private BigDecimal percentage;
+    @ExcelProperty(value = "降本占比")
+    private Double percentage;
+
+    /** 价格统计日期 */
+    @Excel(name = "价格统计日期")
+    @ExcelProperty(value = "价格统计日期")
+    private String priceStatisticDate;
 
     /** 得分 */
     @Excel(name = "得分")
+    @ExcelProperty(value = "得分")
     private Long score;
 
     /** 上传时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
     /** 填报人 */
+    @ExcelIgnore
     @Excel(name = "填报人")
+    @ExcelProperty(value = "填报人")
     private String uploadName;
 
-    public void setId(String id) 
-    {
-        this.id = id;
-    }
+    /** 备选 */
+    @ExcelIgnore
+    @Excel(name = "备选")
+    @ExcelProperty(value = "备选")
+    private String one;
 
-    public String getId() 
-    {
-        return id;
-    }
-    public void setSupplierCode(String supplierCode) 
-    {
-        this.supplierCode = supplierCode;
-    }
 
-    public String getSupplierCode() 
-    {
-        return supplierCode;
-    }
-    public void setSupplierName(String supplierName) 
-    {
-        this.supplierName = supplierName;
-    }
 
-    public String getSupplierName() 
-    {
-        return supplierName;
-    }
-    public void setSinglePrice(Long singlePrice) 
-    {
-        this.singlePrice = singlePrice;
-    }
-
-    public Long getSinglePrice() 
-    {
-        return singlePrice;
-    }
-    public void setReduceMoney(Long reduceMoney) 
-    {
-        this.reduceMoney = reduceMoney;
-    }
-
-    public Long getReduceMoney() 
-    {
-        return reduceMoney;
-    }
-    public void setTotalPurchases(Long totalPurchases) 
-    {
-        this.totalPurchases = totalPurchases;
-    }
-
-    public Long getTotalPurchases() 
-    {
-        return totalPurchases;
-    }
-    public void setSupplyAmount(Long supplyAmount) 
-    {
-        this.supplyAmount = supplyAmount;
-    }
-
-    public Long getSupplyAmount() 
-    {
-        return supplyAmount;
-    }
-    public void setPercentage(BigDecimal percentage) 
-    {
-        this.percentage = percentage;
-    }
-
-    public BigDecimal getPercentage() 
-    {
-        return percentage;
-    }
-    public void setScore(Long score) 
-    {
-        this.score = score;
-    }
-
-    public Long getScore() 
-    {
-        return score;
-    }
-    public void setUploadTime(Date uploadTime) 
-    {
-        this.uploadTime = uploadTime;
-    }
-
-    public Date getUploadTime() 
-    {
-        return uploadTime;
-    }
-    public void setUploadName(String uploadName) 
-    {
-        this.uploadName = uploadName;
-    }
-
-    public String getUploadName() 
-    {
-        return uploadName;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("supplierCode", getSupplierCode())
-            .append("supplierName", getSupplierName())
-            .append("singlePrice", getSinglePrice())
-            .append("reduceMoney", getReduceMoney())
-            .append("totalPurchases", getTotalPurchases())
-            .append("supplyAmount", getSupplyAmount())
-            .append("percentage", getPercentage())
-            .append("score", getScore())
-            .append("uploadTime", getUploadTime())
-            .append("uploadName", getUploadName())
-            .toString();
-    }
 }

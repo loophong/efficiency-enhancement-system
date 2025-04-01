@@ -237,13 +237,11 @@
           <span style="color: rgb(68, 140, 39);">危险化学品台账</span>
           <br>
         </el-form-item>
-
         <el-form-item label="上传文件：">
           <input type="file" ref="inputFile" @change="checkFile"/>
           <br>
         </el-form-item>
       </el-form>
-
       <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
         <el-button @click="cancelUpload">取 消</el-button>
         <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>

@@ -3,7 +3,9 @@ package com.heli.supplier.service;
 import java.util.Date;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.heli.supplier.domain.SupplierHappen;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -64,4 +66,6 @@ public interface ISupplierOnetimeSimpleService extends IService<SupplierOnetimeS
     public int deleteSupplierOnetimeSimpleById(Long id);
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
+
+
 }

@@ -22,7 +22,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @date 2025-03-05
  */
 @Data
-@TableName(value = "supplier_price_compete")
+@TableName(value = "supplier_cooperation_degree")
 public class SupplierCooperationDegree
 {
     @Serial

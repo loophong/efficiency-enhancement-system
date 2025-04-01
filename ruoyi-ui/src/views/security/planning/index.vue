@@ -60,12 +60,14 @@
         />
       </el-form-item>
       <el-form-item label="审批状态" prop="statu">
-        <el-input
-          v-model="queryParams.statu"
-          placeholder="请输入审批状态"
-          clearable
-          @keyup.enter="handleQuery"
-        />
+        <el-select v-model="queryParams.statu" placeholder="请选择审批状态" clearable>
+          <el-option
+            v-for="dict in security_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -130,7 +132,11 @@
       <el-table-column label="时态" align="center" prop="tense" />
       <el-table-column label="状态" align="center" prop="status" />
       <el-table-column label="控制措施" align="center" prop="controlMeasures" />
-      <el-table-column label="审批状态" align="center" prop="statu" />
+      <el-table-column label="审批状态" align="center" prop="statu">
+        <template #default="scope">
+          <dict-tag :options="security_status" :value="scope.row.statu"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:impact:edit']">修改</el-button>
@@ -179,7 +185,14 @@
           <el-input v-model="form.controlMeasures" placeholder="请输入控制措施" />
         </el-form-item>
         <el-form-item label="审批状态" prop="statu">
-          <el-input v-model="form.statu" placeholder="请输入审批状态" />
+          <el-select v-model="form.statu" placeholder="请选择审批状态">
+            <el-option
+              v-for="dict in security_status"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -196,7 +209,7 @@
 import { listImpact, getImpact, delImpact, addImpact, updateImpact } from "@/api/security/impact";
 
 const { proxy } = getCurrentInstance();
-const { evaluation_of_environmental_factor } = proxy.useDict('evaluation_of_environmental_factor');
+const { evaluation_of_environmental_factor, security_status } = proxy.useDict('evaluation_of_environmental_factor', 'security_status');
 
 const impactList = ref([]);
 const open = ref(false);

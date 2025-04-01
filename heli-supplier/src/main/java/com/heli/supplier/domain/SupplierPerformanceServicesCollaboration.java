@@ -36,12 +36,12 @@ public class SupplierPerformanceServicesCollaboration
 
     /** 供应商代码 */
     @Excel(name = "供应商代码")
-    @ExcelProperty(value = "供应商代码")
+    @ExcelProperty(value = {"供应商代码","供应商代码"},index = 0)
     private String supplierCode;
 
     /** 供应商名称 */
     @Excel(name = "供应商名称")
-    @ExcelProperty(value = "供应商名称")
+    @ExcelProperty(value = {"供应商名称","供应商名称"},index = 1)
     private String supplierName;
 
     /** 记录时间 */
@@ -52,22 +52,22 @@ public class SupplierPerformanceServicesCollaboration
 
     /** 供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作 */
     @Excel(name = "供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作")
-    @ExcelProperty(value = "供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作")
+    @ExcelProperty(value = {"服务于协作","供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作"},index = 2)
     private Long letter;
 
     /** 供应商如受到相关方处罚 */
     @Excel(name = "供应商如受到相关方处罚")
-    @ExcelProperty(value = "供应商如受到相关方处罚")
+    @ExcelProperty(value = {"服务于协作","供应商如受到相关方处罚"}, index = 3)
     private Long punish;
 
     /** 供应商如对采购员需求反馈不及时 */
     @Excel(name = "供应商如对采购员需求反馈不及时")
-    @ExcelProperty(value = "供应商如对采购员需求反馈不及时")
+    @ExcelProperty(value = { "服务于协作","供应商如对采购员需求反馈不及时"},index = 4)
     private Long feedbackNotTimely;
 
     /** 得分 */
     @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelProperty(value = "得分",index = 5)
     private Long score;
 
     /** 具体内容 */

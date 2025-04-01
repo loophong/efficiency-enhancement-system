@@ -59,8 +59,8 @@ public class SupplierRectificationTimelinessServiceImpl extends ServiceImpl<Supp
     public int insertSupplierRectificationTimeliness(SupplierRectificationTimeliness supplierRectificationTimeliness)
     {
         supplierRectificationTimeliness.setScore(calculateScore(supplierRectificationTimeliness.getCooperationDegree()));
-        return supplierRectificationTimelinessMapper.updateSupplierRectificationTimeliness(supplierRectificationTimeliness);
-// return supplierRectificationTimelinessMapper.insertSupplierRectificationTimeliness(supplierRectificationTimeliness);
+//        return supplierRectificationTimelinessMapper.updateSupplierRectificationTimeliness(supplierRectificationTimeliness);
+        return supplierRectificationTimelinessMapper.insertSupplierRectificationTimeliness(supplierRectificationTimeliness);
     }
 
     /**

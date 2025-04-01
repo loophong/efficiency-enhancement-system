@@ -17,6 +17,14 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <!-- <el-form-item label="重要度" prop="weight">
+        <el-input
+          v-model="queryParams.weight"
+          placeholder="请输入重要度"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item> -->
       
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -78,8 +86,8 @@
     <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" width="50">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="" align="center" prop="id" /> -->
-      <el-table-column label="供应商代码" align="center" prop="supplierCode" />
-      <el-table-column label="供应商名称" align="center" prop="supplierName" width="150"/>
+      <el-table-column label="供应商代码" align="center" prop="supplierCode" width="75" />
+      <el-table-column label="供应商名称" align="center" prop="supplierName" width="120"/>
       <el-table-column label="质量事故" align="center" prop="qualityIncident" width="50"/>
       <el-table-column label="一次交检合格率" align="center" prop="firstInspectionPassrate" width="70"/>
       <el-table-column label="零公里故障指标完成率" align="center" prop="zeroKilometerFailurerate" width="50"/>
@@ -100,7 +108,7 @@
       <el-table-column label="付款限制条件" align="center" prop="paymentRestrictionconditions" width="50"/>
       <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree" width="50"/>
       <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness" width="50"/>
-      <el-table-column label="总分" align="center" prop="totalScore" width="50"/>
+      <el-table-column label="总分" align="center" prop="totalScore" width="70"/>
       <!-- <el-table-column label="开始时间" align="center" prop="happenTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>

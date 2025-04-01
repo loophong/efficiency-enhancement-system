@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityUploadfileMapper">
+    
+    <resultMap type="SecurityUploadfile" id="SecurityUploadfileResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="file"    column="file"    />
+        <result property="text"    column="text"    />
+    </resultMap>
+
+    <sql id="selectSecurityUploadfileVo">
+        select id, file_name, file, text from security_uploadfile
+    </sql>
+
+    <select id="selectSecurityUploadfileList" parameterType="SecurityUploadfile" resultMap="SecurityUploadfileResult">
+        <include refid="selectSecurityUploadfileVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="file != null  and file != ''"> and file = #{file}</if>
+            <if test="text != null  and text != ''"> and text = #{text}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityUploadfileById" parameterType="Long" resultMap="SecurityUploadfileResult">
+        <include refid="selectSecurityUploadfileVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityUploadfile" parameterType="SecurityUploadfile" useGeneratedKeys="true" keyProperty="id">
+        insert into security_uploadfile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="file != null">file,</if>
+            <if test="text != null">text,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="file != null">#{file},</if>
+            <if test="text != null">#{text},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityUploadfile" parameterType="SecurityUploadfile">
+        update security_uploadfile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="text != null">text = #{text},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityUploadfileById" parameterType="Long">
+        delete from security_uploadfile where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityUploadfileByIds" parameterType="String">
+        delete from security_uploadfile where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
