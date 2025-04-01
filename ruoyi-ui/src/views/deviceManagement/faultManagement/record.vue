@@ -98,7 +98,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="审核结果" prop="maintenanceExamineStatus" v-if="ifShowExamine && existContent">
-          <el-select v-model="form.maintenanceExamineStatus" placeholder="请选择">
+          <el-select v-model="form.maintenanceExamineStatus" placeholder="请选择"
+            :disabled="props.rowFromProps.data.createBy != currentUserId">
             <el-option label="通过" value="通过"></el-option>
             <el-option label="驳回" value="驳回"></el-option>
           </el-select>
@@ -322,29 +323,32 @@ function submitForm() {
           // console.log(props.rowFromProps.data.monthTime)
           if (props.majorGroup == '班组') {
             if (props.rowFromProps.data[props.rowFromProps.data.monthTime].includes('待审核')) {
-              console.log('进入待审核')
+              // console.log('进入待审核')
               if (form.value.maintenanceExamineStatus == '通过') {
-                console.log('进入通过')
-                console.log(status.value)
-                console.log(parseStatus(status.value))
+                // console.log('进入通过')
+                // console.log(status.value)
+                // console.log(parseStatus(status.value))
                 groupForm.value[props.rowFromProps.data.monthTime] = parseStatus(status.value).symbol
-              } else {
-                console.log('进入驳回')
-                console.log(`${parseStatus(status.value).symbol}(驳回)`)
+              } else if (form.value.maintenanceExamineStatus == '驳回') {
+                // console.log('进入驳回')
+                // console.log(`${parseStatus(status.value).symbol}(驳回)`) 
                 groupForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(驳回)`
+              } else {
+                groupForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(待审核)`
               }
             } else {
-              console.log('进入非待审核')
+              // console.log('进入非待审核')
               groupForm.value[props.rowFromProps.data.monthTime] = status.value
             }
-            console.log('groupForm---->', groupForm.value)
-            groupUpdatePlan(groupForm.value)
-            emit('getGroup');
+            // console.log('groupForm---->', groupForm.value)
+            groupUpdatePlan(groupForm.value).then(result => {
+              emit('getGroup')
+            })
           } else {
             majorForm.value[props.rowFromProps.data.monthTime] = status.value
-            // console.log('majorForm---->', majorForm.value)
-            majorUpdatePlan(majorForm.value)
-            emit('getMajor');
+            majorUpdatePlan(majorForm.value).then(result => {
+              emit('getMajor')
+            })
           }
         });
       } else {
@@ -355,13 +359,15 @@ function submitForm() {
           if (props.majorGroup == '班组') {
             groupForm.value[props.rowFromProps.data.monthTime] = status.value
             console.log('groupForm---->', groupForm.value)
-            groupUpdatePlan(groupForm.value)
-            emit('getGroup');
+            groupUpdatePlan(groupForm.value).then(result => {
+              emit('getGroup');
+            })
           } else {
             majorForm.value[props.rowFromProps.data.monthTime] = status.value
             console.log('majorForm---->', majorForm.value)
-            majorUpdatePlan(majorForm.value)
-            emit('getMajor');
+            majorUpdatePlan(majorForm.value).then(result => {
+              emit('getMajor');
+            })
           }
         });
       }
