@@ -199,6 +199,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
             boolean b = qualityIncident(happenTime, endTime, item.getSupplierCode());
             supplierEvaluate.setQualityIncident(BigDecimal.valueOf(0));
             if (b) {
+                supplierEvaluate.setQualityIncident(BigDecimal.valueOf(1));
                 supplierEvaluate.setFirstInspectionPassrate(BigDecimal.valueOf(0));
                 supplierEvaluate.setZeroKilometerFailurerate(BigDecimal.valueOf(0));
                 supplierEvaluate.setQualityNotificationOrderrate(BigDecimal.valueOf(0));
@@ -332,75 +333,86 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * 3.1.3零公里故障率   不会做
      */
     BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal score = new BigDecimal(100);
+        BigDecimal baseScore = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
-
         List<SupplierZeroKilometerFailureRate> list = supplierZeroKilometerFailureRateService.list(
                 new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
                         .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierCode)
                         .between(SupplierZeroKilometerFailureRate::getUploadMonth, happenTime, endTime));
-        // 如果没有数据，返回基础分的 8%
-        if (list.isEmpty()) {
-            return score.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+//        // 如果没有数据，返回基础分的 8%
+//        if (list.isEmpty()) {
+//            return baseScore.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+//        }
+        // 遍历列表，计算最低得分
+        BigDecimal minScore = baseScore;
+        for (SupplierZeroKilometerFailureRate record : list) {
+            BigDecimal score = calculateScore(record.getPpmValue(), record.getZeroFailureRate());
+            minScore = minScore.min(score); // 取最低得分
         }
 
-        BigDecimal maxDeduction = BigDecimal.ZERO; // 记录最大扣分
-
-        for (SupplierZeroKilometerFailureRate data : list) {
-            BigDecimal failureRate = BigDecimal.ZERO;
-
-            // **优先使用 PPM 值计算**（需为有效数字）
-            if (isValidPpmValue(data.getPpmValue())) {
-                failureRate = new BigDecimal(data.getPpmValue()).divide(BigDecimal.valueOf(1000000), 6, RoundingMode.HALF_UP);
-            }
-            // **如果 PPM 值无效，使用 ZeroFailureRate**（需为百分率）
-            else if (isValidZeroFailureRate(data.getZeroFailureRate())) {
-                failureRate = new BigDecimal(data.getZeroFailureRate().replace("%", "")).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
-            }
-
-            // 计算扣分
-            BigDecimal deduction = BigDecimal.ZERO;
-            if (failureRate.compareTo(BigDecimal.ZERO) > 0) {
-                deduction = failureRate.divide(BigDecimal.valueOf(0.01), RoundingMode.DOWN) // 计算超出的百分比
-                        .multiply(BigDecimal.TEN); // 每 1% 扣 10 分
-            }
-
-            // 记录最大扣分值
-            maxDeduction = maxDeduction.max(deduction);
-        }
-
-        // 计算最终得分
-        score = score.subtract(maxDeduction).max(BigDecimal.ZERO);
-        return score.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+        return minScore.multiply(new BigDecimal("0.08")); // 取8%作为最终模块得分
     }
 
     /**
-     * 判断 PPM 值是否有效（数字且不是 #DIV/0! 或 #VALUE!）
+     * 计算评分
      */
-    private boolean isValidPpmValue(String ppmValue) {
-        if (ppmValue == null || ppmValue.trim().isEmpty()) {
-            return false;
+    private BigDecimal calculateScore(String ppmValue, String zeroFailureRate) {
+        BigDecimal baseScore = new BigDecimal(100); // 基础分
+        // 处理 ppmValue
+        if (ppmValue != null && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!")) {
+            try {
+                double ppm = new BigDecimal(ppmValue).doubleValue();
+                double rate = ppm / 1_000_000; // ppm 转换为百分比
+
+                if (rate > 0) {
+                    int deduction = (int) Math.ceil(rate * 100) * 10;
+                    return BigDecimal.valueOf(Math.max(0, 100 - deduction));
+                }
+            } catch (NumberFormatException ignored) {
+                // 解析失败，使用 zeroFailureRate
+            }
         }
-        // 判断是否是有效的数字，并且不等于 #DIV/0! 或 #VALUE!
-        return ppmValue.matches("^-?\\d+(\\.\\d+)?$") && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!");
+
+        // 处理 zeroFailureRate
+        if (zeroFailureRate != null ) {
+            try {
+                double rate = new BigDecimal(zeroFailureRate.replace("%", "")).divide(new BigDecimal("100")).doubleValue();
+                int deduction = (int) Math.ceil(rate * 100) * 10;
+                return BigDecimal.valueOf(Math.max(0, 100 - deduction));
+            } catch (NumberFormatException ignored) {
+                return baseScore;
+            }
+        }
+        return baseScore; // 默认 0 分
     }
 
-    /**
-     * 判断 ZeroFailureRate 是否有效（百分率，例如 5%）
-     */
-    private boolean isValidZeroFailureRate(String zeroFailureRate) {
-        if (zeroFailureRate == null || zeroFailureRate.trim().isEmpty()) {
-            return false;
-        }
-        // 判断是否是有效的百分率（包含 % 符号）
-        if (!zeroFailureRate.matches("^-?\\d+(\\.\\d+)?%$") || zeroFailureRate.equals("#DIV/0!") || zeroFailureRate.equals("#VALUE!")) {
-            return false;
-        }
-        // 去掉百分号并转换为小数
-        BigDecimal value = new BigDecimal(zeroFailureRate.replace("%", ""));
-        return value.compareTo(BigDecimal.ZERO) >= 0 && value.compareTo(BigDecimal.valueOf(100)) <= 0; // 百分率范围是0到100
-    }
+//    /**
+//     * 判断 PPM 值是否有效（数字且不是 #DIV/0! 或 #VALUE!）
+//     */
+//    private boolean isValidPpmValue(String ppmValue) {
+//        if (ppmValue == null || ppmValue.trim().isEmpty()) {
+//            return false;
+//        }
+//        // 判断是否是有效的数字，并且不等于 #DIV/0! 或 #VALUE!
+//        return ppmValue.matches("^-?\\d+(\\.\\d+)?$") && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!");
+//    }
+//
+//    /**
+//     * 判断 ZeroFailureRate 是否有效（百分率，例如 5%）
+//     */
+//    private boolean isValidZeroFailureRate(String zeroFailureRate) {
+//        if (zeroFailureRate == null || zeroFailureRate.trim().isEmpty()) {
+//            return false;
+//        }
+//        // 判断是否是有效的百分率（包含 % 符号）
+//        if (!zeroFailureRate.matches("^-?\\d+(\\.\\d+)?%$") || zeroFailureRate.equals("#DIV/0!") || zeroFailureRate.equals("#VALUE!")) {
+//            return false;
+//        }
+//        // 去掉百分号并转换为小数
+//        BigDecimal value = new BigDecimal(zeroFailureRate.replace("%", ""));
+//        return value.compareTo(BigDecimal.ZERO) >= 0 && value.compareTo(BigDecimal.valueOf(100)) <= 0; // 百分率范围是0到100
+//    }
 
     /**
      * 3.1.4质量通知单及时率
