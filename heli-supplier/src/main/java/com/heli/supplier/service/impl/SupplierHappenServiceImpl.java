@@ -1,6 +1,10 @@
 package com.heli.supplier.service.impl;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.heli.supplier.domain.SupplierImportance;
+import com.heli.supplier.mapper.SupplierImportanceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.heli.supplier.mapper.SupplierHappenMapper;
@@ -14,7 +18,7 @@ import com.heli.supplier.service.ISupplierHappenService;
  * @date 2025-03-07
  */
 @Service
-public class SupplierHappenServiceImpl implements ISupplierHappenService 
+public class SupplierHappenServiceImpl extends ServiceImpl<SupplierHappenMapper, SupplierHappen> implements ISupplierHappenService
 {
     @Autowired
     private SupplierHappenMapper supplierHappenMapper;

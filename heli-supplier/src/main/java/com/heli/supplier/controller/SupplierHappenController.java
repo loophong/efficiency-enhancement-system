@@ -2,6 +2,7 @@ package com.heli.supplier.controller;
 
 import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  */
 @RestController
 @RequestMapping("/supplier/happen")
+@Slf4j
 public class SupplierHappenController extends BaseController
 {
     @Autowired

@@ -40,7 +40,16 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     @Autowired
     private ISupplierQualityIncidentsService supplierQualityIncidentsService;//3.1.1
     @Autowired
-    private ISupplierOnetimeSimpleService onetimeSimpleService;//3.1.2
+    private ISupplierOnetimeSimpleService supplierOnetimeSimpleService;//3.1.2
+
+    @Autowired
+    private ISupplierZeroKilometerFailureRateService supplierZeroKilometerFailureRateService;//3.1.3
+
+    @Autowired
+    private ISupplierHappenService supplierHappenService;//3.1.4   3.1.5
+//
+//    @Autowired
+//    private ISupplierOnetimeSimpleService onetimeSimpleService;//3.1.5
 
     @Autowired
     private ISupplierReturnRateService supplierReturnRateService;//3.1.6
@@ -201,11 +210,17 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
                 supplierEvaluate.setProductmaterialParametersizeChange(BigDecimal.valueOf(0));
             } else {
                 supplierEvaluate.setFirstInspectionPassrate(firstInspectionPassrate(happenTime, endTime, item.getSupplierCode()));
-                //supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(//happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setQualityNotificationOrderrate(qualityNotificationOrderrate(happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setFeedbackOrderletterTimeliness(feedbackOrderletterTimeliness(happenTime, endTime, item.getSupplierCode()));
+
+
                 //下面三个计算没写
-                supplierEvaluate.setZeroKilometerFailurerate(BigDecimal.valueOf(0));
-                supplierEvaluate.setQualityNotificationOrderrate(BigDecimal.valueOf(0));
-                supplierEvaluate.setFeedbackOrderletterTimeliness(BigDecimal.valueOf(0));
+//                supplierEvaluate.setZeroKilometerFailurerate(BigDecimal.valueOf(0));
+
+//                supplierEvaluate.setQualityNotificationOrderrate(qualityNotificationOrderrate(happenTime, endTime, item.getSupplierCode()));
+//                supplierEvaluate.setQualityNotificationOrderrate(BigDecimal.valueOf(0));
+
 
                 supplierEvaluate.setWarrantyperiodRepairrate(warrantyperiodRepairrate(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setThreepackageComponentRepairrate(threePackageComponentRepairrate(happenTime, endTime, item.getSupplierCode()));
@@ -296,7 +311,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         endTime = DateUtils.getLastMonthEndDay(endTime);
 //        log.info("happenTime:{}", happenTime);
 //        log.info("endTime:{}", endTime);
-        List<SupplierOnetimeSimple> list = onetimeSimpleService.list(
+        List<SupplierOnetimeSimple> list = supplierOnetimeSimpleService.list(
                 new LambdaQueryWrapper<SupplierOnetimeSimple>()
                         .eq(SupplierOnetimeSimple::getSupplierCode, supplierCode)
                         .between(SupplierOnetimeSimple::getUpdateMonth, happenTime, endTime));
@@ -317,43 +332,138 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * 3.1.3零公里故障率   不会做
      */
     BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(0);
-//        happenTime = DateUtils.getMonthFirstDay(happenTime);
-//        endTime = DateUtils.getLastMonthEndDay(endTime);
-//        List<SupplierOnetimeSimple> list = onetimeSimpleService.list(
-//                new LambdaQueryWrapper<SupplierOnetimeSimple>()
-//                        .eq(SupplierOnetimeSimple::getSupplierCode, supplierCode)
-//                       );
-        return bigDecimal;
+        BigDecimal score = new BigDecimal(100);
+        happenTime = DateUtils.getMonthFirstDay(happenTime);
+        endTime = DateUtils.getLastMonthEndDay(endTime);
+
+        List<SupplierZeroKilometerFailureRate> list = supplierZeroKilometerFailureRateService.list(
+                new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
+                        .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierCode)
+                        .between(SupplierZeroKilometerFailureRate::getUploadMonth, happenTime, endTime));
+        // 如果没有数据，返回基础分的 8%
+        if (list.isEmpty()) {
+            return score.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+        }
+
+        BigDecimal maxDeduction = BigDecimal.ZERO; // 记录最大扣分
+
+        for (SupplierZeroKilometerFailureRate data : list) {
+            BigDecimal failureRate = BigDecimal.ZERO;
+
+            // **优先使用 PPM 值计算**（需为有效数字）
+            if (isValidPpmValue(data.getPpmValue())) {
+                failureRate = new BigDecimal(data.getPpmValue()).divide(BigDecimal.valueOf(1000000), 6, RoundingMode.HALF_UP);
+            }
+            // **如果 PPM 值无效，使用 ZeroFailureRate**（需为百分率）
+            else if (isValidZeroFailureRate(data.getZeroFailureRate())) {
+                failureRate = new BigDecimal(data.getZeroFailureRate().replace("%", "")).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+            }
+
+            // 计算扣分
+            BigDecimal deduction = BigDecimal.ZERO;
+            if (failureRate.compareTo(BigDecimal.ZERO) > 0) {
+                deduction = failureRate.divide(BigDecimal.valueOf(0.01), RoundingMode.DOWN) // 计算超出的百分比
+                        .multiply(BigDecimal.TEN); // 每 1% 扣 10 分
+            }
+
+            // 记录最大扣分值
+            maxDeduction = maxDeduction.max(deduction);
+        }
+
+        // 计算最终得分
+        score = score.subtract(maxDeduction).max(BigDecimal.ZERO);
+        return score.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 判断 PPM 值是否有效（数字且不是 #DIV/0! 或 #VALUE!）
+     */
+    private boolean isValidPpmValue(String ppmValue) {
+        if (ppmValue == null || ppmValue.trim().isEmpty()) {
+            return false;
+        }
+        // 判断是否是有效的数字，并且不等于 #DIV/0! 或 #VALUE!
+        return ppmValue.matches("^-?\\d+(\\.\\d+)?$") && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!");
+    }
+
+    /**
+     * 判断 ZeroFailureRate 是否有效（百分率，例如 5%）
+     */
+    private boolean isValidZeroFailureRate(String zeroFailureRate) {
+        if (zeroFailureRate == null || zeroFailureRate.trim().isEmpty()) {
+            return false;
+        }
+        // 判断是否是有效的百分率（包含 % 符号）
+        if (!zeroFailureRate.matches("^-?\\d+(\\.\\d+)?%$") || zeroFailureRate.equals("#DIV/0!") || zeroFailureRate.equals("#VALUE!")) {
+            return false;
+        }
+        // 去掉百分号并转换为小数
+        BigDecimal value = new BigDecimal(zeroFailureRate.replace("%", ""));
+        return value.compareTo(BigDecimal.ZERO) >= 0 && value.compareTo(BigDecimal.valueOf(100)) <= 0; // 百分率范围是0到100
     }
 
     /**
      * 3.1.4质量通知单及时率
      */
     BigDecimal qualityNotificationOrderrate(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(0);
+        BigDecimal baseScore = BigDecimal.valueOf(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
-        List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
-                new LambdaQueryWrapper<SupplierTwoReviewScore>()
-                        .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
-        );
-        return bigDecimal;
+        List<SupplierHappen> list = supplierHappenService.list(
+                new LambdaQueryWrapper<SupplierHappen>()
+                        .eq(SupplierHappen::getSupplierCode, supplierCode)
+                        .between(SupplierHappen::getHappenTime, happenTime, endTime));
+        int feedbackCount = list.size();
+        // 每次发生质量信息反馈单扣 20 分
+        BigDecimal totalDeduction = BigDecimal.valueOf(feedbackCount * 20);
+
+        // 扣除总分
+        baseScore = baseScore.subtract(totalDeduction);
+
+        // 计算最终得分为基础分的 8%
+        BigDecimal finalScore = baseScore.multiply(BigDecimal.valueOf(0.08)).setScale(2, RoundingMode.HALF_UP);
+
+        // 确保得分不低于 0
+        return finalScore.max(BigDecimal.ZERO);
+
     }
 
     /**
      * 3.1.5 反馈单回函及时率
      */
     BigDecimal feedbackOrderletterTimeliness(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(0);
+        BigDecimal baseScore = BigDecimal.valueOf(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
-        List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
-                new LambdaQueryWrapper<SupplierTwoReviewScore>()
-                        .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
-        );
-        return bigDecimal;
+        List<SupplierHappen> list = supplierHappenService.list(
+                new LambdaQueryWrapper<SupplierHappen>()
+                        .eq(SupplierHappen::getSupplierCode, supplierCode)
+                        .between(SupplierHappen::getHappenTime, happenTime, endTime));
+        // 记录回函不及时的次数
+        int feedbackCount = 0;
+
+        // 遍历每个发生记录，判断回函是否及时
+        for (SupplierHappen happen : list) {
+            Date completeTime = happen.getCompleteTime();
+            Date deadline = happen.getDeadline();
+
+            // 判断完成时间是否晚于截止时间
+            if (completeTime != null && deadline != null && completeTime.after(deadline)) {
+                // 如果回函不及时，扣除 40 分
+                feedbackCount++;
+            }
+        }
+
+        // 每次回函不及时扣 40 分
+        BigDecimal scoreDeduction = BigDecimal.valueOf(feedbackCount * 40);
+
+        // 计算最终得分，模块得分为基础分的 5%
+        BigDecimal finalScore = baseScore.subtract(scoreDeduction).multiply(BigDecimal.valueOf(0.05));
+
+        // 确保得分不低于 0
+        return finalScore.max(BigDecimal.ZERO);
     }
+
 
     /**
      * 3.1.6保修期内市场售后返修率
