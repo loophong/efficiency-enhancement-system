@@ -18,9 +18,17 @@
       <el-form-item label="车型" prop="vehicleModel">
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
+<!--      <el-form-item label="数量" prop="quantity">-->
+<!--        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="数量" prop="quantity">
-        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"
-        />
+        <el-input-number
+            v-model="queryParams.quantity"
+            placeholder="请输入数量"
+            clearable
+            @keyup.enter="handleQuery"
+            :min="0"/>
       </el-form-item>
 <!--      <el-form-item label="阀片" prop="valvePlate">-->
 <!--        <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>-->
@@ -78,9 +86,17 @@
                         placeholder="请选择采购回复到货时间">
         </el-date-picker>
       </el-form-item>
+<!--      <el-form-item label="生产周期" prop="productionCycle">-->
+<!--        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable-->
+<!--                  @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="生产周期" prop="productionCycle">
-        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable
-                  @keyup.enter="handleQuery"/>
+        <el-input-number
+            v-model="queryParams.productionCycle"
+            placeholder="请输入生产周期"
+            clearable
+            @keyup.enter="handleQuery"
+            :min="0"/>
       </el-form-item>
       <el-form-item label="最晚上线日期" prop="latestOnlineDate" label-width="100px">
         <el-date-picker clearable v-model="queryParams.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
