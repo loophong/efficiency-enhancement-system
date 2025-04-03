@@ -24,8 +24,15 @@
             clearable
             @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态(0未读，1已读)" clearable style="width: 100px">
+      <el-form-item label="内容" prop="content">
+        <el-input
+            v-model="queryParams.content"
+            placeholder="请输入内容"
+            clearable
+            @keyup.enter="handleQuery"/>
+      </el-form-item>
+      <el-form-item label="状态" prop="status" >
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable style="width: 200px">
           <el-option
               v-for="dict in sys_notifications_status"
               :key="dict.value"
@@ -48,20 +55,20 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:notifications:add']">新增
-        </el-button>
-      </el-col>
+      <!--            <el-col :span="1.5">-->
+      <!--              <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:notifications:add']">新增-->
+      <!--              </el-button>-->
+      <!--            </el-col>-->
       <!--      <el-col :span="1.5">-->
       <!--        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"-->
       <!--                   v-hasPermi="['production:notifications:edit']">修改-->
       <!--        </el-button>-->
       <!--      </el-col>-->
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-                   v-hasPermi="['production:notifications:remove']">删除
-        </el-button>
-      </el-col>
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"-->
+      <!--                   v-hasPermi="['production:notifications:remove']">删除-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <!--      <el-col :span="1.5">-->
       <!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
       <!--                   v-hasPermi="['production:notifications:export']">导出-->
@@ -80,9 +87,9 @@
           <dict-tag :options="sys_notifications_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="消息类型" align="center" prop="type"/>
+      <!--      <el-table-column label="消息类型" align="center" prop="type"/>-->
       <!--      <el-table-column label="接收消息的用户 ID" align="center" prop="receiverId"/>-->
-      <!--      <el-table-column label="发送消息的用户 ID" align="center" prop="senderId"/>-->
+      <el-table-column label="发送人" align="center" prop="receiverId"/>
       <el-table-column label="发送时间" align="center" prop="createdAt"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -141,31 +148,21 @@
 
     <!-- 处理消息通知对话框 -->
     <el-dialog title="消息阅读" v-model="handleVisible" width="500px" append-to-body>
-      <el-form ref="notificationsRef" :model="form"  label-width="80px">
-        <el-form-item label="接收消息的用户 ID" prop="receiverId">
-          <el-input v-model="form.receiverId" placeholder="请输入接收消息的用户 ID"/>
-        </el-form-item>
-        <el-form-item label="发送消息的用户 ID" prop="senderId">
-          <el-input v-model="form.senderId" placeholder="请输入发送消息的用户 ID"/>
+      <el-form ref="notificationsRef" :model="form" label-width="80px">
+        <!--        <el-form-item label="接收消息的用户 ID" prop="receiverId">-->
+        <!--          <el-input v-model="form.receiverId" placeholder="请输入接收消息的用户 ID"/>-->
+        <!--        </el-form-item>-->
+        <el-form-item label="发送人" prop="receiverId">
+          <el-input v-model="form.receiverId" disabled placeholder="发送人"/>
         </el-form-item>
         <el-form-item label="标题" prop="title">
-          <el-input v-model="form.title" placeholder="请输入标题"/>
+          <el-input v-model="form.title" disabled placeholder="请输入标题"/>
         </el-form-item>
         <el-form-item label="内容" prop="content">
-          <el-input v-model="form.content" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.content" disabled type="textarea" placeholder="请输入内容"/>
         </el-form-item>
-<!--        <el-form-item label="状态(0未读，1已读)" prop="status">-->
-<!--          <el-radio-group v-model="form.status">-->
-<!--            <el-radio-->
-<!--                v-for="dict in sys_notifications_status"-->
-<!--                :key="dict.value"-->
-<!--                :label="parseInt(dict.value)"-->
-<!--            >{{ dict.label }}-->
-<!--            </el-radio>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
-        <el-form-item label="消息创建的时间" prop="createdAt">
-          <el-input v-model="form.createdAt" placeholder="请输入消息创建的时间"/>
+        <el-form-item label="发送时间" prop="createdAt">
+          <el-input v-model="form.createdAt" disabled placeholder="发送时间"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -189,6 +186,7 @@ import {
   updateNotifications,
   mine
 } from "@/api/production/notifications";
+import {listUserAndDept} from "@/api/system/user.js";
 
 const {proxy} = getCurrentInstance();
 const {sys_notifications_status} = proxy.useDict('sys_notifications_status');
@@ -230,6 +228,20 @@ function getList() {
     notificationsList.value = response.rows;
     total.value = response.total;
     loading.value = false;
+    notificationsList.value.forEach(item => {
+      console.log("当前遍历的列表" + JSON.stringify(item));
+      usersList.value.forEach(user => {
+        console.log("当前处理的user" + JSON.stringify(user));
+        if (user.userId === item.receiverId) {
+          console.log("匹配成功")
+          console.log("nickName" + user.nickName)
+          console.log("item.receiverId" + item.receiverId)
+
+          item.receiverId = user.nickName;
+
+        }
+      })
+    })
   });
 }
 
@@ -316,7 +328,12 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const _ids = row.id || ids.value;
+  const _ids = row.id;
+  // 提示用户当前消息还未处理
+  if (row.status === 0) {
+    proxy.$modal.msgError("当前消息还阅读，请阅读后删除");
+    return;
+  }
   proxy.$modal.confirm('是否确认删除消息通知编号为"' + _ids + '"的数据项？').then(function () {
     return delNotifications(_ids);
   }).then(() => {
@@ -342,30 +359,56 @@ function handleRead(row) {
   updateNotifications({
     id: _id,
     status: 1
-  }).then(response => {});
+  }).then(response => {
+  });
 
   reset();
   getNotifications(_id).then(response => {
     form.value = response.data;
     handleVisible.value = true;
+    usersList.value.forEach(user => {
+
+      if (user.userId === form.value.receiverId) {
+        console.log("匹配成功")
+        console.log("nickName" + user.nickName)
+
+        form.value.receiverId = user.nickName;
+
+      }
+    })
   });
 }
 
 // 此处为路由，跳转到处理的页面
-function handleMessage(){
-  console.log("消息类型为："+  form.value.type)
+function handleMessage() {
+  console.log("消息类型为：" + form.value.type)
   handleVisible.value = false
-  if(form.value.type === "production_plan_co_sign"){
+  if (form.value.type === "production_plan_co_sign") {
     proxy.$router.push({
       path: '/production/planCoSign',
     })
-  }else if(form.value.type === "production_special"){
+  } else if (form.value.type === "production_special") {
     proxy.$router.push({
       path: '/production/cases',
     })
-  }else{
+  } else {
     // 提示用户跳转失败，并联系开发人员
-    proxy.$modal.msgError("消息类型为："+  form.value.type + "，跳转失败，请联系开发人员");
+    proxy.$modal.msgError("消息类型为：" + form.value.type + "，跳转失败，请联系开发人员");
   }
 }
+
+// 获取系统用户列表
+const usersList = ref([]);
+
+function getUserList() {
+  listUserAndDept().then(response => {
+    usersList.value = response.data;
+    getList();
+  });
+}
+
+
+onMounted(() => {
+  getUserList();
+});
 </script>
