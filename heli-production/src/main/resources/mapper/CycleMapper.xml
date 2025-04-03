@@ -21,11 +21,17 @@
     <select id="selectProductionCycleList" parameterType="CycleEntity" resultMap="ProductionCycleResult">
         <include refid="selectProductionCycleVo"/>
         <where>
-            <if test="series != null  and series != ''">and series = #{series}</if>
-            <if test="tonnage != null  and tonnage != ''">and tonnage = #{tonnage}</if>
-            <if test="vehicleModel != null  and vehicleModel != ''">and vehicle_model = #{vehicleModel}</if>
-            <if test="capacityVehicleModel != null  and capacityVehicleModel != ''">and capacity_vehicle_model =
-                #{capacityVehicleModel}
+            <if test="series != null  and series != ''">
+                and series like concat('%', #{series}, '%')
+            </if>
+            <if test="tonnage != null  and tonnage != ''">
+                and tonnage like concat('%', #{tonnage}, '%')
+            </if>
+            <if test="vehicleModel != null  and vehicleModel != ''">
+                and vehicle_model like concat('%',#{vehicleModel},'%')
+            </if>
+            <if test="capacityVehicleModel != null  and capacityVehicleModel != ''">
+                and capacity_vehicle_model like concat('%', #{capacityVehicleModel}, '%')
             </if>
             <if test="productionCycle != null ">and production_cycle = #{productionCycle}</if>
         </where>
