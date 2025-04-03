@@ -9,14 +9,23 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <!--      <el-form-item label="产量" prop="productionQuantity">-->
+      <!--        <el-input-->
+      <!--            v-model="queryParams.productionQuantity"-->
+      <!--            placeholder="请输入产量"-->
+      <!--            clearable-->
+      <!--            @keyup.enter="handleQuery"-->
+      <!--        />-->
+      <!--      </el-form-item>-->
       <el-form-item label="产量" prop="productionQuantity">
-        <el-input
+        <el-input-number
             v-model="queryParams.productionQuantity"
             placeholder="请输入产量"
             clearable
             @keyup.enter="handleQuery"
-        />
+            :min="0"/>
       </el-form-item>
+
       <el-form-item label="备注" prop="remarks">
         <el-input
             v-model="queryParams.remarks"
@@ -64,16 +73,16 @@
         >删除
         </el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--            type="warning"-->
-<!--            plain-->
-<!--            icon="Download"-->
-<!--            @click="handleExport"-->
-<!--            v-hasPermi="['production:capacity:export']"-->
-<!--        >导出-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button-->
+      <!--            type="warning"-->
+      <!--            plain-->
+      <!--            icon="Download"-->
+      <!--            @click="handleExport"-->
+      <!--            v-hasPermi="['production:capacity:export']"-->
+      <!--        >导出-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
