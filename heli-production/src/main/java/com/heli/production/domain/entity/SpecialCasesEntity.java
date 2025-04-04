@@ -82,14 +82,14 @@ public class SpecialCasesEntity implements Serializable {
     private Integer approvalStatus;
 
     /**
-     * 填报时间
+     * 处理时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date uploadDate;
 
     /**
-     * 处理时间
+     * 处理文件
      */
     private String files;
 

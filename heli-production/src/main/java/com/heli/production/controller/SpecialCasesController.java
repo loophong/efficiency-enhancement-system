@@ -1,13 +1,17 @@
 package com.heli.production.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.heli.production.domain.dto.SpecialHandleDTO;
 import com.heli.production.domain.entity.SpecialCasesEntity;
 import com.heli.production.service.ISpecialCasesService;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 
 import com.ruoyi.framework.websocket.WebSocketServer;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +29,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.core.page.TableDataInfo;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +38,7 @@ import java.util.List;
  * @author hong
  * @date 2025-02-25
  */
+@Slf4j
 @RestController
 @RequestMapping("/production/special")
 public class SpecialCasesController extends BaseController {
@@ -93,13 +99,14 @@ public class SpecialCasesController extends BaseController {
     @PutMapping
     public AjaxResult edit(@RequestBody SpecialHandleDTO dto) {
         List<Long> notifyUserList = dto.getNotifyUserList();
-        if(notifyUserList != null ){
+        if (notifyUserList != null) {
             for (Long id : notifyUserList) {
                 webSocketServer.sendMessage(id, "生产有重要特殊情况处理，请及时查看");
             }
         }
         SpecialCasesEntity specialCasesEntity = new SpecialCasesEntity();
         BeanUtils.copyProperties(dto, specialCasesEntity);
+        specialCasesEntity.setUploadDate(new Date());
         return toAjax(specialCasesService.updateSpecialCases(specialCasesEntity));
     }
 
