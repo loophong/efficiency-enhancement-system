@@ -86,15 +86,32 @@
                         placeholder="请选择最晚上线日期">
         </el-date-picker>
       </el-form-item>
+<!--      <el-form-item label="是否超期" prop="isOverdue">-->
+<!--        <el-input v-model="queryParams.isOverdue" placeholder="请输入是否超期" clearable @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="是否加急" prop="isUrgent">-->
+<!--        <el-input v-model="queryParams.isUrgent" placeholder="请输入是否加急" clearable @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
+<!--      <el-form-item label="是否排产" prop="isScheduling">-->
+<!--        <el-input v-model="queryParams.isScheduling" placeholder="请输入是否排产" clearable @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
+
       <el-form-item label="是否超期" prop="isOverdue">
-        <el-input v-model="queryParams.isOverdue" placeholder="请输入是否超期" clearable @keyup.enter="handleQuery"/>
+        <el-select v-model="queryParams.isOverdue" placeholder="请选择是否超期" clearable style="width: 150px">
+          <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
       </el-form-item>
       <el-form-item label="是否加急" prop="isUrgent">
-        <el-input v-model="queryParams.isUrgent" placeholder="请输入是否加急" clearable @keyup.enter="handleQuery"/>
+        <el-select v-model="queryParams.isUrgent" placeholder="请选择是否加急" clearable style="width: 150px">
+          <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
       </el-form-item>
       <el-form-item label="是否排产" prop="isScheduling">
-        <el-input v-model="queryParams.isScheduling" placeholder="请输入是否排产" clearable @keyup.enter="handleQuery"/>
+        <el-select v-model="queryParams.isScheduling" placeholder="请选择是否排产" clearable style="width: 150px">
+          <el-option v-for="dict in production_is_scheduling" :key="dict.value" :label="dict.label" :value="dict.value"/>
+        </el-select>
       </el-form-item>
+
       <el-form-item label="上线时间" prop="onlineDate">
         <el-date-picker clearable v-model="queryParams.onlineDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择排产时间">
@@ -119,16 +136,10 @@
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-                   v-hasPermi="['production:scheduling:remove']"
-        >删除
+                   v-hasPermi="['production:scheduling:remove']">删除
         </el-button>
       </el-col>
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
-      <!--                   v-hasPermi="['production:scheduling:export']"-->
-      <!--        >导出-->
-      <!--        </el-button>-->
-      <!--      </el-col>-->
+
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload"
                    v-hasPermi="['production:mainPlanTable:import']">导入
@@ -150,19 +161,8 @@
       </el-table-column>
       <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
       <el-table-column label="数量" align="center" prop="quantity"/>
-      <!--      <el-table-column label="阀片" align="center" prop="valvePlate"/>-->
-      <!--      <el-table-column label="货叉" align="center" prop="forklift"/>-->
-      <!--      <el-table-column label="门架" align="center" prop="mast"/>-->
-      <!--      <el-table-column label="空滤" align="center" prop="airFilter"/>-->
-      <!--      <el-table-column label="属具" align="center" prop="attachments"/>-->
-      <!--      <el-table-column label="轮胎" align="center" prop="tires"/>-->
-      <!--      <el-table-column label="配置" align="center" prop="configuration"/>-->
       <el-table-column label="车号" align="center" prop="vehicleNumber"/>
       <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
-      <!--      <el-table-column label="交货形式" align="center" prop="deliveryForm"/>-->
-      <!--      <el-table-column label="交货地点" align="center" prop="deliveryLocation"/>-->
-      <!--      <el-table-column label="联系人姓名" align="center" prop="contactPerson"/>-->
-      <!--      <el-table-column label="联系电话" align="center" prop="phoneNumber"/>-->
       <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
@@ -185,17 +185,32 @@
           <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否超期" align="center" prop="isOverdue"/>
-      <el-table-column label="是否加急" align="center" prop="isUrgent">
+<!--      <el-table-column label="是否超期" align="center" prop="isOverdue"/>-->
+<!--      <el-table-column label="是否加急" align="center" prop="isUrgent">-->
+<!--        <template #default="scope">-->
+<!--          <el-tag v-if="scope.row.isUrgent === 0" type="info">否</el-tag>-->
+<!--          <el-tag v-else-if="scope.row.isUrgent === 1" type="danger">是</el-tag>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="是否超期" align="center" prop="isOverdue">
         <template #default="scope">
-          <el-tag v-if="scope.row.isUrgent === 0" type="info">否</el-tag>
-          <el-tag v-else-if="scope.row.isUrgent === 1" type="danger">是</el-tag>
+          <dict-tag :options="production_yes_no" :value="scope.row.isOverdue"/>
         </template>
       </el-table-column>
+      <el-table-column label="是否加急" align="center" prop="isUrgent">
+        <template #default="scope">
+          <dict-tag :options="production_yes_no" :value="scope.row.isUrgent"/>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="是否排产" align="center" prop="isScheduling">-->
+<!--        <template #default="scope">-->
+<!--          <el-tag v-if="scope.row.isScheduling === 0" type="info">未排产</el-tag>-->
+<!--          <el-tag v-else-if="scope.row.isScheduling === 1" type="success">已排产</el-tag>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="是否排产" align="center" prop="isScheduling">
         <template #default="scope">
-          <el-tag v-if="scope.row.isScheduling === 0" type="info">未排产</el-tag>
-          <el-tag v-else-if="scope.row.isScheduling === 1" type="success">已排产</el-tag>
+          <dict-tag :options="production_is_scheduling" :value="scope.row.isScheduling"/>
         </template>
       </el-table-column>
       <el-table-column label="上线日期" align="center" prop="latestOnlineDate" width="100">
@@ -230,7 +245,7 @@
 
     <!-- 添加或修改订单信息对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="schedulingRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="schedulingRef" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="网点名称" prop="branch">
           <el-input v-model="form.branch" placeholder="请输入网点名称"/>
         </el-form-item>
@@ -248,9 +263,13 @@
         <el-form-item label="车型" prop="vehicleModel">
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
+<!--        <el-form-item label="数量" prop="quantity">-->
+<!--          <el-input v-model="form.quantity" placeholder="请输入数量"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入数量"/>
+          <el-input-number v-model="form.quantity" placeholder="请输入数量" :min="0" :step="1" />
         </el-form-item>
+
         <el-form-item label="阀片" prop="valvePlate">
           <el-input v-model="form.valvePlate" placeholder="请输入阀片"/>
         </el-form-item>
@@ -305,22 +324,55 @@
                           placeholder="请选择采购回复到货时间">
           </el-date-picker>
         </el-form-item>
+<!--        <el-form-item label="生产周期" prop="productionCycle">-->
+<!--          <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="生产周期" prop="productionCycle">
-          <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
+          <el-input-number v-model="form.productionCycle" placeholder="请输入生产周期" :min="0" :step="1" />
         </el-form-item>
         <el-form-item label="最晚上线日期" prop="latestOnlineDate">
           <el-date-picker clearable v-model="form.latestOnlineDate" type="date" value-format="YYYY-MM-DD"
                           placeholder="请选择最晚上线日期">
           </el-date-picker>
         </el-form-item>
+<!--        <el-form-item label="是否超期" prop="isOverdue">-->
+<!--          <el-input v-model="form.isOverdue" placeholder="请输入是否超期"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="是否加急" prop="isUrgent">-->
+<!--          <el-input v-model="form.isUrgent" placeholder="请输入是否加急"/>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="是否排产" prop="isScheduling">-->
+<!--          <el-input v-model="form.isScheduling" placeholder="请输入是否排产"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="是否超期" prop="isOverdue">
-          <el-input v-model="form.isOverdue" placeholder="请输入是否超期"/>
+          <el-select v-model="form.isOverdue" placeholder="请选择是否超期">
+            <el-option
+                v-for="dict in production_yes_no"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否加急" prop="isUrgent">
-          <el-input v-model="form.isUrgent" placeholder="请输入是否加急"/>
+          <el-select v-model="form.isUrgent" placeholder="请选择是否加急">
+            <el-option
+                v-for="dict in production_yes_no"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否排产" prop="isScheduling">
-          <el-input v-model="form.isScheduling" placeholder="请输入是否排产"/>
+          <el-select v-model="form.isScheduling" placeholder="请选择是否排产">
+            <el-option
+                v-for="dict in production_is_scheduling"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -492,8 +544,8 @@ import useTagsViewStore from "@/store/modules/tagsView.js";
 import {importFile} from "@/api/production/mainPlanTable.js";
 // import {getCapacity} from "@/api/production/capacity";
 // import {handleStandardSelectionChange} from "../scheduling/index.vue";
-
 const {proxy} = getCurrentInstance();
+const { production_is_scheduling, production_yes_no } = proxy.useDict('production_is_scheduling', 'production_yes_no');
 
 const {
   production_fault_reason,
@@ -545,7 +597,92 @@ const data = reactive({
     isScheduling: null,
     onlineDate: null
   },
-  rules: {},
+  rules: {
+    branch: [
+      { required: true, message: "网点名称不能为空", trigger: "blur" }
+    ],
+    contractNumber: [
+      { required: true, message: "合同号不能为空", trigger: "blur" }
+    ],
+    orderNumber: [
+      { required: true, message: "订单号不能为空", trigger: "blur" }
+    ],
+    orderDate: [
+      { required: true, message: "接单日期不能为空", trigger: "blur" }
+    ],
+    vehicleModel: [
+      { required: true, message: "车型不能为空", trigger: "blur" }
+    ],
+    quantity: [
+      { required: true, message: "数量不能为空", trigger: "blur" }
+    ],
+    valvePlate: [
+      { required: true, message: "阀片不能为空", trigger: "blur" }
+    ],
+    forklift: [
+      { required: true, message: "货叉不能为空", trigger: "blur" }
+    ],
+    mast: [
+      { required: true, message: "门架不能为空", trigger: "blur" }
+    ],
+    airFilter: [
+      { required: true, message: "空滤不能为空", trigger: "blur" }
+    ],
+    attachments: [
+      { required: true, message: "属具不能为空", trigger: "blur" }
+    ],
+    tires: [
+      { required: true, message: "轮胎不能为空", trigger: "blur" }
+    ],
+    configuration: [
+      { required: true, message: "配置不能为空", trigger: "blur" }
+    ],
+    vehicleNumber: [
+      { required: true, message: "车号不能为空", trigger: "blur" }
+    ],
+    remarks: [
+      { required: true, message: "备注信息不能为空", trigger: "blur" }
+    ],
+    deliveryForm: [
+      { required: true, message: "交货形式不能为空", trigger: "blur" }
+    ],
+    deliveryLocation: [
+      { required: true, message: "交货地点不能为空", trigger: "blur" }
+    ],
+    contactPerson: [
+      { required: true, message: "联系人姓名不能为空", trigger: "blur" }
+    ],
+    phoneNumber: [
+      { required: true, message: "联系电话不能为空", trigger: "blur" }
+    ],
+    systemDeliveryDate: [
+      { required: true, message: "订单系统交货期不能为空", trigger: "blur" }
+    ],
+    productionCompletionDate: [
+      { required: true, message: "生产回复完工日期不能为空", trigger: "blur" }
+    ],
+    procurementArrivalDate: [
+      { required: true, message: "采购回复到货时间不能为空", trigger: "blur" }
+    ],
+    productionCycle: [
+      { required: true, message: "生产周期不能为空", trigger: "blur" }
+    ],
+    capacityType: [
+      { required: true, message: "产能型号不能为空", trigger: "change" }
+    ],
+    latestOnlineDate: [
+      { required: true, message: "最晚上线日期不能为空", trigger: "blur" }
+    ],
+    isOverdue: [
+      { required: true, message: "是否超期不能为空", trigger: "change" }
+    ],
+    isUrgent: [
+      { required: true, message: "是否加急不能为空", trigger: "change" }
+    ],
+    isScheduling: [
+      { required: true, message: "是否排产不能为空", trigger: "change" }
+    ]
+  },
 
   specialRules: {
     orderNumber: [
@@ -940,10 +1077,10 @@ function uploadFile() {
             // isLoading.value = false;
           }
         }).then(() => {
-            // 跳转进入生产周期index页面
-            uploadDialogVisible.value = false;
-            isLoading.value = false;
-            proxy.$router.push({path: '/production/cycle'});
+          // 跳转进入生产周期index页面
+          uploadDialogVisible.value = false;
+          isLoading.value = false;
+          proxy.$router.push({path: '/production/cycle'});
         }).catch(() => {
           uploadDialogVisible.value = false;
           isLoading.value = false;
