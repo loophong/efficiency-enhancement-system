@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="会签人编号" prop="reviewerId">
-        <el-input v-model="queryParams.reviewerId" placeholder="请输入会签人编号" clearable @keyup.enter="handleQuery"/>
-      </el-form-item>
+<!--      <el-form-item label="会签人编号" prop="reviewerId">-->
+<!--        <el-input v-model="queryParams.reviewerId" placeholder="请输入会签人编号" clearable @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="会签人" prop="reviewerName">
         <el-input v-model="queryParams.reviewerName" placeholder="请输入会签人" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
