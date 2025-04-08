@@ -54,6 +54,7 @@ public class SpecialCasesController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(SpecialCasesEntity specialCases) {
         startPage();
+        log.info("查询特殊情况列表,参数:{}", specialCases);
         List<SpecialCasesEntity> list = specialCasesService.selectSpecialCasesList(specialCases);
         return getDataTable(list);
     }
