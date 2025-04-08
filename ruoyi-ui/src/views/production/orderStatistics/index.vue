@@ -78,7 +78,7 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="orderStatisticsRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="统计年月" prop="yearAndMonth">
-          <el-date-picker clearable v-model="form.yearAndMonth" type="date" value-format="YYYY-MM-DD"
+          <el-date-picker clearable v-model="form.yearAndMonth" type="month" value-format="YYYY-MM-DD"
                           placeholder="请选择统计年月">
           </el-date-picker>
         </el-form-item>
@@ -86,7 +86,8 @@
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入数量"/>
+<!--          <el-input v-model="form.quantity" placeholder="请输入数量"/>-->
+          <el-input-number v-model="form.quantity" placeholder="请输入数量" :min="0" :step="1"/>
         </el-form-item>
         <el-form-item label="产能类型" prop="capacityType">
           <el-input v-model="form.capacityType" placeholder="请输入产能类型"/>
@@ -133,7 +134,20 @@ const data = reactive({
     quantity: null,
     capacityType: null
   },
-  rules: {}
+  rules: {
+    yearAndMonth: [
+      {required: true, message: "统计年月不能为空", trigger: "blur"}
+    ],
+    vehicleModel: [
+      {required: true, message: "车型不能为空", trigger: "blur"}
+    ],
+    quantity: [
+      {required: true, message: "数量不能为空", trigger: "blur"}
+    ],
+    capacityType: [
+      {required: true, message: "产能类型不能为空", trigger: "blur"}
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
