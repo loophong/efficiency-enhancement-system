@@ -17,10 +17,9 @@ import java.util.List;
 @Slf4j
 public class HistoryOrderListener implements ReadListener<HistoryOrderEntity> {
 
-    private static final int BATCH_COUNT = 500;
+    private static final int BATCH_COUNT = 1000;
 
     @Autowired
-//    private IHistoryOrderService historyOrderService;
     private HistoryOrderMapper historyOrderMapper;
 
 
