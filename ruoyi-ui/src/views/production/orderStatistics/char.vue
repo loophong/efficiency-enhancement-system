@@ -123,7 +123,7 @@ function getVehicleModel() {
 function getCapacityType() {
   all().then(response => {
     console.log("获取产能类型列表", response)
-    response.data.forEach(item => {
+    response.data.capacityEntities.forEach(item => {
       capacityTypeList.value.push(item.capacityType)
     })
     console.log("获取产能类型列表", capacityTypeList)

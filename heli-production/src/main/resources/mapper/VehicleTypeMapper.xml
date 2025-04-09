@@ -20,11 +20,17 @@
     <select id="selectVehicleTypeList" parameterType="VehicleTypeEntity" resultMap="VehicleTypeResult">
         <include refid="selectVehicleTypeVo"/>
         <where>
-            <if test="series != null  and series != ''"> and series = #{series}</if>
-            <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
-            <if test="vehicleType != null  and vehicleType != ''"> and vehicle_type = #{vehicleType}</if>
-            <if test="mainConfiguration != null  and mainConfiguration != ''"> and main_configuration = #{mainConfiguration}</if>
-            <if test="standardEquipment != null  and standardEquipment != ''"> and standard_equipment = #{standardEquipment}</if>
+            <if test="series != null  and series != ''">and series like concat('%', #{series}, '%')</if>
+            <if test="tonnage != null  and tonnage != ''">and tonnage like concat('%', #{tonnage}, '%')</if>
+            <if test="vehicleType != null  and vehicleType != ''">
+                and vehicle_type like concat('%', #{vehicleType},'%')
+            </if>
+            <if test="mainConfiguration != null  and mainConfiguration != ''">
+                and main_configuration like concat('%',#{mainConfiguration}, '%')
+            </if>
+            <if test="standardEquipment != null  and standardEquipment != ''">
+                and standard_equipment like concat('%',#{standardEquipment}, '%')
+            </if>
         </where>
     </select>
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.production.domain.entity.SpecialCasesEntity;
 import com.heli.production.mapper.SpecialCasesMapper;
 import com.heli.production.service.ISpecialCasesService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.List;
  * @author hong
  * @date 2025-02-25
  */
+@Slf4j
 @Service
 public class SpecialCasesServiceImpl extends ServiceImpl<SpecialCasesMapper,SpecialCasesEntity> implements ISpecialCasesService {
     @Autowired
@@ -41,6 +43,7 @@ public class SpecialCasesServiceImpl extends ServiceImpl<SpecialCasesMapper,Spec
      */
     @Override
     public List<SpecialCasesEntity> selectSpecialCasesList(SpecialCasesEntity specialCases) {
+        log.info("查询特殊情况service:{}", specialCases);
         return specialCasesMapper.selectSpecialCasesList(specialCases);
     }
 

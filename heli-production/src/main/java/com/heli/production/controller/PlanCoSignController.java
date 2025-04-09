@@ -8,6 +8,8 @@ import com.heli.production.domain.entity.SysNotificationsEntity;
 import com.heli.production.domain.vo.CoSignInfoVO;
 import com.heli.production.service.IDailyPlanService;
 import com.heli.production.service.ISysNotificationsService;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.service.ISysUserService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public class PlanCoSignController extends BaseController {
     private IDailyPlanService dailyPlanService;
     @Autowired
     private ISysNotificationsService sysNotificationsService;
+    @Autowired
+    private ISysUserService sysUserService;
 
     /**
      * 查询计划会签列表
@@ -107,6 +111,9 @@ public class PlanCoSignController extends BaseController {
         if(size == 0){
             return AjaxResult.error("当日没有排产计划，请先创建排产计划");
         }
+
+        SysUser sysUser = sysUserService.selectUserById(getUserId());
+        planCoSign.setReviewerName(sysUser.getNickName());
         planCoSignService.insertPlanCoSign(planCoSign);
 
         //创建消息实体

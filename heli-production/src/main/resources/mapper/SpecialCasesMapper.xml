@@ -36,14 +36,14 @@
     <select id="selectSpecialCasesList" parameterType="SpecialCasesEntity" resultMap="SpecialCasesResult">
         <include refid="selectSpecialCasesVo"/>
         <where>
-            <if test="orderNumber != null  and orderNumber != ''">and order_number like concat('%', #{orderNumber},
-                '%')
+            <if test="orderNumber != null  and orderNumber != ''">
+                and order_number like concat('%', #{orderNumber}, '%')
             </if>
             <if test="onlineDate != null ">and online_date = #{onlineDate}</if>
             <if test="faultReason != null ">and fault_reason = #{faultReason}</if>
             <if test="responsibleDepartment != null ">and responsible_department = #{responsibleDepartment}</if>
             <if test="isMajorFault != null ">and is_major_fault = #{isMajorFault}</if>
-            <if test="approvalStatus != null  and approvalStatus != ''">and approval_status = #{approvalStatus}</if>
+            <if test="approvalStatus != null ">and approval_status = #{approvalStatus}</if>
             <if test="uploadDate != null ">and upload_date = #{uploadDate}</if>
             <if test="files != null ">and files = #{files}</if>
         </where>

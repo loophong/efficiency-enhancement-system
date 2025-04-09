@@ -9,8 +9,16 @@
       <el-form-item label="车型" prop="vehicleModel">
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
+<!--      <el-form-item label="数量" prop="quantity">-->
+<!--        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="数量" prop="quantity">
-        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
+        <el-input-number
+            v-model="queryParams.quantity"
+            placeholder="请输入数量"
+            clearable
+            @keyup.enter="handleQuery"
+            :min="0"/>
       </el-form-item>
       <el-form-item label="备注信息" prop="remarks">
         <el-input v-model="queryParams.remarks" placeholder="请输入备注信息" clearable @keyup.enter="handleQuery"/>

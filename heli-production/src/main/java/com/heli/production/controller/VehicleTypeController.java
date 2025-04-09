@@ -89,6 +89,7 @@ public class VehicleTypeController extends BaseController {
     @Log(title = "车型", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody VehicleTypeEntity vehicleType) {
+        log.info("vehicleType:{}",vehicleType);
         return toAjax(vehicleTypeService.insertVehicleType(vehicleType));
     }
 
