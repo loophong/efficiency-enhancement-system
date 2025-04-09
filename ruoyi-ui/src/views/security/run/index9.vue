@@ -122,7 +122,7 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="relatedpartyevaluationrecordsRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="评价内容">
-          <editor v-model="form.evaluationContent" :min-height="192"/>
+          <editor v-model="form.evaluationContent"type="textarea" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="分值" prop="score">
           <el-input v-model="form.score" placeholder="请输入分值" />

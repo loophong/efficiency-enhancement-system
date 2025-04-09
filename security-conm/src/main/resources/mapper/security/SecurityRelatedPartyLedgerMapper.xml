@@ -14,18 +14,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="agreementSigningDate"    column="agreement_signing_date"    />
         <result property="factoryEntryStartDate"    column="factory_entry_start_date"    />
         <result property="factoryEntryEndDate"    column="factory_entry_end_date"    />
-        <result property="externalVisitors"    column="external_visitors"    />
-        <result property="interns"    column="interns"    />
-        <result property="laborDispatchOutsourcing"    column="labor_dispatch_outsourcing"    />
-        <result property="constructionWork"    column="construction_work"    />
-        <result property="transportationInspectionServices"    column="transportation_inspection_services"    />
-        <result property="logisticsDelivery"    column="logistics_delivery"    />
-        <result property="onSiteParties"    column="on_site_parties"    />
-        <result property="others"    column="others"    />
+        <result property="serve"    column="serve"    />
+        <result property="otherActivity"    column="other__activity"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectSecurityRelatedPartyLedgerVo">
-        select id, responsible_department, related_party_name, main_contact_person, our_company_contact_person, is_safety_management_agreement_signed, agreement_signing_date, factory_entry_start_date, factory_entry_end_date, external_visitors, interns, labor_dispatch_outsourcing, construction_work, transportation_inspection_services, logistics_delivery, on_site_parties, others from security_related_party_ledger
+        select id, responsible_department, related_party_name, main_contact_person, our_company_contact_person, is_safety_management_agreement_signed, agreement_signing_date, factory_entry_start_date, factory_entry_end_date, serve, other__activity, remark from security_related_party_ledger
     </sql>
 
     <select id="selectSecurityRelatedPartyLedgerList" parameterType="SecurityRelatedPartyLedger" resultMap="SecurityRelatedPartyLedgerResult">
@@ -39,14 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="agreementSigningDate != null "> and agreement_signing_date = #{agreementSigningDate}</if>
             <if test="factoryEntryStartDate != null "> and factory_entry_start_date = #{factoryEntryStartDate}</if>
             <if test="factoryEntryEndDate != null "> and factory_entry_end_date = #{factoryEntryEndDate}</if>
-            <if test="externalVisitors != null  and externalVisitors != ''"> and external_visitors = #{externalVisitors}</if>
-            <if test="interns != null  and interns != ''"> and interns = #{interns}</if>
-            <if test="laborDispatchOutsourcing != null  and laborDispatchOutsourcing != ''"> and labor_dispatch_outsourcing = #{laborDispatchOutsourcing}</if>
-            <if test="constructionWork != null  and constructionWork != ''"> and construction_work = #{constructionWork}</if>
-            <if test="transportationInspectionServices != null  and transportationInspectionServices != ''"> and transportation_inspection_services = #{transportationInspectionServices}</if>
-            <if test="logisticsDelivery != null  and logisticsDelivery != ''"> and logistics_delivery = #{logisticsDelivery}</if>
-            <if test="onSiteParties != null  and onSiteParties != ''"> and on_site_parties = #{onSiteParties}</if>
-            <if test="others != null  and others != ''"> and others = #{others}</if>
+            <if test="serve != null  and serve != ''"> and serve = #{serve}</if>
         </where>
     </select>
     
@@ -66,14 +54,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="agreementSigningDate != null">agreement_signing_date,</if>
             <if test="factoryEntryStartDate != null">factory_entry_start_date,</if>
             <if test="factoryEntryEndDate != null">factory_entry_end_date,</if>
-            <if test="externalVisitors != null">external_visitors,</if>
-            <if test="interns != null">interns,</if>
-            <if test="laborDispatchOutsourcing != null">labor_dispatch_outsourcing,</if>
-            <if test="constructionWork != null">construction_work,</if>
-            <if test="transportationInspectionServices != null">transportation_inspection_services,</if>
-            <if test="logisticsDelivery != null">logistics_delivery,</if>
-            <if test="onSiteParties != null">on_site_parties,</if>
-            <if test="others != null">others,</if>
+            <if test="serve != null">serve,</if>
+            <if test="otherActivity != null">other__activity,</if>
+            <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="responsibleDepartment != null and responsibleDepartment != ''">#{responsibleDepartment},</if>
@@ -84,14 +67,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="agreementSigningDate != null">#{agreementSigningDate},</if>
             <if test="factoryEntryStartDate != null">#{factoryEntryStartDate},</if>
             <if test="factoryEntryEndDate != null">#{factoryEntryEndDate},</if>
-            <if test="externalVisitors != null">#{externalVisitors},</if>
-            <if test="interns != null">#{interns},</if>
-            <if test="laborDispatchOutsourcing != null">#{laborDispatchOutsourcing},</if>
-            <if test="constructionWork != null">#{constructionWork},</if>
-            <if test="transportationInspectionServices != null">#{transportationInspectionServices},</if>
-            <if test="logisticsDelivery != null">#{logisticsDelivery},</if>
-            <if test="onSiteParties != null">#{onSiteParties},</if>
-            <if test="others != null">#{others},</if>
+            <if test="serve != null">#{serve},</if>
+            <if test="otherActivity != null">#{otherActivity},</if>
+            <if test="remark != null">#{remark},</if>
          </trim>
     </insert>
 
@@ -106,14 +84,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="agreementSigningDate != null">agreement_signing_date = #{agreementSigningDate},</if>
             <if test="factoryEntryStartDate != null">factory_entry_start_date = #{factoryEntryStartDate},</if>
             <if test="factoryEntryEndDate != null">factory_entry_end_date = #{factoryEntryEndDate},</if>
-            <if test="externalVisitors != null">external_visitors = #{externalVisitors},</if>
-            <if test="interns != null">interns = #{interns},</if>
-            <if test="laborDispatchOutsourcing != null">labor_dispatch_outsourcing = #{laborDispatchOutsourcing},</if>
-            <if test="constructionWork != null">construction_work = #{constructionWork},</if>
-            <if test="transportationInspectionServices != null">transportation_inspection_services = #{transportationInspectionServices},</if>
-            <if test="logisticsDelivery != null">logistics_delivery = #{logisticsDelivery},</if>
-            <if test="onSiteParties != null">on_site_parties = #{onSiteParties},</if>
-            <if test="others != null">others = #{others},</if>
+            <if test="serve != null">serve = #{serve},</if>
+            <if test="otherActivity != null">other__activity = #{otherActivity},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
     </update>

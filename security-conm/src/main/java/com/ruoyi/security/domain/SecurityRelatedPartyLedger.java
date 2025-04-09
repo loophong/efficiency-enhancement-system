@@ -11,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 相关方管理台账对象 security_related_party_ledger
  * 
  * @author wang
- * @date 2025-03-05
+ * @date 2025-04-09
  */
 public class SecurityRelatedPartyLedger extends BaseEntity
 {
@@ -55,37 +55,13 @@ public class SecurityRelatedPartyLedger extends BaseEntity
     @Excel(name = "外来参观", width = 30, dateFormat = "yyyy-MM-dd")
     private Date factoryEntryEndDate;
 
-    /** 实习生 */
-    @Excel(name = "实习生")
-    private String externalVisitors;
+    /** 服务性质 */
+    @Excel(name = "服务性质")
+    private String serve;
 
-    /** 劳务派遣，外包 */
-    @Excel(name = "劳务派遣，外包")
-    private String interns;
-
-    /** 施工作业类 */
-    @Excel(name = "施工作业类")
-    private String laborDispatchOutsourcing;
-
-    /** 清运、监测、服务 */
-    @Excel(name = "清运、监测、服务")
-    private String constructionWork;
-
-    /** 物流配送 */
-    @Excel(name = "物流配送")
-    private String transportationInspectionServices;
-
-    /** 驻厂相关方 */
-    @Excel(name = "驻厂相关方")
-    private String logisticsDelivery;
-
-    /** 其他 */
-    @Excel(name = "其他")
-    private String onSiteParties;
-
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
-    private String others;
+    /** 相关方活动区域 */
+    @Excel(name = "相关方活动区域")
+    private String otherActivity;
 
     public void setId(Long id) 
     {
@@ -168,77 +144,23 @@ public class SecurityRelatedPartyLedger extends BaseEntity
     {
         return factoryEntryEndDate;
     }
-    public void setExternalVisitors(String externalVisitors) 
+    public void setServe(String serve) 
     {
-        this.externalVisitors = externalVisitors;
+        this.serve = serve;
     }
 
-    public String getExternalVisitors() 
+    public String getServe() 
     {
-        return externalVisitors;
+        return serve;
     }
-    public void setInterns(String interns) 
+    public void setOtherActivity(String otherActivity) 
     {
-        this.interns = interns;
-    }
-
-    public String getInterns() 
-    {
-        return interns;
-    }
-    public void setLaborDispatchOutsourcing(String laborDispatchOutsourcing) 
-    {
-        this.laborDispatchOutsourcing = laborDispatchOutsourcing;
+        this.otherActivity = otherActivity;
     }
 
-    public String getLaborDispatchOutsourcing() 
+    public String getOtherActivity() 
     {
-        return laborDispatchOutsourcing;
-    }
-    public void setConstructionWork(String constructionWork) 
-    {
-        this.constructionWork = constructionWork;
-    }
-
-    public String getConstructionWork() 
-    {
-        return constructionWork;
-    }
-    public void setTransportationInspectionServices(String transportationInspectionServices) 
-    {
-        this.transportationInspectionServices = transportationInspectionServices;
-    }
-
-    public String getTransportationInspectionServices() 
-    {
-        return transportationInspectionServices;
-    }
-    public void setLogisticsDelivery(String logisticsDelivery) 
-    {
-        this.logisticsDelivery = logisticsDelivery;
-    }
-
-    public String getLogisticsDelivery() 
-    {
-        return logisticsDelivery;
-    }
-    public void setOnSiteParties(String onSiteParties) 
-    {
-        this.onSiteParties = onSiteParties;
-    }
-
-    public String getOnSiteParties() 
-    {
-        return onSiteParties;
-    }
-    public void setOthers(String others) 
-    {
-        this.others = others;
-    }
-
-    public String getOthers() 
-    {
-        return others;
+        return otherActivity;
     }
 
     @Override
@@ -253,14 +175,9 @@ public class SecurityRelatedPartyLedger extends BaseEntity
             .append("agreementSigningDate", getAgreementSigningDate())
             .append("factoryEntryStartDate", getFactoryEntryStartDate())
             .append("factoryEntryEndDate", getFactoryEntryEndDate())
-            .append("externalVisitors", getExternalVisitors())
-            .append("interns", getInterns())
-            .append("laborDispatchOutsourcing", getLaborDispatchOutsourcing())
-            .append("constructionWork", getConstructionWork())
-            .append("transportationInspectionServices", getTransportationInspectionServices())
-            .append("logisticsDelivery", getLogisticsDelivery())
-            .append("onSiteParties", getOnSiteParties())
-            .append("others", getOthers())
+            .append("serve", getServe())
+            .append("otherActivity", getOtherActivity())
+            .append("remark", getRemark())
             .toString();
     }
 }

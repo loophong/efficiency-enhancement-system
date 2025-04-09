@@ -206,7 +206,7 @@
 </template>
 
 <script setup name="Impact">
-import { listImpact, getImpact, delImpact, addImpact, updateImpact } from "@/api/security/impact";
+import { listImpact, getImpact, delImpact, addImpact, updateImpact } from "@/api/security/impactlist";
 
 const { proxy } = getCurrentInstance();
 const { evaluation_of_environmental_factor, security_status } = proxy.useDict('evaluation_of_environmental_factor', 'security_status');

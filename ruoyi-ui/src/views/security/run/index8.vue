@@ -65,6 +65,16 @@
           placeholder="请选择外来参观">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="服务性质" prop="serve">
+        <el-select v-model="queryParams.serve" placeholder="请选择服务性质" clearable>
+          <el-option
+            v-for="dict in security_service"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -114,7 +124,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="relatedpartyledgerList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="100" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="主管科室" align="center" prop="responsibleDepartment" />
       <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
@@ -136,14 +146,13 @@
           <span>{{ parseTime(scope.row.factoryEntryEndDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实习生" align="center" prop="externalVisitors" />
-      <el-table-column label="劳务派遣，外包" align="center" prop="interns" />
-      <el-table-column label="施工作业类" align="center" prop="laborDispatchOutsourcing" />
-      <el-table-column label="清运、监测、服务" align="center" prop="constructionWork" />
-      <el-table-column label="物流配送" align="center" prop="transportationInspectionServices" />
-      <el-table-column label="驻厂相关方" align="center" prop="logisticsDelivery" />
-      <el-table-column label="其他" align="center" prop="onSiteParties" />
-      <el-table-column label="${comment}" align="center" prop="others" />
+      <el-table-column label="服务性质" align="center" prop="serve" width="200" >
+        <template #default="scope">
+          <dict-tag :options="security_service" :value="scope.row.serve"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="相关方活动区域" align="center" prop="otherActivity" />
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:relatedpartyledger:edit']">修改</el-button>
@@ -202,8 +211,21 @@
             placeholder="请选择外来参观">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="${comment}" prop="others">
-          <el-input v-model="form.others" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="服务性质" prop="serve">
+          <el-select v-model="form.serve" placeholder="请选择服务性质">
+            <el-option
+              v-for="dict in security_service"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="相关方活动区域" prop="otherActivity">
+          <el-input v-model="form.otherActivity" placeholder="请输入相关方活动区域" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -220,6 +242,7 @@
 import { listRelatedpartyledger, getRelatedpartyledger, delRelatedpartyledger, addRelatedpartyledger, updateRelatedpartyledger } from "@/api/security/relatedpartyledger";
 
 const { proxy } = getCurrentInstance();
+const { security_service } = proxy.useDict('security_service');
 
 const relatedpartyledgerList = ref([]);
 const open = ref(false);
@@ -244,14 +267,7 @@ const data = reactive({
     agreementSigningDate: null,
     factoryEntryStartDate: null,
     factoryEntryEndDate: null,
-    externalVisitors: null,
-    interns: null,
-    laborDispatchOutsourcing: null,
-    constructionWork: null,
-    transportationInspectionServices: null,
-    logisticsDelivery: null,
-    onSiteParties: null,
-    others: null
+    serve: null,
   },
   rules: {
     responsibleDepartment: [
@@ -311,14 +327,9 @@ function reset() {
     agreementSigningDate: null,
     factoryEntryStartDate: null,
     factoryEntryEndDate: null,
-    externalVisitors: [],
-    interns: null,
-    laborDispatchOutsourcing: null,
-    constructionWork: null,
-    transportationInspectionServices: null,
-    logisticsDelivery: null,
-    onSiteParties: null,
-    others: null
+    serve: null,
+    otherActivity: null,
+    remark: null
   };
   proxy.resetForm("relatedpartyledgerRef");
 }
@@ -355,7 +366,6 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getRelatedpartyledger(_id).then(response => {
     form.value = response.data;
-    form.value.externalVisitors = form.value.externalVisitors.split(",");
     open.value = true;
     title.value = "修改相关方管理台账";
   });
@@ -365,7 +375,6 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["relatedpartyledgerRef"].validate(valid => {
     if (valid) {
-      form.value.externalVisitors = form.value.externalVisitors.join(",");
       if (form.value.id != null) {
         updateRelatedpartyledger(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
