@@ -211,7 +211,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
                 supplierEvaluate.setProductmaterialParametersizeChange(BigDecimal.valueOf(0));
             } else {
                 supplierEvaluate.setFirstInspectionPassrate(firstInspectionPassrate(happenTime, endTime, item.getSupplierCode()));
-                supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setZeroKilometerFailurerate(zeroKilometerFailurerate(happenTime, endTime, item.getSupplierName()));
                 supplierEvaluate.setQualityNotificationOrderrate(qualityNotificationOrderrate(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setFeedbackOrderletterTimeliness(feedbackOrderletterTimeliness(happenTime, endTime, item.getSupplierCode()));
 
@@ -332,13 +332,13 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     /**
      * 3.1.3零公里故障率   不会做
      */
-    BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierCode) {
+    BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierName) {
         BigDecimal baseScore = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierZeroKilometerFailureRate> list = supplierZeroKilometerFailureRateService.list(
                 new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
-                        .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierCode)
+                        .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierName)
                         .between(SupplierZeroKilometerFailureRate::getUploadMonth, happenTime, endTime));
 //        // 如果没有数据，返回基础分的 8%
 //        if (list.isEmpty()) {

@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
-      <el-form-item label="系统" prop="controlSystem">
+      <!-- <el-form-item label="系统" prop="controlSystem">
         <el-input
           v-model="queryParams.controlSystem"
           placeholder="请输入系统"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="供应商编码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
