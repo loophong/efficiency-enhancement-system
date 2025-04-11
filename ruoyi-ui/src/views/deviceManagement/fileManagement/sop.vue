@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
       <!-- <el-form-item label="关联id" prop="sopCombineId">
         <el-input v-model="queryParams.sopCombineId" placeholder="请输入关联id" clearable @keyup.enter="handleQuery" />
       </el-form-item> -->
@@ -10,9 +10,9 @@
       <el-form-item label="设备名称" prop="sopName">
         <el-input v-model="queryParams.sopName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="SOP类型" prop="sopMaintenance">
+      <!-- <el-form-item label="SOP类型" prop="sopMaintenance">
         <el-input v-model="queryParams.sopMaintenance" placeholder="请输入SOP类型" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="上传时间" style="width: 308px">
         <el-date-picker v-model="daterangeUpTime" value-format="YYYY-MM-DD" type="daterange" range-separator="-"
           start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -47,9 +47,6 @@
         <el-button type="info" plain icon="Refresh" @click="resetGetList"
           v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
       </el-col>
-      <el-button @click="openDrawer = true" type="primary" style="margin-left: 16px;">
-        点我打开
-      </el-button>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -178,7 +175,7 @@ const router = useRouter();
 const currentUserName = ref("");
 const currentUserId = ref(0);
 
-const routerDeviceNum = route.query.deviceNum;
+var routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
@@ -211,6 +208,17 @@ const handleRouteParams = () => {
   }
 };
 
+watch(() => route.query.deviceNum, (newVal) => {
+  console.log('检测到新参数--->', newVal)
+  routerDeviceNum = newVal
+  handleRouteParams(newVal)
+})
+
+
+onMounted(() => {
+  handleRouteParams();
+});
+
 function handlePreview(input) {
   showDocx.value = false
   showExcel.value = false
@@ -232,8 +240,8 @@ function handlePreview(input) {
 }
 
 function handlePreview2(input, index, num, name) {
-  console.log({ input })
-  console.log({ index })
+  // console.log({ input })
+  // console.log({ index })
   showDocx.value = false
   showExcel.value = false
   showPdf.value = false
@@ -269,9 +277,6 @@ function handleClose(done) {
     })
 }
 
-onMounted(() => {
-  handleRouteParams();
-});
 
 function resetGetList() {
   currentStatus.value = '默认';

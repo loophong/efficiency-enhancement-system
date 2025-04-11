@@ -1,11 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="设备编号" prop="deviceNum">
+        <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
       <el-form-item label="设备名称" prop="deviceName">
         <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="设备编号" prop="deviceNum">
-        <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
+      <el-form-item label="工单状态" prop="workStatus">
+        <el-input v-model="queryParams.workStatus" placeholder="请输入工单状态" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="申请人" prop="applyBy">
         <el-input v-model="queryParams.applyBy" placeholder="请输入申请人" clearable @keyup.enter="handleQuery" />
@@ -198,7 +201,7 @@
       </template>
     </el-dialog>
 
-    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :direction="direction" :before-close="handleClose">
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :direction="direction">
       <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
     </el-drawer>
 

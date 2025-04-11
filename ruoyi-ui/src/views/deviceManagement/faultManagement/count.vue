@@ -1,49 +1,55 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="项目名" prop="indicatorName">
         <el-input v-model="queryParams.indicatorName" placeholder="请输入项目名" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="目标值" prop="indicatorTarget">
-        <el-input v-model="queryParams.indicatorTarget" placeholder="请输入目标值" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="年份" prop="indicatorTime">
         <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="一月数据" prop="indicatorJan">
+      <el-form-item label="目标值" prop="indicatorTarget">
+        <el-input v-model="queryParams.indicatorTarget" placeholder="请输入目标值" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="目标值上限" prop="indicatorUp">
+        <el-input v-model="queryParams.indicatorUp" placeholder="请输入目标值上限" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="目标值下限" prop="indicatorDown">
+        <el-input v-model="queryParams.indicatorDown" placeholder="请输入目标值下限" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="一月" prop="indicatorJan">
         <el-input v-model="queryParams.indicatorJan" placeholder="请输入一月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="二月数据" prop="indicatorFeb">
+      <el-form-item label="二月" prop="indicatorFeb">
         <el-input v-model="queryParams.indicatorFeb" placeholder="请输入二月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="三月数据" prop="indicatorMar">
+      <el-form-item label="三月" prop="indicatorMar">
         <el-input v-model="queryParams.indicatorMar" placeholder="请输入三月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="四月数据" prop="indicatorApr">
+      <el-form-item label="四月" prop="indicatorApr">
         <el-input v-model="queryParams.indicatorApr" placeholder="请输入四月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="五月数据" prop="indicatorMay">
+      <el-form-item label="五月" prop="indicatorMay">
         <el-input v-model="queryParams.indicatorMay" placeholder="请输入五月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="六月数据" prop="indicatorJun">
+      <el-form-item label="六月" prop="indicatorJun">
         <el-input v-model="queryParams.indicatorJun" placeholder="请输入六月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="七月数据" prop="indicatorJul">
+      <el-form-item label="七月" prop="indicatorJul">
         <el-input v-model="queryParams.indicatorJul" placeholder="请输入七月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="八月数据" prop="indicatorAug">
+      <el-form-item label="八月" prop="indicatorAug">
         <el-input v-model="queryParams.indicatorAug" placeholder="请输入八月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="九月数据" prop="indicatorSep">
+      <el-form-item label="九月" prop="indicatorSep">
         <el-input v-model="queryParams.indicatorSep" placeholder="请输入九月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="十月数据" prop="indicatorOct">
+      <el-form-item label="十月" prop="indicatorOct">
         <el-input v-model="queryParams.indicatorOct" placeholder="请输入十月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="十一月数据" prop="indicatorNov">
+      <el-form-item label="十一月" prop="indicatorNov">
         <el-input v-model="queryParams.indicatorNov" placeholder="请输入十一月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="十二月数据" prop="indicatorDec">
+      <el-form-item label="十二月" prop="indicatorDec">
         <el-input v-model="queryParams.indicatorDec" placeholder="请输入十二月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>
@@ -215,6 +221,9 @@
         <el-form-item label="项目名" prop="indicatorName">
           <el-input v-model="form.indicatorName" placeholder="请输入项目名" />
         </el-form-item>
+        <el-form-item label="年份" prop="indicatorTime">
+          <el-input v-model="form.indicatorTime" placeholder="请输入年份" />
+        </el-form-item>
         <el-form-item label="目标值" prop="indicatorTarget">
           <el-input v-model="form.indicatorTarget" placeholder="请输入目标值" />
         </el-form-item>
@@ -223,9 +232,6 @@
         </el-form-item>
         <el-form-item label="目标值下限" align="center" prop="indicatorDown">
           <el-input v-model="form.indicatorDown" placeholder="请输入目标值下限" />
-        </el-form-item>
-        <el-form-item label="年份" prop="indicatorTime">
-          <el-input v-model="form.indicatorTime" placeholder="请输入年份" />
         </el-form-item>
         <el-form-item label="一月数据" prop="indicatorJan">
           <el-input v-model="form.indicatorJan" placeholder="请输入一月数据" />
@@ -352,6 +358,12 @@ const data = reactive({
     indicatorDec: null
   },
   rules: {
+    indicatorName: [
+      { required: true, message: '名称不能为空', trigger: 'blur' }
+    ],
+    indicatorTime: [
+      { required: true, message: '年份不能为空', trigger: 'blur' }
+    ],
   },
   formExport: {},
   rulesExport: {
@@ -619,7 +631,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加设备指标分析";
+  title.value = "新增";
 }
 
 /** 修改按钮操作 */
@@ -629,7 +641,7 @@ function handleUpdate(row) {
   getCount(_indicatorId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改设备指标分析";
+    title.value = "修改";
   });
 }
 

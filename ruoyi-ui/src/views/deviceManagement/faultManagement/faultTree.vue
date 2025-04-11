@@ -139,7 +139,7 @@
 </template>
 
 
-<script setup name="Tree">
+<script setup name="FaultTree">
 import { listTable, getTable, delTable, addTable, updateTable, uploadFile, getTreeList } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
 import faultChart from "./faultChart.vue"
@@ -234,46 +234,12 @@ function paginateData(data, pageSize = 1000) {
   };
 
 }
-
+//跳转
 function handleToAnalysis(row, module, destination) {
   router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { faultType: row.faultType, yearAndMonth: row.reportedTime } });
 }
 
-// function handleChangePage(index) {
-//   tableList.value = pagesList.value[index - 1]
-// }
 
-
-
-// /** 查询设备故障记录列表 */
-// getTreeList(queryParams.value).then(response => {
-//   const paginatedData = paginateData(response);
-//   // tableList.value = response.rows;
-// });
-
-// function getPageList() {
-//   // tableList.value = pages[0]
-// }
-
-/** 查询设备故障记录列表 */
-// function getList() {
-//   loading.value = true;
-//   queryParams.value.params = {};
-//   if (null != daterangeReportedTime && '' != daterangeReportedTime) {
-//     queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
-//     queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
-//   }
-//   if (null != daterangeResolutionTime && '' != daterangeResolutionTime) {
-//     queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
-//     queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
-//   }
-//   listTable(queryParams.value).then(response => {
-//     // tableList.value = response.rows;
-//     total.value = response.total;
-//     loading.value = false;
-//   });
-//   loading.value = false;
-// }
 
 // 取消按钮
 function cancel() {
@@ -375,13 +341,13 @@ function submitForm() {
 // }
 
 /** 台账跳转按钮操作 */
-function handleToDetails(row) {
-  router.push({ path: "/file/details", query: { deviceNum: row.deviceNum, name: "若依" } });
-}
+// function handleToDetails(row) {
+//   router.push({ path: "/file/details", query: { deviceNum: row.deviceNum, name: "若依" } });
+// }
 /** SOP跳转按钮操作 */
-function handleToSop(row) {
-  router.push({ path: "/file/sop", query: { deviceNum: row.deviceNum, name: "若依" } });
-}
+// function handleToSop(row) {
+//   router.push({ path: "/file/sop", query: { deviceNum: row.deviceNum, name: "若依" } });
+// }
 
 
 // 导入excel，检查文件类型
@@ -450,5 +416,4 @@ function handleExport() {
   }, `table_${new Date().getTime()}.xlsx`)
 }
 
-// getList();
 </script>
