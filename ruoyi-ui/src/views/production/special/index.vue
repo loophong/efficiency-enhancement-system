@@ -15,22 +15,22 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="故障原因" prop="faultReason">
-        <el-select v-model="queryParams.faultReason" placeholder="请选择故障原因" clearable>
+        <el-select v-model="queryParams.faultReason" placeholder="请选择故障原因" clearable style="width: 150px">
           <el-option v-for="dict in production_fault_reason" :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="责任科室" prop="responsibleDepartment">
-        <el-select v-model="queryParams.responsibleDepartment" placeholder="请选择责任科室" clearable>
+        <el-select v-model="queryParams.responsibleDepartment" placeholder="请选择责任科室" clearable style="width: 150px">
           <el-option v-for="dict in system_dept" :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否为重大故障" prop="isMajorFault">
-        <el-select v-model="queryParams.isMajorFault" placeholder="请选择是否为重大故障" clearable>
+      <el-form-item label="是否为重大故障" prop="isMajorFault" label-width="120px">
+        <el-select v-model="queryParams.isMajorFault" placeholder="请选择是否为重大故障" clearable style="width: 150px">
           <el-option v-for="dict in production_yes_no" :key="dict.value" :label="dict.label" :value="dict.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="处理状态" prop="approvalStatus">
-        <el-select v-model="queryParams.approvalStatus" placeholder="请选择处理状态" clearable>
+        <el-select v-model="queryParams.approvalStatus" placeholder="请选择处理状态" clearable style="width: 150px">
           <el-option v-for="dict in production_special_statue" :key="dict.value" :label="dict.label"
                      :value="dict.value"/>
         </el-select>
@@ -101,9 +101,9 @@
       </el-table-column>
       <el-table-column label="解决方案" align="center" prop="solution"/>
       <el-table-column label="处理时间" align="center" prop="uploadDate" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
-        </template>
+<!--        <template #default="scope">-->
+<!--          <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d} {h}:{m}:{s}') }}</span>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="文件" align="center" prop="files"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -381,6 +381,15 @@ function getList() {
     casesList.value = response.rows;
     total.value = response.total;
     loading.value = false;
+
+    // 对文件名进行修改
+    // 当前文件名字为files:"/profile/upload/2025/04/04/新建 DOCX 文档_20250404154611A001.docx,/profile/upload/2025/04/04/新建文本文档 (2)_20250404154616A002.txt,/profile/upload/2025/04/04/神经网络验证_20250404154622A003.docx"
+    casesList.value.forEach(item => {
+      if (item.files) {
+        item.files = item.files.split(",").map(file => file.split("/").pop());
+        console.log("处理后的文件名为"+JSON.stringify(item.files))
+      }
+    });
   });
 }
 

@@ -23,20 +23,22 @@
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['production:vehicle:edit']">
+        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
+                   v-hasPermi="['production:vehicle:edit']">
           修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['production:vehicle:remove']">
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
+                   v-hasPermi="['production:vehicle:remove']">
           删除
         </el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:vehicle:export']">-->
-<!--          导出-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:vehicle:export']">-->
+      <!--          导出-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
 
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['production:vehicle:import']">
@@ -51,8 +53,8 @@
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="${comment}" align="center" prop="id"/>-->
       <el-table-column label="系列名称" align="center" prop="series" width="150"/>
-      <el-table-column label="吨位" align="center" prop="tonnage"  width="120"/>
-      <el-table-column label="车型" align="center" prop="vehicleType"  width="200"/>
+      <el-table-column label="吨位" align="center" prop="tonnage" width="120"/>
+      <el-table-column label="车型" align="center" prop="vehicleType" width="200"/>
       <el-table-column label="发动机/主要配置" align="center" prop="mainConfiguration"/>
       <el-table-column label="标配：阀片、电瓶、轮胎" align="center" prop="standardEquipment"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -76,8 +78,8 @@
     />
 
     <!-- 添加或修改车型对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="vehicleRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
+      <el-form ref="vehicleRef" :model="form" :rules="rules" label-width="180px">
         <el-form-item label="系列名称" prop="series">
           <el-input v-model="form.series" placeholder="请输入系列名称"/>
         </el-form-item>
@@ -88,10 +90,10 @@
           <el-input v-model="form.vehicleType" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="发动机/主要配置" prop="mainConfiguration">
-          <el-input v-model="form.mainConfiguration" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.mainConfiguration" type="textarea" :rows="4" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="标配：阀片、电瓶、轮胎" prop="standardEquipment">
-          <el-input v-model="form.standardEquipment" type="textarea" placeholder="请输入内容"/>
+          <el-input v-model="form.standardEquipment" type="textarea" :rows="4" placeholder="请输入内容"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -116,11 +118,11 @@
         </el-form-item>
       </el-form>
 
-<!--      <i class="el-icon-upload"></i>-->
+      <!--      <i class="el-icon-upload"></i>-->
 
-<!--      <div class="upload-demo" ref="uploadRef" style="margin-bottom: 20px;">-->
-<!--        <input type="file" ref="inputFile" @change="checkFile"/>-->
-<!--      </div>-->
+      <!--      <div class="upload-demo" ref="uploadRef" style="margin-bottom: 20px;">-->
+      <!--        <input type="file" ref="inputFile" @change="checkFile"/>-->
+      <!--      </div>-->
 
       <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
         <el-button @click="cancelUpload">取 消</el-button>
@@ -181,7 +183,24 @@ const data = reactive({
     mainConfiguration: null,
     standardEquipment: null
   },
-  rules: {}
+  rules: {
+    series: [
+      {required: true, message: "系列名称不能为空", trigger: "blur"}
+    ],
+    tonnage: [
+      {required: true, message: "吨位不能为空", trigger: "blur"}
+    ],
+    vehicleType: [
+      {required: true, message: "车型不能为空", trigger: "blur"}
+    ],
+    mainConfiguration: [
+      {required: true, message: "发动机/主要配置", trigger: "blur"}
+    ],
+    standardEquipment: [
+      {required: true, message: "标配：阀片、电瓶、轮胎", trigger: "blur"}
+    ]
+  }
+
 });
 
 const {queryParams, form, rules} = toRefs(data);
@@ -335,7 +354,7 @@ function uploadFile() {
     }).finally(() => {
       resetUpload();
     });
-  }else {
+  } else {
     proxy.$modal.msgError("请选择文件");
   }
 }

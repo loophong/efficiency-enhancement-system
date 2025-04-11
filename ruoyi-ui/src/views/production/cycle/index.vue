@@ -14,9 +14,17 @@
         <el-input v-model="queryParams.capacityVehicleModel" placeholder="请输入产能车型" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>
+<!--      <el-form-item label="生产周期" prop="productionCycle">-->
+<!--        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable-->
+<!--                  @keyup.enter="handleQuery"/>-->
+<!--      </el-form-item>-->
       <el-form-item label="生产周期" prop="productionCycle">
-        <el-input v-model="queryParams.productionCycle" placeholder="请输入生产周期" clearable
-                  @keyup.enter="handleQuery"/>
+        <el-input-number
+            v-model="queryParams.productionCycle"
+            placeholder="请输入生产周期"
+            clearable
+            @keyup.enter="handleQuery"
+            :min="0"/>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -98,8 +106,15 @@
           </el-select>
         </el-form-item>
 
+<!--        <el-form-item label="生产周期" prop="productionCycle">-->
+<!--          <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>-->
+<!--        </el-form-item>-->
         <el-form-item label="生产周期" prop="productionCycle">
-          <el-input v-model="form.productionCycle" placeholder="请输入生产周期"/>
+          <el-input-number
+              v-model="form.productionCycle"
+              placeholder="请输入生产周期"
+              clearable
+              :min="0"/>
         </el-form-item>
       </el-form>
       <template #footer>

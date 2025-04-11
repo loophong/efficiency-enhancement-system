@@ -72,6 +72,6 @@ public class SysNotificationsEntity implements Serializable {
      * 消息创建的时间
      */
     @Excel(name = "消息创建的时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 }

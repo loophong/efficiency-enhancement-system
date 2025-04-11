@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityRelatedPartyLedger;
  * 相关方管理台账Service接口
  * 
  * @author wang
- * @date 2025-03-05
+ * @date 2025-04-09
  */
 public interface ISecurityRelatedPartyLedgerService 
 {

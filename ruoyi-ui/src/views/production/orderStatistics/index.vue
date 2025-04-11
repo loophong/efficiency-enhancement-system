@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="统计年月" prop="yearAndMonth">
-        <el-date-picker clearable v-model="queryParams.yearAndMonth" type="date" value-format="YYYY-MM-DD"
+        <el-date-picker clearable v-model="queryParams.yearAndMonth" type="month" value-format="YYYY-MM-DD"
                         placeholder="请选择统计年月">
         </el-date-picker>
       </el-form-item>
@@ -10,7 +10,9 @@
         <el-input v-model="queryParams.vehicleModel" placeholder="请输入车型" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="数量" prop="quantity">
-        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
+        <!--        <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>-->
+        <el-input-number v-model="queryParams.quantity" placeholder="请输入数量" :min="0" :step="1"
+                         @keyup.enter="handleQuery"/>
       </el-form-item>
       <el-form-item label="产能类型" prop="capacityType">
         <el-input v-model="queryParams.capacityType" placeholder="请输入产能类型" clearable @keyup.enter="handleQuery"/>
@@ -37,17 +39,17 @@
                    v-hasPermi="['production:orderStatistics:remove']">删除
         </el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
-<!--                   v-hasPermi="['production:orderStatistics:export']">导出-->
-<!--        </el-button>-->
-<!--      </el-col>-->
+      <!--      <el-col :span="1.5">-->
+      <!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
+      <!--                   v-hasPermi="['production:orderStatistics:export']">导出-->
+      <!--        </el-button>-->
+      <!--      </el-col>-->
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="orderStatisticsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="id" align="center" prop="id"/>-->
+      <!--      <el-table-column label="id" align="center" prop="id"/>-->
       <el-table-column label="统计年月" align="center" prop="yearAndMonth" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.yearAndMonth, '{y}-{m}') }}</span>
@@ -76,14 +78,16 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="orderStatisticsRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="统计年月" prop="yearAndMonth">
-          <el-date-picker clearable v-model="form.yearAndMonth" type="date" value-format="YYYY-MM-DD" placeholder="请选择统计年月">
+          <el-date-picker clearable v-model="form.yearAndMonth" type="month" value-format="YYYY-MM-DD"
+                          placeholder="请选择统计年月">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="车型" prop="vehicleModel">
           <el-input v-model="form.vehicleModel" placeholder="请输入车型"/>
         </el-form-item>
         <el-form-item label="数量" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入数量"/>
+<!--          <el-input v-model="form.quantity" placeholder="请输入数量"/>-->
+          <el-input-number v-model="form.quantity" placeholder="请输入数量" :min="0" :step="1"/>
         </el-form-item>
         <el-form-item label="产能类型" prop="capacityType">
           <el-input v-model="form.capacityType" placeholder="请输入产能类型"/>
@@ -130,7 +134,20 @@ const data = reactive({
     quantity: null,
     capacityType: null
   },
-  rules: {}
+  rules: {
+    yearAndMonth: [
+      {required: true, message: "统计年月不能为空", trigger: "blur"}
+    ],
+    vehicleModel: [
+      {required: true, message: "车型不能为空", trigger: "blur"}
+    ],
+    quantity: [
+      {required: true, message: "数量不能为空", trigger: "blur"}
+    ],
+    capacityType: [
+      {required: true, message: "产能类型不能为空", trigger: "blur"}
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);

@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 相关方管理台账Controller
  * 
  * @author wang
- * @date 2025-03-05
+ * @date 2025-04-09
  */
 @RestController
 @RequestMapping("/security/relatedpartyledger")

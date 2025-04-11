@@ -6,6 +6,7 @@ import java.util.List;
 import com.heli.production.domain.entity.HistoryOrderEntity;
 import com.heli.production.service.IHistoryOrderService;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -44,11 +45,12 @@ public class HistoryOrderController extends BaseController {
     @Log(title = "[历史订单表]上传", businessType = BusinessType.IMPORT)
     @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
-    public void importTable(Date date, MultipartFile excelFile) {
-        log.info("传入的date为 " + date);
+    public AjaxResult importTable(Date date, MultipartFile excelFile) {
+        log.info("传入的date为 " + DateUtils.formatOutput(date));
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {
-            historyOrderService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, date);
+            return historyOrderService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, date);
+//            return AjaxResult.success();
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
             throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");

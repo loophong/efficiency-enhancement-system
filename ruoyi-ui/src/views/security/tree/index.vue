@@ -40,9 +40,9 @@
             </el-tree>
           </div>
         </el-tab-pane>
-        
+      
         <el-tab-pane label="可视化视图" name="visualization">
-          <div ref="echartContainer" style="width: 100%; height: 700px;"></div>
+          <div ref="echartContainer" style="width: 1250px; height: 1500px;"></div>
         </el-tab-pane>
       </el-tabs>
   
@@ -67,7 +67,7 @@
             <el-radio-group v-model="form.menuType">
               <el-radio label="M">目录</el-radio>
               <el-radio label="C">菜单</el-radio>
-              <el-radio label="F">按钮</el-radio>
+              <!-- <el-radio label="F">按钮</el-radio> -->
             </el-radio-group>
           </el-form-item>
           
@@ -79,33 +79,33 @@
             <el-input-number v-model="form.orderNum" :min="0" />
           </el-form-item>
           
-          <el-form-item v-if="form.menuType !== 'F'" label="路由地址" prop="path">
+          <el-form-item v-if="form.menuType == 'C'" label="路由地址" prop="path">
             <el-input v-model="form.path" placeholder="请输入路由地址" />
           </el-form-item>
           
-          <el-form-item v-if="form.menuType === 'C'" label="组件路径" prop="component">
+          <!-- <el-form-item v-if="form.menuType === 'C'" label="组件路径" prop="component">
             <el-input v-model="form.component" placeholder="请输入组件路径" />
-          </el-form-item>
+          </el-form-item> -->
           
-          <el-form-item v-if="form.menuType !== 'F'" label="是否外链" prop="isFrame">
+          <!-- <el-form-item v-if="form.menuType !== 'F'" label="是否外链" prop="isFrame">
             <el-radio-group v-model="form.isFrame">
               <el-radio :label="false">否</el-radio>
               <el-radio :label="true">是</el-radio>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           
-          <el-form-item label="菜单状态" prop="status">
+          <!-- <el-form-item label="菜单状态" prop="status">
             <el-radio-group v-model="form.status">
               <el-radio :label="true">显示</el-radio>
               <el-radio :label="false">隐藏</el-radio>
             </el-radio-group>
-          </el-form-item>
+          </el-form-item> -->
           
-          <el-form-item label="权限标识" prop="perms">
+          <!-- <el-form-item label="权限标识" prop="perms">
             <el-input v-model="form.perms" placeholder="请输入权限标识" />
-          </el-form-item>
+          </el-form-item> -->
           
-          <el-form-item label="菜单图标" prop="icon">
+          <!-- <el-form-item label="菜单图标" prop="icon">
             <el-popover
               placement="bottom-start"
               width="450"
@@ -130,15 +130,15 @@
               </template>
               <icon-select @selected="selectedIcon" />
             </el-popover>
-          </el-form-item>
+          </el-form-item> -->
           
-          <el-form-item label="备注" prop="remark">
+          <!-- <el-form-item label="备注" prop="remark">
             <el-input
               v-model="form.remark"
               type="textarea"
               placeholder="请输入备注信息"
             />
-          </el-form-item>
+          </el-form-item> -->
         </el-form>
         
         <template #footer>
@@ -161,6 +161,7 @@
     getSecuritySysMenu 
   } from '@/api/security/sysmenu';
   import IconSelect from '@/components/IconSelect';
+  import { getOffsetTop } from 'element-plus/es/utils/index.mjs';
   
   export default {
     name: 'SecuritySysMenuTree',
@@ -194,9 +195,6 @@
         rules: {
           menuName: [
             { required: true, message: '菜单名称不能为空', trigger: 'blur' }
-          ],
-          orderNum: [
-            { required: true, message: '菜单顺序不能为空', trigger: 'blur' }
           ],
           path: [
             { required: true, message: '路由地址不能为空', trigger: 'blur' }
@@ -277,30 +275,40 @@
           series: [{
             type: 'tree',
             data: this.convertToEChartData(data), // 转换为ECharts数据格式
-            symbol: 'roundRect',
-            symbolSize: [80, 30],
-            orient: 'vertical',
-            expandAndCollapse: true,
-            initialTreeDepth: 3,
+            symbol: 'roundRect', // 节点形状：圆角矩形
+            symbolSize: [20, 20], // 节点大小调整为更宽一些
+            orient: 'horizontal', // 修改为水平方向
+            expandAndCollapse: true, // 允许展开和折叠节点
+            initialTreeDepth: 2, // 初始展开的层级减少，避免过于拥挤
             label: {
-              position: 'top',
-              fontSize: 12,
-              color: '#333'
+              position: 'left', // 标签位置调整到左侧
+              fontSize: 14, // 字体大小适当增大
+              color: '#333', // 字体颜色保持深色
+              align: 'right', // 文本右对齐，与水平方向匹配
+              verticalAlign: 'middle' // 垂直居中对齐
             },
             leaves: {
               label: {
-                position: 'right',
+                position: 'bottom', // 叶子节点标签放在底部
                 verticalAlign: 'middle'
               }
             },
             emphasis: {
-              focus: 'descendant',
+              focus: 'descendant', // 高亮时聚焦子孙节点
               itemStyle: {
-                shadowBlur: 10,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                shadowBlur: 15, // 增加阴影模糊度
+                shadowColor: 'rgba(0, 0, 0, 0.6)', // 阴影颜色更深一些
+                borderColor: '#fff', // 边框颜色设置为白色
+                borderWidth: 2 // 边框宽度增加
               }
             },
-            animationDuration: 550
+            animationDuration: 700, // 动画持续时间稍微延长
+            animationDurationUpdate: 500, // 更新动画的时间
+            lineStyle: {
+              color: '#ccc', // 连接线颜色变浅
+              width: 2, // 线条宽度增加
+              curveness: 0.5 // 曲线弯曲程度增加，使线条更柔和
+            }
           }]
         };
         this.echartInstance.setOption(option); // 设置ECharts配置项
@@ -324,7 +332,8 @@
             label: {
               show: true,
               position: node.children && node.children.length ? 'left' : 'right',
-              fontSize: 12
+              fontSize: 12,
+              offset: [0, 0],
             }
           };
   
