@@ -148,11 +148,11 @@
             <el-form-item label="序号" prop="orderNum">
               <el-input v-model="form.orderNum" placeholder="请输入序号" />
             </el-form-item>
-            <el-form-item label="执行班组" prop="executeGroup">
-              <el-input v-model="form.executeGroup" placeholder="请输入执行班组" />
-            </el-form-item>
             <el-form-item label="设备类别" prop="deviceType">
               <el-input v-model="form.deviceType" placeholder="请输入设备类别" />
+            </el-form-item>
+            <el-form-item label="执行班组" prop="executeGroup">
+              <el-input v-model="form.executeGroup" placeholder="请输入执行班组" />
             </el-form-item>
             <el-form-item label="保养内容" prop="maintenanceContent">
               <el-input v-model="form.maintenanceContent" placeholder="请输入保养内容" />
@@ -318,6 +318,15 @@ const data = reactive({
     monthFour: null
   },
   rules: {
+    orderNum: [
+      { required: true, message: "序号不能为空", trigger: "blur" }
+    ],
+    deviceType: [
+      { required: true, message: "设备类别不能为空", trigger: "blur" }
+    ],
+    executeGroup: [
+      { required: true, message: "执行班组不能为空", trigger: "blur" }
+    ],
   }
 });
 
@@ -481,6 +490,7 @@ function submitForm() {
           getList();
         });
       } else {
+        form.value.createBy = currentUserId.value
         addPlan(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

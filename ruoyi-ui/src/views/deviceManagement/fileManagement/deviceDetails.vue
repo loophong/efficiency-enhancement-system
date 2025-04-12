@@ -14,6 +14,12 @@
       <el-form-item label="班组" prop="detailsGroup">
         <el-input v-model="queryParams.detailsGroup" placeholder="请输入班组" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <el-form-item label="设备状态" prop="deviceStatus">
+        <el-input v-model="queryParams.deviceStatus" placeholder="请输入设备状态" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="设备类别" prop="deviceType">
+        <el-input v-model="queryParams.deviceType" placeholder="请输入设备类别" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
       <el-form-item label="重点设备标注" prop="ifKey">
         <el-input v-model="queryParams.ifKey" placeholder="请输入重点设备标注" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -200,7 +206,8 @@ const route = useRoute();
 const showDialog = ref(false);
 const daterangeFinancialDate = ref([]);
 
-const routerDeviceNum = route.query.deviceNum;
+
+var routerDeviceNum = route.query.deviceNum;
 
 const data = reactive({
   form: {},
@@ -224,12 +231,11 @@ const data = reactive({
   rules: {
   }
 });
-
 const { queryParams, form, rules } = toRefs(data);
 
 const handleRouteParams = () => {
   if (routerDeviceNum) {
-    console.log('Received deviceNum:', routerDeviceNum);
+    console.log('接收到参数:', routerDeviceNum);
     data.queryParams.inventoryNum = routerDeviceNum;
     getList(); // 假设需要根据路由参数重新获取列表数据
   } else {
@@ -238,6 +244,14 @@ const handleRouteParams = () => {
     // 可以选择性地在这里添加其他逻辑
   }
 };
+
+
+watch(() => route.query.deviceNum, (newVal) => {
+  console.log('检测到新参数--->', newVal)
+  routerDeviceNum = newVal
+  handleRouteParams(newVal)
+})
+
 
 // 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
 onMounted(() => {

@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="序号" prop="majorOrder">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
+      <!-- <el-form-item label="序号" prop="majorOrder">
         <el-input v-model="queryParams.majorOrder" placeholder="请输入序号" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="设备名称" prop="majorName">
         <el-input v-model="queryParams.majorName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -19,9 +19,9 @@
       <el-form-item label="人员" prop="majorPeople">
         <el-input v-model="queryParams.majorPeople" placeholder="请输入人员" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="内容" prop="majorContent">
+      <!-- <el-form-item label="内容" prop="majorContent">
         <el-input v-model="queryParams.majorContent" placeholder="请输入内容" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -65,13 +65,14 @@
       </el-col> -->
 
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="View" @click="showFullYear = true"
-          v-hasPermi="['maintenanceTable:plan:add']">全年数据</el-button>
+        <el-button type="primary" plain icon="View" v-if="showFullYear == false" @click="showFullYear = true"
+          v-hasPermi="['maintenanceTable:plan:add']">显示全年数据</el-button>
+        <el-button type="primary" plain icon="Hide" v-else @click="showFullYear = false"
+          v-hasPermi="['maintenanceTable:plan:add']">显示当月及上月数据</el-button>
       </el-col>
 
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Hide" @click="showFullYear = false"
-          v-hasPermi="['maintenanceTable:plan:add']">当月及上月数据</el-button>
+
       </el-col>
       <el-badge :value="listForTip.length" class="item" color="green">
         <el-button @click="openMessage = true">消息详情</el-button>
@@ -699,15 +700,7 @@
         <el-form-item label="人员" prop="majorPeople">
           <el-input v-model="form.majorPeople" placeholder="请输入人员" />
         </el-form-item>
-        <el-form-item label="月份" prop="majorMonth">
-          <el-input v-model="form.majorMonth" placeholder="请输入月份" />
-        </el-form-item>
-        <el-form-item label="第几周" prop="majorMonthWeek">
-          <el-input v-model="form.majorMonthWeek" placeholder="请输入第几周" />
-        </el-form-item>
-        <el-form-item label="内容" prop="majorContent">
-          <el-input v-model="form.majorContent" placeholder="请输入内容" />
-        </el-form-item>
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -1357,6 +1350,21 @@ const data = reactive({
     majorGroup: null
   },
   rules: {
+    majorName: [
+      { required: true, message: "设备名称不能为空", trigger: "blur" }
+    ],
+    majorPosition: [
+      { required: true, message: "部位不能为空", trigger: "blur" }
+    ],
+    majorProject: [
+      { required: true, message: "保养维修项目不能为空", trigger: "blur" }
+    ],
+    majorCycleNum: [
+      { required: true, message: "周期不能为空", trigger: "blur" }
+    ],
+    majorPeople: [
+      { required: true, message: "人员不能为空", trigger: "blur" }
+    ],
   }
 });
 
@@ -1504,6 +1512,7 @@ function submitForm() {
           getList();
         });
       } else {
+        form.value.createBy = currentUserId.value
         addPlan(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

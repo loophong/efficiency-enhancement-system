@@ -33,16 +33,17 @@
         <include refid="selectDeviceMaintenanceTableVo"/>
         <where>
             <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
-            <if test="workStatus != null  and workStatus != ''"> and work_status = #{workStatus}</if>
+            <if test="workStatus != null  and workStatus != ''"> and work_status like concat('%', #{workStatus}, '%')</if>
             <if test="deviceNum != null  and deviceNum != ''"> and device_num like concat('%', #{deviceNum}, '%')</if>
-            <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
-            <if test="faultType != null  and faultType != ''"> and fault_type = #{faultType}</if>
-            <if test="applyBy != null  and applyBy != ''"> and apply_by = #{applyBy}</if>
-            <if test="applyDepartment != null  and applyDepartment != ''"> and apply_department = #{applyDepartment}</if>
-            <if test="maintenancePeople != null  and maintenancePeople != ''"> and maintenance_people = #{maintenancePeople}</if>
-            <if test="faultPhenomenon != null  and faultPhenomenon != ''"> and fault_phenomenon = #{faultPhenomenon}</if>
-            <if test="maintenanceAnalysis != null  and maintenanceAnalysis != ''"> and maintenance_analysis = #{maintenanceAnalysis}</if>
-            <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content = #{maintenanceContent}</if>
+            <if test="workStatus != null  and workStatus != ''"> and work_status like concat('%', #{workStatus}, '%')</if>
+            <if test="issueType != null  and issueType != ''"> and issue_type like concat('%', #{issueType}, '%')</if>
+            <if test="faultType != null  and faultType != ''"> and fault_type like concat('%', #{faultType}, '%')</if>
+            <if test="applyBy != null  and applyBy != ''"> and apply_by like concat('%', #{applyBy}, '%')</if>
+            <if test="applyDepartment != null  and applyDepartment != ''"> and apply_department like concat('%', #{applyDepartment}, '%')</if>
+            <if test="maintenancePeople != null  and maintenancePeople != ''"> and maintenance_people like concat('%', #{maintenancePeople}, '%')</if>
+            <if test="faultPhenomenon != null  and faultPhenomenon != ''"> and fault_phenomenon like concat('%', #{faultPhenomenon}, '%')</if>
+            <if test="maintenanceAnalysis != null  and maintenanceAnalysis != ''"> and maintenance_analysis like concat('%', #{maintenanceAnalysis}, '%')</if>
+            <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content like concat('%', #{maintenanceContent}, '%')</if>
             <if test="params.beginReportedTime != null and params.beginReportedTime != '' and params.endReportedTime != null and params.endReportedTime != ''">
                 AND STR_TO_DATE(reported_time, '%y-%m-%d %H:%i')
                 BETWEEN STR_TO_DATE(#{params.beginReportedTime}, '%y-%m-%d %H:%i')
@@ -53,7 +54,7 @@
                 BETWEEN STR_TO_DATE(#{params.beginResolutionTime}, '%y-%m-%d %H:%i')
                 AND DATE_ADD(STR_TO_DATE(#{params.endResolutionTime}, '%y-%m-%d %H:%i'), INTERVAL 1 DAY)
             </if>
-            <if test="faultDuration != null  and faultDuration != ''"> and fault_duration = #{faultDuration}</if>
+            <if test="faultDuration != null  and faultDuration != ''"> and fault_duration like concat('%', #{faultDuration}, '%')</if>
             <if test="maintenanceCast != null  and maintenanceCast != ''"> and maintenance_cast = #{maintenanceCast}</if>
             <if test="ifDown != null  and ifDown != ''"> and if_down = #{ifDown}</if>
             <if test="faultFile != null  and faultFile != ''"> and fault_file = #{faultFile}</if>

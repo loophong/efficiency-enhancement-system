@@ -36,19 +36,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectDeviceDetailsVo"/>
         <where>
             <if test="params.beginFinancialDate != null and params.beginFinancialDate != '' and params.endFinancialDate != null and params.endFinancialDate != ''"> and financial_date between #{params.beginFinancialDate} and #{params.endFinancialDate}</if>
-            <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num = #{inventoryNum}</if>
+            <if test="inventoryNum != null  and inventoryNum != ''"> and inventory_num like concat('%', #{inventoryNum}, '%')</if>
             <if test="fixedAssetName != null  and fixedAssetName != ''"> and fixed_asset_name like concat('%', #{fixedAssetName}, '%')</if>
             <if test="detailsGroup != null  and detailsGroup != ''"> and details_group like concat('%', #{detailsGroup}, '%')</if>
-            <if test="deviceStatus != null  and deviceStatus != ''"> and device_status = #{deviceStatus}</if>
-            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
+            <if test="deviceStatus != null  and deviceStatus != ''"> and device_status like concat('%', #{deviceStatus}, '%')</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type like concat('%', #{deviceType}, '%')</if>
             <if test="ifKey != null  and ifKey != ''"> and if_key = #{ifKey}</if>
-            <if test="storageUnit != null  and storageUnit != ''"> and storage_unit = #{storageUnit}</if>
-            <if test="costCenter != null  and costCenter != ''"> and cost_center = #{costCenter}</if>
-            <if test="usedYear != null  and usedYear != ''"> and used_year = #{usedYear}</if>
-            <if test="assetOrigin != null  and assetOrigin != ''"> and asset_origin = #{assetOrigin}</if>
+            <if test="storageUnit != null  and storageUnit != ''"> and storage_unit like concat('%', #{storageUnit}, '%')</if>
+            <if test="costCenter != null  and costCenter != ''"> and cost_center like concat('%', #{costCenter}, '%')</if>
+            <if test="usedYear != null  and usedYear != ''"> and used_year like concat('%', #{usedYear}, '%')</if>
+            <if test="assetOrigin != null  and assetOrigin != ''"> and asset_origin like concat('%', #{assetOrigin}, '%')</if>
             <if test="brand != null  and brand != ''"> and brand like concat('%', #{brand}, '%')</if>
-            <if test="tonnage != null  and tonnage != ''"> and tonnage = #{tonnage}</if>
-            <if test="faultCount != null  and faultCount != ''"> and fault_count = #{faultCount}</if>
+            <if test="tonnage != null  and tonnage != ''"> and tonnage like concat('%', #{tonnage}, '%')</if>
+            <if test="faultCount != null  and faultCount != ''"> and fault_count like concat('%', #{faultCount}, '%')</if>
         </where>
     </select>
     

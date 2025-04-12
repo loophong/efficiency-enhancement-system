@@ -27,14 +27,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectDeviceGroupPlanVo"/>
         <where>  
             <if test="orderNum != null  and orderNum != ''"> and order_num = #{orderNum}</if>
-            <if test="deviceType != null  and deviceType != ''"> and device_type = #{deviceType}</if>
-            <if test="executeGroup != null  and executeGroup != ''"> and execute_group = #{executeGroup}</if>
+            <if test="deviceType != null  and deviceType != ''"> and device_type like concat('%', #{deviceType}, '%')</if>
+            <if test="executeGroup != null  and executeGroup != ''"> and execute_group like concat('%', #{executeGroup}, '%')</if>
             <if test="maintenanceContent != null  and maintenanceContent != ''"> and maintenance_content like concat('%', #{maintenanceContent}, '%')</if>
             <if test="maintenanceCycle != null  and maintenanceCycle != ''"> and maintenance_cycle = #{maintenanceCycle}</if>
-            <if test="monthOne != null  and monthOne != ''"> and month_one = #{monthOne}</if>
-            <if test="monthTwo != null  and monthTwo != ''"> and month_two = #{monthTwo}</if>
-            <if test="monthThree != null  and monthThree != ''"> and month_three = #{monthThree}</if>
-            <if test="monthFour != null  and monthFour != ''"> and month_four = #{monthFour}</if>
+            <if test="monthOne != null  and monthOne != ''"> and month_one like concat('%', #{monthOne}, '%')</if>
+            <if test="monthTwo != null  and monthTwo != ''"> and month_two like concat('%', #{monthTwo}, '%')</if>
+            <if test="monthThree != null  and monthThree != ''"> and month_three like concat('%', #{monthThree}, '%')</if>
+            <if test="monthFour != null  and monthFour != ''"> and month_four like concat('%', #{monthFour}, '%')</if>
         </where>
     </select>
 

@@ -34,23 +34,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectDeviceIndicatorCountVo"/>
         <where>
             <if test="indicatorName != null  and indicatorName != ''"> and indicator_name like concat('%', #{indicatorName}, '%')</if>
-            <if test="indicatorTarget != null  and indicatorTarget != ''"> and indicator_target = #{indicatorTarget}</if>
-            <if test="indicatorUp != null  and indicatorUp != ''"> and indicator_up = #{indicatorUp}</if>
-            <if test="indicatorDown != null  and indicatorDown != ''"> and indicator_down = #{indicatorDown}</if>
-            <if test="indicatorTime != null  and indicatorTime != ''"> and indicator_time = #{indicatorTime}</if>
-            <if test="indicatorJan != null  and indicatorJan != ''"> and indicator_jan = #{indicatorJan}</if>
-            <if test="indicatorFeb != null  and indicatorFeb != ''"> and indicator_feb = #{indicatorFeb}</if>
-            <if test="indicatorMar != null  and indicatorMar != ''"> and indicator_mar = #{indicatorMar}</if>
-            <if test="indicatorApr != null  and indicatorApr != ''"> and indicator_apr = #{indicatorApr}</if>
-            <if test="indicatorMay != null  and indicatorMay != ''"> and indicator_may = #{indicatorMay}</if>
-            <if test="indicatorJun != null  and indicatorJun != ''"> and indicator_jun = #{indicatorJun}</if>
-            <if test="indicatorJul != null  and indicatorJul != ''"> and indicator_jul = #{indicatorJul}</if>
-            <if test="indicatorAug != null  and indicatorAug != ''"> and indicator_aug = #{indicatorAug}</if>
-            <if test="indicatorSep != null  and indicatorSep != ''"> and indicator_sep = #{indicatorSep}</if>
-            <if test="indicatorOct != null  and indicatorOct != ''"> and indicator_oct = #{indicatorOct}</if>
-            <if test="indicatorNov != null  and indicatorNov != ''"> and indicator_nov = #{indicatorNov}</if>
-            <if test="indicatorDec != null  and indicatorDec != ''"> and indicator_dec = #{indicatorDec}</if>
-            <if test="indicatorFile != null  and indicatorFile != ''"> and indicator_file = #{indicatorFile}</if>
+            <if test="indicatorTarget != null  and indicatorTarget != ''"> and indicator_target like concat('%', #{indicatorTarget}, '%')</if>
+            <if test="indicatorUp != null  and indicatorUp != ''"> and indicator_up like concat('%', #{indicatorUp}, '%')</if>
+            <if test="indicatorDown != null  and indicatorDown != ''"> and indicator_down  like concat('%', #{indicatorDown}, '%')</if>
+            <if test="indicatorTime != null  and indicatorTime != ''"> and indicator_time  like concat('%', #{indicatorTime}, '%')</if>
+            <if test="indicatorJan != null  and indicatorJan != ''"> and indicator_jan  like concat('%', #{indicatorJan}, '%')</if>
+            <if test="indicatorFeb != null  and indicatorFeb != ''"> and indicator_feb  like concat('%', #{indicatorFeb}, '%')</if>
+            <if test="indicatorMar != null  and indicatorMar != ''"> and indicator_mar  like concat('%', #{indicatorMar}, '%')</if>
+            <if test="indicatorApr != null  and indicatorApr != ''"> and indicator_apr  like concat('%', #{indicatorApr}, '%')</if>
+            <if test="indicatorMay != null  and indicatorMay != ''"> and indicator_may  like concat('%', #{indicatorMay}, '%')</if>
+            <if test="indicatorJun != null  and indicatorJun != ''"> and indicator_jun  like concat('%', #{indicatorJun}, '%')</if>
+            <if test="indicatorJul != null  and indicatorJul != ''"> and indicator_jul  like concat('%', #{indicatorJul}, '%')</if>
+            <if test="indicatorAug != null  and indicatorAug != ''"> and indicator_aug  like concat('%', #{indicatorAug}, '%')</if>
+            <if test="indicatorSep != null  and indicatorSep != ''"> and indicator_sep  like concat('%', #{indicatorSep}, '%')</if>
+            <if test="indicatorOct != null  and indicatorOct != ''"> and indicator_oct  like concat('%', #{indicatorOct}, '%')</if>
+            <if test="indicatorNov != null  and indicatorNov != ''"> and indicator_nov  like concat('%', #{indicatorNov}, '%')</if>
+            <if test="indicatorDec != null  and indicatorDec != ''"> and indicator_dec  like concat('%', #{indicatorDec}, '%')</if>
+            <if test="indicatorFile != null  and indicatorFile != ''"> and indicator_file  like concat('%', #{indicatorFile}, '%')</if>
         </where>
     </select>
 

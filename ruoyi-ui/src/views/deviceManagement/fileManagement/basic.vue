@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
       <!-- <el-form-item label="关联保养id" prop="basicCombineMaintenance">
         <el-input v-model="queryParams.basicCombineMaintenance" placeholder="请输入关联保养id" clearable
           @keyup.enter="handleQuery" />

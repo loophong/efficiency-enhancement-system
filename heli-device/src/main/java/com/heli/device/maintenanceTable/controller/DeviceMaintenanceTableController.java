@@ -65,7 +65,6 @@ public class DeviceMaintenanceTableController extends BaseController
     {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         String formattedDate = sdf.format(yearAndMonth);
-        log.info(faultType);
 //        startPage();
         List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate,faultType);
         return getDataTable(list);

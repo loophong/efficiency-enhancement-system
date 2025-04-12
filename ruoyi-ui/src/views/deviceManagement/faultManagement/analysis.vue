@@ -1,21 +1,21 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="日期选择" prop="yearAndMonth">
+        <el-date-picker v-model="queryParams.yearAndMonth" value-format="YYYY-MM" type="month"></el-date-picker>
+      </el-form-item>
       <el-form-item label="故障类型名称" prop="faultType">
         <el-select v-model="queryParams.faultType" placeholder="请选择故障类型名称" clearable style="width: 180px;">
           <el-option v-for="dict in device_fault_analysis" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="维修时间" prop="analysisTime">
+      <!-- <el-form-item label="维修时间" prop="analysisTime">
         <el-input v-model="queryParams.analysisTime" placeholder="请输入维修时间" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="原因分析" prop="maintenanceAnalysis">
+      </el-form-item> -->
+      <!-- <el-form-item label="原因分析" prop="maintenanceAnalysis">
         <el-input v-model="queryParams.maintenanceAnalysis" placeholder="请输入原因分析" clearable
           @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="日期选择" prop="yearAndMonth">
-        <el-date-picker v-model="queryParams.yearAndMonth" value-format="YYYY-MM" type="month"></el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="记录日期" style="width: 308px">
         <el-date-picker v-model="daterangeAnalysisRecordTime" value-format="YYYY-MM-DD" type="daterange"
           range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
@@ -42,7 +42,12 @@
         </template>
       </el-table-column>
       <!-- <el-table-column label="次数" align="center" prop="count" width="140" /> -->
-      <el-table-column label="维修时间" align="center" prop="faultDuration" width="140" />
+      <el-table-column label="维修时间" align="center" prop="faultDuration" width="140">
+        <template #default="scope">
+          <span v-if="scope.row.faultDuration">{{ scope.row.faultDuration }} (h)</span>
+          <span v-else>{{ scope.row.faultDuration }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="故障现象" align="center" prop="faultPhenomenon" />
       <el-table-column label="原因分析" align="center" prop="maintenanceAnalysis">
         <template #default="scope">
@@ -176,8 +181,15 @@ const data = reactive({
 const { queryParams, form, rules, queryParamsAnalysis } = toRefs(data);
 
 
-const routerFaultType = route.query.faultType;
-const routerYearAndMonth = route.query.yearAndMonth;
+var routerFaultType = route.query.faultType;
+var routerYearAndMonth = route.query.yearAndMonth;
+
+watch(() => route.query, (newVal) => {
+  console.log('检测到新参数--->', newVal)
+  routerFaultType = route.query.faultType
+  routerYearAndMonth = route.query.yearAndMonth
+  handleRouteParams()
+})
 const handleRouteParams = () => {
   if (routerFaultType && routerYearAndMonth) {
     console.log('Received faultType:', routerFaultType);
@@ -191,6 +203,8 @@ const handleRouteParams = () => {
     // 可以选择性地在这里添加其他逻辑
   }
 };
+
+
 
 handleRouteParams();
 
