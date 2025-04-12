@@ -1,7 +1,11 @@
 package com.ruoyi.security.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.security.service.impl.SecurityEnvironmentalMonitoringReportServiceImpl;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,7 @@ import com.ruoyi.security.domain.SecurityControlledDocumentDistributionDirectory
 import com.ruoyi.security.service.ISecurityControlledDocumentDistributionDirectoryService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 受控文件发放目录Controller
@@ -28,11 +33,14 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @date 2025-03-02
  */
 @RestController
+@Slf4j
 @RequestMapping("/security/controlleddirectory")
 public class SecurityControlledDocumentDistributionDirectoryController extends BaseController
 {
     @Autowired
     private ISecurityControlledDocumentDistributionDirectoryService securityControlledDocumentDistributionDirectoryService;
+    @Autowired
+    private SecurityEnvironmentalMonitoringReportServiceImpl securityEnvironmentalMonitoringReportServiceImpl;
 
     /**
      * 查询受控文件发放目录列表
@@ -100,5 +108,17 @@ public class SecurityControlledDocumentDistributionDirectoryController extends B
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityControlledDocumentDistributionDirectoryService.deleteSecurityControlledDocumentDistributionDirectoryByIds(ids));
+    }
+
+    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PostMapping("/import")
+    public void importTable( MultipartFile excelFile) {
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+            securityControlledDocumentDistributionDirectoryService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
     }
 }

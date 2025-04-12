@@ -1,7 +1,10 @@
 package com.ruoyi.security.controller;
 
 import java.util.List;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,7 @@ import com.ruoyi.security.domain.SecurityEnvironmentalOhsManagementSystemDocumen
 import com.ruoyi.security.service.ISecurityEnvironmentalOhsManagementSystemDocumentsService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 环境职业健康安全管理体系文件清单Controller
@@ -27,6 +31,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author wang
  * @date 2025-03-02
  */
+@Slf4j
 @RestController
 @RequestMapping("/security/OhsDocuments")
 public class SecurityEnvironmentalOhsManagementSystemDocumentsController extends BaseController
@@ -100,5 +105,17 @@ public class SecurityEnvironmentalOhsManagementSystemDocumentsController extends
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityEnvironmentalOhsManagementSystemDocumentsService.deleteSecurityEnvironmentalOhsManagementSystemDocumentsByIds(ids));
+    }
+
+    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PostMapping("/import")
+    public void importTable( MultipartFile excelFile) {
+        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+        try {
+            securityEnvironmentalOhsManagementSystemDocumentsService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+        } catch (Exception e) {
+            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+        }
     }
 }

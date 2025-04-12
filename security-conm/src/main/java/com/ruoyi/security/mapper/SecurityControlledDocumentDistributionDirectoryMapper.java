@@ -58,4 +58,7 @@ public interface SecurityControlledDocumentDistributionDirectoryMapper
      * @return 结果
      */
     public int deleteSecurityControlledDocumentDistributionDirectoryByIds(Long[] ids);
+
+
+
 }

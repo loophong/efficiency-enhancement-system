@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+ import request from '@/utils/request'
 
 // 查询环境职业健康安全管理体系文件清单列表
 export function listOhsDocuments(query) {
@@ -40,5 +40,16 @@ export function delOhsDocuments(id) {
   return request({
     url: '/security/OhsDocuments/' + id,
     method: 'delete'
+  })
+}
+
+export function importFile(formData) {
+  return request({
+    url: '/security/OhsDocuments/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }

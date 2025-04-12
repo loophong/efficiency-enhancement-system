@@ -42,3 +42,16 @@ export function delLegallist(id) {
     method: 'delete'
   })
 }
+// 导入安全/环境法律法规识别清单
+export function importFile(formData) {
+  return request({
+    url: '/security/legallist/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+

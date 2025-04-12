@@ -1,5 +1,6 @@
 package com.ruoyi.security.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -19,15 +20,15 @@ public class SecurityControlledDocumentDistributionDirectory extends BaseEntity
     private Long id;
 
     /** 文件名称 */
-    @Excel(name = "文件名称")
+    @ExcelProperty(value = "文件名称")
     private String fileName;
 
     /** 编号 */
-    @Excel(name = "编号")
+    @ExcelProperty(value = "编号")
     private String documentNumber;
 
     /** 接收单位 */
-    @Excel(name = "接收单位")
+    @ExcelProperty(value = "接收单位")
     private String receivingUnit;
 
     public void setId(Long id) 

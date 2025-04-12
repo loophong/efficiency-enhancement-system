@@ -141,7 +141,7 @@
           <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="考核内容">
-          <editor v-model="form.assessmentContent" :min-height="192"/>
+          <el-input v-model="form.assessmentContent"  type="textarea" placeholder="请输入内容"/>
         </el-form-item>
         <el-form-item label="考试时间" prop="examinationDate">
           <el-date-picker clearable

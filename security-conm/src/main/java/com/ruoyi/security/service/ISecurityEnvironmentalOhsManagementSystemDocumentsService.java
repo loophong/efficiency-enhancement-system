@@ -2,6 +2,7 @@ package com.ruoyi.security.service;
 
 import java.util.List;
 import com.ruoyi.security.domain.SecurityEnvironmentalOhsManagementSystemDocuments;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 环境职业健康安全管理体系文件清单Service接口
@@ -58,4 +59,6 @@ public interface ISecurityEnvironmentalOhsManagementSystemDocumentsService
      * @return 结果
      */
     public int deleteSecurityEnvironmentalOhsManagementSystemDocumentsById(Long id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
 }

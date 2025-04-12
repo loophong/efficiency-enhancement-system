@@ -42,3 +42,15 @@ export function delControlleddirectory(id) {
     method: 'delete'
   })
 }
+
+// 导入受控文件发放目录
+export function importFile(formData) {
+  return request({
+    url: '/security/controlleddirectory/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type':'multipart/form-data'
+    }
+  })
+}

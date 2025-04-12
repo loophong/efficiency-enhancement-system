@@ -1,8 +1,6 @@
 package com.ruoyi.security.domain;
 
 import java.util.Date;
-
-import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -10,12 +8,12 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 安全/环境法律法规识别清单对象 secutity_legal_regulations_identification_list
+ * 安全法律法规识别清单对象 secutity_legal_regulations_identification_list_1
  * 
  * @author wang
- * @date 2025-03-02
+ * @date 2025-04-11
  */
-public class SecutityLegalRegulationsIdentificationList extends BaseEntity
+public class SecutityLegalRegulationsIdentificationList1 extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
