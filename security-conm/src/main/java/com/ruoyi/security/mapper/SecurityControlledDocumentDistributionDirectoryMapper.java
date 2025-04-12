@@ -60,5 +60,5 @@ public interface SecurityControlledDocumentDistributionDirectoryMapper
     public int deleteSecurityControlledDocumentDistributionDirectoryByIds(Long[] ids);
 
 
-
+    void batchInsert(List<SecurityControlledDocumentDistributionDirectory> list);
 }

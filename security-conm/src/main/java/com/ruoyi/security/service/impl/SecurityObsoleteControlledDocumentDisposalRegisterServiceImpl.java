@@ -3,8 +3,6 @@ package com.ruoyi.security.service.impl;
 import java.util.List;
 
 import com.alibaba.excel.EasyExcel;
-import com.ruoyi.security.domain.SecurityHazardousChemicalInventory;
-import com.ruoyi.security.listener.HazardousChemicalInventoryListener;
 import com.ruoyi.security.listener.SecurityObsoleteControlledDocumentDisposalRegisterListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,11 +104,10 @@ public class SecurityObsoleteControlledDocumentDisposalRegisterServiceImpl imple
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecurityObsoleteControlledDocumentDisposalRegister.class,
                         new SecurityObsoleteControlledDocumentDisposalRegisterListener(securityObsoleteControlledDocumentDisposalRegisterMapper)).headRowNumber(3).sheet().doRead();
-
                 log.info("读取文件成功: {}", fileName);
 
             } catch (Exception e) {
-                log.info("读取文件失败: {}", e.getMessage());
+                log.info("读取文件失败: {}", e.getMessage(),e);
             }
 
 //            return R.ok("读取" + fileName + "文件成功");

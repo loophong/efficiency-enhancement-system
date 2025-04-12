@@ -2,10 +2,13 @@ package com.ruoyi.security.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.util.ListUtils;
 import com.ruoyi.security.domain.SecurityHazardousMaterialsSafetyInspection;
 import com.ruoyi.security.mapper.SecurityHazardousMaterialsSafetyInspectionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @Slf4j
 public class HazardousMaterialsSafetyInspectioListener implements ReadListener<SecurityHazardousMaterialsSafetyInspection> {
@@ -16,6 +19,9 @@ public class HazardousMaterialsSafetyInspectioListener implements ReadListener<S
     public HazardousMaterialsSafetyInspectioListener(SecurityHazardousMaterialsSafetyInspectionMapper securityHazardousMaterialsSafetyInspectionMapperr) {
         this.securityHazardousMaterialsSafetyInspectionMapper = securityHazardousMaterialsSafetyInspectionMapperr;
     }
+    private static final int BATCH_COUNT = 1000;
+
+    private List<SecurityHazardousMaterialsSafetyInspection> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
 
     /**
@@ -26,40 +32,21 @@ public class HazardousMaterialsSafetyInspectioListener implements ReadListener<S
      */
     @Override
     public void invoke(SecurityHazardousMaterialsSafetyInspection registerInfoExcel, AnalysisContext analysisContext) {
-        // 将监听到的数据存入缓存集合中
-
         log.info("当前读取的数据为:" + registerInfoExcel);
 
-        if (registerInfoExcel.getInspectionItem() != null) {
-            securityHazardousMaterialsSafetyInspectionMapper.insertSecurityHazardousMaterialsSafetyInspection(registerInfoExcel);
+        if (registerInfoExcel.getInspectionItem() != null || registerInfoExcel.getId() instanceof Long) {
+            cacheDataList.add(registerInfoExcel);
+        }
+        if(registerInfoExcel.getInspectionItem()==null){
+            registerInfoExcel.setInspectionItem(cacheDataList.get(cacheDataList.size() - 1).getInspectionItem());
+            cacheDataList.add(registerInfoExcel);
         }
 
     }
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         log.info("读取完毕");
+        securityHazardousMaterialsSafetyInspectionMapper.batchInsert(cacheDataList);
     }
 
-//    /**
-//     * 处理结尾, 不足100条
-//     *
-//     * @param analysisContext 全局监听内容
-//     */
-//    @Override
-//    public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-//        saveToDB();
-//        log.info("所有数据解析完成");
-//    }
-//
-//    /**
-//     * 将读取到的内容写入DB
-//     */
-//    private void saveToDB() {
-//        log.info("开始写入数据库");
-////        historyOrderMapper.insert(cacheDataList);
-//        historyOrderMapper.batchInsert(cacheDataList);
-//
-////        historyOrderService.saveBatch(cacheDataList, BATCH_COUNT);
-//
-//    }
 }

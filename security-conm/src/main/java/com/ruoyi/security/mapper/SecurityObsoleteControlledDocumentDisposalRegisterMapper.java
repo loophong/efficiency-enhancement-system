@@ -5,15 +5,15 @@ import com.ruoyi.security.domain.SecurityObsoleteControlledDocumentDisposalRegis
 
 /**
  * 作废受控文件收回销毁登记Mapper接口
- * 
+ *
  * @author wang
  * @date 2025-03-02
  */
-public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper 
+public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 {
     /**
      * 查询作废受控文件收回销毁登记
-     * 
+     *
      * @param id 作废受控文件收回销毁登记主键
      * @return 作废受控文件收回销毁登记
      */
@@ -21,7 +21,7 @@ public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 
     /**
      * 查询作废受控文件收回销毁登记列表
-     * 
+     *
      * @param securityObsoleteControlledDocumentDisposalRegister 作废受控文件收回销毁登记
      * @return 作废受控文件收回销毁登记集合
      */
@@ -29,7 +29,7 @@ public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 
     /**
      * 新增作废受控文件收回销毁登记
-     * 
+     *
      * @param securityObsoleteControlledDocumentDisposalRegister 作废受控文件收回销毁登记
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 
     /**
      * 修改作废受控文件收回销毁登记
-     * 
+     *
      * @param securityObsoleteControlledDocumentDisposalRegister 作废受控文件收回销毁登记
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 
     /**
      * 删除作废受控文件收回销毁登记
-     * 
+     *
      * @param id 作废受控文件收回销毁登记主键
      * @return 结果
      */
@@ -53,9 +53,11 @@ public interface SecurityObsoleteControlledDocumentDisposalRegisterMapper
 
     /**
      * 批量删除作废受控文件收回销毁登记
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityObsoleteControlledDocumentDisposalRegisterByIds(Long[] ids);
+
+    void batchInsert(List<SecurityObsoleteControlledDocumentDisposalRegister> List);
 }

@@ -83,7 +83,7 @@
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="检查项目" align="center" prop="inspectionItem" />
       <el-table-column label="检查标准" align="center" prop="inspectionStandard" />
-      <el-table-column label="检查挤入" align="center" prop="inspectionRecord" />
+      <el-table-column label="检查记录" align="center" prop="inspectionRecord" />
       <el-table-column label="检查人" align="center" prop="inspecter" />
       <el-table-column label="检查时间" align="center" prop="inspectionTime" width="180">
         <template #default="scope">
@@ -139,7 +139,7 @@
         <el-form-item label="检查标准" prop="inspectionStandard">
           <el-input v-model="form.inspectionStandard" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="检查挤入" prop="inspectionRecord">
+        <el-form-item label="检查记录" prop="inspectionRecord">
           <el-input v-model="form.inspectionRecord" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="检查人" prop="inspecter">
