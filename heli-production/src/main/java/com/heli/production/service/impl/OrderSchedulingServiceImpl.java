@@ -10,6 +10,7 @@ import com.heli.production.service.IMainPlanTableService;
 import com.heli.production.service.IOrderSchedulingService;
 import com.heli.production.mapper.OrderSchedulingMapper;
 import com.heli.production.service.IWorkdayService;
+import com.ruoyi.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,8 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
                 log.info("最晚上线时间: {}", sdf.format(lastOnlineDate));
 
                 // 判断是否超期
+                Date now = DateUtils.parseDate(DateUtils.getDate());
+                orderSchedulingEntity.setIsOverdue(now.before(lastOnlineDate) ? 0 : 1);
 
                 // 判断是否加急
                 String remarks = orderSchedulingEntity.getRemarks();
@@ -117,7 +120,7 @@ public class OrderSchedulingServiceImpl extends ServiceImpl<OrderSchedulingMappe
                 }
                 // 设置产能类型
                 orderSchedulingEntity.setCapacityType(cycle.getCapacityVehicleModel());
-            }else{
+            } else {
                 log.info("不存在该车型");
                 unexistList.add(orderSchedulingEntity);
                 continue;
