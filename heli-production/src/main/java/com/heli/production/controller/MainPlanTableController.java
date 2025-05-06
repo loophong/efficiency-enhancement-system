@@ -65,7 +65,13 @@ public class MainPlanTableController extends BaseController {
             if (list.contains(entity.getVehicleModel())) {
                 continue;
             }
-            list.add(entity.getVehicleModel());
+            if(entity.getVehicleModel() == null){
+                list.add("订单："+entity.getOrderNumber()+"车型为空");
+            }else {
+                list.add(entity.getVehicleModel());
+            }
+            log.info("车型不存在的" + String.valueOf(entity));
+
         }
         return AjaxResult.success(list);
     }
