@@ -32,17 +32,31 @@ public class HazardousMaterialsSafetyInspectioListener implements ReadListener<S
      */
     @Override
     public void invoke(SecurityHazardousMaterialsSafetyInspection registerInfoExcel, AnalysisContext analysisContext) {
-        log.info("当前读取的数据为:" + registerInfoExcel);
+        log.info("当前读取的数据为: {}", registerInfoExcel);
 
-        if (registerInfoExcel.getInspectionItem() != null || registerInfoExcel.getId() instanceof Long) {
+        // 检查数据是否有效
+        if (isValidData(registerInfoExcel)) {
             cacheDataList.add(registerInfoExcel);
         }
-        if(registerInfoExcel.getInspectionItem()==null){
+
+        // 如果 inspectionItem 为空，使用上一个记录的 inspectionItem
+        if (registerInfoExcel.getInspectionItem() == null && !cacheDataList.isEmpty()) {
             registerInfoExcel.setInspectionItem(cacheDataList.get(cacheDataList.size() - 1).getInspectionItem());
             cacheDataList.add(registerInfoExcel);
         }
-
     }
+
+    /**
+     * 检查数据是否有效
+     *
+     * @param registerInfoExcel 当前读取的数据
+     * @return 数据是否有效
+     */
+    private boolean isValidData(SecurityHazardousMaterialsSafetyInspection registerInfoExcel) {
+        // 检查 inspectionItem 是否不为空，或者 id 是 Long 类型
+        return registerInfoExcel.getInspectionItem() != null || registerInfoExcel.getId() instanceof Long;
+    }
+
     @Override
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         log.info("读取完毕");
