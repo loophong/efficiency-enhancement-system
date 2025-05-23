@@ -185,8 +185,6 @@ const drawerUrl = ref("");
 const currentStatus = ref("默认");
 const currentUserName = ref("");
 const currentUserId = ref(0);
-const router = useRouter();
-const route = useRoute();
 
 const data = reactive({
   form: {},
@@ -214,23 +212,6 @@ const data = reactive({
 
 const { queryParams, form, rules, formForHistory } = toRefs(data);
 
-const routerDeviceNum = route.query.deviceNum;
-const handleRouteParams = () => {
-  if (routerDeviceNum) {
-    console.log('Received deviceNum:', routerDeviceNum);
-    data.queryParams.deviceNum = routerDeviceNum;
-    getList(); // 假设需要根据路由参数重新获取列表数据
-  } else {
-    getList();
-    console.log('No specific route params received.');
-    // 可以选择性地在这里添加其他逻辑
-  }
-};
-
-// 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
-onMounted(() => {
-  handleRouteParams();
-});
 
 
 function resetGetList() {

@@ -9,6 +9,8 @@ import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
 import com.ruoyi.common.utils.SecurityUtils;
 import lombok.extern.log4j.Log4j2;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Log4j2
@@ -82,6 +84,7 @@ public class MajorPlanExcelListener implements ReadListener<DeviceMajorPlan> {
 //            } else {
             // 否则，执行插入操作
             data.setCreateBy(userId.toString());
+            data.setCreateTime(new Date());
             deviceMajorPlanMapper.insertDeviceMajorPlan(data);
 //            }
         }

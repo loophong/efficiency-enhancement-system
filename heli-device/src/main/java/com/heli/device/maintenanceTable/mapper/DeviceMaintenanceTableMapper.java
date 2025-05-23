@@ -32,6 +32,8 @@ public interface DeviceMaintenanceTableMapper extends BaseMapper<DeviceMaintenan
      */
     public List<DeviceMaintenanceTable> selectDeviceMaintenanceTableList(DeviceMaintenanceTable deviceMaintenanceTable);
 
+
+
     @Select({
             "<script>",
             "SELECT * FROM device_maintenance_table",

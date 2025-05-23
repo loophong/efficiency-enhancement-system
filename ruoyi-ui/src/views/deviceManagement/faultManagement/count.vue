@@ -74,7 +74,11 @@
         <!--Excel 参数导入 -->
         <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
         </el-button>
-        <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
+        <el-dialog title="导入指标统计Excel文件" v-model="showDialog" width="30%">
+          <span>上传表：</span>
+          <span style="color:darkgreen">设备指标统计表</span>
+          <br />
+          <br />
           <el-form :model="formExport" ref="formExportRef" :rules="rulesExport" label-width="90px">
             <el-form-item label="选择年份" prop="year">
               <el-date-picker v-model="formExport.year" type="year" placeholder="请选择年份" value-format="YYYY"

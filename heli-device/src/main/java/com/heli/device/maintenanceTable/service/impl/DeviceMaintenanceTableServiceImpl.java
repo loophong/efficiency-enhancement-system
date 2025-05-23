@@ -67,24 +67,28 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
     public List<Map<String, Object>> handleTreeList(DeviceMaintenanceTable deviceMaintenanceTable){
         // 转换逻辑
         List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectDeviceMaintenanceTableList(deviceMaintenanceTable);
-        log.info(list.toString());
-        List<Map<String, Object>> transformedList = list.stream().collect(Collectors.groupingBy(DeviceMaintenanceTable::getDeviceNum))
+        // 过滤掉 faultType 为 null 或空的项
+        List<DeviceMaintenanceTable> processedList = list.stream()
+                .peek(item -> {
+                    if (item.getFaultType() == null || item.getFaultType().trim().isEmpty()) {
+                        item.setFaultType("未定义类型");
+                    }
+                })
+                .collect(Collectors.toList());
+        List<Map<String, Object>> transformedList = processedList.stream().collect(Collectors.groupingBy(DeviceMaintenanceTable::getDeviceNum))
                 .entrySet().stream().map(entry -> {
                     Map<String, Object> deviceMap = new HashMap<>();
                     String deviceNum = entry.getKey();
-
                     // 为deviceMap生成一个唯一的ID
                     String deviceId = UUID.nameUUIDFromBytes(deviceNum.getBytes()).toString();
                     deviceMap.put("uniqueId", deviceId);
                     deviceMap.put("deviceNum", deviceNum);
-
 
                     List<Map<String, Object>> faultTypeChildren = entry.getValue().stream()
                             .collect(Collectors.groupingBy(DeviceMaintenanceTable::getFaultType))
                             .entrySet().stream().map(faultEntry -> {
                                 Map<String, Object> faultTypeMap = new HashMap<>();
                                 String faultType = faultEntry.getKey();
-
                                 // 为issueTypeMap生成一个唯一的ID，基于设备编号和问题类型组合
                                 String issueTypeId = UUID.nameUUIDFromBytes((deviceNum + faultType).getBytes()).toString();
                                 faultTypeMap.put("uniqueId", issueTypeId);

@@ -48,13 +48,18 @@
             <!--Excel 参数导入 -->
             <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
             </el-button>
-            <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
+            <el-dialog title="导入班组计划Excel文件" v-model="showDialog" width="30%">
               <el-form :model="form" ref="formRef" label-width="90px">
               </el-form>
+              <span>上传表：</span>
+              <span style="color:darkgreen">自主保全计划</span>
+              <br />
+              <br />
               <div class="upload-area">
                 <i class="el-icon-upload"></i>
                 <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
               </div>
+              <br />
               <span class="dialog-footer">
                 <el-button @click="showDialog = false">取 消</el-button>
                 <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
@@ -276,6 +281,7 @@ import record from "./record.vue"
 import { ElMessage } from 'element-plus'
 import { getInfo } from "@/api/login";
 import { ElNotification } from 'element-plus'
+import { format } from 'date-fns';
 
 
 const { proxy } = getCurrentInstance();

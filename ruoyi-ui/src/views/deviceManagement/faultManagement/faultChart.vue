@@ -270,7 +270,7 @@ function handleToAnalysis(row, module, destination) {
   white-space: normal !important;
   pointer-events: auto !important;
   word-break: break-word;
-  max-width: 400px;
+  /* max-width: 400px; */
   overflow-y: hidden !important;
   /* 自动高度 */
   height: auto;
