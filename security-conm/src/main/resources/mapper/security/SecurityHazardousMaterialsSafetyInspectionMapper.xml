@@ -50,6 +50,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionTime != null">#{inspectionTime},</if>
          </trim>
     </insert>
+    <insert id="batchInsert" parameterType="list">
+        insert into security_hazardous_materials_safety_inspection (inspection_item, inspection_standard, inspection_record, inspecter, inspection_time) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.inspectionItem}, #{item.inspectionStandard}, #{item.inspectionRecord}, #{item.inspecter}, #{item.inspectionTime})
+        </foreach>
+    </insert>
 
     <update id="updateSecurityHazardousMaterialsSafetyInspection" parameterType="SecurityHazardousMaterialsSafetyInspection">
         update security_hazardous_materials_safety_inspection

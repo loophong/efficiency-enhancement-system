@@ -58,4 +58,6 @@ public interface SecurityHazardousMaterialsSafetyInspectionMapper
      * @return 结果
      */
     public int deleteSecurityHazardousMaterialsSafetyInspectionByIds(Long[] ids);
+
+    void batchInsert(List<SecurityHazardousMaterialsSafetyInspection> List);
 }

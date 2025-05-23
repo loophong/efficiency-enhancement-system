@@ -104,8 +104,6 @@ public class SecurityHazardousChemicalInventoryServiceImpl implements ISecurityH
             log.info("开始读取文件: {}", fileName);
 
             try {
-
-
                 EasyExcel.read(excelFile.getInputStream(), SecurityHazardousChemicalInventory.class,
                         new HazardousChemicalInventoryListener(securityHazardousChemicalInventoryMapper)).headRowNumber(4).sheet().doRead();
 

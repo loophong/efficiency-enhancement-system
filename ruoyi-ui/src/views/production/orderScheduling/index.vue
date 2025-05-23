@@ -1055,15 +1055,15 @@ function uploadFile() {
     formData.append('date', uploadDate.value);
     formData.append('excelFile', file);
     importFile(formData).then((response) => {
-      console.log("导入结果：" + response);
+      console.log("导入结果：" + JSON.stringify(response) );
 
-      if (response.length === 0) {
+      if (response.data.length === 0) {
         proxy.$modal.msgSuccess("导入成功");
         getList();
         uploadDialogVisible.value = false;
         isLoading.value = false;
       } else {
-// 使用对话框提示用户，并且点击确认才可关闭
+        // 使用对话框提示用户，并且点击确认才可关闭
         proxy.$modal.confirm('导入失败，车型的生产周期不存在，请填写后重新导入：' + JSON.stringify(response.data), '导入失败', {
           confirmButtonText: '确认',
           cancelButtonText: '取消',

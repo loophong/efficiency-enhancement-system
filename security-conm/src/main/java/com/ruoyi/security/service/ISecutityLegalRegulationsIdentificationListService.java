@@ -2,6 +2,7 @@ package com.ruoyi.security.service;
 
 import java.util.List;
 import com.ruoyi.security.domain.SecutityLegalRegulationsIdentificationList;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 安全/环境法律法规识别清单Service接口
@@ -58,4 +59,5 @@ public interface ISecutityLegalRegulationsIdentificationListService
      * @return 结果
      */
     public int deleteSecutityLegalRegulationsIdentificationListById(Long id);
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
 }

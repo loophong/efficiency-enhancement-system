@@ -7,9 +7,9 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 作废受控文件收回销毁登记对象 security_obsolete_controlled_document_disposal_register
- * 
+ *
  * @author wang
- * @date 2025-03-02
+ * @date 2025-04-12
  */
 public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEntity
 {
@@ -32,104 +32,76 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
 
     /** 是否销毁 */
     @Excel(name = "是否销毁")
-    private Integer isDestroyed;
+    private String isDestroyed;
 
     /** 备注 */
     @Excel(name = "备注")
     private String remarks;
 
-    /** 年份 */
-    @Excel(name = "年份")
-    private String year;
-
-    /** 确认人 */
-    @Excel(name = "确认人")
-    private String reviewer;
-
-    public void setId(Long id) 
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setFileName(String fileName) 
+    public void setFileName(String fileName)
     {
         this.fileName = fileName;
     }
 
-    public String getFileName() 
+    public String getFileName()
     {
         return fileName;
     }
-    public void setDocumentNumber(String documentNumber) 
+    public void setDocumentNumber(String documentNumber)
     {
         this.documentNumber = documentNumber;
     }
 
-    public String getDocumentNumber() 
+    public String getDocumentNumber()
     {
         return documentNumber;
     }
-    public void setRecyclingDepartment(String recyclingDepartment) 
+    public void setRecyclingDepartment(String recyclingDepartment)
     {
         this.recyclingDepartment = recyclingDepartment;
     }
 
-    public String getRecyclingDepartment() 
+    public String getRecyclingDepartment()
     {
         return recyclingDepartment;
     }
-    public void setIsDestroyed(Integer isDestroyed) 
+    public void setIsDestroyed(String isDestroyed)
     {
         this.isDestroyed = isDestroyed;
     }
 
-    public Integer getIsDestroyed() 
+    public String getIsDestroyed()
     {
         return isDestroyed;
     }
-    public void setRemarks(String remarks) 
+    public void setRemarks(String remarks)
     {
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
-    }
-    public void setYear(String year) 
-    {
-        this.year = year;
-    }
-
-    public String getYear() 
-    {
-        return year;
-    }
-    public void setReviewer(String reviewer) 
-    {
-        this.reviewer = reviewer;
-    }
-
-    public String getReviewer() 
-    {
-        return reviewer;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("id", getId())
-            .append("fileName", getFileName())
-            .append("documentNumber", getDocumentNumber())
-            .append("recyclingDepartment", getRecyclingDepartment())
-            .append("isDestroyed", getIsDestroyed())
-            .append("remarks", getRemarks())
-            .append("year", getYear())
-            .append("reviewer", getReviewer())
-            .toString();
+                .append("id", getId())
+                .append("fileName", getFileName())
+                .append("documentNumber", getDocumentNumber())
+                .append("recyclingDepartment", getRecyclingDepartment())
+                .append("isDestroyed", getIsDestroyed())
+                .append("remarks", getRemarks())
+                .toString();
     }
 }

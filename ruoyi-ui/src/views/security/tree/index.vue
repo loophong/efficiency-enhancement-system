@@ -42,7 +42,7 @@
         </el-tab-pane>
       
         <el-tab-pane label="可视化视图" name="visualization">
-          <div ref="echartContainer" style="width: 1250px; height: 1500px;"></div>
+          <div ref="echartContainer" style="width: 1250px; height: 2000px;"></div>
         </el-tab-pane>
       </el-tabs>
   

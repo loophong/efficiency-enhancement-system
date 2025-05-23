@@ -17,14 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="发生时间" prop="happenTime">
+      <!-- <el-form-item label="发生时间" prop="happenTime">
         <el-date-picker clearable
           v-model="queryParams.happenTime"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择发生时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="文件名称" prop="fileName">
         <el-input
           v-model="queryParams.fileName"
@@ -33,7 +33,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item> -->
-      <el-form-item label="完成时间" prop="completeTime">
+      <!-- <el-form-item label="完成时间" prop="completeTime">
         <el-date-picker clearable
           v-model="queryParams.completeTime"
           type="date"
@@ -56,7 +56,7 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <!-- <el-form-item label="备选1" prop="one">
         <el-input
           v-model="queryParams.one"
@@ -173,7 +173,7 @@
 
     <!-- 添加或修改质量通知单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="happenRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="happenRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>

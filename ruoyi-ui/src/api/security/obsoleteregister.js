@@ -42,3 +42,15 @@ export function delObsoleteregister(id) {
     method: 'delete'
   })
 }
+
+// 导入作废受控文件收回销毁登记
+export function importFile(formData) {
+  return request({
+    url: '/security/obsoleteregister/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type':'multipart/form-data'
+    }
+  })
+}

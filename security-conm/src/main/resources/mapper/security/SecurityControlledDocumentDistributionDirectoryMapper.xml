@@ -42,6 +42,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="receivingUnit != null">#{receivingUnit},</if>
          </trim>
     </insert>
+<!--    <insert id="batchInsert">-->
+<!--        insert into security_controlled_document_distribution_directory-->
+<!--        <foreach collection="list" item="item" index="index" separator=";">-->
+<!--            (-->
+<!--            <if test="item.fileName != null and item.fileName != ''">#{item.fileName},</if>-->
+<!--            <if test="item.documentNumber != null">#{item.documentNumber},</if>-->
+<!--            <if test="item.receivingUnit != null">#{item.receivingUnit},</if>-->
+<!--            )-->
+<!--        </foreach>-->
+<!--    </insert>-->
+
+    <insert id="batchInsert" parameterType="list">
+        insert into security_controlled_document_distribution_directory(id,file_name,document_number,receiving_unit)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id}, #{item.fileName}, #{item.documentNumber}, #{item.receivingUnit})
+        </foreach>
+    </insert>
 
     <update id="updateSecurityControlledDocumentDistributionDirectory" parameterType="SecurityControlledDocumentDistributionDirectory">
         update security_controlled_document_distribution_directory

@@ -1,13 +1,10 @@
-package com.heli.production.Listener;
+package com.heli.production.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.heli.production.domain.entity.HistoryOrderEntity;
 import com.heli.production.domain.entity.MainPlanTableEntity;
-import com.heli.production.mapper.HistoryOrderMapper;
 import com.heli.production.mapper.MainPlanTableMapper;
-import com.heli.production.service.IHistoryOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,26 +12,22 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
-public class HistoryOrderListener implements ReadListener<HistoryOrderEntity> {
+public class MainPlanTableListener implements ReadListener<MainPlanTableEntity> {
 
-    private static final int BATCH_COUNT = 1000;
+    private static final int BATCH_COUNT = 200;
+
 
     @Autowired
-    private HistoryOrderMapper historyOrderMapper;
+    private MainPlanTableMapper mainPlanTableMapper;
 
+    private Date uploadDate;
 
-    private Date orderYear;
+    private List<MainPlanTableEntity> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
-    private List<HistoryOrderEntity> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
-
-    public HistoryOrderListener(HistoryOrderMapper historyOrderMapper, Date orderYear) {
-        this.historyOrderMapper = historyOrderMapper;
-        this.orderYear = orderYear;
+    public MainPlanTableListener(MainPlanTableMapper mainPlanTableMapper, Date uploadDate) {
+        this.mainPlanTableMapper = mainPlanTableMapper;
+        this.uploadDate = uploadDate;
     }
-//    public HistoryOrderListener(IHistoryOrderService historyOrderService, Date orderYear) {
-//        this.historyOrderService = historyOrderService;
-//        this.orderYear = orderYear;
-//    }
 
     /**
      * 批量读取Excel写入DB
@@ -43,13 +36,13 @@ public class HistoryOrderListener implements ReadListener<HistoryOrderEntity> {
      * @param analysisContext   读取到的Excel内容
      */
     @Override
-    public void invoke(HistoryOrderEntity registerInfoExcel, AnalysisContext analysisContext) {
+    public void invoke(MainPlanTableEntity registerInfoExcel, AnalysisContext analysisContext) {
         // 将监听到的数据存入缓存集合中
 
         log.info("当前读取的数据为:" + registerInfoExcel);
 
-        if (registerInfoExcel.getOrderNumber() != null) {
-            registerInfoExcel.setOrderYear(orderYear);
+        if (registerInfoExcel.getOrderNumber() != null){
+            registerInfoExcel.setUploadDate(uploadDate);
             cacheDataList.add(registerInfoExcel);
         }
 
@@ -59,6 +52,7 @@ public class HistoryOrderListener implements ReadListener<HistoryOrderEntity> {
             cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
         }
     }
+
 
     /**
      * 处理结尾, 不足100条
@@ -76,10 +70,6 @@ public class HistoryOrderListener implements ReadListener<HistoryOrderEntity> {
      */
     private void saveToDB() {
         log.info("开始写入数据库");
-//        historyOrderMapper.insert(cacheDataList);
-        historyOrderMapper.batchInsert(cacheDataList);
-
-//        historyOrderService.saveBatch(cacheDataList, BATCH_COUNT);
-
+        mainPlanTableMapper.insert(cacheDataList);
     }
 }

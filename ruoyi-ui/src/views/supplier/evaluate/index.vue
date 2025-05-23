@@ -149,7 +149,7 @@
 
     <!-- 添加或修改评分表对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="evaluateRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="evaluateRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码"/>
         </el-form-item>

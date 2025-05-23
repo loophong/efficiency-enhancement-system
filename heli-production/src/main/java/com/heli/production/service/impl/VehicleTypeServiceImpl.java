@@ -3,7 +3,7 @@ package com.heli.production.service.impl;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.heli.production.Listener.VehicleTypeTableListener;
+import com.heli.production.listener.VehicleTypeTableListener;
 import com.heli.production.domain.entity.VehicleTypeEntity;
 import com.heli.production.service.IVehicleTypeService;
 import com.heli.production.mapper.VehicleTypeMapper;
