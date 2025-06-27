@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="remainingIssuesAnalysis != null  and remainingIssuesAnalysis != ''"> and remaining_issues_analysis like concat('%', #{remainingIssuesAnalysis}, '%')</if>
             <if test="maintenanceExamineStatus != null  and maintenanceExamineStatus != ''"> and maintenance_examine_status = #{maintenanceExamineStatus}</if>
             <if test="maintenanceExamineComment != null  and maintenanceExamineComment != ''"> and maintenance_examine_comment = #{maintenanceExamineComment}</if>
+            <if test="createTime != null"> AND YEARWEEK(create_time, 1) = YEARWEEK(#{createTime}, 1)</if>
             <if test="maintenanceDeadline != null and maintenanceDeadline != ''"> and maintenance_deadline = #{maintenanceDeadline}</if>
             <if test="majorGroup != null and majorGroup != ''"> and major_group = #{majorGroup}</if>
         </where>

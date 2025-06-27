@@ -65,6 +65,12 @@ public class DeviceGroupPlan extends BaseEntity
     @ExcelProperty(index = 8)
     private String monthFour;
 
+    @ExcelIgnore
+    private String lastCompleteTime;
+
+    @ExcelIgnore
+    private String rollTime;
+
     public void setGroupId(String groupId) 
     {
         this.groupId = groupId;
@@ -156,6 +162,26 @@ public class DeviceGroupPlan extends BaseEntity
         return monthFour;
     }
 
+    public void setLastCompleteTime(String lastCompleteTime)
+    {
+        this.lastCompleteTime = lastCompleteTime;
+    }
+
+    public String getLastCompleteTime()
+    {
+        return lastCompleteTime;
+    }
+
+    public void setRollTime(String rollTime)
+    {
+        this.rollTime = rollTime;
+    }
+
+    public String getRollTime()
+    {
+        return rollTime;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -171,6 +197,9 @@ public class DeviceGroupPlan extends BaseEntity
             .append("monthFour", getMonthFour())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
+            .append("updateBy", getUpdateBy())
+            .append("updateTime", getUpdateTime())
+            .append("lastCompleteTime", getLastCompleteTime())
             .toString();
     }
 }

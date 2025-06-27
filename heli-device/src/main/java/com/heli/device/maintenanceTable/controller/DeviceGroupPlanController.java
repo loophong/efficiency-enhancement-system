@@ -11,6 +11,8 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,6 +81,17 @@ public class DeviceGroupPlanController extends BaseController
         return getDataTable(list);
     }
 
+    @PostMapping("/reset")
+    public ResponseEntity<?> updatePlan() {
+        try {
+            String result = deviceGroupPlanService.updateDeviceGroupPlan();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("操作失败：" + e.getMessage());
+        }
+    }
+
     /**
      * 导出班组计划保养列表
      */
@@ -134,6 +147,8 @@ public class DeviceGroupPlanController extends BaseController
     {
         return toAjax(deviceGroupPlanService.deleteDeviceGroupPlanByGroupIds(groupIds));
     }
+
+
 
 
 
