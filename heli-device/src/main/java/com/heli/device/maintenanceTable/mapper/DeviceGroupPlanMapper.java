@@ -19,7 +19,7 @@ import org.springframework.data.repository.query.Param;
 public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
 {
 
-    List<DeviceGroupPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields);
+    List<DeviceGroupPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields,@Param("userId") String userId);
     /**
      * 查询班组计划保养
      * 

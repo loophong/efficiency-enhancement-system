@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             OR
             (
             <foreach collection="fields" item="field" separator=" OR ">
-                ${field} LIKE '%待审核%'
+                ${field} LIKE '%待审核%' AND create_by = #{userId}
             </foreach>
             )
         </where>

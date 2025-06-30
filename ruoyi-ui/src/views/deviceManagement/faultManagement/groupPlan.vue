@@ -499,10 +499,10 @@ function getList() {
           if (i.maintenanceCycle == '1') {
             i.monthFour = '待提交'
             showNotification('自主保全计划', '待提交')
-          } else if (i.maintenanceCycle == '2' && i.monthTwo) {
+          } else if (i.maintenanceCycle == '2' && !i.monthThree) {
             i.monthFour = '待提交'
             showNotification('自主保全计划', '待提交')
-          } else if (i.maintenanceCycle == '3' && i.monthOne) {
+          } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
             i.monthFour = '待提交'
             showNotification('自主保全计划', '待提交')
           } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {

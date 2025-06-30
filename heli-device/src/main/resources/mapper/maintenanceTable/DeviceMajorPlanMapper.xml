@@ -139,7 +139,7 @@
         FROM device_major_plan
         <where>
             <foreach collection="fields" item="field" separator="OR">
-                ${field} LIKE '%待审核%'
+                ${field} LIKE '%待审核%' AND create_by = #{userId}
             </foreach>
             OR
             (

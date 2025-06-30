@@ -64,8 +64,10 @@ public class DeviceGroupPlanController extends BaseController
             fields.add("month_"  + week);
         }
 
+        SecurityUtils securityUtils = new SecurityUtils();
+        String userId =securityUtils.getUserId().toString();
 
-        List<DeviceGroupPlan> list = deviceGroupPlanMapper.selectRecordsByAuditStatus(fields);
+        List<DeviceGroupPlan> list = deviceGroupPlanMapper.selectRecordsByAuditStatus(fields,userId);
         return getDataTable(list);
     }
 
