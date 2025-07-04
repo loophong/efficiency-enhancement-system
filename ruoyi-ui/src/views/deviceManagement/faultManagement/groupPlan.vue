@@ -348,6 +348,9 @@ const data = reactive({
     executeGroup: [
       { required: true, message: "执行班组不能为空", trigger: "blur" }
     ],
+    maintenanceCycle: [
+      { required: true, message: "保养周期不能为空", trigger: "blur" }
+    ],
   }
 });
 

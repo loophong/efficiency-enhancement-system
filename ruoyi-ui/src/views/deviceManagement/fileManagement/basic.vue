@@ -188,6 +188,8 @@ const currentUserId = ref(0);
 const router = useRouter();
 const route = useRoute();
 
+let routerDeviceNum = route.query.deviceNum;
+
 const data = reactive({
   form: {},
   formForHistory: {},
@@ -214,7 +216,8 @@ const data = reactive({
 
 const { queryParams, form, rules, formForHistory } = toRefs(data);
 
-const routerDeviceNum = route.query.deviceNum;
+
+
 const handleRouteParams = () => {
   if (routerDeviceNum) {
     console.log('Received deviceNum:', routerDeviceNum);
@@ -227,11 +230,21 @@ const handleRouteParams = () => {
   }
 };
 
+watch(() => ({ deviceNum: route.query.deviceNum, from: route.query.from }),
+  (newParams) => {
+    console.log('检测到新参数 deviceNum -->', newParams.deviceNum);
+    console.log('检测到新参数 from -->', newParams.from);
+    if (newParams.from && newParams.from != 'basic') {
+      routerDeviceNum = newParams.deviceNum;
+      handleRouteParams();
+    }
+  }
+);
+
 // 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
 onMounted(() => {
   handleRouteParams();
 });
-
 
 function resetGetList() {
   currentStatus.value = '默认';

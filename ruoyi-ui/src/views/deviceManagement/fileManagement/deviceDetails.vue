@@ -215,6 +215,7 @@ const daterangeFinancialDate = ref([]);
 
 
 var routerDeviceNum = route.query.deviceNum;
+var routerFrom = route.query.from;
 
 const data = reactive({
   form: {},
@@ -243,6 +244,7 @@ const { queryParams, form, rules } = toRefs(data);
 const handleRouteParams = () => {
   if (routerDeviceNum) {
     console.log('接收到参数:', routerDeviceNum);
+    console.log('接收到参数from:', routerFrom);
     data.queryParams.inventoryNum = routerDeviceNum;
     getList(); // 假设需要根据路由参数重新获取列表数据
   } else {
@@ -253,11 +255,17 @@ const handleRouteParams = () => {
 };
 
 
-watch(() => route.query.deviceNum, (newVal) => {
-  console.log('检测到新参数--->', newVal)
-  routerDeviceNum = newVal
-  handleRouteParams(newVal)
-})
+watch(() => ({ deviceNum: route.query.deviceNum, from: route.query.from }),
+  (newParams) => {
+    console.log('检测到新参数 deviceNum -->', newParams.deviceNum);
+    console.log('检测到新参数 from -->', newParams.from);
+    if (newParams.from && newParams.from != 'deviceDetails') {
+      routerDeviceNum = newParams.deviceNum;
+      handleRouteParams(newParams);
+    }
+  }
+);
+
 
 
 // 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
@@ -288,7 +296,7 @@ function cancel() {
 
 /** 跳转按钮操作 */
 function handleToRoute(row, module, destination) {
-  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.inventoryNum } });
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.inventoryNum, from: 'deviceDetails' } });
 }
 
 // 表单重置
