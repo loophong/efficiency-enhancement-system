@@ -33,17 +33,15 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
     private String description;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
-    private String statu;
+    private String approvalStatus;
 
     /** 审批科室 */
-    @Excel(name = "审批科室")
-    private String statuDepartment;
+    private String approvalDept;
 
     /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date statuTime;
+    private Date approvalTime;
 
     public void setId(Long id)
     {
@@ -81,32 +79,32 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
     {
         return description;
     }
-    public void setStatu(String statu)
+    public void setApprovalStatus(String approvalStatus)
     {
-        this.statu = statu;
+        this.approvalStatus = approvalStatus;
     }
 
-    public String getStatu()
+    public String getApprovalStatus()
     {
-        return statu;
+        return approvalStatus;
     }
-    public void setStatuDepartment(String statuDepartment)
+    public void setApprovalDept(String approvalDept)
     {
-        this.statuDepartment = statuDepartment;
-    }
-
-    public String getStatuDepartment()
-    {
-        return statuDepartment;
-    }
-    public void setStatuTime(Date statuTime)
-    {
-        this.statuTime = statuTime;
+        this.approvalDept = approvalDept;
     }
 
-    public Date getStatuTime()
+    public String getApprovalDept()
     {
-        return statuTime;
+        return approvalDept;
+    }
+    public void setApprovalTime(Date approvalTime)
+    {
+        this.approvalTime = approvalTime;
+    }
+
+    public Date getApprovalTime()
+    {
+        return approvalTime;
     }
 
     @Override
@@ -116,9 +114,9 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
                 .append("environment", getEnvironment())
                 .append("features", getFeatures())
                 .append("description", getDescription())
-                .append("statu", getStatu())
-                .append("statuDepartment", getStatuDepartment())
-                .append("statuTime", getStatuTime())
+                .append("approvalStatus", getApprovalStatus())
+                .append("approvalDept", getApprovalDept())
+                .append("approvalTime", getApprovalTime())
                 .toString();
     }
 }

@@ -9,13 +9,10 @@
         <result property="environment"    column="environment"    />
         <result property="features"    column="features"    />
         <result property="description"    column="description"    />
-        <result property="statu"    column="statu"    />
-        <result property="statuDepartment"    column="statu_department"    />
-        <result property="statuTime"    column="statu_time"    />
     </resultMap>
 
     <sql id="selectSecurityEnvironmentalOrganizationDescriptionVo">
-        select id, environment, features, description, statu, statu_department, statu_time from Security_environmental_organization_description
+        select id, environment, features, description from Security_environmental_organization_description
     </sql>
 
     <select id="selectSecurityEnvironmentalOrganizationDescriptionList" parameterType="SecurityEnvironmentalOrganizationDescription" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
@@ -23,9 +20,6 @@
         <where>
             <if test="environment != null  and environment != ''"> and environment like concat('%', #{environment}, '%')</if>
             <if test="features != null  and features != ''"> and features like concat('%', #{features}, '%')</if>
-            <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
-            <if test="statuDepartment != null  and statuDepartment != ''"> and statu_department = #{statuDepartment}</if>
-            <if test="statuTime != null "> and statu_time = #{statuTime}</if>
         </where>
     </select>
 
@@ -41,18 +35,12 @@
             <if test="environment != null">environment,</if>
             <if test="features != null">features,</if>
             <if test="description != null">description,</if>
-            <if test="statu != null">statu,</if>
-            <if test="statuDepartment != null">statu_department,</if>
-            <if test="statuTime != null">statu_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="environment != null">#{environment},</if>
             <if test="features != null">#{features},</if>
             <if test="description != null">#{description},</if>
-            <if test="statu != null">#{statu},</if>
-            <if test="statuDepartment != null">#{statuDepartment},</if>
-            <if test="statuTime != null">#{statuTime},</if>
         </trim>
     </insert>
 
@@ -62,9 +50,6 @@
             <if test="environment != null">environment = #{environment},</if>
             <if test="features != null">features = #{features},</if>
             <if test="description != null">description = #{description},</if>
-            <if test="statu != null">statu = #{statu},</if>
-            <if test="statuDepartment != null">statu_department = #{statuDepartment},</if>
-            <if test="statuTime != null">statu_time = #{statuTime},</if>
         </trim>
         where id = #{id}
     </update>

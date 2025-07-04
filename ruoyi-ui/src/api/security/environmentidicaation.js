@@ -42,3 +42,24 @@ export function delEnvironmentidicaation(id) {
     method: 'delete'
   })
 }
+
+// 导入环境识别
+export function importEnvironmentidicaation(formData) {
+  return request({
+    url: '/security/environmentidicaation/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 下载导入模板
+export function importTemplate() {
+  return request({
+    url: '/security/environmentidicaation/import/template',
+    method: 'get',
+    responseType: 'blob'
+  })
+}
