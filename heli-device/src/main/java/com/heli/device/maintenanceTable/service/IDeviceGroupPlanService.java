@@ -21,6 +21,9 @@ public interface IDeviceGroupPlanService
      */
     public DeviceGroupPlan selectDeviceGroupPlanByGroupId(String groupId);
 
+    //替换表中每周数据
+    public String updateDeviceGroupPlan();
+
     /**
      * 查询班组计划保养列表
      * 

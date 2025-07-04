@@ -716,13 +716,15 @@
     </el-dialog>
 
     <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
+      <el-button type="primary" @click="watchCurrentWeek" v-if="!showCurrent">仅查看本周</el-button>
+      <el-button type="primary" @click="watchAllWeek" v-else>查看所有</el-button>
       <el-table v-loading="loading" :data="listForTip" @selection-change="handleSelectionChange" border>
         <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
         <el-table-column label="部位" align="center" prop="majorPosition" />
         <el-table-column label="保养维修项目" align="center" prop="majorProject" width="280" />
         <el-table-column label="周期" align="center" prop="majorCycleNum" />
         <el-table-column label="人员" align="center" prop="majorPeople" />
-        <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="needShow['weekJanOne']">
+        <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="ifCurrentMonth(1)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJanOne')">
@@ -734,7 +736,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="一月2W" align="center" prop="weekJanTwo" v-if="needShow['weekJanTwo']">
+        <el-table-column label="一月2W" align="center" prop="weekJanTwo" v-if="ifCurrentMonth(1)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJanTwo')">
@@ -746,7 +748,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="一月3W" align="center" prop="weekJanThree" v-if="needShow['weekJanThree']">
+        <el-table-column label="一月3W" align="center" prop="weekJanThree" v-if="ifCurrentMonth(1)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJanThree')">
@@ -758,7 +760,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="一月4W" align="center" prop="weekJanFour" v-if="needShow['weekJanFour']">
+        <el-table-column label="一月4W" align="center" prop="weekJanFour" v-if="ifCurrentMonth(1)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJanFour')">
@@ -770,7 +772,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="二月1W" align="center" prop="weekFebOne" v-if="needShow['weekFebOne']">
+        <el-table-column label="二月1W" align="center" prop="weekFebOne" v-if="ifCurrentMonth(2)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekFebOne')">
@@ -782,7 +784,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="二月2W" align="center" prop="weekFebTwo" v-if="needShow['weekFebTwo']">
+        <el-table-column label="二月2W" align="center" prop="weekFebTwo" v-if="ifCurrentMonth(2)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekFebTwo')">
@@ -794,7 +796,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="二月3W" align="center" prop="weekFebThree" v-if="needShow['weekFebThree']">
+        <el-table-column label="二月3W" align="center" prop="weekFebThree" v-if="ifCurrentMonth(2)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekFebThree')">
@@ -806,7 +808,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="二月4W" align="center" prop="weekFebFour" v-if="needShow['weekFebFour']">
+        <el-table-column label="二月4W" align="center" prop="weekFebFour" v-if="ifCurrentMonth(2)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekFebFour')">
@@ -818,7 +820,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="三月1W" align="center" prop="weekMarOne" v-if="needShow['weekMarOne']">
+        <el-table-column label="三月1W" align="center" prop="weekMarOne" v-if="ifCurrentMonth(3)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMarOne')">
@@ -830,7 +832,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="三月2W" align="center" prop="weekMarTwo" v-if="needShow['weekMarTwo']">
+        <el-table-column label="三月2W" align="center" prop="weekMarTwo" v-if="ifCurrentMonth(3)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMarTwo')">
@@ -842,7 +844,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="三月3W" align="center" prop="weekMarThree" v-if="needShow['weekMarThree']">
+        <el-table-column label="三月3W" align="center" prop="weekMarThree" v-if="ifCurrentMonth(3)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMarThree')">
@@ -854,7 +856,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="三月4W" align="center" prop="weekMarFour" v-if="needShow['weekMarFour']">
+        <el-table-column label="三月4W" align="center" prop="weekMarFour" v-if="ifCurrentMonth(3)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMarFour')">
@@ -866,7 +868,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="四月1W" align="center" prop="weekAprOne" v-if="needShow['weekAprOne']">
+        <el-table-column label="四月1W" align="center" prop="weekAprOne" v-if="ifCurrentMonth(4)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAprOne')">
@@ -878,7 +880,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="四月2W" align="center" prop="weekAprTwo" v-if="needShow['weekAprTwo']">
+        <el-table-column label="四月2W" align="center" prop="weekAprTwo" v-if="ifCurrentMonth(4)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAprTwo')">
@@ -890,7 +892,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="四月3W" align="center" prop="weekAprThree" v-if="needShow['weekAprThree']">
+        <el-table-column label="四月3W" align="center" prop="weekAprThree" v-if="ifCurrentMonth(4)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAprThree')">
@@ -902,7 +904,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="四月4W" align="center" prop="weekAprFour" v-if="needShow['weekAprFour']">
+        <el-table-column label="四月4W" align="center" prop="weekAprFour" v-if="ifCurrentMonth(4)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAprFour')">
@@ -914,7 +916,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="五月1W" align="center" prop="weekMayOne" v-if="needShow['weekMayOne']">
+        <el-table-column label="五月1W" align="center" prop="weekMayOne" v-if="ifCurrentMonth(5)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMayOne')">
@@ -926,7 +928,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="五月2W" align="center" prop="weekMayTwo" v-if="needShow['weekMayTwo']">
+        <el-table-column label="五月2W" align="center" prop="weekMayTwo" v-if="ifCurrentMonth(5)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMayTwo')">
@@ -938,7 +940,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="五月3W" align="center" prop="weekMayThree" v-if="needShow['weekMayThree']">
+        <el-table-column label="五月3W" align="center" prop="weekMayThree" v-if="ifCurrentMonth(5)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMayThree')">
@@ -950,7 +952,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="五月4W" align="center" prop="weekMayFour" v-if="needShow['weekMayFour']">
+        <el-table-column label="五月4W" align="center" prop="weekMayFour" v-if="ifCurrentMonth(5)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekMayFour')">
@@ -962,7 +964,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="六月1W" align="center" prop="weekJunOne" v-if="needShow['weekJunOne']">
+        <el-table-column label="六月1W" align="center" prop="weekJunOne" v-if="ifCurrentMonth(6)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJunOne')">
@@ -974,7 +976,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="六月2W" align="center" prop="weekJunTwo" v-if="needShow['weekJunTwo']">
+        <el-table-column label="六月2W" align="center" prop="weekJunTwo" v-if="ifCurrentMonth(6)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJunTwo')">
@@ -986,7 +988,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="六月3W" align="center" prop="weekJunThree" v-if="needShow['weekJunThree']">
+        <el-table-column label="六月3W" align="center" prop="weekJunThree" v-if="ifCurrentMonth(6)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJunThree')">
@@ -998,7 +1000,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="六月4W" align="center" prop="weekJunFour" v-if="needShow['weekJunFour']">
+        <el-table-column label="六月4W" align="center" prop="weekJunFour" v-if="ifCurrentMonth(6)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJunFour')">
@@ -1010,7 +1012,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="七月1W" align="center" prop="weekJulOne" v-if="needShow['weekJulOne']">
+        <el-table-column label="七月1W" align="center" prop="weekJulOne" v-if="ifCurrentMonth(7)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJulOne')">
@@ -1022,7 +1024,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="七月2W" align="center" prop="weekJulTwo" v-if="needShow['weekJulTwo']">
+        <el-table-column label="七月2W" align="center" prop="weekJulTwo" v-if="ifCurrentMonth(7)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJulTwo')">
@@ -1034,7 +1036,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="七月3W" align="center" prop="weekJulThree" v-if="needShow['weekJulThree']">
+        <el-table-column label="七月3W" align="center" prop="weekJulThree" v-if="ifCurrentMonth(7)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJulThree')">
@@ -1046,7 +1048,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="七月4W" align="center" prop="weekJulFour" v-if="needShow['weekJulFour']">
+        <el-table-column label="七月4W" align="center" prop="weekJulFour" v-if="ifCurrentMonth(7)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekJulFour')">
@@ -1058,7 +1060,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="八月1W" align="center" prop="weekAugOne" v-if="needShow['weekAugOne']">
+        <el-table-column label="八月1W" align="center" prop="weekAugOne" v-if="ifCurrentMonth(8)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAugOne')">
@@ -1070,7 +1072,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="八月2W" align="center" prop="weekAugTwo" v-if="needShow['weekAugTwo']">
+        <el-table-column label="八月2W" align="center" prop="weekAugTwo" v-if="ifCurrentMonth(8)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAugTwo')">
@@ -1082,7 +1084,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="八月3W" align="center" prop="weekAugThree" v-if="needShow['weekAugThree']">
+        <el-table-column label="八月3W" align="center" prop="weekAugThree" v-if="ifCurrentMonth(8)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAugThree')">
@@ -1094,7 +1096,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="八月4W" align="center" prop="weekAugFour" v-if="needShow['weekAugFour']">
+        <el-table-column label="八月4W" align="center" prop="weekAugFour" v-if="ifCurrentMonth(8)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekAugFour')">
@@ -1106,7 +1108,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="九月1W" align="center" prop="weekSepOne" v-if="needShow['weekSepOne']">
+        <el-table-column label="九月1W" align="center" prop="weekSepOne" v-if="ifCurrentMonth(9)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekSepOne')">
@@ -1118,7 +1120,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="九月2W" align="center" prop="weekSepTwo" v-if="needShow['weekSepTwo']">
+        <el-table-column label="九月2W" align="center" prop="weekSepTwo" v-if="ifCurrentMonth(9)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekSepTwo')">
@@ -1130,7 +1132,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="九月3W" align="center" prop="weekSepThree" v-if="needShow['weekSepThree']">
+        <el-table-column label="九月3W" align="center" prop="weekSepThree" v-if="ifCurrentMonth(9)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekSepThree')">
@@ -1142,7 +1144,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="九月4W" align="center" prop="weekSepFour" v-if="needShow['weekSepFour']">
+        <el-table-column label="九月4W" align="center" prop="weekSepFour" v-if="ifCurrentMonth(9)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekSepFour')">
@@ -1154,7 +1156,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十月1W" align="center" prop="weekOctOne" v-if="needShow['weekOctOne']">
+        <el-table-column label="十月1W" align="center" prop="weekOctOne" v-if="ifCurrentMonth(10)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekOctOne')">
@@ -1166,7 +1168,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十月2W" align="center" prop="weekOctTwo" v-if="needShow['weekOctTwo']">
+        <el-table-column label="十月2W" align="center" prop="weekOctTwo" v-if="ifCurrentMonth(10)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekOctTwo')">
@@ -1178,7 +1180,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十月3W" align="center" prop="weekOctThree" v-if="needShow['weekOctThree']">
+        <el-table-column label="十月3W" align="center" prop="weekOctThree" v-if="ifCurrentMonth(10)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekOctThree')">
@@ -1190,7 +1192,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十月4W" align="center" prop="weekOctFour" v-if="needShow['weekOctFour']">
+        <el-table-column label="十月4W" align="center" prop="weekOctFour" v-if="ifCurrentMonth(10)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekOctFour')">
@@ -1202,7 +1204,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十一月1W" align="center" prop="weekNovOne" v-if="needShow['weekNovOne']">
+        <el-table-column label="十一月1W" align="center" prop="weekNovOne" v-if="ifCurrentMonth(11)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekNovOne')">
@@ -1214,7 +1216,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十一月2W" align="center" prop="weekNovTwo" v-if="needShow['weekNovTwo']">
+        <el-table-column label="十一月2W" align="center" prop="weekNovTwo" v-if="ifCurrentMonth(11)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekNovTwo')">
@@ -1226,7 +1228,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十一月3W" align="center" prop="weekNovThree" v-if="needShow['weekNovThree']">
+        <el-table-column label="十一月3W" align="center" prop="weekNovThree" v-if="ifCurrentMonth(11)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekNovThree')">
@@ -1238,7 +1240,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十一月4W" align="center" prop="weekNovFour" v-if="needShow['weekNovFour']">
+        <el-table-column label="十一月4W" align="center" prop="weekNovFour" v-if="ifCurrentMonth(11)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekNovFour')">
@@ -1250,7 +1252,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十二月1W" align="center" prop="weekDecOne" v-if="needShow['weekDecOne']">
+        <el-table-column label="十二月1W" align="center" prop="weekDecOne" v-if="ifCurrentMonth(12)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekDecOne')">
@@ -1262,7 +1264,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十二月2W" align="center" prop="weekDecTwo" v-if="needShow['weekDecTwo']">
+        <el-table-column label="十二月2W" align="center" prop="weekDecTwo" v-if="ifCurrentMonth(12)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekDecTwo')">
@@ -1274,7 +1276,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十二月3W" align="center" prop="weekDecThree" v-if="needShow['weekDecThree']">
+        <el-table-column label="十二月3W" align="center" prop="weekDecThree" v-if="ifCurrentMonth(12)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekDecThree')">
@@ -1286,7 +1288,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="十二月4W" align="center" prop="weekDecFour" v-if="needShow['weekDecFour']">
+        <el-table-column label="十二月4W" align="center" prop="weekDecFour" v-if="ifCurrentMonth(12)">
           <template #default="scope">
             <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
               @click="handleCellClick(scope.row, 'weekDecFour')">
@@ -1330,9 +1332,11 @@ const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const showDialog = ref(false);
+const showCurrent = ref(false);
 const total = ref(0);
 const notifyOffset = ref(0);
 const title = ref("");
+const tmpListForTip = ref([]);
 const rowForProps = reactive({})
 const majorGroup = ref('专业')
 const currentUserName = ref("");
@@ -1435,6 +1439,41 @@ getInfo().then(result => {
   currentUserId.value = result.user.userId
   currentUserName.value = result.user.userName
 })
+//判断为是否是本周
+function isThisWeek(dateString) {
+  const checkDate = new Date(dateString);
+  checkDate.setHours(0, 0, 0, 0); // 标准化为目标日期的00:00:00
+
+  const now = new Date();
+  const currentStart = getStartOfWeek(now);
+  const nextWeekStart = new Date(currentStart);
+  nextWeekStart.setDate(currentStart.getDate() + 7); // 下周一 00:00:00
+
+  return checkDate >= currentStart && checkDate < nextWeekStart;
+}
+
+function watchCurrentWeek() {
+  showCurrent.value = true
+  tmpListForTip.value = listForTip.value
+  listForTip.value = listForTip.value.filter(item => {
+    return isThisWeek(item.updateTime)
+  })
+}
+
+function watchAllWeek() {
+  showCurrent.value = false
+  if (Array.isArray(tmpListForTip.value) && (tmpListForTip.value.length != 0)) {
+    listForTip.value = tmpListForTip.value
+  }
+}
+function getStartOfWeek(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0); // 清除时间部分
+  const day = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const diff = (day === 0 ? -6 : 1 - day); // 调整为周一
+  d.setDate(d.getDate() + diff);
+  return d;
+}
 // 取消按钮
 function cancel() {
   open.value = false;

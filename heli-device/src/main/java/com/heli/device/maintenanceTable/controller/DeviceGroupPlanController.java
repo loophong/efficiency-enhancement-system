@@ -11,6 +11,8 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,8 +64,10 @@ public class DeviceGroupPlanController extends BaseController
             fields.add("month_"  + week);
         }
 
+        SecurityUtils securityUtils = new SecurityUtils();
+        String userId =securityUtils.getUserId().toString();
 
-        List<DeviceGroupPlan> list = deviceGroupPlanMapper.selectRecordsByAuditStatus(fields);
+        List<DeviceGroupPlan> list = deviceGroupPlanMapper.selectRecordsByAuditStatus(fields,userId);
         return getDataTable(list);
     }
 
@@ -77,6 +81,17 @@ public class DeviceGroupPlanController extends BaseController
         startPage();
         List<DeviceGroupPlan> list = deviceGroupPlanService.selectDeviceGroupPlanList(deviceGroupPlan);
         return getDataTable(list);
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<?> updatePlan() {
+        try {
+            String result = deviceGroupPlanService.updateDeviceGroupPlan();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("操作失败：" + e.getMessage());
+        }
     }
 
     /**
@@ -134,6 +149,8 @@ public class DeviceGroupPlanController extends BaseController
     {
         return toAjax(deviceGroupPlanService.deleteDeviceGroupPlanByGroupIds(groupIds));
     }
+
+
 
 
 

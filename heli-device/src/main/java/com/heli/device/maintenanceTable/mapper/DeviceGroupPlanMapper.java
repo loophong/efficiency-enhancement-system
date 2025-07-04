@@ -1,6 +1,8 @@
 package com.heli.device.maintenanceTable.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
@@ -17,7 +19,7 @@ import org.springframework.data.repository.query.Param;
 public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
 {
 
-    List<DeviceGroupPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields);
+    List<DeviceGroupPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields,@Param("userId") String userId);
     /**
      * 查询班组计划保养
      * 
@@ -41,7 +43,15 @@ public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
      * @return 结果
      */
     public int insertDeviceGroupPlan(DeviceGroupPlan deviceGroupPlan);
+    LocalDateTime getRollTime();
 
+    void updateFieldsForOneWeekAgo(@Param("currentTime") LocalDateTime currentTime);
+
+    void updateFieldsForTwoWeeksAgo(@Param("currentTime") LocalDateTime currentTime);
+
+    void updateFieldsForThreeWeeksAgo(@Param("currentTime") LocalDateTime currentTime);
+
+    void updateAllFieldsToZeroAndSetLastCompleteTime(@Param("currentTime") LocalDateTime currentTime);
     /**
      * 修改班组计划保养
      * 

@@ -89,6 +89,7 @@ public class DeviceGroupPlanListener implements ReadListener<DeviceGroupPlan> {
                 // 否则，执行插入操作
             data.setCreateBy(userId.toString());
             data.setCreateTime(new Date());
+            data.setRollTime(new Date().toString());
             deviceGroupPlanMapper.insertDeviceGroupPlan(data);
 //            }
         }

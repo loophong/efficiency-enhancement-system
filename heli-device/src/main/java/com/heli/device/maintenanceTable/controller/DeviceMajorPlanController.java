@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.heli.device.maintenanceTable.mapper.DeviceMajorPlanMapper;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -63,7 +64,10 @@ public class DeviceMajorPlanController extends BaseController
             }
         }
 
-        List<DeviceMajorPlan> list = deviceMajorPlanMapper.selectRecordsByAuditStatus(fields);
+        SecurityUtils securityUtils = new SecurityUtils();
+        String userId =securityUtils.getUserId().toString();
+
+        List<DeviceMajorPlan> list = deviceMajorPlanMapper.selectRecordsByAuditStatus(fields,userId);
         return getDataTable(list);
     }
 

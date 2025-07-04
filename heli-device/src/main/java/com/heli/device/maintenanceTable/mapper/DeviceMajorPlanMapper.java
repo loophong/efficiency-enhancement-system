@@ -15,7 +15,7 @@ import org.springframework.data.repository.query.Param;
 public interface DeviceMajorPlanMapper extends BaseMapper<DeviceMajorPlan>
 {
 
-    List<DeviceMajorPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields);
+    List<DeviceMajorPlan> selectRecordsByAuditStatus(@Param("fields") List<String> fields,@Param("userId") String userId);
     /**
      * 查询专业计划保养
      * 
