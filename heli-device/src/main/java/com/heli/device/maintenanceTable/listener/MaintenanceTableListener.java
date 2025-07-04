@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.util.Date;
 import java.util.List;
 
 @Log4j2
@@ -84,9 +85,11 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
             if (existing != null) {
                 // 如果存在重复记录，执行更新操作
                 data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
+                data.setUpdateTime(new Date());
                 deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
             } else {
                 // 否则，执行插入操作
+                data.setCreateTime(new Date());
                 deviceMaintenanceTableMapper.insertDeviceMaintenanceTable(data);
             }
         }

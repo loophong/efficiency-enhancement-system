@@ -5,6 +5,7 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 
+import java.util.Date;
 import java.util.List;
 
 import com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper;
@@ -87,6 +88,8 @@ public class DeviceGroupPlanListener implements ReadListener<DeviceGroupPlan> {
 //            } else {
                 // 否则，执行插入操作
             data.setCreateBy(userId.toString());
+            data.setCreateTime(new Date());
+            data.setRollTime(new Date().toString());
             deviceGroupPlanMapper.insertDeviceGroupPlan(data);
 //            }
         }

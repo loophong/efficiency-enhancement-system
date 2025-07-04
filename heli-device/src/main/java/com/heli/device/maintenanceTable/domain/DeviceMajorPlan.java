@@ -240,6 +240,9 @@ public class DeviceMajorPlan extends BaseEntity
     @ExcelProperty(index = 53)
     private String weekDecFour;
 
+    @ExcelIgnore
+    private String lastCompleteTime;
+
     public void setMajorId(String majorId)
     {
         this.majorId = majorId;
@@ -745,6 +748,16 @@ public class DeviceMajorPlan extends BaseEntity
         return weekDecFour;
     }
 
+    public void setLastCompleteTime(String lastCompleteTime)
+    {
+        this.lastCompleteTime = lastCompleteTime;
+    }
+
+    public String getLastCompleteTime()
+    {
+        return lastCompleteTime;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -806,6 +819,9 @@ public class DeviceMajorPlan extends BaseEntity
                 .append("weekDecFour", getWeekDecFour())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
+                .append("updateBy", getUpdateBy())
+                .append("updateTime", getUpdateTime())
+                .append("lastCompleteTime", getLastCompleteTime())
                 .toString();
     }
 }

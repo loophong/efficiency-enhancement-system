@@ -286,6 +286,8 @@ public class DeviceMaintenanceTable extends BaseEntity
                 .append("maintenanceCast", getMaintenanceCast())
                 .append("ifDown", getIfDown())
                 .append("faultFile", getFaultFile())
+                .append("createTime", getCreateTime())
+                .append("updateTime", getCreateTime())
                 .toString();
     }
 }

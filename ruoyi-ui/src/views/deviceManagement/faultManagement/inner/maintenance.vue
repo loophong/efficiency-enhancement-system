@@ -1,99 +1,5 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="设备编号" prop="deviceNum">
-        <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="设备名称" prop="deviceName">
-        <el-input v-model="queryParams.deviceName" placeholder="请输入设备名称" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="工单状态" prop="workStatus">
-        <el-input v-model="queryParams.workStatus" placeholder="请输入工单状态" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="申请人" prop="applyBy">
-        <el-input v-model="queryParams.applyBy" placeholder="请输入申请人" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="申请部门" prop="applyDepartment">
-        <el-input v-model="queryParams.applyDepartment" placeholder="请输入申请部门" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="维修人员" prop="maintenancePeople">
-        <el-input v-model="queryParams.maintenancePeople" placeholder="请输入维修人员" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="故障现象" prop="faultPhenomenon">
-        <el-input v-model="queryParams.faultPhenomenon" placeholder="请输入故障现象" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="维修分析" prop="maintenanceAnalysis">
-        <el-input v-model="queryParams.maintenanceAnalysis" placeholder="请输入维修分析" clearable
-          @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="维修内容" prop="maintenanceContent">
-        <el-input v-model="queryParams.maintenanceContent" placeholder="请输入维修内容" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="报修时间" style="width: 308px">
-        <el-date-picker v-model="daterangeReportedTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm" type="daterange"
-          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-      </el-form-item>
-      <el-form-item label="处理时间" style="width: 308px">
-        <el-date-picker v-model="daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
-          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-      </el-form-item>
-      <el-form-item label="故障时长" prop="faultDuration">
-        <el-input v-model="queryParams.faultDuration" placeholder="请输入故障时长" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="维修费用" prop="maintenanceCast">
-        <el-input v-model="queryParams.maintenanceCast" placeholder="请输入维修费用" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item label="是否停机" prop="ifDown">
-        <el-input v-model="queryParams.ifDown" placeholder="请输入是否停机" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:table:add']">新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:table:edit']">修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:table:remove']">删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <!--Excel 参数导入 -->
-        <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
-        </el-button>
-        <el-dialog title="导入维修记录Excel文件" v-model="showDialog" width="30%">
-          <el-form :model="form" ref="formRef" label-width="90px">
-          </el-form>
-          <span>上传表：</span>
-          <span style="color:darkgreen">维修记录表</span>
-          <br />
-          <br />
-          <div class="upload-area">
-            <i class="el-icon-upload"></i>
-            <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
-          </div>
-          <span class="dialog-footer">
-            <br />
-            <el-button @click="showDialog = false">取 消</el-button>
-            <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
-            <el-button type="primary" :loading="true" v-else>上传中(重复数据检查)</el-button>
-          </span>
-        </el-dialog>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="exportAll"
-          v-hasPermi="['system:table:export']">导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-
     <el-table v-loading="loading" :data="tableList" @selection-change="handleSelectionChange" border stripe>
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="maintenanceTableId" /> -->
@@ -138,72 +44,6 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
-    <!-- 添加或修改2.设备故障记录(导入)对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="tableRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="设备编号" prop="deviceNum">
-          <el-input v-model="form.deviceNum" placeholder="请输入设备编号" />
-        </el-form-item>
-        <el-form-item label="设备名称" prop="deviceName">
-          <el-input v-model="form.deviceName" placeholder="请输入设备名称" />
-        </el-form-item>
-        <el-form-item label="工单状态" prop="workStatus">
-          <el-input v-model="form.workStatus" placeholder="请输入工单状态" />
-        </el-form-item>
-        <el-form-item label="问题类型" prop="issueType">
-          <el-input v-model="form.issueType" placeholder="请输入问题类型" />
-        </el-form-item>
-        <el-form-item label="故障类型" prop="faultType">
-          <el-select v-model="form.faultType" placeholder="请选择故障类型">
-            <el-option v-for="dict in device_fault_analysis" :key="dict.value" :label="dict.label"
-              :value="dict.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="申请人" prop="applyBy">
-          <el-input v-model="form.applyBy" placeholder="请输入申请人" />
-        </el-form-item>
-        <el-form-item label="申请部门" prop="applyDepartment">
-          <el-input v-model="form.applyDepartment" placeholder="请输入申请部门" />
-        </el-form-item>
-        <el-form-item label="维修人员" prop="maintenancePeople">
-          <el-input v-model="form.maintenancePeople" placeholder="请输入维修人员" />
-        </el-form-item>
-        <el-form-item label="故障现象" prop="faultPhenomenon">
-          <el-input v-model="form.faultPhenomenon" placeholder="请输入故障现象" />
-        </el-form-item>
-        <el-form-item label="故障现象文件" prop="faultFile">
-          <file-upload v-model="form.faultFile" />
-        </el-form-item>
-        <el-form-item label="维修分析" prop="maintenanceAnalysis">
-          <el-input v-model="form.maintenanceAnalysis" placeholder="请输入维修分析" />
-        </el-form-item>
-        <el-form-item label="维修内容" prop="maintenanceContent">
-          <el-input v-model="form.maintenanceContent" placeholder="请输入维修内容" />
-        </el-form-item>
-        <el-form-item label="报修时间" prop="reportedTime">
-          <el-input v-model="form.reportedTime" placeholder="请输入报修时间" />
-        </el-form-item>
-        <el-form-item label="处理时间" prop="resolutionTime">
-          <el-input v-model="form.resolutionTime" placeholder="请输入处理时间" />
-        </el-form-item>
-        <el-form-item label="故障时长" prop="faultDuration">
-          <el-input v-model="form.faultDuration" placeholder="请输入故障时长" />
-        </el-form-item>
-        <el-form-item label="维修费用" prop="maintenanceCast">
-          <el-input v-model="form.maintenanceCast" placeholder="请输入维修费用" />
-        </el-form-item>
-        <el-form-item label="是否停机" prop="ifDown">
-          <el-input v-model="form.ifDown" placeholder="请输入是否停机" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
-
     <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :direction="direction">
       <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
     </el-drawer>
@@ -212,8 +52,8 @@
 </template>
 
 
-<script setup name="Maintenance">
-import { listTable, getTable, delTable, addTable, updateTable, uploadFile } from "@/api/device/maintenanceTable/table";
+<script setup name="MaintenanceInner">
+import { listTable, getTable, uploadFile } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -392,37 +232,8 @@ function handleUpdate(row) {
   });
 }
 
-/** 提交按钮 */
-function submitForm() {
-  proxy.$refs["tableRef"].validate(valid => {
-    if (valid) {
-      if (form.value.maintenanceTableId != null) {
-        updateTable(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
-      } else {
-        addTable(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
-}
 
-/** 删除按钮操作 */
-function handleDelete(row) {
-  const _maintenanceTableIds = row.maintenanceTableId || ids.value;
-  proxy.$modal.confirm('是否确认删除设备故障记录编号为"' + _maintenanceTableIds + '"的数据项？').then(function () {
-    return delTable(_maintenanceTableIds);
-  }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => { });
-}
+
 
 
 /** 跳转按钮操作 */

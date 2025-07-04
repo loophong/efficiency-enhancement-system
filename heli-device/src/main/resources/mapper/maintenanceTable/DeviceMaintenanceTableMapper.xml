@@ -23,10 +23,12 @@
         <result property="maintenanceCast"    column="maintenance_cast"    />
         <result property="ifDown"    column="if_down"    />
         <result property="faultFile"    column="fault_file"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
     </resultMap>
 
     <sql id="selectDeviceMaintenanceTableVo">
-        select maintenance_table_id, device_name, work_status, device_num, issue_type, fault_type, apply_by, apply_department, maintenance_people, fault_phenomenon, maintenance_analysis, maintenance_content, reported_time, resolution_time, fault_duration, maintenance_cast, if_down,fault_file from device_maintenance_table
+        select maintenance_table_id, device_name, work_status, device_num, issue_type, fault_type, apply_by, apply_department, maintenance_people, fault_phenomenon, maintenance_analysis, maintenance_content, reported_time, resolution_time, fault_duration, maintenance_cast, if_down,fault_file,create_time,update_time from device_maintenance_table
     </sql>
 
     <select id="selectDeviceMaintenanceTableList" parameterType="DeviceMaintenanceTable" resultMap="DeviceMaintenanceTableResult">
@@ -61,6 +63,7 @@
         </where>
     </select>
 
+
     <select id="selectDeviceMaintenanceTableByMaintenanceTableId" parameterType="Long" resultMap="DeviceMaintenanceTableResult">
         <include refid="selectDeviceMaintenanceTableVo"/>
         where maintenance_table_id = #{maintenanceTableId}
@@ -86,6 +89,8 @@
             <if test="maintenanceCast != null">maintenance_cast,</if>
             <if test="ifDown != null">if_down,</if>
             <if test="faultFile != null">fault_file,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="deviceName != null">#{deviceName},</if>
@@ -105,6 +110,8 @@
             <if test="maintenanceCast != null">#{maintenanceCast},</if>
             <if test="ifDown != null">#{ifDown},</if>
             <if test="faultFile != null">#{faultFile},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
         </trim>
     </insert>
 
@@ -128,6 +135,8 @@
             <if test="maintenanceCast != null">maintenance_cast = #{maintenanceCast},</if>
             <if test="ifDown != null">if_down = #{ifDown},</if>
             <if test="faultFile != null">fault_file = #{faultFile},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
         </trim>
         where maintenance_table_id = #{maintenanceTableId}
     </update>

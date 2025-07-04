@@ -105,7 +105,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="审核意见" prop="maintenanceExamineComment"
-          v-if="form.maintenanceExamineStatus == '驳回' || status.includes('驳回')">
+          v-if="form.maintenanceExamineStatus == '驳回' || (status != null && status != undefined && status.includes('驳回'))">
           <el-input v-model="form.maintenanceExamineComment" type="textarea" autosize placeholder="请输入内容" />
         </el-form-item>
         <!-- <el-form-item label="截止时间" prop="maintenanceDeadline">
@@ -131,7 +131,7 @@ import { updatePlan as majorUpdatePlan } from "@/api/device/maintenanceTable/maj
 import { getInfo } from "@/api/login";
 import { onMounted, watch, ref, nextTick } from 'vue';
 const { proxy } = getCurrentInstance();
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 const open = ref(false);
 const existContent = ref(false);
@@ -152,7 +152,10 @@ const props = defineProps({
   },
   majorGroup: {
     type: String
-  }
+  },
+  timeOfClick: {
+    type: String
+  },
 });
 
 
@@ -194,6 +197,8 @@ function handleProps() {
   console.log("接收到的参数1————>", JSON.stringify(props.rowFromProps.data));
   console.log("接收到的参数majorGroup————>", JSON.stringify(props.majorGroup));
   console.log("接收到的参数createBy————>", props.rowFromProps.data.createBy);
+  console.log("接收到的参数timeOfClick————>", JSON.stringify(props.timeOfClick));
+
   ifShowExamine.value = false;
   if (props.rowFromProps.data[props.rowFromProps.data.monthTime] != '' && props.rowFromProps.data[props.rowFromProps.data.monthTime] != null) {
     ifShowExamine.value = ((props.rowFromProps.data.createBy == currentUserId.value) && props.rowFromProps.data[props.rowFromProps.data.monthTime].includes('待审核'));
@@ -204,6 +209,7 @@ function handleProps() {
   } else {
     majorForm.value.majorId = Number(props.rowFromProps.data.majorId);
   }
+
   getList();
 }
 
@@ -218,10 +224,15 @@ getInfo().then(result => {
 
 /** 查询记录列表 */
 function getList() {
+  if (props.timeOfClick) {
+    const date = parse(props.timeOfClick, 'yy-MM-dd', new Date());
+    var formattedDate = format(date, 'yyyy-MM-dd');
+  }
   existContent.value = false
   queryParams.value.maintenancePlanId = props.majorGroup == '班组' ? props.rowFromProps.data.groupId : props.rowFromProps.data.majorId
   queryParams.value.planMonthTime = props.rowFromProps.data.monthTime
   queryParams.value.majorGroup = props.majorGroup
+  queryParams.value.createTime = formattedDate
   listRecord(queryParams.value).then(response => {
     if (response.total) {
       form.value = response.rows[0];
@@ -319,19 +330,12 @@ function submitForm() {
         updateRecord(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
-          // console.log(groupForm.value)
-          // console.log(props.rowFromProps.data.monthTime)
           if (props.majorGroup == '班组') {
-            if (props.rowFromProps.data[props.rowFromProps.data.monthTime].includes('待审核')) {
-              // console.log('进入待审核')
+            if (props.rowFromProps.data[props.rowFromProps.data.monthTime] != null && props.rowFromProps.data[props.rowFromProps.data.monthTime] != undefined && (props.rowFromProps.data[props.rowFromProps.data.monthTime].includes('待审核'))) {
               if (form.value.maintenanceExamineStatus == '通过') {
-                // console.log('进入通过')
-                // console.log(status.value)
-                // console.log(parseStatus(status.value))
                 groupForm.value[props.rowFromProps.data.monthTime] = parseStatus(status.value).symbol
+                groupForm.value['lastCompleteTime'] = format(new Date(), 'yyyy-MM-dd HH:mm:ss')
               } else if (form.value.maintenanceExamineStatus == '驳回') {
-                // console.log('进入驳回')
-                // console.log(`${parseStatus(status.value).symbol}(驳回)`) 
                 groupForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(驳回)`
               } else {
                 groupForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(待审核)`
@@ -340,12 +344,23 @@ function submitForm() {
               // console.log('进入非待审核')
               groupForm.value[props.rowFromProps.data.monthTime] = status.value
             }
-            // console.log('groupForm---->', groupForm.value)
             groupUpdatePlan(groupForm.value).then(result => {
               emit('getGroup')
             })
           } else {
-            majorForm.value[props.rowFromProps.data.monthTime] = status.value
+            if (props.rowFromProps.data[props.rowFromProps.data.monthTime] != null && props.rowFromProps.data[props.rowFromProps.data.monthTime] != undefined && (props.rowFromProps.data[props.rowFromProps.data.monthTime].includes('待审核'))) {
+              if (form.value.maintenanceExamineStatus == '通过') {
+                majorForm.value[props.rowFromProps.data.monthTime] = parseStatus(status.value).symbol
+                majorForm.value['lastCompleteTime'] = format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+              } else if (form.value.maintenanceExamineStatus == '驳回') {
+                majorForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(驳回)`
+              } else {
+                majorForm.value[props.rowFromProps.data.monthTime] = `${parseStatus(status.value).symbol}(待审核)`
+              }
+            } else {
+              // console.log('进入非待审核')
+              majorForm.value[props.rowFromProps.data.monthTime] = status.value
+            }
             majorUpdatePlan(majorForm.value).then(result => {
               emit('getMajor')
             })

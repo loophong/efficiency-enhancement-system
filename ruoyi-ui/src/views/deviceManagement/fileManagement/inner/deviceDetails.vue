@@ -67,10 +67,7 @@
           <el-form :model="form" ref="formRef" label-width="90px">
             <!-- 如果有表单内容，这里添加 -->
           </el-form>
-          <span>上传表：</span>
-          <span style="color:darkgreen">设备台账表</span>
-          <br />
-          <br />
+
           <div class="upload-area">
             <i class="el-icon-upload"></i>
             <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
@@ -123,10 +120,6 @@
             v-hasPermi="['file:details:remove']">删除</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'fault', 'maintenance')"
             v-hasPermi="['file:details:remove']">故障记录</el-button>
-          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'basic')"
-            v-hasPermi="['file:details:remove']">基础档案</el-button>
-          <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'sop')"
-            v-hasPermi="['file:details:remove']">SOP</el-button>
         </template>
       </el-table-column>
     </el-table>

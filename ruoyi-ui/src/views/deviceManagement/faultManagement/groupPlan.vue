@@ -13,7 +13,7 @@
             <el-input v-model="queryParams.maintenanceCycle" placeholder="请输入保养周期" clearable
               @keyup.enter="handleQuery" />
           </el-form-item>
-          <el-form-item label="月度(1W)" prop="monthOne">
+          <!-- <el-form-item label="月度(1W)" prop="monthOne">
             <el-input v-model="queryParams.monthOne" placeholder="请输入月度(1W)" clearable @keyup.enter="handleQuery" />
           </el-form-item>
           <el-form-item label="月度(2W)" prop="monthTwo">
@@ -24,7 +24,7 @@
           </el-form-item>
           <el-form-item label="月度(4W)" prop="monthFour">
             <el-input v-model="queryParams.monthFour" placeholder="请输入月度(4W)" clearable @keyup.enter="handleQuery" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item>
             <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
             <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -48,13 +48,18 @@
             <!--Excel 参数导入 -->
             <el-button type="primary" icon="UploadFilled" @click="showDialog = true" plain>导入
             </el-button>
-            <el-dialog title="导入Excel文件" v-model="showDialog" width="30%">
+            <el-dialog title="导入班组计划Excel文件" v-model="showDialog" width="30%">
               <el-form :model="form" ref="formRef" label-width="90px">
               </el-form>
+              <span>上传表：</span>
+              <span style="color:darkgreen">自主保全计划</span>
+              <br />
+              <br />
               <div class="upload-area">
                 <i class="el-icon-upload"></i>
                 <input type="file" id="inputFile" ref="fileInput" @change="checkFile" />
               </div>
+              <br />
               <span class="dialog-footer">
                 <el-button @click="showDialog = false">取 消</el-button>
                 <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
@@ -84,18 +89,17 @@
             </template>
           </el-table-column>
           <el-table-column label="保养周期" align="center" prop="maintenanceCycle" width="80" />
-          <el-table-column label="月度(1W)" align="center" prop="monthOne" width="120">
+          <el-table-column :label="firstWeek" align="center" prop="monthOne" width="180">
             <template #default="scope">
               <div @click="handleCellClick(scope.row, 'monthOne')" class="custom-cell">
                 <span><span :style="{ fontSize: '36px' }">
                     {{ parseStatus(scope.row.monthOne).symbol }}
                   </span>
                   <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthOne).description }}</span></span>
-
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(2W)" align="center" prop="monthTwo" width="120">
+          <el-table-column :label="secondWeek" align="center" prop="monthTwo" width="180">
             <template #default="scope">
               <div @click="handleCellClick(scope.row, 'monthTwo')" class="custom-cell">
                 <span :style="{ fontSize: '36px' }">
@@ -105,7 +109,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(3W)" align="center" prop="monthThree" width="120">
+          <el-table-column :label="thirdWeek" align="center" prop="monthThree" width="180">
             <template #default="scope">
               <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
                 @click="handleCellClick(scope.row, 'monthThree')">
@@ -117,10 +121,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(4W)" align="center" prop="monthFour" width="120">
+          <el-table-column :label="fourthWeek" align="center" prop="monthFour" width="180">
             <template #default="scope">
-              <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              <div v-if="scope.row.monthFour == '待提交'" style="color: blue;"
                 @click="handleCellClick(scope.row, 'monthFour')">
+                {{ scope.row.monthFour }}
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+                @click="handleCellClick(scope.row, 'monthFour')" v-else>
                 <span>
                   <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.monthFour).symbol
                   }}</span>
@@ -202,6 +210,8 @@
         </el-dialog>
       </div>
       <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
+        <el-button type="primary" @click="watchCurrentWeek" v-if="!showCurrent">仅查看本周</el-button>
+        <el-button type="primary" @click="watchAllWeek" v-if="showCurrent">查看所有</el-button>
         <el-table v-loading="loading" :data="listForTip" @selection-change="handleSelectionChange" border stripe>
           <el-table-column label="序号" align="center" prop="orderNum" width="60" />
           <el-table-column label="设备类别" align="center" prop="deviceType" width="120" />
@@ -212,18 +222,17 @@
             </template>
           </el-table-column>
           <el-table-column label="保养周期" align="center" prop="maintenanceCycle" width="80" />
-          <el-table-column label="月度(1W)" align="center" prop="monthOne" width="120">
+          <el-table-column :label="firstWeek" align="center" prop="monthOne" width="120">
             <template #default="scope">
               <div @click="handleCellClick(scope.row, 'monthOne')" class="custom-cell">
                 <span><span :style="{ fontSize: '36px' }">
                     {{ parseStatus(scope.row.monthOne).symbol }}
                   </span>
                   <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthOne).description }}</span></span>
-
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(2W)" align="center" prop="monthTwo" width="120">
+          <el-table-column :label="secondWeek" align="center" prop="monthTwo" width="120">
             <template #default="scope">
               <div @click="handleCellClick(scope.row, 'monthTwo')" class="custom-cell">
                 <span :style="{ fontSize: '36px' }">
@@ -233,7 +242,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(3W)" align="center" prop="monthThree" width="120">
+          <el-table-column :label="thirdWeek" align="center" prop="monthThree" width="120">
             <template #default="scope">
               <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
                 @click="handleCellClick(scope.row, 'monthThree')">
@@ -245,10 +254,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="月度(4W)" align="center" prop="monthFour" width="120">
+          <el-table-column :label="fourthWeek" align="center" prop="monthFour" width="120">
             <template #default="scope">
-              <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+              <div v-if="scope.row.monthFour == '待提交'" style="color: blue;"
                 @click="handleCellClick(scope.row, 'monthFour')">
+                {{ scope.row.monthFour }}
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; height: 100%; cursor: pointer;"
+                @click="handleCellClick(scope.row, 'monthFour')" v-else>
                 <span>
                   <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.monthFour).symbol
                   }}</span>
@@ -266,22 +279,24 @@
     </el-tab-pane>
   </el-tabs>
   <record ref="recordRef" :rowFromProps="rowForProps" :showDialog="showDialogNull" :majorGroup="majorGroup"
-    v-if="showRecord" @getGroup="getList"></record>
+    :timeOfClick="timeOfClick" v-if="showRecord" @getGroup="getList"></record>
 </template>
 
 <script setup name="Plan">
-import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList } from "@/api/device/maintenanceTable/groupPlan";
+import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList, resetPlan } from "@/api/device/maintenanceTable/groupPlan";
 import majorPlan from "./majorPlan.vue"
 import record from "./record.vue"
 import { ElMessage } from 'element-plus'
 import { getInfo } from "@/api/login";
 import { ElNotification } from 'element-plus'
+import { subDays, format } from 'date-fns';
 
 
 const { proxy } = getCurrentInstance();
 const recordRef = ref(null);
 const planList = ref([]);
 const listForTip = ref([]);
+const tmpListForTip = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const buttonLoading = ref(false);
@@ -295,7 +310,13 @@ const multiple = ref(true);
 const total = ref(0);
 const notifyOffset = ref(0);
 const showDialog = ref(false);
+const showCurrent = ref(false);
 const title = ref("");
+const firstWeek = ref(format(subDays(getMonday(new Date()), 21), 'yy-MM-dd'));;
+const secondWeek = ref(format(subDays(getMonday(new Date()), 14), 'yy-MM-dd'));;
+const thirdWeek = ref(format(subDays(getMonday(new Date()), 7), 'yy-MM-dd'));;
+const fourthWeek = ref(format(getMonday(new Date()), 'yy-MM-dd'));;
+const timeOfClick = ref("");
 const currentUserName = ref("");
 const currentUserId = ref(0);
 
@@ -332,14 +353,14 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-function showNotification(keyword) {
+function showNotification(keyword, keyword2) {
   // 根据传递进来的参数计算新的偏移量
   const newOffset = notifyOffset.value + 65;
   // 显示通知
   ElNotification({
     title: '班组自主',
     dangerouslyUseHTMLString: true,
-    message: `<span>您有</span><span style="color: #2d7ad6;">[${keyword}]</span><span>审核中，请及时处理</span>`,
+    message: `<span>您有</span><span style="color: #2d7ad6;">[${keyword}]</span><span>${keyword2 || '审核中'}，请及时处理</span>`,
     type: "warning",
     offset: newOffset,
     duration: 7000,
@@ -348,24 +369,82 @@ function showNotification(keyword) {
   notifyOffset.value = newOffset;
 }
 
-
+console.log(format(subDays(new Date(), 7), 'yyyy-MM-dd HH:mm:ss'));
 //获取当前登录用户信息
 getInfo().then(result => {
   currentUserId.value = result.user.userId
   currentUserName.value = result.user.userName
 })
-
+resetPlan().then(result => {
+  console.log(result)
+  if (result != '当前时间为当前周，无需处理。') {
+    window.location.reload();
+  }
+});
 //点击单元格
 function handleCellClick(row, cell) {
   console.log('id:', row.groupId);
+  // console.log('row:', row);
   const content = row[cell];
   console.log('内容：', content);
+  if (cell == 'monthOne') {
+    timeOfClick.value = firstWeek.value
+  } else if (cell == 'monthTwo') {
+    timeOfClick.value = secondWeek.value
+  } else if (cell == 'monthThree') {
+    timeOfClick.value = thirdWeek.value
+  } else if (cell == 'monthFour') {
+    timeOfClick.value = fourthWeek.value
+  }
+  console.log('timeOfClick:', timeOfClick.value)
   row.monthTime = cell
   rowForProps.data = row
   showDialogNull.value = !showDialogNull.value
   showRecord.value = true
 }
 
+
+//判断为是否是本周
+function isThisWeek(dateString) {
+  const checkDate = new Date(dateString);
+  checkDate.setHours(0, 0, 0, 0); // 标准化为目标日期的00:00:00
+
+  const now = new Date();
+  const currentStart = getStartOfWeek(now);
+  const nextWeekStart = new Date(currentStart);
+  nextWeekStart.setDate(currentStart.getDate() + 7); // 下周一 00:00:00
+
+  return checkDate >= currentStart && checkDate < nextWeekStart;
+}
+
+function watchCurrentWeek() {
+  showCurrent.value = true
+  tmpListForTip.value = listForTip.value
+  listForTip.value = listForTip.value.filter(item => {
+    return isThisWeek(item.updateTime)
+  })
+}
+function watchAllWeek() {
+  showCurrent.value = false
+  if (Array.isArray(tmpListForTip.value) && (tmpListForTip.value.length != 0)) {
+    listForTip.value = tmpListForTip.value
+  }
+}
+
+function getStartOfWeek(date) {
+  const d = new Date(date);
+  d.setHours(0, 0, 0, 0); // 清除时间部分
+  const day = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const diff = (day === 0 ? -6 : 1 - day); // 调整为周一
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function getMonday(date) {
+  const day = date.getDay();
+  const daysToSubtract = (day + 6) % 7;
+  return subDays(date, daysToSubtract);
+}
 
 function parseStatus(input) {
   const trimmedInput = input ? input.trim() : '';
@@ -400,24 +479,110 @@ function getList() {
       const tmp = JSON.parse(JSON.stringify(result.rows))
       tmp.forEach(element => {
         if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-          showNotification('monthOne')
+          showNotification('自主保全计划')
         }
         if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-          showNotification('monthTwo')
+          showNotification('自主保全计划')
         }
         if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-          showNotification('monthThree')
+          showNotification('自主保全计划')
         }
         if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-          showNotification('monthFour')
+          showNotification('自主保全计划')
         }
       });
       console.log('ListForTipGroup------>', listForTip.value)
+      listForTip.value.forEach(i => {
+        if (i.monthFour == null || i.monthFour === '') {
+          // const maintenanceCycle = i.maintenanceCycle;
+          // const lastCompleteTime = i.lastCompleteTime;
+          if (i.maintenanceCycle == '1') {
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
+          } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
+          } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
+          } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
+          }
+          // try {
+          //   let date = new Date(lastCompleteTime);
+          //   let weeks = parseInt(maintenanceCycle, 10);
+          //   if (isNaN(weeks)) {
+          //     throw new Error("maintenanceCycle 必须是有效的数字");
+          //   }
+          //   date.setDate(date.getDate() + weeks * 7); 1
+          //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
+          //   if (isThisWeek(formattedDate)) {
+          //     i.monthFour = '待提交'
+          //     showNotification('自主保全计划', '待提交')
+          //   }
+          // } catch (error) {
+          //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
+          // }
+        }
+      });
     })
+    const tmpHandle = JSON.parse(JSON.stringify(response.rows))
+    console.log({ tmpHandle })
+
+    planList.value.forEach(i => {
+      if (i.monthFour == null || i.monthFour === '') {
+        if (i.maintenanceCycle == '1') {
+          i.monthFour = '待提交'
+          showNotification('自主保全计划', '待提交')
+        } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+          i.monthFour = '待提交'
+          showNotification('自主保全计划', '待提交')
+        } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+          i.monthFour = '待提交'
+          showNotification('自主保全计划', '待提交')
+        } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+          i.monthFour = '待提交'
+          showNotification('自主保全计划', '待提交')
+        }
+        // const maintenanceCycle = i.maintenanceCycle;
+        // const lastCompleteTime = i.lastCompleteTime;
+        // try {
+        //   let date = new Date(lastCompleteTime);
+        //   let weeks = parseInt(maintenanceCycle, 10);
+        //   if (isNaN(weeks)) {
+        //     throw new Error("maintenanceCycle 必须是有效的数字");
+        //   }
+        //   date.setDate(date.getDate() + weeks * 7); 1
+        //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
+        //   if (isThisWeek(formattedDate)) {
+        //     i.monthFour = '待提交'
+        //     showNotification('自主保全计划', '待提交')
+        //   }
+        // } catch (error) {
+        //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
+        // }
+      }
+    });
+    listForTip.value.forEach(element => {
+      if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+        showNotification('自主保全计划')
+      }
+      if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+        showNotification('自主保全计划')
+      }
+      if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+        showNotification('自主保全计划')
+      }
+      if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+        showNotification('自主保全计划')
+      }
+    });
     loading.value = false;
   });
 
 }
+
 // 取消按钮
 function cancel() {
   open.value = false;

@@ -63,10 +63,13 @@
         <result property="weekDecFour"    column="week_dec_four"    />
         <result property="createTime"    column="create_time"    />
         <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="lastCompleteTime"    column="last_complete_time"    />
     </resultMap>
 
     <sql id="selectDeviceMajorPlanVo">
-        select major_id, major_order, major_name, major_position, major_project, major_cycle_num, major_people, major_month, week_jan_one, week_jan_two, week_jan_three, week_jan_four, week_feb_one, week_feb_two, week_feb_three, week_feb_four, week_mar_one, week_mar_two, week_mar_three, week_mar_four, week_apr_one, week_apr_two, week_apr_three, week_apr_four, week_may_one, week_may_two, week_may_three, week_may_four, week_jun_one, week_jun_two, week_jun_three, week_jun_four, week_jul_one, week_jul_two, week_jul_three, week_jul_four, week_aug_one, week_aug_two, week_aug_three, week_aug_four, week_sep_one, week_sep_two, week_sep_three, week_sep_four, week_oct_one, week_oct_two, week_oct_three, week_oct_four, week_nov_one, week_nov_two, week_nov_three, week_nov_four, week_dec_one, week_dec_two, week_dec_three, week_dec_four,create_time,create_by from device_major_plan
+        select major_id, major_order, major_name, major_position, major_project, major_cycle_num, major_people, major_month, week_jan_one, week_jan_two, week_jan_three, week_jan_four, week_feb_one, week_feb_two, week_feb_three, week_feb_four, week_mar_one, week_mar_two, week_mar_three, week_mar_four, week_apr_one, week_apr_two, week_apr_three, week_apr_four, week_may_one, week_may_two, week_may_three, week_may_four, week_jun_one, week_jun_two, week_jun_three, week_jun_four, week_jul_one, week_jul_two, week_jul_three, week_jul_four, week_aug_one, week_aug_two, week_aug_three, week_aug_four, week_sep_one, week_sep_two, week_sep_three, week_sep_four, week_oct_one, week_oct_two, week_oct_three, week_oct_four, week_nov_one, week_nov_two, week_nov_three, week_nov_four, week_dec_one, week_dec_two, week_dec_three, week_dec_four,create_time,create_by,update_time,update_by,last_complete_time from device_major_plan
     </sql>
 
     <select id="selectDeviceMajorPlanList" parameterType="DeviceMajorPlan" resultMap="DeviceMajorPlanResult">
@@ -127,6 +130,7 @@
             <if test="weekDecTwo != null  and weekDecTwo != ''"> and week_dec_two = #{weekDecTwo}</if>
             <if test="weekDecThree != null  and weekDecThree != ''"> and week_dec_three = #{weekDecThree}</if>
             <if test="weekDecFour != null  and weekDecFour != ''"> and week_dec_four = #{weekDecFour}</if>
+            <if test="lastCompleteTime != null  and lastCompleteTime != ''"> and last_complete_time = #{lastCompleteTime}</if>
         </where>
     </select>
 
@@ -135,8 +139,17 @@
         FROM device_major_plan
         <where>
             <foreach collection="fields" item="field" separator="OR">
-                ${field} LIKE '%待审核%'
+                ${field} LIKE '%待审核%' AND create_by = #{userId}
             </foreach>
+            OR
+            (
+            last_complete_time &lt;= DATE_SUB(
+            DATE_SUB(NOW(), INTERVAL (WEEKDAY(NOW()) + 1) DAY),
+            INTERVAL (
+            CAST(major_cycle_num AS UNSIGNED) - 1
+            ) WEEK
+            )
+            )
         </where>
     </select>
 
@@ -264,6 +277,7 @@
             <if test="weekDecFour != null">#{weekDecFour},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="createBy != null">#{createBy},</if>
+            <if test="lastCompleteTime != null">#{lastCompleteTime},</if>
         </trim>
     </insert>
 
@@ -327,6 +341,9 @@
             <if test="weekDecFour != null">week_dec_four = #{weekDecFour},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            update_time = CONVERT_TZ(NOW(), 'UTC', 'Asia/Shanghai'),
+            <if test="lastCompleteTime != null">last_complete_time = #{lastCompleteTime},</if>
         </trim>
         where major_id = #{majorId}
     </update>

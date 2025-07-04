@@ -133,7 +133,7 @@ function toggleTheme() {
 }
 
 function routerNotice(){
-  router.push({path: '/system/notice'})
+  router.push({path: '/notifications'})
 }
 
 

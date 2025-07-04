@@ -26,6 +26,14 @@ export function addPlan(data) {
   })
 }
 
+// 轮换班组计划保养
+export function resetPlan() {
+  return request({
+    url: '/fault/groupPlan/reset',
+    method: 'post',
+  })
+}
+
 // 修改班组计划保养
 export function updatePlan(data) {
   return request({
