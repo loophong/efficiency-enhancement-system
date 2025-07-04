@@ -1,6 +1,9 @@
 package com.ruoyi.security.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,8 @@ import com.ruoyi.security.domain.SecurityEnvironmentalOrganizationDescription;
 import com.ruoyi.security.service.ISecurityEnvironmentalOrganizationDescriptionService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 环境识别Controller
@@ -100,5 +105,60 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityEnvironmentalOrganizationDescriptionService.deleteSecurityEnvironmentalOrganizationDescriptionByIds(ids));
+    }
+
+    /**
+     * 导入环境识别数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:environmentidicaation:import')")
+    @Log(title = "环境识别", businessType = BusinessType.IMPORT)
+    @PostMapping("/import")
+    public AjaxResult importData(@RequestParam("file") MultipartFile file) {
+        try {
+            ExcelUtil<SecurityEnvironmentalOrganizationDescription> util = new ExcelUtil<>(SecurityEnvironmentalOrganizationDescription.class);
+            List<SecurityEnvironmentalOrganizationDescription> list = util.importExcel(file.getInputStream());
+            // 自動補齊 environment
+            String lastEnv = null;
+            for (SecurityEnvironmentalOrganizationDescription item : list) {
+                if (item == null) continue;
+                if (item.getEnvironment() != null && !item.getEnvironment().trim().isEmpty()) {
+                    lastEnv = item.getEnvironment();
+                } else {
+                    item.setEnvironment(lastEnv);
+                }
+            }
+            // 過濾有效行
+            List<SecurityEnvironmentalOrganizationDescription> validList = list.stream()
+                .filter(item -> item != null && (
+                    (item.getEnvironment() != null && !item.getEnvironment().trim().isEmpty())
+                    || (item.getFeatures() != null && !item.getFeatures().trim().isEmpty())
+                    || (item.getDescription() != null && !item.getDescription().trim().isEmpty())
+                ))
+                .collect(Collectors.toList());
+            for (SecurityEnvironmentalOrganizationDescription item : validList) {
+                securityEnvironmentalOrganizationDescriptionService.insertSecurityEnvironmentalOrganizationDescription(item);
+            }
+            return AjaxResult.success("导入成功，共" + validList.size() + "条数据");
+        } catch (Exception e) {
+            throw new com.ruoyi.common.exception.ServiceException("导入失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 下载导入模板（只包含三個字段，並合併單元格）
+     */
+    @PreAuthorize("@ss.hasPermi('security:environmentidicaation:import')")
+    @GetMapping("/import/template")
+    public void importTemplate(HttpServletResponse response) {
+        try {
+            // 只導出三個字段的模板
+            List<SecurityEnvironmentalOrganizationDescription> list = List.of();
+            ExcelUtil<SecurityEnvironmentalOrganizationDescription> util = new ExcelUtil<>(SecurityEnvironmentalOrganizationDescription.class);
+            util.showColumn("environment", "features", "description");
+            util.exportExcel(response, list, "环境识别模板");
+            // 合併單元格（如需合併，需手動操作POI，這裡僅導出三列表頭，合併可根據需求擴展）
+        } catch (Exception e) {
+            throw new ServiceException("模板下载失败：" + e.getMessage());
+        }
     }
 }
