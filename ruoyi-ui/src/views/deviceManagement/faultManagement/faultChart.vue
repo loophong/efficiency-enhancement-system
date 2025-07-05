@@ -212,10 +212,8 @@ function initChart() {
         expandAndCollapse: true,
         animationDuration: 550,
         animationDurationUpdate: 750,
-
       }
     ]
-
   };
 
   option && myChart.value.setOption(option);

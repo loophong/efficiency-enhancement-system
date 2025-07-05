@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <!-- <el-form-item label="序号" prop="majorOrder">
         <el-input v-model="queryParams.majorOrder" placeholder="请输入序号" clearable @keyup.enter="handleQuery" />
       </el-form-item> -->
@@ -716,8 +716,8 @@
     </el-dialog>
 
     <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
-      <el-button type="primary" @click="watchCurrentWeek" v-if="!showCurrent">仅查看本周</el-button>
-      <el-button type="primary" @click="watchAllWeek" v-else>查看所有</el-button>
+      <el-button type="primary" @click="watchCurrentWeek" v-show="!showCurrent">仅查看本周</el-button>
+      <el-button type="primary" @click="watchAllWeek" v-show="showCurrent">查看所有</el-button>
       <el-table v-loading="loading" :data="listForTip" @selection-change="handleSelectionChange" border>
         <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
         <el-table-column label="部位" align="center" prop="majorPosition" />

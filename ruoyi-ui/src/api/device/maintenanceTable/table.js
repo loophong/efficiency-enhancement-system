@@ -9,6 +9,14 @@ export function listTable(query) {
   })
 }
 
+// 查询设备故障记录唯一编号
+export function numberList() {
+  return request({
+    url: '/fault/maintenance/numberList',
+    method: 'get',
+  })
+}
+
 // 查询设备故障记录详细
 export function getTable(maintenanceTableId) {
   return request({
@@ -42,6 +50,8 @@ export function delTable(maintenanceTableId) {
     method: 'delete'
   })
 }
+
+
 
 
 

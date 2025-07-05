@@ -16,7 +16,7 @@ import com.ruoyi.common.core.domain.R;
 public interface IDeviceMaintenanceTableService
 {
     /**
-     * 查询2.设备故障记录(导入)
+     * 查询设备故障记录(导入)
      *
      * @param maintenanceTableId 2.设备故障记录(导入)主键
      * @return 2.设备故障记录(导入)
@@ -24,8 +24,9 @@ public interface IDeviceMaintenanceTableService
     public DeviceMaintenanceTable selectDeviceMaintenanceTableByMaintenanceTableId(Long maintenanceTableId);
     public R<String> readFaultRecordsToDB(String fileName, InputStream inputStream);
 
+
     /**
-     * 查询2.设备故障记录(导入)列表
+     * 查询设备故障记录(导入)列表
      *
      * @param deviceMaintenanceTable 2.设备故障记录(导入)
      * @return 2.设备故障记录(导入)集合
@@ -33,7 +34,7 @@ public interface IDeviceMaintenanceTableService
     public List<DeviceMaintenanceTable> selectDeviceMaintenanceTableList(DeviceMaintenanceTable deviceMaintenanceTable);
 
     /**
-     * 新增2.设备故障记录(导入)
+     * 新增设备故障记录(导入)
      *
      * @param deviceMaintenanceTable 2.设备故障记录(导入)
      * @return 结果
@@ -41,7 +42,7 @@ public interface IDeviceMaintenanceTableService
     public int insertDeviceMaintenanceTable(DeviceMaintenanceTable deviceMaintenanceTable);
 
     /**
-     * 修改2.设备故障记录(导入)
+     * 修改设备故障记录(导入)
      *
      * @param deviceMaintenanceTable 2.设备故障记录(导入)
      * @return 结果
@@ -49,7 +50,7 @@ public interface IDeviceMaintenanceTableService
     public int updateDeviceMaintenanceTable(DeviceMaintenanceTable deviceMaintenanceTable);
 
     /**
-     * 批量删除2.设备故障记录(导入)
+     * 批量删除设备故障记录(导入)
      *
      * @param maintenanceTableIds 需要删除的2.设备故障记录(导入)主键集合
      * @return 结果
@@ -57,7 +58,7 @@ public interface IDeviceMaintenanceTableService
     public int deleteDeviceMaintenanceTableByMaintenanceTableIds(Long[] maintenanceTableIds);
 
     /**
-     * 删除2.设备故障记录(导入)信息
+     * 删除设备故障记录(导入)信息
      *
      * @param maintenanceTableId 2.设备故障记录(导入)主键
      * @return 结果

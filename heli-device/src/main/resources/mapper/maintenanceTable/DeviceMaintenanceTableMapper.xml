@@ -69,6 +69,12 @@
         where maintenance_table_id = #{maintenanceTableId}
     </select>
 
+    <!--唯一编号集合-->
+    <select id="selectUniqueMaintenanceTableIds" resultType="java.lang.String">
+        SELECT DISTINCT device_num
+        FROM device_maintenance_table
+    </select>
+
     <insert id="insertDeviceMaintenanceTable" parameterType="DeviceMaintenanceTable" useGeneratedKeys="true" keyProperty="maintenanceTableId">
         insert into device_maintenance_table
         <trim prefix="(" suffix=")" suffixOverrides=",">

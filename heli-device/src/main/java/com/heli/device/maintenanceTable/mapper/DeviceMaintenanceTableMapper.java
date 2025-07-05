@@ -32,7 +32,7 @@ public interface DeviceMaintenanceTableMapper extends BaseMapper<DeviceMaintenan
      */
     public List<DeviceMaintenanceTable> selectDeviceMaintenanceTableList(DeviceMaintenanceTable deviceMaintenanceTable);
 
-
+    public List<String> selectUniqueMaintenanceTableIds();
 
     @Select({
             "<script>",

@@ -2,10 +2,12 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <el-form-item label="日期选择" prop="yearAndMonth">
-        <el-date-picker v-model="queryParams.yearAndMonth" value-format="YYYY-MM" type="month"></el-date-picker>
+        <el-date-picker v-model="queryParams.yearAndMonth" value-format="YYYY-MM" type="month"
+          @change="handleQuery"></el-date-picker>
       </el-form-item>
       <el-form-item label="故障类型名称" prop="faultType">
-        <el-select v-model="queryParams.faultType" placeholder="请选择故障类型名称" clearable style="width: 180px;">
+        <el-select v-model="queryParams.faultType" placeholder="请选择故障类型名称" clearable filterable style="width: 180px;"
+          @change="handleQuery">
           <el-option v-for="dict in device_fault_analysis" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -32,7 +34,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="tableList" row-key="maintenanceTableId"
-      @selection-change="handleSelectionChange" border stripe>
+      @selection-change="handleSelectionChange" border stripe :default-expand-all="openAllTree">
       <!-- <el-table-column type="selection" width="55" align="center" /> -->
       <el-table-column label="故障类型名称" align="center" prop="faultTypeName" width="220">
         <template #default="scope">
@@ -128,6 +130,7 @@ const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
 const analysisList = ref([]);
 const open = ref(false);
 const openDrawer = ref(false);
+const openAllTree = ref(true);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -349,7 +352,7 @@ async function getList() {
         });
       }
     }
-    if (queryParams.value.faultType === '' || queryParams.value.faultType === null) {
+    if (queryParams.value.faultType == '' || queryParams.value.faultType == null) {
       tableList.value = resultArrayFormat
     } else {
       tableList.value = resultArrayFormat.filter(item => {
@@ -438,6 +441,11 @@ function reset() {
 
 /** 搜索按钮操作 */
 async function handleQuery() {
+  if (!queryParams.value.faultType) {
+    openAllTree.value = false
+  } else {
+    openAllTree.value = true
+  }
   queryParams.value.pageNum = 1;
   // console.log(results['润滑不良'])
   getList();

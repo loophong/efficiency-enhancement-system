@@ -12,8 +12,13 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    visibleMonths: {
+        type: Array,
+        required: true,
+    }
 });
 
+console.log('props.visibleMonths-------->' + props.visibleMonths)
 
 // 英文月份到中文的映射
 const monthMapping = {
@@ -76,7 +81,25 @@ const initChart = () => {
 
 const updateChart = () => {
     if (!myChart) return;
+    const monthToIndex = {
+        '一月': 0,
+        '二月': 1,
+        '三月': 2,
+        '四月': 3,
+        '五月': 4,
+        '六月': 5,
+        '七月': 6,
+        '八月': 7,
+        '九月': 8,
+        '十月': 9,
+        '十一月': 10,
+        '十二月': 11
+    };
+    // 将 visibleMonths 转换为对应的索引（无需排序）
+    const visibleIndexes = props.visibleMonths.map(month => monthToIndex[month]);
 
+    // 按 visibleMonths 的顺序提取数据
+    const filteredData = visibleIndexes.map(index => parsedData.barData[index]);
     const option = {
         animation: false,
         tooltip: {
@@ -99,7 +122,7 @@ const updateChart = () => {
         xAxis: [
             {
                 type: 'category',
-                data: parsedData.categories,
+                data: props.visibleMonths,
                 axisPointer: {
                     type: 'shadow'
                 }
@@ -119,7 +142,7 @@ const updateChart = () => {
             {
                 name: '指标值',
                 type: 'bar',
-                data: parsedData.barData,
+                data: filteredData,
                 itemStyle: {
                     color: function (params) {
                         const value = params.value;
@@ -172,6 +195,10 @@ onMounted(() => {
 
 watch(() => props.chartData, (newVal) => {
     parsedData = parseChartData(newVal);
+    updateChart();
+}, { deep: true });
+
+watch(() => props.visibleMonths, (newMonths) => {
     updateChart();
 }, { deep: true });
 

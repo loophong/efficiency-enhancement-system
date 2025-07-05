@@ -7,6 +7,17 @@
       <el-form-item label="年份" prop="indicatorTime">
         <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+      <!-- <el-form-item label="开始月" prop="indicatorTime">
+        <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
+      </el-form-item>
+      <el-form-item label="结束月" prop="indicatorTime">
+        <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
+      </el-form-item> -->
+      <el-form-item label="月份" prop="monthRangeResult">
+        <el-date-picker v-model="monthRangeResult" type="monthrange" :clearable="false" range-separator="至"
+          start-placeholder="开始月份" end-placeholder="结束月份" @change="handleMonthChange()" format="MM"
+          value-format="YYYY-MM-DD" :disabledDate="disabledDateHandler" />
+      </el-form-item>
       <el-form-item label="目标值" prop="indicatorTarget">
         <el-input v-model="queryParams.indicatorTarget" placeholder="请输入目标值" clearable @keyup.enter="handleQuery" />
       </el-form-item>
@@ -52,6 +63,7 @@
       <el-form-item label="十二月" prop="indicatorDec">
         <el-input v-model="queryParams.indicatorDec" placeholder="请输入十二月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
+
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -112,84 +124,84 @@
       <el-table-column label="目标值" align="center" prop="indicatorTarget" />
       <el-table-column label="目标值上限" align="center" prop="indicatorUp" />
       <el-table-column label="目标值下限" align="center" prop="indicatorDown" />
-      <el-table-column label="一月" align="center" prop="indicatorJan">
+      <el-table-column label="一月" align="center" prop="indicatorJan" v-if="visibleMonths.includes('一月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorJan, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorJan }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="二月" align="center" prop="indicatorFeb">
+      <el-table-column label="二月" align="center" prop="indicatorFeb" v-if="visibleMonths.includes('二月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorFeb, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorFeb }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="三月" align="center" prop="indicatorMar">
+      <el-table-column label="三月" align="center" prop="indicatorMar" v-if="visibleMonths.includes('三月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorMar, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorMar }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="四月" align="center" prop="indicatorApr">
+      <el-table-column label="四月" align="center" prop="indicatorApr" v-if="visibleMonths.includes('四月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorApr, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorApr }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="五月" align="center" prop="indicatorMay">
+      <el-table-column label="五月" align="center" prop="indicatorMay" v-if="visibleMonths.includes('五月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorMay, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorMay }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="六月" align="center" prop="indicatorJun">
+      <el-table-column label="六月" align="center" prop="indicatorJun" v-if="visibleMonths.includes('六月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorJun, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorJun }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="七月" align="center" prop="indicatorJul">
+      <el-table-column label="七月" align="center" prop="indicatorJul" v-if="visibleMonths.includes('七月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorJul, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorJul }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="八月" align="center" prop="indicatorAug">
+      <el-table-column label="八月" align="center" prop="indicatorAug" v-if="visibleMonths.includes('八月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorAug, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorAug }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="九月" align="center" prop="indicatorSep">
+      <el-table-column label="九月" align="center" prop="indicatorSep" v-if="visibleMonths.includes('九月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorSep, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorSep }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="十月" align="center" prop="indicatorOct">
+      <el-table-column label="十月" align="center" prop="indicatorOct" v-if="visibleMonths.includes('十月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorOct, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorOct }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="十一月" align="center" prop="indicatorNov">
+      <el-table-column label="十一月" align="center" prop="indicatorNov" v-if="visibleMonths.includes('十一月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorNov, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorNov }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="十二月" align="center" prop="indicatorDec">
+      <el-table-column label="十二月" align="center" prop="indicatorDec" v-if="visibleMonths.includes('十二月')">
         <template #default="scope">
           <span :style="{ color: getColor(scope.row.indicatorDec, scope.row.indicatorUp, scope.row.indicatorDown) }">
             {{ scope.row.indicatorDec }}
@@ -286,7 +298,7 @@
     </el-dialog>
 
     <el-dialog :title="chartTitle" v-model="openChart" width="1000px" append-to-body>
-      <count-chart ref="chartRef" :chartData="chartData"></count-chart>
+      <count-chart ref="chartRef" :chartData="chartData" :visibleMonths="visibleMonths"></count-chart>
     </el-dialog>
 
     <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
@@ -309,7 +321,7 @@ import { ElMessageBox } from 'element-plus'
 import VueOfficeDocx from '@vue-office/docx'
 import '@vue-office/docx/lib/index.css'
 import { ElMessage } from 'element-plus'
-import { format } from 'date-fns';
+import { format, isSameYear, isBefore, parse } from 'date-fns';
 
 import ImageModule from 'docxtemplater-image-module-free'
 import expressions from 'angular-expressions'
@@ -319,6 +331,7 @@ const chartRef = ref(null);
 const { proxy } = getCurrentInstance();
 const countList = ref([]);
 const exportList = ref([]);
+const monthRangeResult = ref(['2025-01-01', '2025-12-01']);
 const open = ref(false);
 const openDrawer = ref(false);
 const openChart = ref(false);
@@ -337,6 +350,7 @@ const chartTitle = ref("");
 const drawerUrl = ref("");
 const daterangeIndicatorTime = ref([]);
 const chartData = reactive({})
+const visibleMonths = ref([]);
 
 const data = reactive({
   form: {},
@@ -380,6 +394,26 @@ const data = reactive({
 });
 
 const { queryParams, form, rules, formExport, rulesExport } = toRefs(data);
+
+
+
+const monthMap = {
+  '01': '一月',
+  '02': '二月',
+  '03': '三月',
+  '04': '四月',
+  '05': '五月',
+  '06': '六月',
+  '07': '七月',
+  '08': '八月',
+  '09': '九月',
+  '10': '十月',
+  '11': '十一月',
+  '12': '十二月'
+};
+onMounted(() => {
+  handleMonthChange();
+});
 //文件显示
 function formatFileInfo(fileInfo) {
   if (fileInfo == '' || fileInfo == null) {
@@ -422,15 +456,57 @@ function formatFileInfo(fileInfo) {
 //     }
 //   });
 // }
+function disabledDateHandler(date) {
+  const [startDateStr] = monthRangeResult.value;
+
+  if (!startDateStr) return false; // 尚未选择开始月份，不限制
+
+  const startDate = new Date(startDateStr);
+  const currentDate = date;
+
+  // 1. 如果年份不同 → 禁用
+  if (!isSameYear(currentDate, startDate)) {
+    return true;
+  }
+
+  // // 2. 如果当前月份早于开始月份 → 禁用
+  // if (isBefore(currentDate, startDate)) {
+  //   return true;
+  // }
+
+  return false;
+}
 
 function handleShowChart(row) {
   console.log('countList---->', countList.value[0])
   console.log('row---->', row)
+
   chartTitle.value = row.indicatorName
   chartData.data = row
   openChart.value = true
 }
+//处理月份选择
+function handleMonthChange() {
+  if (Array.isArray(monthRangeResult.value) && monthRangeResult.value.length == 2) {
+    // console.log(monthRangeResult.value)
+    // console.log(monthRangeResult.value[0])
+    // console.log(monthRangeResult.value[1])
 
+    const [startDate, endDate] = monthRangeResult.value;
+    const startMonth = startDate.split('-')[1]; // 提取月份部分，如 '03'
+    const endMonth = endDate.split('-')[1];     // 提取月份部分，如 '07'
+    // 生成从 startMonth 到 endMonth 的所有月份
+    const months = [];
+    for (let i = parseInt(startMonth); i <= parseInt(endMonth); i++) {
+      const monthStr = i.toString().padStart(2, '0');
+      months.push(monthStr);
+    }
+    // 将数字月份转换为中文名称
+    const chineseMonths = months.map(m => monthMap[m]);
+    // 更新响应式变量
+    visibleMonths.value = chineseMonths;
+  }
+}
 
 function getColor(value, targetUp, targetDown) {
   if (targetUp == '' && targetDown == '') {

@@ -443,7 +443,7 @@ function handleDelete(row) {
 
 /** 跳转按钮操作 */
 function handleToRoute(row, module, destination) {
-  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum } });
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum ,from:'maintenance'} });
 }
 
 
