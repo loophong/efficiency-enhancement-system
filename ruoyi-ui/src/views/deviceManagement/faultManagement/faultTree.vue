@@ -13,11 +13,11 @@
           type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
           style="width: 200px;"></el-date-picker>
       </el-form-item>
-      <el-form-item label="处理时间" style="width: 308px" prop="daterangeResolutionTime">
+      <!-- <el-form-item label="处理时间" style="width: 308px" prop="daterangeResolutionTime">
         <el-date-picker v-model="queryParams.daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
           type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
           style="width: 200px;"></el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -170,8 +170,6 @@ const pagesList = ref([]);
 const numberOptionList = ref([]);
 const router = useRouter();
 const showDialog = ref(false);
-// const daterangeReportedTime = ref([]);
-// const daterangeResolutionTime = ref([]);
 
 const data = reactive({
   form: {},
@@ -203,12 +201,12 @@ const data = reactive({
     deviceNum: [
       { required: true, message: '设备编号不能为空', trigger: 'change' }
     ],
-    daterangeReportedTime: [
-      { required: true, message: '请选择报修时间范围', trigger: 'change' }
-    ],
-    daterangeResolutionTime: [
-      { required: true, message: '请选择处理时间范围', trigger: 'change' }
-    ]
+    // daterangeReportedTime: [
+    //   { required: true, message: '请选择报修时间范围', trigger: 'change' }
+    // ],
+    // daterangeResolutionTime: [
+    //   { required: true, message: '请选择处理时间范围', trigger: 'change' }
+    // ]
   }
 });
 

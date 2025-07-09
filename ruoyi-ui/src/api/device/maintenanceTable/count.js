@@ -9,6 +9,22 @@ export function listCount(query) {
   })
 }
 
+// 查询去重名称
+export function uniqueNameList() {
+  return request({
+    url: '/fault/indicator/uniqueName',
+    method: 'get',
+  })
+}
+
+// 查询去重年份
+export function uniqueTimeList() {
+  return request({
+    url: '/fault/indicator/uniqueTime',
+    method: 'get',
+  })
+}
+
 // 查询设备指标分析详细
 export function getCount(indicatorId) {
   return request({

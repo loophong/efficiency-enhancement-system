@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <div ref="chartContainer" id="main" style="width: 100%; height: 1600px;"></div>
+    <div ref="chartContainer" id="main" style="width: 100%; height: 150vh; overflow: auto;"></div>
     <!-- Tooltip for displaying detailed information -->
     <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
       style="position:absolute;white-space:nowrap;background-color:#f9f9f9;border:1px solid #d3d3d3;padding:5px;display:none;z-index:1000;">
@@ -171,8 +171,8 @@ function initChart() {
 
   const option = {
     tooltip: {
-      trigger: 'item',
-      triggerOn: 'mousemove'
+      trigger: 'none',
+      // triggerOn: 'mousemove'
     },
     series: [
       {
@@ -181,13 +181,13 @@ function initChart() {
         name: 'tree1',
         data: [data],
         top: '10%',
-        left: '8%',
+        left: '15%',
         bottom: '22%',
-        right: '20%',
+        right: '40%',
         symbolSize: 7,
         edgeShape: 'polyline',
         edgeForkPosition: '63%',
-        initialTreeDepth: 20,
+        initialTreeDepth: 3,
         lineStyle: {
           width: 2
         },
