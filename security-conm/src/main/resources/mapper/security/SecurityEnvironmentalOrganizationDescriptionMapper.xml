@@ -9,25 +9,44 @@
         <result property="environment"    column="environment"    />
         <result property="features"    column="features"    />
         <result property="description"    column="description"    />
-        <result property="createTime"    column="statu_time"    />
+        <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="createBy"    column="create_by"    />
         <result property="updateBy"    column="update_by"    />
         <result property="parentId"    column="parent_id"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
+    <!-- 查询条件 -->
     <sql id="selectSecurityEnvironmentalOrganizationDescriptionVo">
-        select id, environment, features, description, statu_time, update_time, create_by, update_by, parent_id from security_environmental_organization_description
+        select id, environment, features, description, parent_id, create_time, update_time, create_by, update_by, related_id
+        from security_environmental_organization_description
+    </sql>
+
+    <!-- 查询条件 -->
+    <sql id="where">
+        <where>
+            <if test="environment != null and environment != ''">
+                AND environment like concat('%', #{environment}, '%')
+            </if>
+            <if test="features != null and features != ''">
+                AND features like concat('%', #{features}, '%')
+            </if>
+            <if test="description != null and description != ''">
+                AND description like concat('%', #{description}, '%')
+            </if>
+            <if test="parentId != null">
+                AND parent_id = #{parentId}
+            </if>
+            <if test="relatedId != null">
+                AND related_id = #{relatedId}
+            </if>
+        </where>
     </sql>
 
     <select id="selectSecurityEnvironmentalOrganizationDescriptionList" parameterType="SecurityEnvironmentalOrganizationDescription" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
         <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
-        <where>  
-            <if test="environment != null  and environment != ''"> and environment = #{environment}</if>
-            <if test="features != null  and features != ''"> and features = #{features}</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="parentId != null "> and parent_id = #{parentId}</if>
-        </where>
+        <include refid="where"/>
         order by environment
     </select>
     
@@ -42,11 +61,12 @@
             <if test="environment != null and environment != ''">environment,</if>
             <if test="features != null and features != ''">features,</if>
             <if test="description != null">description,</if>
-            <if test="createTime != null">statu_time,</if>
+            <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="createBy != null">create_by,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="parentId != null">parent_id,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="environment != null and environment != ''">#{environment},</if>
@@ -57,6 +77,7 @@
             <if test="createBy != null">#{createBy},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="parentId != null">#{parentId},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -66,11 +87,12 @@
             <if test="environment != null and environment != ''">environment = #{environment},</if>
             <if test="features != null and features != ''">features = #{features},</if>
             <if test="description != null">description = #{description},</if>
-            <if test="createTime != null">statu_time = #{createTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="parentId != null">parent_id = #{parentId},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>

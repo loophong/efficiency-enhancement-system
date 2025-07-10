@@ -248,6 +248,25 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
     }
     
     /**
+     * 根据关联ID查询环境识别列表
+     */
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public AjaxResult listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        if (relatedId == null) {
+            return AjaxResult.error("关联ID不能为空");
+        }
+        
+        SecurityEnvironmentalOrganizationDescription query = new SecurityEnvironmentalOrganizationDescription();
+        query.setRelatedId(relatedId);
+        
+        List<SecurityEnvironmentalOrganizationDescription> list = 
+            securityEnvironmentalOrganizationDescriptionService.selectSecurityEnvironmentalOrganizationDescriptionList(query);
+        
+        return success(list);
+    }
+    
+    /**
      * 新增环境识别
      */
     @PreAuthorize("@ss.hasPermi('security:environmentidicaation:add')")

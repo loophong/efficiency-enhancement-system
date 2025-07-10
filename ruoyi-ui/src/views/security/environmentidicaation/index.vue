@@ -185,14 +185,16 @@ const data = reactive({
     id: null,
     environment: null,
     features: null,
-    description: null
+    description: null,
+    relatedId: null  // 添加关联ID字段
   },
   // 查询参数
   queryParams: {
     pageNum: 1,
     pageSize: 10,
     environment: null,
-    features: null
+    features: null,
+    relatedId: null  // 添加关联ID查询参数
   },
   rules: {},
 });
@@ -206,9 +208,27 @@ const spanArr = ref([]); // 用于记录每个环境的起始 index
 
 // 初始化函数
 onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
   // 加载数据
   getList();
 });
+
+/**
+ * 检查URL参数中是否有关联ID
+ */
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+  
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联文件的环境识别记录");
+  }
+}
 
 /** 查询环境识别列表 */
 function getList() {
@@ -336,8 +356,13 @@ function reset() {
     id: null,
     environment: null,
     features: null,
-    description: null
+    description: null,
+    relatedId: null
   };
+  // 如果有关联ID查询参数，保留该值
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   proxy.resetForm("environmentidicaationRef");
 }
 
@@ -363,6 +388,10 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+  // 如果有关联ID，自动填充到表单中
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加环境识别";
 }
@@ -445,6 +474,9 @@ function beforeImport(file) {
     } else {
       proxy.$modal.msgError(res.msg);
     }
+  }).catch(err => {
+    console.error("导入失败:", err);
+    proxy.$modal.msgError("导入失败: " + (err.message || "未知错误"));
   }).finally(() => {
     loading.value = false;
   });

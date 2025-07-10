@@ -9,15 +9,6 @@ export function listEnvironmentidicaation(query) {
   })
 }
 
-// 查询环境识别树形结构
-export function listOrganization(query) {
-  return request({
-    url: '/security/environmentidicaation/treeList',
-    method: 'get',
-    params: query
-  })
-}
-
 // 查询环境识别详细
 export function getEnvironmentidicaation(id) {
   return request({
@@ -52,7 +43,7 @@ export function delEnvironmentidicaation(id) {
   })
 }
 
-// 导入环境识别
+// 导入环境识别数据
 export function importEnvironmentidicaation(formData) {
   return request({
     url: '/security/environmentidicaation/import',
@@ -60,7 +51,16 @@ export function importEnvironmentidicaation(formData) {
     data: formData,
     headers: {
       'Content-Type': 'multipart/form-data'
-    }
+    },
+    // 阻止axios自动处理Content-Type和formData
+    transformRequest: [function (data) {
+      // 如果是FormData实例，直接返回
+      if (data instanceof FormData) {
+        return data;
+      }
+      // 否则使用默认转换
+      return JSON.stringify(data);
+    }]
   })
 }
 
@@ -70,5 +70,13 @@ export function importTemplate() {
     url: '/security/environmentidicaation/import/template',
     method: 'get',
     responseType: 'blob'
+  })
+}
+
+// 根据关联ID查询环境识别
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/environmentidicaation/listByRelatedId/' + relatedId,
+    method: 'get'
   })
 }

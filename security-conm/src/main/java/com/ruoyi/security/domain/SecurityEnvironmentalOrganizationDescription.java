@@ -31,6 +31,9 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
     /** 父ID */
     private Long parentId;
 
+    /** 关联ID */
+    private Long relatedId;
+
     /** 子项列表 */
     private java.util.List<SecurityEnvironmentalOrganizationDescription> children;
 
@@ -84,6 +87,16 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
         return parentId;
     }
     
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
+    
     public java.util.List<SecurityEnvironmentalOrganizationDescription> getChildren() 
     {
         return children;
@@ -106,6 +119,7 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
             .append("createBy", getCreateBy())
             .append("updateBy", getUpdateBy())
             .append("parentId", getParentId())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

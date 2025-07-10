@@ -44,4 +44,28 @@ public class SecuritySysMenuServiceImpl implements ISecuritySysMenuService {
         int result = securitySysMenuMapper.hasChildByMenuId(menuId);
         return result > 0;
     }
+    
+    @Override
+    public String getMenuNameByPath(String path) {
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
+        
+        // 首先尝试精确匹配
+        securitysysmenu menu = securitySysMenuMapper.selectMenuByPath(path);
+        if (menu != null && menu.getMenuName() != null) {
+            return menu.getMenuName();
+        }
+        
+        // 如果精确匹配失败，尝试部分匹配
+        List<securitysysmenu> menus = selectMenuTree();
+        for (securitysysmenu m : menus) {
+            if (m.getPath() != null && !m.getPath().isEmpty() && 
+                (path.contains(m.getPath()) || m.getPath().contains(path))) {
+                return m.getMenuName();
+            }
+        }
+        
+        return null;
+    }
 }

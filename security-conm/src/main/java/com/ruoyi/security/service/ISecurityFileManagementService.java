@@ -1,7 +1,9 @@
 package com.ruoyi.security.service;
 
 import java.util.List;
+import java.util.Map;
 import com.ruoyi.security.domain.SecurityFileManagement;
+import com.ruoyi.security.domain.FileStatistics;
 
 /**
  * 文件管理Service接口
@@ -58,4 +60,26 @@ public interface ISecurityFileManagementService
      * @return 结果
      */
     public int deleteSecurityFileManagementById(Long id);
+    
+    /**
+     * 获取文件统计信息
+     * 
+     * @return 文件统计信息
+     */
+    public FileStatistics getFileStatistics();
+    
+    /**
+     * 获取最近上传的文件列表
+     * 
+     * @param limit 限制数量
+     * @return 最近上传的文件列表
+     */
+    public List<SecurityFileManagement> getRecentFiles(int limit);
+    
+    /**
+     * 获取模块文件统计
+     * 
+     * @return 模块文件统计信息
+     */
+    public Map<String, Integer> getModuleStatistics();
 }
