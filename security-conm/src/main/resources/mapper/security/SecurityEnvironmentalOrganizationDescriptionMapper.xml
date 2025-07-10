@@ -9,57 +9,78 @@
         <result property="environment"    column="environment"    />
         <result property="features"    column="features"    />
         <result property="description"    column="description"    />
+        <result property="createTime"    column="statu_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="parentId"    column="parent_id"    />
     </resultMap>
 
     <sql id="selectSecurityEnvironmentalOrganizationDescriptionVo">
-        select id, environment, features, description from Security_environmental_organization_description
+        select id, environment, features, description, statu_time, update_time, create_by, update_by, parent_id from security_environmental_organization_description
     </sql>
 
     <select id="selectSecurityEnvironmentalOrganizationDescriptionList" parameterType="SecurityEnvironmentalOrganizationDescription" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
         <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
-        <where>
-            <if test="environment != null  and environment != ''"> and environment like concat('%', #{environment}, '%')</if>
-            <if test="features != null  and features != ''"> and features like concat('%', #{features}, '%')</if>
+        <where>  
+            <if test="environment != null  and environment != ''"> and environment = #{environment}</if>
+            <if test="features != null  and features != ''"> and features = #{features}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
         </where>
+        order by environment
     </select>
-
+    
     <select id="selectSecurityEnvironmentalOrganizationDescriptionById" parameterType="Long" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
         <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
         where id = #{id}
     </select>
-
-    <insert id="insertSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription">
-        insert into Security_environmental_organization_description
+        
+    <insert id="insertSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription" useGeneratedKeys="true" keyProperty="id">
+        insert into security_environmental_organization_description
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">id,</if>
-            <if test="environment != null">environment,</if>
-            <if test="features != null">features,</if>
+            <if test="environment != null and environment != ''">environment,</if>
+            <if test="features != null and features != ''">features,</if>
             <if test="description != null">description,</if>
-        </trim>
+            <if test="createTime != null">statu_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="parentId != null">parent_id,</if>
+         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">#{id},</if>
-            <if test="environment != null">#{environment},</if>
-            <if test="features != null">#{features},</if>
+            <if test="environment != null and environment != ''">#{environment},</if>
+            <if test="features != null and features != ''">#{features},</if>
             <if test="description != null">#{description},</if>
-        </trim>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="parentId != null">#{parentId},</if>
+         </trim>
     </insert>
 
     <update id="updateSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription">
-        update Security_environmental_organization_description
+        update security_environmental_organization_description
         <trim prefix="SET" suffixOverrides=",">
-            <if test="environment != null">environment = #{environment},</if>
-            <if test="features != null">features = #{features},</if>
+            <if test="environment != null and environment != ''">environment = #{environment},</if>
+            <if test="features != null and features != ''">features = #{features},</if>
             <if test="description != null">description = #{description},</if>
+            <if test="createTime != null">statu_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="parentId != null">parent_id = #{parentId},</if>
         </trim>
         where id = #{id}
     </update>
 
     <delete id="deleteSecurityEnvironmentalOrganizationDescriptionById" parameterType="Long">
-        delete from Security_environmental_organization_description where id = #{id}
+        delete from security_environmental_organization_description where id = #{id}
     </delete>
 
     <delete id="deleteSecurityEnvironmentalOrganizationDescriptionByIds" parameterType="String">
-        delete from Security_environmental_organization_description where id in
+        delete from security_environmental_organization_description where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

@@ -5,15 +5,15 @@ import com.ruoyi.security.domain.SecurityEnvironmentalOrganizationDescription;
 
 /**
  * 环境识别Mapper接口
- *
- * @author wang
- * @date 2025-03-05
+ * 
+ * @author ruoyi
+ * @date 2023-07-19
  */
-public interface SecurityEnvironmentalOrganizationDescriptionMapper
+public interface SecurityEnvironmentalOrganizationDescriptionMapper 
 {
     /**
      * 查询环境识别
-     *
+     * 
      * @param id 环境识别主键
      * @return 环境识别
      */
@@ -21,7 +21,7 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
 
     /**
      * 查询环境识别列表
-     *
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 环境识别集合
      */
@@ -29,7 +29,7 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
 
     /**
      * 新增环境识别
-     *
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
 
     /**
      * 修改环境识别
-     *
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
 
     /**
      * 删除环境识别
-     *
+     * 
      * @param id 环境识别主键
      * @return 结果
      */
@@ -53,7 +53,7 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
 
     /**
      * 批量删除环境识别
-     *
+     * 
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */

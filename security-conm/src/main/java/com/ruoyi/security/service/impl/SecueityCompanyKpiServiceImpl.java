@@ -6,9 +6,19 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.security.mapper.SecueityCompanyKpiMapper;
 import com.ruoyi.security.domain.SecueityCompanyKpi;
 import com.ruoyi.security.service.ISecueityCompanyKpiService;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 公司KPIService业务层处理
+ * 公司KPI服务实现
  * 
  * @author wang
  * @date 2025-02-27
@@ -16,6 +26,11 @@ import com.ruoyi.security.service.ISecueityCompanyKpiService;
 @Service
 public class SecueityCompanyKpiServiceImpl implements ISecueityCompanyKpiService 
 {
+    private static final Logger log = LoggerFactory.getLogger(SecueityCompanyKpiServiceImpl.class);
+    
+    // 匹配目标值格式的正则表达式
+    private static final Pattern TARGET_VALUE_PATTERN = Pattern.compile("^([<>=]+)?(\\d+(\\.\\d+)?)$");
+
     @Autowired
     private SecueityCompanyKpiMapper secueityCompanyKpiMapper;
 
@@ -89,5 +104,181 @@ public class SecueityCompanyKpiServiceImpl implements ISecueityCompanyKpiService
     public int deleteSecueityCompanyKpiById(Long id)
     {
         return secueityCompanyKpiMapper.deleteSecueityCompanyKpiById(id);
+    }
+
+    /**
+     * 解析目标值格式
+     * 
+     * @param value 原始值
+     * @return 解析结果，包含操作符和数值
+     */
+    private Map<String, String> parseTargetValue(String value) {
+        Map<String, String> result = new HashMap<>();
+        result.put("operator", "");
+        result.put("value", "0");
+        
+        if (StringUtils.isEmpty(value)) {
+            return result;
+        }
+        
+        Matcher matcher = TARGET_VALUE_PATTERN.matcher(value.trim());
+        if (matcher.find()) {
+            String operator = matcher.group(1);
+            String numValue = matcher.group(2);
+            
+            result.put("operator", operator != null ? operator : "");
+            result.put("value", numValue != null ? numValue : "0");
+        }
+        
+        return result;
+    }
+
+    /**
+     * 导入KPI数据
+     * 
+     * @param kpiList KPI数据列表
+     * @param operName 操作人
+     * @return 结果
+     */
+    @Override
+    public String importKpi(List<SecueityCompanyKpi> kpiList, String operName)
+    {
+        if (StringUtils.isNull(kpiList) || kpiList.size() == 0)
+        {
+            throw new ServiceException("导入KPI数据不能为空！");
+        }
+        int successNum = 0;
+        int failureNum = 0;
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+        
+        for (SecueityCompanyKpi kpi : kpiList)
+        {
+            try
+            {
+                // 设置默认值
+                if (StringUtils.isEmpty(kpi.getUnitName()))
+                {
+                    kpi.setUnitName("");  // 设置为空字符串
+                }
+                
+                if (StringUtils.isEmpty(kpi.getCategory()))
+                {
+                    kpi.setCategory("默认分类");
+                }
+                
+                if (StringUtils.isEmpty(kpi.getIndicatorName()))
+                {
+                    kpi.setIndicatorName("默认指标");
+                }
+                
+                if (StringUtils.isEmpty(kpi.getUnitOfMeasurement()))
+                {
+                    kpi.setUnitOfMeasurement("个");
+                }
+                
+                if (StringUtils.isEmpty(kpi.getYear()))
+                {
+                    kpi.setYear(DateUtils.getDate().substring(0, 4));
+                }
+                
+                if (StringUtils.isEmpty(kpi.getEvaluationFrequency()))
+                {
+                    kpi.setEvaluationFrequency("季度");
+                }
+                
+                if (kpi.getWeight() == null)
+                {
+                    kpi.setWeight(new BigDecimal("1"));
+                }
+                
+                // 处理特殊格式的目标值
+                StringBuilder formatInfo = new StringBuilder();
+                
+                // 处理年度目标值
+                if (kpi.getAnnualTargetValue() == null || kpi.getAnnualTargetValue().compareTo(BigDecimal.ZERO) == 0)
+                {
+                    kpi.setAnnualTargetValue(new BigDecimal("95"));
+                    formatInfo.append("ANNUAL_TARGET:>=;");
+                }
+                
+                // 处理一季度目标值
+                if (kpi.getQ1TargetValue() == null || kpi.getQ1TargetValue().compareTo(BigDecimal.ZERO) == 0)
+                {
+                    kpi.setQ1TargetValue(new BigDecimal("95"));
+                    formatInfo.append("Q1_TARGET:>=;");
+                }
+                
+                // 处理二季度目标值
+                if (kpi.getQ2TargetValue() == null || kpi.getQ2TargetValue().compareTo(BigDecimal.ZERO) == 0)
+                {
+                    kpi.setQ2TargetValue(new BigDecimal("95"));
+                    formatInfo.append("Q2_TARGET:>=;");
+                }
+                
+                // 处理三季度目标值
+                if (kpi.getQ3TargetValue() == null || kpi.getQ3TargetValue().compareTo(BigDecimal.ZERO) == 0)
+                {
+                    kpi.setQ3TargetValue(new BigDecimal("95"));
+                    formatInfo.append("Q3_TARGET:>=;");
+                }
+                
+                // 处理四季度目标值
+                if (kpi.getQ4TargetValue() == null || kpi.getQ4TargetValue().compareTo(BigDecimal.ZERO) == 0)
+                {
+                    kpi.setQ4TargetValue(new BigDecimal("95"));
+                    formatInfo.append("Q4_TARGET:>=;");
+                }
+                
+                // 添加格式信息到隐藏字段或元数据中，而不是备注
+                // 这里我们仍然使用备注字段存储格式信息，但是前端会过滤掉这些信息
+                if (formatInfo.length() > 0)
+                {
+                    String beizhu = kpi.getBeizhu();
+                    if (StringUtils.isEmpty(beizhu))
+                    {
+                        // 如果没有备注，只添加格式信息
+                        kpi.setBeizhu("FORMAT_INFO:" + formatInfo.toString());
+                    }
+                    else
+                    {
+                        // 如果已有备注，将格式信息添加到备注后面
+                        // 检查备注是否已经包含格式信息
+                        if (beizhu.contains("FORMAT_INFO:"))
+                        {
+                            // 替换已有的格式信息
+                            kpi.setBeizhu(beizhu.replaceAll("FORMAT_INFO:[^；]+", "FORMAT_INFO:" + formatInfo.toString()));
+                        }
+                        else
+                        {
+                            // 添加新的格式信息
+                            kpi.setBeizhu(beizhu + "；FORMAT_INFO:" + formatInfo.toString());
+                        }
+                    }
+                }
+                
+                // 插入数据
+                this.insertSecueityCompanyKpi(kpi);
+                successNum++;
+            }
+            catch (Exception e)
+            {
+                failureNum++;
+                String msg = "<br/>第 " + (successNum + failureNum) + " 条数据导入失败：";
+                failureMsg.append(msg + e.getMessage());
+                log.error(msg, e);
+            }
+        }
+        
+        if (failureNum > 0)
+        {
+            failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据导入失败，错误如下：");
+            throw new ServiceException(failureMsg.toString());
+        }
+        else
+        {
+            successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条");
+        }
+        return successMsg.toString();
     }
 }

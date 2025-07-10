@@ -9,6 +9,15 @@ export function listEnvironmentidicaation(query) {
   })
 }
 
+// 查询环境识别树形结构
+export function listOrganization(query) {
+  return request({
+    url: '/security/environmentidicaation/treeList',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询环境识别详细
 export function getEnvironmentidicaation(id) {
   return request({
