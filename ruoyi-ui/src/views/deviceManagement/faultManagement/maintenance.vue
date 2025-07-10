@@ -138,7 +138,7 @@
     <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize" @pagination="getList" />
 
-    <!-- 添加或修改2.设备故障记录(导入)对话框 -->
+    <!-- 添加或修改设备故障记录(导入)对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="tableRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备编号" prop="deviceNum">
@@ -204,7 +204,7 @@
       </template>
     </el-dialog>
 
-    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :direction="direction">
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" direction="rtl">
       <vue-office-docx :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler" @error="errorHandler" />
     </el-drawer>
 
@@ -281,12 +281,15 @@ const data = reactive({
     ifDown: null
   },
   rules: {
+    deviceNum: [
+      { required: true, message: '设备编号不能为空', trigger: 'blur' }
+    ]
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-const routerDeviceNum = route.query.deviceNum;
+var routerDeviceNum = route.query.deviceNum;
 const handleRouteParams = () => {
   if (routerDeviceNum) {
     console.log('Received deviceNum:', routerDeviceNum);
@@ -299,10 +302,23 @@ const handleRouteParams = () => {
   }
 };
 
+watch(() => ({ deviceNum: route.query.deviceNum, from: route.query.from }),
+  (newParams) => {
+    console.log('检测到新参数 deviceNum -->', newParams.deviceNum);
+    console.log('检测到新参数 from -->', newParams.from);
+    if (newParams.from && newParams.from != 'maintenance') {
+      routerDeviceNum = newParams.deviceNum;
+      handleRouteParams(newParams);
+    }
+  }
+);
+
 // 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
 onMounted(() => {
   handleRouteParams();
 });
+
+
 
 /** 查询设备故障记录列表 */
 function getList() {
@@ -427,7 +443,7 @@ function handleDelete(row) {
 
 /** 跳转按钮操作 */
 function handleToRoute(row, module, destination) {
-  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum } });
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum ,from:'maintenance'} });
 }
 
 

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
       <!-- <el-form-item label="序号" prop="majorOrder">
         <el-input v-model="queryParams.majorOrder" placeholder="请输入序号" clearable @keyup.enter="handleQuery" />
       </el-form-item> -->
@@ -19,9 +19,10 @@
       <el-form-item label="人员" prop="majorPeople">
         <el-input v-model="queryParams.majorPeople" placeholder="请输入人员" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <!-- <el-form-item label="内容" prop="majorContent">
-        <el-input v-model="queryParams.majorContent" placeholder="请输入内容" clearable @keyup.enter="handleQuery" />
-      </el-form-item> -->
+      <el-form-item label="筛选" prop="majorContent">
+        <el-cascader v-model="cascaderValue" :options="cascaderOptions" :props="cascaderProps" clearable />
+        <!-- <el-input v-model="queryParams.majorContent" placeholder="请输入内容" clearable @keyup.enter="handleQuery" /> -->
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -94,6 +95,11 @@
       <el-table-column label="保养维修项目" align="center" prop="majorProject" width="280" />
       <el-table-column label="周期" align="center" prop="majorCycleNum" />
       <el-table-column label="人员" align="center" prop="majorPeople" />
+      <el-table-column label="创建年份" align="center" prop="createTime">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.createTime, '{y}') }}</span>
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="月份" align="center" prop="majorMonth" /> -->
       <el-table-column label="一月1W" align="center" prop="weekJanOne" v-if="showFullYear || ifCurrentMonth(1)">
         <template #default="scope">
@@ -706,6 +712,7 @@
           <el-input v-model="form.majorPeople" placeholder="请输入人员" />
         </el-form-item>
 
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -716,8 +723,8 @@
     </el-dialog>
 
     <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
-      <el-button type="primary" @click="watchCurrentWeek" v-if="!showCurrent">仅查看本周</el-button>
-      <el-button type="primary" @click="watchAllWeek" v-else>查看所有</el-button>
+      <el-button type="primary" @click="watchCurrentWeek" v-show="!showCurrent">仅查看本周</el-button>
+      <el-button type="primary" @click="watchAllWeek" v-show="showCurrent">查看所有</el-button>
       <el-table v-loading="loading" :data="listForTip" @selection-change="handleSelectionChange" border>
         <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
         <el-table-column label="部位" align="center" prop="majorPosition" />
@@ -1341,7 +1348,78 @@ const rowForProps = reactive({})
 const majorGroup = ref('专业')
 const currentUserName = ref("");
 const currentUserId = ref(0);
-const needShow = reactive({})
+const ifTip = ref(true);
+const needShow = reactive({});
+//级联选择器
+const cascaderValue = ref([])
+const cascaderProps = {
+  expandTrigger: 'hover',
+};
+const monthLabels = [
+  '一月', '二月', '三月', '四月', '五月', '六月',
+  '七月', '八月', '九月', '十月', '十一月', '十二月'
+];
+
+const monthAbbreviations = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+];
+const cascaderOptions = monthLabels.map((label, index) => ({
+  value: monthAbbreviations[index],
+  label: label,
+  children: [
+    {
+      value: 'One', label: '1W', children: [
+        { value: '◎', label: '◎(检查保养项目)' },
+        { value: '◆', label: '◆(精度调整计划)' },
+        { value: '☆', label: '☆(检修计划)' },
+        { value: '◎(待审核)', label: '◎(待审核)' },
+        { value: '◆(待审核)', label: '◆(待审核)' },
+        { value: '☆(待审核)', label: '☆(待审核)' },
+        { value: '待审核', label: '所有(待审核)' },
+
+      ]
+    },
+    {
+      value: 'Two', label: '2W', children: [
+        { value: '◎', label: '◎(检查保养项目)' },
+        { value: '◆', label: '◆(精度调整计划)' },
+        { value: '☆', label: '☆(检修计划)' },
+        { value: '◎(待审核)', label: '◎(待审核)' },
+        { value: '◆(待审核)', label: '◆(待审核)' },
+        { value: '☆(待审核)', label: '☆(待审核)' },
+        { value: '待审核', label: '所有(待审核)' },
+
+      ]
+    },
+    {
+      value: 'Three', label: '3W', children: [
+        { value: '◎', label: '◎(检查保养项目)' },
+        { value: '◆', label: '◆(精度调整计划)' },
+        { value: '☆', label: '☆(检修计划)' },
+        { value: '◎(待审核)', label: '◎(待审核)' },
+        { value: '◆(待审核)', label: '◆(待审核)' },
+        { value: '☆(待审核)', label: '☆(待审核)' },
+        { value: '待审核', label: '所有(待审核)' },
+
+      ]
+    },
+    {
+      value: 'Four', label: '4W', children: [
+        { value: '◎', label: '◎(检查保养项目)' },
+        { value: '◆', label: '◆(精度调整计划)' },
+        { value: '☆', label: '☆(检修计划)' },
+        { value: '◎(待审核)', label: '◎(待审核)' },
+        { value: '◆(待审核)', label: '◆(待审核)' },
+        { value: '☆(待审核)', label: '☆(待审核)' },
+        { value: '待审核', label: '所有(待审核)' },
+      ]
+    }
+  ]
+}));
+
+
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -1353,8 +1431,6 @@ const data = reactive({
     majorProject: null,
     majorCycleNum: null,
     majorPeople: null,
-    majorMonth: null,
-    majorMonthWeek: null,
     majorContent: null,
     majorGroup: null
   },
@@ -1405,33 +1481,44 @@ function ifCurrentMonth(num) {
 /** 查询专业计划保养列表 */
 function getList() {
   loading.value = true;
+  if (Array.isArray(cascaderValue.value) && cascaderValue.value.length == 3) {
+    // console.log(`week${cascaderValue.value[0]}${cascaderValue.value[1]}${cascaderValue.value[2]}`)
+    queryParams.value[`week${cascaderValue.value[0]}${cascaderValue.value[1]}`] = cascaderValue.value[2]
+  }
+
   listPlan(queryParams.value).then(response => {
     planList.value = response.rows;
     total.value = response.total;
+    if (Array.isArray(cascaderValue.value) && cascaderValue.value.length == 3) {
+      delete queryParams.value[`week${cascaderValue.value[0]}${cascaderValue.value[1]}`]
+    }
     // console.log('needShow----->', needShow)
     // console.log('majorList------->', listForTip.value)
     loading.value = false;
   });
-  tipList().then(result => {
-    listForTip.value = result.rows
+  if (ifTip.value) {
+    tipList().then(result => {
+      listForTip.value = result.rows
 
-    const tmp = JSON.parse(JSON.stringify(result.rows))
-    const fields = [];
-    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].forEach(month => {
-      ['One', 'Two', 'Three', 'Four'].forEach(week => {
-        fields.push(`week${month}${week}`);
+      const tmp = JSON.parse(JSON.stringify(result.rows))
+      const fields = [];
+      ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].forEach(month => {
+        ['One', 'Two', 'Three', 'Four'].forEach(week => {
+          fields.push(`week${month}${week}`);
+        });
       });
-    });
-    tmp.forEach(element => {
-      fields.forEach(field => {
-        if (element.createBy == currentUserId.value && element[field] != '' && element[field] != null && element[field].includes('待审核')) {
-          console.log(element)
-          needShow[field] = true
-          showNotification(field);
-        }
+      tmp.forEach(element => {
+        fields.forEach(field => {
+          if (element.createBy == currentUserId.value && element[field] != '' && element[field] != null && element[field].includes('待审核')) {
+            console.log(element)
+            needShow[field] = true
+            showNotification(field);
+          }
+        });
       });
-    });
-  })
+    })
+    ifTip.value = false
+  }
 }
 
 //获取当前用户信息
@@ -1510,6 +1597,7 @@ function handleCellClick(row, cell) {
 
 /** 搜索按钮操作 */
 function handleQuery() {
+  // console.log(cascaderValue.value)
   queryParams.value.pageNum = 1;
   getList();
 }

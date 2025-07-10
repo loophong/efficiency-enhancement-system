@@ -1,17 +1,23 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px"
+      :rules="ruleSearch">
       <el-form-item label="设备编号" prop="deviceNum">
-        <el-input v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery" />
+        <el-select v-model="queryParams.deviceNum" placeholder="请输入设备编号" clearable @keyup.enter="handleQuery"
+          style="width: 200px;" filterable>
+          <el-option v-for="item in numberOptionList" :key="item" :label="item" :value="item" />
+        </el-select>
       </el-form-item>
-      <el-form-item label="报修时间" style="width: 308px">
-        <el-date-picker v-model="daterangeReportedTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm" type="daterange"
-          range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+      <el-form-item label="报修时间" style="width: 308px" prop="daterangeReportedTime">
+        <el-date-picker v-model="queryParams.daterangeReportedTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
+          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
+          style="width: 200px;"></el-date-picker>
       </el-form-item>
-      <el-form-item label="处理时间" style="width: 308px">
-        <el-date-picker v-model="daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
-          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-      </el-form-item>
+      <!-- <el-form-item label="处理时间" style="width: 308px" prop="daterangeResolutionTime">
+        <el-date-picker v-model="queryParams.daterangeResolutionTime" format="YY/MM/DD" value-format="YY-MM-DD HH:mm"
+          type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期"
+          style="width: 200px;"></el-date-picker>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -140,7 +146,7 @@
 
 
 <script setup name="FaultTree">
-import { listTable, getTable, delTable, addTable, updateTable, uploadFile, getTreeList } from "@/api/device/maintenanceTable/table";
+import { listTable, getTable, delTable, addTable, updateTable, uploadFile, getTreeList, numberList } from "@/api/device/maintenanceTable/table";
 import { ElMessage } from 'element-plus';
 import faultChart from "./faultChart.vue"
 
@@ -161,10 +167,9 @@ const chartData = reactive({})
 const route = useRoute();
 const title = ref("");
 const pagesList = ref([]);
+const numberOptionList = ref([]);
 const router = useRouter();
 const showDialog = ref(false);
-const daterangeReportedTime = ref([]);
-const daterangeResolutionTime = ref([]);
 
 const data = reactive({
   form: {},
@@ -185,26 +190,46 @@ const data = reactive({
     resolutionTime: null,
     faultDuration: null,
     maintenanceCast: null,
-    ifDown: null
+    ifDown: null,
+    daterangeReportedTime: null,
+    daterangeResolutionTime: null
   },
 
   rules: {
+  },
+  ruleSearch: {
+    deviceNum: [
+      { required: true, message: '设备编号不能为空', trigger: 'change' }
+    ],
+    // daterangeReportedTime: [
+    //   { required: true, message: '请选择报修时间范围', trigger: 'change' }
+    // ],
+    // daterangeResolutionTime: [
+    //   { required: true, message: '请选择处理时间范围', trigger: 'change' }
+    // ]
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const { queryParams, form, rules, ruleSearch } = toRefs(data);
+
+onMounted(() => {
+  numberList().then(r => {
+    console.log(r.rows)
+    numberOptionList.value = r.rows
+  })
+});
 
 
 function handleTreeList() {
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeReportedTime && '' != daterangeReportedTime && Array.isArray(daterangeReportedTime.value)) {
-    queryParams.value.params["beginReportedTime"] = daterangeReportedTime.value[0];
-    queryParams.value.params["endReportedTime"] = daterangeReportedTime.value[1];
+  if (null != queryParams.value.daterangeReportedTime && '' != queryParams.value.daterangeReportedTime && Array.isArray(queryParams.value.daterangeReportedTime)) {
+    queryParams.value.params["beginReportedTime"] = queryParams.value.daterangeReportedTime[0];
+    queryParams.value.params["endReportedTime"] = queryParams.value.daterangeReportedTime[1];
   }
-  if (null != daterangeResolutionTime && '' != daterangeResolutionTime && Array.isArray(daterangeResolutionTime.value)) {
-    queryParams.value.params["beginResolutionTime"] = daterangeResolutionTime.value[0];
-    queryParams.value.params["endResolutionTime"] = daterangeResolutionTime.value[1];
+  if (null != queryParams.value.daterangeResolutionTime && '' != queryParams.value.daterangeResolutionTime && Array.isArray(queryParams.value.daterangeResolutionTime)) {
+    queryParams.value.params["beginResolutionTime"] = queryParams.value.daterangeResolutionTime[0];
+    queryParams.value.params["endResolutionTime"] = queryParams.value.daterangeResolutionTime[1];
   }
   getTreeList(queryParams.value).then(response => {
     total.value = response.total
@@ -271,14 +296,19 @@ function reset() {
 
 /** 搜索按钮操作 */
 function handleQuery() {
-  queryParams.value.pageNum = 1;
-  handleTreeList();
+  proxy.$refs["queryRef"].validate(valid => {
+    if (valid) {
+      queryParams.value.pageNum = 1;
+      handleTreeList();
+    }
+  })
+
 }
 
 /** 重置按钮操作 */
 function resetQuery() {
-  daterangeReportedTime.value = [];
-  daterangeResolutionTime.value = [];
+  queryParams.daterangeReportedTime.value = [];
+  queryParams.daterangeResolutionTime.value = [];
   proxy.resetForm("queryRef");
   handleQuery();
 }

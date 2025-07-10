@@ -208,13 +208,19 @@ const handleRouteParams = () => {
   }
 };
 
-watch(() => route.query.deviceNum, (newVal) => {
-  console.log('检测到新参数--->', newVal)
-  routerDeviceNum = newVal
-  handleRouteParams(newVal)
-})
 
+watch(() => ({ deviceNum: route.query.deviceNum, from: route.query.from }),
+  (newParams) => {
+    console.log('检测到新参数 deviceNum -->', newParams.deviceNum);
+    console.log('检测到新参数 from -->', newParams.from);
+    if (newParams.from && newParams.from != 'sop') {
+      routerDeviceNum = newParams.deviceNum;
+      handleRouteParams(newParams);
+    }
+  }
+);
 
+// 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
 onMounted(() => {
   handleRouteParams();
 });

@@ -32,6 +32,19 @@ public interface DeviceIndicatorCountMapper extends BaseMapper<DeviceIndicatorCo
      */
     public DeviceIndicatorCount selectDeviceIndicatorCountByIndicatorId(Long indicatorId);
 
+
+    /**
+     * 查询 indicator_name 的去重值
+     */
+    @Select("SELECT DISTINCT indicator_name FROM device_indicator_count")
+    List<String> selectDistinctIndicatorName();
+
+    /**
+     * 查询 indicator_time 的去重值
+     */
+    @Select("SELECT DISTINCT indicator_time FROM device_indicator_count")
+    List<String> selectDistinctIndicatorTime();
+
     /**
      * 查询设备指标分析列表
      * 

@@ -82,54 +82,54 @@
             <if test="majorCycleNum != null  and majorCycleNum != ''"> and major_cycle_num = #{majorCycleNum}</if>
             <if test="majorPeople != null  and majorPeople != ''"> and major_people like concat('%', #{majorPeople}, '%')</if>
             <if test="majorMonth != null  and majorMonth != ''"> and major_month = #{majorMonth}</if>
-            <if test="weekJanOne != null  and weekJanOne != ''"> and week_jan_one = #{weekJanOne}</if>
-            <if test="weekJanTwo != null  and weekJanTwo != ''"> and week_jan_two = #{weekJanTwo}</if>
-            <if test="weekJanThree != null  and weekJanThree != ''"> and week_jan_three = #{weekJanThree}</if>
-            <if test="weekJanFour != null  and weekJanFour != ''"> and week_jan_four = #{weekJanFour}</if>
-            <if test="weekFebOne != null  and weekFebOne != ''"> and week_feb_one = #{weekFebOne}</if>
-            <if test="weekFebTwo != null  and weekFebTwo != ''"> and week_feb_two = #{weekFebTwo}</if>
-            <if test="weekFebThree != null  and weekFebThree != ''"> and week_feb_three = #{weekFebThree}</if>
-            <if test="weekFebFour != null  and weekFebFour != ''"> and week_feb_four = #{weekFebFour}</if>
-            <if test="weekMarOne != null  and weekMarOne != ''"> and week_mar_one = #{weekMarOne}</if>
-            <if test="weekMarTwo != null  and weekMarTwo != ''"> and week_mar_two = #{weekMarTwo}</if>
-            <if test="weekMarThree != null  and weekMarThree != ''"> and week_mar_three = #{weekMarThree}</if>
-            <if test="weekMarFour != null  and weekMarFour != ''"> and week_mar_four = #{weekMarFour}</if>
-            <if test="weekAprOne != null  and weekAprOne != ''"> and week_apr_one = #{weekAprOne}</if>
-            <if test="weekAprTwo != null  and weekAprTwo != ''"> and week_apr_two = #{weekAprTwo}</if>
-            <if test="weekAprThree != null  and weekAprThree != ''"> and week_apr_three = #{weekAprThree}</if>
-            <if test="weekAprFour != null  and weekAprFour != ''"> and week_apr_four = #{weekAprFour}</if>
-            <if test="weekMayOne != null  and weekMayOne != ''"> and week_may_one = #{weekMayOne}</if>
-            <if test="weekMayTwo != null  and weekMayTwo != ''"> and week_may_two = #{weekMayTwo}</if>
-            <if test="weekMayThree != null  and weekMayThree != ''"> and week_may_three = #{weekMayThree}</if>
-            <if test="weekMayFour != null  and weekMayFour != ''"> and week_may_four = #{weekMayFour}</if>
-            <if test="weekJunOne != null  and weekJunOne != ''"> and week_jun_one = #{weekJunOne}</if>
-            <if test="weekJunTwo != null  and weekJunTwo != ''"> and week_jun_two = #{weekJunTwo}</if>
-            <if test="weekJunThree != null  and weekJunThree != ''"> and week_jun_three = #{weekJunThree}</if>
-            <if test="weekJunFour != null  and weekJunFour != ''"> and week_jun_four = #{weekJunFour}</if>
-            <if test="weekJulOne != null  and weekJulOne != ''"> and week_jul_one = #{weekJulOne}</if>
-            <if test="weekJulTwo != null  and weekJulTwo != ''"> and week_jul_two = #{weekJulTwo}</if>
-            <if test="weekJulThree != null  and weekJulThree != ''"> and week_jul_three = #{weekJulThree}</if>
-            <if test="weekJulFour != null  and weekJulFour != ''"> and week_jul_four = #{weekJulFour}</if>
-            <if test="weekAugOne != null  and weekAugOne != ''"> and week_aug_one = #{weekAugOne}</if>
-            <if test="weekAugTwo != null  and weekAugTwo != ''"> and week_aug_two = #{weekAugTwo}</if>
-            <if test="weekAugThree != null  and weekAugThree != ''"> and week_aug_three = #{weekAugThree}</if>
-            <if test="weekAugFour != null  and weekAugFour != ''"> and week_aug_four = #{weekAugFour}</if>
-            <if test="weekSepOne != null  and weekSepOne != ''"> and week_sep_one = #{weekSepOne}</if>
-            <if test="weekSepTwo != null  and weekSepTwo != ''"> and week_sep_two = #{weekSepTwo}</if>
-            <if test="weekSepThree != null  and weekSepThree != ''"> and week_sep_three = #{weekSepThree}</if>
-            <if test="weekSepFour != null  and weekSepFour != ''"> and week_sep_four = #{weekSepFour}</if>
-            <if test="weekOctOne != null  and weekOctOne != ''"> and week_oct_one = #{weekOctOne}</if>
-            <if test="weekOctTwo != null  and weekOctTwo != ''"> and week_oct_two = #{weekOctTwo}</if>
-            <if test="weekOctThree != null  and weekOctThree != ''"> and week_oct_three = #{weekOctThree}</if>
-            <if test="weekOctFour != null  and weekOctFour != ''"> and week_oct_four = #{weekOctFour}</if>
-            <if test="weekNovOne != null  and weekNovOne != ''"> and week_nov_one = #{weekNovOne}</if>
-            <if test="weekNovTwo != null  and weekNovTwo != ''"> and week_nov_two = #{weekNovTwo}</if>
-            <if test="weekNovThree != null  and weekNovThree != ''"> and week_nov_three = #{weekNovThree}</if>
-            <if test="weekNovFour != null  and weekNovFour != ''"> and week_nov_four = #{weekNovFour}</if>
-            <if test="weekDecOne != null  and weekDecOne != ''"> and week_dec_one = #{weekDecOne}</if>
-            <if test="weekDecTwo != null  and weekDecTwo != ''"> and week_dec_two = #{weekDecTwo}</if>
-            <if test="weekDecThree != null  and weekDecThree != ''"> and week_dec_three = #{weekDecThree}</if>
-            <if test="weekDecFour != null  and weekDecFour != ''"> and week_dec_four = #{weekDecFour}</if>
+            <if test="weekJanOne != null  and weekJanOne != ''"> and week_jan_one like concat('%', #{weekJanOne}, '%')</if>
+            <if test="weekJanTwo != null  and weekJanTwo != ''"> and week_jan_two like concat('%', #{weekJanTwo}, '%')</if>
+            <if test="weekJanThree != null  and weekJanThree != ''"> and week_jan_three like concat('%', #{weekJanThree}, '%')</if>
+            <if test="weekJanFour != null  and weekJanFour != ''"> and week_jan_four like concat('%', #{weekJanFour}, '%')</if>
+            <if test="weekFebOne != null  and weekFebOne != ''"> and week_feb_one  like concat('%', #{weekFebOne}, '%')</if>
+            <if test="weekFebTwo != null  and weekFebTwo != ''"> and week_feb_two  like concat('%', #{weekFebTwo}, '%')</if>
+            <if test="weekFebThree != null  and weekFebThree != ''"> and week_feb_three like concat('%', #{weekFebThree}, '%')</if>
+            <if test="weekFebFour != null  and weekFebFour != ''"> and week_feb_four like concat('%', #{weekFebFour}, '%')</if>
+            <if test="weekMarOne != null  and weekMarOne != ''"> and week_mar_one like concat('%', #{weekMarOne}, '%')</if>
+            <if test="weekMarTwo != null  and weekMarTwo != ''"> and week_mar_two like concat('%', #{weekMarTwo}, '%')</if>
+            <if test="weekMarThree != null  and weekMarThree != ''"> and week_mar_three like concat('%', #{weekMarThree}, '%')</if>
+            <if test="weekMarFour != null  and weekMarFour != ''"> and week_mar_four like concat('%', #{weekMarFour}, '%')</if>
+            <if test="weekAprOne != null  and weekAprOne != ''"> and week_apr_one like concat('%', #{weekAprOne}, '%')</if>
+            <if test="weekAprTwo != null  and weekAprTwo != ''"> and week_apr_two like concat('%', #{weekAprTwo}, '%')</if>
+            <if test="weekAprThree != null  and weekAprThree != ''"> and week_apr_three like concat('%', #{weekAprThree}, '%')</if>
+            <if test="weekAprFour != null  and weekAprFour != ''"> and week_apr_four like concat('%', #{weekAprFour}, '%')</if>
+            <if test="weekMayOne != null  and weekMayOne != ''"> and week_may_one like concat('%', #{weekMayOne}, '%')</if>
+            <if test="weekMayTwo != null  and weekMayTwo != ''"> and week_may_two like concat('%', #{weekMayTwo}, '%')</if>
+            <if test="weekMayThree != null  and weekMayThree != ''"> and week_may_three like concat('%', #{weekMayThree}, '%')</if>
+            <if test="weekMayFour != null  and weekMayFour != ''"> and week_may_four like concat('%', #{weekMayFour}, '%')</if>
+            <if test="weekJunOne != null  and weekJunOne != ''"> and week_jun_one like concat('%', #{weekJunOne}, '%')</if>
+            <if test="weekJunTwo != null  and weekJunTwo != ''"> and week_jun_two like concat('%', #{weekJunTwo}, '%')</if>
+            <if test="weekJunThree != null  and weekJunThree != ''"> and week_jun_three like concat('%', #{weekJunThree}, '%')</if>
+            <if test="weekJunFour != null  and weekJunFour != ''"> and week_jun_four like concat('%', #{weekJunFour}, '%')</if>
+            <if test="weekJulOne != null  and weekJulOne != ''"> and week_jul_one like concat('%', #{weekJulOne}, '%')</if>
+            <if test="weekJulTwo != null  and weekJulTwo != ''"> and week_jul_two like concat('%', #{weekJulTwo}, '%')</if>
+            <if test="weekJulThree != null  and weekJulThree != ''"> and week_jul_three like concat('%', #{weekJulThree}, '%')</if>
+            <if test="weekJulFour != null  and weekJulFour != ''"> and week_jul_four like concat('%', #{weekJulFour}, '%')</if>
+            <if test="weekAugOne != null  and weekAugOne != ''"> and week_aug_one like concat('%', #{weekAugOne}, '%')</if>
+            <if test="weekAugTwo != null  and weekAugTwo != ''"> and week_aug_two like concat('%', #{weekAugTwo}, '%')</if>
+            <if test="weekAugThree != null  and weekAugThree != ''"> and week_aug_three like concat('%', #{weekAugThree}, '%')</if>
+            <if test="weekAugFour != null  and weekAugFour != ''"> and week_aug_four like concat('%', #{weekAugFour}, '%')</if>
+            <if test="weekSepOne != null  and weekSepOne != ''"> and week_sep_one like concat('%', #{weekSepOne}, '%')</if>
+            <if test="weekSepTwo != null  and weekSepTwo != ''"> and week_sep_two like concat('%', #{weekSepTwo}, '%')</if>
+            <if test="weekSepThree != null  and weekSepThree != ''"> and week_sep_three like concat('%', #{weekSepThree}, '%')</if>
+            <if test="weekSepFour != null  and weekSepFour != ''"> and week_sep_four like concat('%', #{weekSepFour}, '%')</if>
+            <if test="weekOctOne != null  and weekOctOne != ''"> and week_oct_one like concat('%', #{weekOctOne}, '%')</if>
+            <if test="weekOctTwo != null  and weekOctTwo != ''"> and week_oct_two like concat('%', #{weekOctTwo}, '%')</if>
+            <if test="weekOctThree != null  and weekOctThree != ''"> and week_oct_three like concat('%', #{weekOctThree}, '%')</if>
+            <if test="weekOctFour != null  and weekOctFour != ''"> and week_oct_four like concat('%', #{weekOctFour}, '%')</if>
+            <if test="weekNovOne != null  and weekNovOne != ''"> and week_nov_one like concat('%', #{weekNovOne}, '%')</if>
+            <if test="weekNovTwo != null  and weekNovTwo != ''"> and week_nov_two like concat('%', #{weekNovTwo}, '%')</if>
+            <if test="weekNovThree != null  and weekNovThree != ''"> and week_nov_three like concat('%', #{weekNovThree}, '%')</if>
+            <if test="weekNovFour != null  and weekNovFour != ''"> and week_nov_four like concat('%', #{weekNovFour}, '%')</if>
+            <if test="weekDecOne != null  and weekDecOne != ''"> and week_dec_one like concat('%', #{weekDecOne}, '%')</if>
+            <if test="weekDecTwo != null  and weekDecTwo != ''"> and week_dec_two like concat('%', #{weekDecTwo}, '%')</if>
+            <if test="weekDecThree != null  and weekDecThree != ''"> and week_dec_three like concat('%', #{weekDecThree}, '%')</if>
+            <if test="weekDecFour != null  and weekDecFour != ''"> and week_dec_four like concat('%', #{weekDecFour}, '%')</if>
             <if test="lastCompleteTime != null  and lastCompleteTime != ''"> and last_complete_time = #{lastCompleteTime}</if>
         </where>
     </select>

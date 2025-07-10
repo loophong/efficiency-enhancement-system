@@ -83,6 +83,18 @@ public class DeviceMaintenanceTableController extends BaseController
     }
 
     /**
+     * 查询设备故障记录列表故障树
+     */
+//    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
+    @GetMapping("/numberList")
+    public TableDataInfo uniqueNumberList()
+    {
+//        startPage();
+        List<String> list = deviceMaintenanceTableMapper.selectUniqueMaintenanceTableIds();
+        return getDataTable(list);
+    }
+
+    /**
      * 导出设备故障记录列表
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:export')")
