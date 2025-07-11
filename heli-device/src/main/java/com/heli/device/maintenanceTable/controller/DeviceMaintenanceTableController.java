@@ -8,6 +8,7 @@ import java.util.Map;
 
 
 import com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper;
+import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -166,9 +167,9 @@ public class DeviceMaintenanceTableController extends BaseController
         try (InputStream inputStream = excelFile.getInputStream()) {
             //清空数据库
             log.info("开始读取 " + excelFile.getName() + " 文件");
-            deviceMaintenanceTableService.readFaultRecordsToDB(excelFile.getOriginalFilename(), inputStream);
+           status = deviceMaintenanceTableService.readFaultRecordsToDB(excelFile.getOriginalFilename(), inputStream);
 //            financialTempTableService.tempTableToInterestsTable(yearAndMonth);
-            status = 1;
+
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
             throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
