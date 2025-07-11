@@ -17,6 +17,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,8 +31,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.security.domain.SecurityFileManagement;
+import com.ruoyi.security.service.ISecurityEnvironmentalOrganizationDescriptionService;
 import com.ruoyi.security.service.ISecurityFileManagementService;
 import com.ruoyi.security.service.ISecuritySysMenuService;
+import com.ruoyi.security.utils.ThreadLocalContext;
 
 /**
  * 文件上传切面，用于拦截所有上传方法
@@ -40,12 +43,19 @@ import com.ruoyi.security.service.ISecuritySysMenuService;
 @Component
 public class FileUploadAspect {
     private static final Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
+    
+    // 用于标记请求是否已处理文件的属性名
+    private static final String FILE_PROCESSED_FLAG = "FILE_PROCESSED_FLAG";
+    private static final String FILE_MANAGEMENT_ID = "FILE_MANAGEMENT_ID";
 
     @Autowired
     private ISecurityFileManagementService fileManagementService;
     
     @Autowired
     private ISecuritySysMenuService securitySysMenuService;
+    
+    @Autowired
+    private ISecurityEnvironmentalOrganizationDescriptionService environmentalService;
 
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
@@ -58,7 +68,12 @@ public class FileUploadAspect {
               "execution(* *..*file*(..)) || " +
               "execution(* *..*File*(..)))")
     public void uploadPointcut() {}
-
+    
+    /**
+     * 定义切点 - 拦截所有表单管理相关的Controller方法
+     */
+    @Pointcut("execution(* com.ruoyi..controller..*.*(..))")
+    public void formManagementPointcut() {}
 
     /**
      * 在上传方法执行前记录信息
@@ -70,333 +85,383 @@ public class FileUploadAspect {
                 joinPoint.getSignature().getName());
     }
 
+    /**
+     * 环绕通知，处理所有导入方法
+     */
+    @Around("execution(* com.ruoyi..controller..*.*import*(..))")
+    public Object aroundImportMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+        Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
+        log.info("环绕通知：处理所有导入方法 {}.{}",
+                joinPoint.getTarget().getClass().getName(),
+                joinPoint.getSignature().getName());
+
+        // 获取当前请求
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            return joinPoint.proceed();
+        }
+
+        HttpServletRequest request = attributes.getRequest();
+        
+        // 获取业务ID（从ThreadLocal中）
+        Long threadLocalRelatedId = ThreadLocalContext.getRelatedId();
+        
+        // 获取Referer和当前URI
+        String referer = request.getHeader("Referer");
+        String uri = request.getRequestURI();
+        
+        // 构造relatedUrl，优先使用Referer
+        String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
+        relatedUrl = ensureSecurityConmPrefix(relatedUrl);
+
+        // 获取当前用户
+        String username = SecurityUtils.getUsername();
+
+        // 获取模块名称
+        String moduleName = getModuleNameFromUri(referer);
+        if ("未知模块".equals(moduleName)) {
+            moduleName = getModuleNameFromUri(uri);
+        }
+
+        Long fileManagementId = null;
+
+        // 处理文件上传
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile) arg;
+                if (!file.isEmpty()) {
+                    // 处理文件上传，获取文件管理记录ID
+                    fileManagementId = processMultipartFile(
+                        file,
+                        moduleName,
+                        getShortClassName(joinPoint.getTarget().getClass().getSimpleName()),
+                        joinPoint.getSignature().getName(),
+                        username,
+                        "IMPORT",
+                        relatedUrl,
+                        threadLocalRelatedId
+                    );
+
+                    if (fileManagementId != null) {
+                        // 将处理标志和文件管理记录ID存储到请求属性中
+                        request.setAttribute(FILE_PROCESSED_FLAG, true);
+                        request.setAttribute(FILE_MANAGEMENT_ID, fileManagementId);
+                        
+                        // 存储到ThreadLocal中
+                        ThreadLocalContext.setRelatedId(fileManagementId);
+                        log.info("已将文件管理记录ID: {} 存储到ThreadLocal和请求属性中", fileManagementId);
+                    }
+                    break;
+                }
+            }
+        }
+
+        // 执行原始方法
+        Object result = joinPoint.proceed();
+        
+        // 如果导入成功且有文件管理记录ID，更新关联ID
+        if (result instanceof AjaxResult && fileManagementId != null) {
+            AjaxResult ajaxResult = (AjaxResult) result;
+            if (ajaxResult.isSuccess()) {
+                String className = joinPoint.getTarget().getClass().getSimpleName();
+                log.info("导入成功，准备更新关联ID: {}，控制器类名: {}", fileManagementId, className);
+                updateRelatedIdForSecurityController(className, fileManagementId);
+            }
+        }
+        
+        return result;
+    }
+
+    /**
+     * 根据控制器类型更新关联 ID
+     */
+    private void updateRelatedIdForSecurityController(String controllerName, Long fileManagementId) {
+        int updatedRows = 0;
+
+        try {
+            // 识别所有 security 控制器并更新关联 ID
+            if (controllerName.contains("EnvironmentalOrganization")) {
+                // 环境识别导入
+                updatedRows = environmentalService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新环境识别数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityAcceptanceEvaluation")) {
+                // 验收评价
+                updatedRows = getServiceAndUpdateRelatedId("acceptanceEvaluationService", fileManagementId);
+                log.info("已更新验收评价数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityAccidentCauseAnalysis")) {
+                // 事故原因分析
+                updatedRows = getServiceAndUpdateRelatedId("accidentCauseAnalysisService", fileManagementId);
+                log.info("已更新事故原因分析数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {
+                // 事故措施跟踪
+                updatedRows = getServiceAndUpdateRelatedId("accidentMeasuresTrackingService", fileManagementId);
+                log.info("已更新事故措施跟踪数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityAnnualPlan")) {
+                // 年度计划
+                updatedRows = getServiceAndUpdateRelatedId("annualPlanService", fileManagementId);
+                log.info("已更新年度计划数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityChangeManagement")) {
+                // 变更管理
+                updatedRows = getServiceAndUpdateRelatedId("changeManagementService", fileManagementId);
+                log.info("已更新变更管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityCheckReport")) {
+                // 检查报告
+                updatedRows = getServiceAndUpdateRelatedId("checkReportService", fileManagementId);
+                log.info("已更新检查报告数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityCollaboration")) {
+                // 协作管理
+                updatedRows = getServiceAndUpdateRelatedId("collaborationService", fileManagementId);
+                log.info("已更新协作管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEmergencyDrill")) {
+                // 应急演练
+                updatedRows = getServiceAndUpdateRelatedId("emergencyDrillService", fileManagementId);
+                log.info("已更新应急演练数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEmergencyPlan")) {
+                // 应急预案
+                updatedRows = getServiceAndUpdateRelatedId("emergencyPlanService", fileManagementId);
+                log.info("已更新应急预案数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardousInspection")) {
+                // 危险源检查
+                updatedRows = getServiceAndUpdateRelatedId("hazardousInspectionService", fileManagementId);
+                log.info("已更新危险源检查数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardousManagement")) {
+                // 危险源管理
+                updatedRows = getServiceAndUpdateRelatedId("hazardousManagementService", fileManagementId);
+                log.info("已更新危险源管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityInternalAudit")) {
+                // 内部审核
+                updatedRows = getServiceAndUpdateRelatedId("internalAuditService", fileManagementId);
+                log.info("已更新内部审核数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityKpiEvaluation")) {
+                // KPI评价
+                updatedRows = getServiceAndUpdateRelatedId("kpiEvaluationService", fileManagementId);
+                log.info("已更新KPI评价数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityLegalRequirement")) {
+                // 法律法规
+                updatedRows = getServiceAndUpdateRelatedId("legalRequirementService", fileManagementId);
+                log.info("已更新法律法规数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityManagementReview")) {
+                // 管理评审
+                updatedRows = getServiceAndUpdateRelatedId("managementReviewService", fileManagementId);
+                log.info("已更新管理评审数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityObjective")) {
+                // 目标指标
+                updatedRows = getServiceAndUpdateRelatedId("objectiveService", fileManagementId);
+                log.info("已更新目标指标数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityRiskAssessment")) {
+                // 风险评估
+                updatedRows = getServiceAndUpdateRelatedId("riskAssessmentService", fileManagementId);
+                log.info("已更新风险评估数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityTraining")) {
+                // 培训管理
+                updatedRows = getServiceAndUpdateRelatedId("trainingService", fileManagementId);
+                log.info("已更新培训管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityFileManagement")) {
+                // 文件管理
+                updatedRows = getServiceAndUpdateRelatedId("fileManagementService", fileManagementId);
+                log.info("已更新文件管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else {
+                // 其他 security 控制器，通用处理
+                log.info("未找到匹配的服务类，尝试通用处理: {}", controllerName);
+
+                // 尝试从控制器名称推断服务名称
+                String serviceName = inferServiceNameFromController(controllerName);
+                if (serviceName != null) {
+                    updatedRows = getServiceAndUpdateRelatedId(serviceName, fileManagementId);
+                    log.info("已更新 {} 数据的关联 ID: {}, 更新行数: {}", serviceName, fileManagementId, updatedRows);
+                } else {
+                    log.warn("无法处理控制器 {}, 未能更新关联 ID", controllerName);
+                }
+            }
+        } catch (Exception e) {
+            log.error("更新关联 ID 失败: {}", e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 从控制器名称推断服务名称
+     */
+    private String inferServiceNameFromController(String controllerName) {
+        // 移除 "Controller" 后缀
+        String name = controllerName.replace("Controller", "");
+
+        // 首字母小写
+        if (name.length() > 0) {
+            name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
+        }
+
+        // 添加 "Service" 后缀
+        name += "Service";
+
+        return name;
+    }
+
+    /**
+     * 获取服务并更新关联 ID
+     */
+    private int getServiceAndUpdateRelatedId(String serviceName, Long fileManagementId) {
+        try {
+            // 尝试从 Spring 容器中获取服务
+            Object service = SpringUtils.getBean(serviceName);
+            if (service != null) {
+                // 尝试调用 updateLatestImportedRelatedId 方法
+                Method method = service.getClass().getMethod("updateLatestImportedRelatedId", Long.class);
+                Object result = method.invoke(service, fileManagementId);
+                if (result instanceof Integer) {
+                    return (Integer) result;
+                }
+            }
+        } catch (Exception e) {
+            log.error("获取服务或调用方法失败: {}", e.getMessage());
+        }
+        return 0;
+    }
+
+    @Order(Integer.MAX_VALUE)
+    @AfterReturning("formManagementPointcut()")
+    public void afterFormManagement() {
+        // 清除ThreadLocal中的数据，防止内存泄漏
+        ThreadLocalContext.clearRelatedId();
+        log.debug("已清除ThreadLocal中的relatedId");
+    }
 
     /**
      * 在上传方法返回后执行
      */
     @AfterReturning(pointcut = "uploadPointcut()", returning = "result")
     public void afterUpload(JoinPoint joinPoint, Object result) {
-        log.info("拦截到上传/导入方法: {}.{}", joinPoint.getTarget().getClass().getName(), 
+        log.info("拦截到上传/导入方法: {}.{}", 
+                joinPoint.getTarget().getClass().getName(),
                 joinPoint.getSignature().getName());
         
         try {
-            // 如果是环境识别导入方法，跳过处理（由环绕通知处理）
-            if (joinPoint.getSignature().getName().equals("importData") && 
-                joinPoint.getTarget().getClass().getSimpleName().contains("SecurityEnvironmentalOrganizationDescription")) {
-                log.info("检测到环境识别导入方法，正在处理...");
-            }
-            
             // 获取当前请求
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             if (attributes == null) {
                 log.warn("无法获取请求上下文，可能不在Web请求中");
                 return;
             }
+            
             HttpServletRequest request = attributes.getRequest();
             
+            // 检查是否已经处理过文件
+            Boolean fileProcessed = (Boolean) request.getAttribute(FILE_PROCESSED_FLAG);
+            if (Boolean.TRUE.equals(fileProcessed)) {
+                log.info("文件已在环绕通知中处理，跳过afterUpload处理");
+                return;
+            }
+
+            // 获取当前ThreadLocal中的relatedId
+            Long threadLocalRelatedId = ThreadLocalContext.getRelatedId();
+            
             // 获取当前登录用户
-            String username = "";
-            try {
-                SysUser user = SecurityUtils.getLoginUser().getUser();
-                if (user != null) {
-                    username = user.getUserName();
-                }
-            } catch (Exception e) {
-                log.error("获取当前登录用户失败", e);
-            }
+            String username = SecurityUtils.getLoginUser().getUser().getUserName();
             
-            // 获取请求的URI和方法
+            // 获取请求的URI和Referer
             String uri = request.getRequestURI();
-            String method = request.getMethod();
-            log.info("请求URI: {}, 方法: {}, 用户: {}", uri, method, username);
-            
-            // 构建完整URL（包含查询参数）
-            String fullUrl = uri;
-            String queryString = request.getQueryString();
-            if (StringUtils.isNotEmpty(queryString)) {
-                fullUrl = uri + "?" + queryString;
-            }
-            
-            // 获取来源URL（Referer）
             String referer = request.getHeader("Referer");
-            // 优先使用Referer作为关联URL，如果没有则使用当前请求URL
-            String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : fullUrl;
             
-            // 处理relatedUrl，确保只有一个securityConm前缀
+            // 构造完整的relatedUrl
+            String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
             relatedUrl = ensureSecurityConmPrefix(relatedUrl);
-            log.info("关联URL(处理后): {}", relatedUrl);
+            
+            // 获取模块名称
+            String moduleName = getModuleNameFromUri(referer);
+            if ("未知模块".equals(moduleName)) {
+                moduleName = getModuleNameFromUri(uri);
+            }
             
             String className = joinPoint.getTarget().getClass().getSimpleName();
             String methodName = joinPoint.getSignature().getName();
             
-            // 获取模块名称 - 优先从Referer中获取，因为上传文件时通常是从其他模块页面发起的
-            String moduleName = "";
-            if (StringUtils.isNotEmpty(referer)) {
-                moduleName = getModuleNameFromUri(referer);
-                log.info("从Referer获取的模块名称: {}", moduleName);
-            }
+            // 处理文件上传
+            boolean fileHandled = false;
             
-            // 如果从Referer中无法获取有效的模块名称，则尝试从当前URI获取
-            if (StringUtils.isEmpty(moduleName) || "未知模块".equals(moduleName)) {
-                moduleName = getModuleNameFromUri(uri);
-                log.info("从URI获取的模块名称: {}", moduleName);
-            }
-            
-            // 添加请求内容检查，记录更多信息
+            // 处理方法参数中的MultipartFile
             Object[] args = joinPoint.getArgs();
-            log.debug("请求URI: {}, 方法: {}, 参数数量: {}", uri, method, args.length);
-            for (int i = 0; i < args.length; i++) {
-                log.debug("参数[{}]类型: {}", i, args[i] != null ? args[i].getClass().getName() : "null");
-            }
-            
-            // 处理文件信息
-            boolean fileProcessed = false;
-            
-            // 1. 处理方法参数中的MultipartFile
             for (Object arg : args) {
                 if (arg instanceof MultipartFile) {
-                    // 单文件上传
-                    log.info("检测到单文件上传参数: {}", ((MultipartFile) arg).getOriginalFilename());
-                    processMultipartFile((MultipartFile) arg, moduleName, getShortClassName(className), methodName, username, "UPLOAD", relatedUrl);
-                    fileProcessed = true;
-                } else if (arg instanceof MultipartFile[]) {
-                    // 多文件上传
-                    MultipartFile[] files = (MultipartFile[]) arg;
-                    log.info("检测到多文件上传参数，文件数量: {}", files.length);
-                    for (MultipartFile file : files) {
-                        processMultipartFile(file, moduleName, getShortClassName(className), methodName, username, "UPLOAD", relatedUrl);
+                    MultipartFile file = (MultipartFile) arg;
+                    if (!file.isEmpty()) {
+                        processMultipartFile(file, moduleName, getShortClassName(className),
+                                methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
+                        fileHandled = true;
                     }
-                    fileProcessed = true;
-                } else {
-                    // 尝试检查复杂对象中的MultipartFile字段
-                    try {
-                        if (arg != null) {
-                            Class<?> argClass = arg.getClass();
-                            for (Field field : argClass.getDeclaredFields()) {
-                                field.setAccessible(true);
-                                Object fieldValue = field.get(arg);
-                                if (fieldValue instanceof MultipartFile) {
-                                    log.info("从复杂对象中提取到文件: {}", field.getName());
-                                    processMultipartFile((MultipartFile) fieldValue, moduleName, 
-                                                        getShortClassName(className), methodName, 
-                                                        username, "UPLOAD", relatedUrl);
-                                    fileProcessed = true;
-                                }
-                            }
+                } else if (arg instanceof MultipartFile[]) {
+                    MultipartFile[] files = (MultipartFile[]) arg;
+                    for (MultipartFile file : files) {
+                        if (!file.isEmpty()) {
+                            processMultipartFile(file, moduleName, getShortClassName(className),
+                                    methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
+                            fileHandled = true;
                         }
-                    } catch (Exception e) {
-                        log.debug("检查复杂对象中的文件字段失败", e);
                     }
                 }
             }
             
-            // 2. 处理MultipartHttpServletRequest中的文件
-            if (!fileProcessed && request instanceof MultipartHttpServletRequest) {
+            // 如果没有处理过文件，检查MultipartHttpServletRequest
+            if (!fileHandled && request instanceof MultipartHttpServletRequest) {
                 MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
                 Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-                log.info("从MultipartHttpServletRequest中检测到文件，数量: {}", fileMap.size());
                 
                 for (MultipartFile file : fileMap.values()) {
-                    processMultipartFile(file, moduleName, getShortClassName(className), methodName, username, "UPLOAD", relatedUrl);
-                    fileProcessed = true;
-                }
-            }
-            
-            // 处理常见的文件上传场景，如Spring的CommonsMultipartFile
-            if (!fileProcessed) {
-                for (Object arg : args) {
-                    if (arg != null && arg.getClass().getName().contains("MultipartFile")) {
-                        try {
-                            log.info("尝试通过反射处理文件类型: {}", arg.getClass().getName());
-                            // 尝试通过反射调用getOriginalFilename方法
-                            Method getOriginalFilename = 
-                                arg.getClass().getMethod("getOriginalFilename");
-                            String filename = (String) getOriginalFilename.invoke(arg);
-                            
-                            // 尝试通过反射调用getSize方法
-                            Method getSize = 
-                                arg.getClass().getMethod("getSize");
-                            Long size = (Long) getSize.invoke(arg);
-                            
-                            // 尝试通过反射调用getContentType方法
-                            Method getContentType = 
-                                arg.getClass().getMethod("getContentType");
-                            String contentType = (String) getContentType.invoke(arg);
-                            
-                            log.info("通过反射获取文件信息: 名称={}, 大小={}, 类型={}", filename, size, contentType);
-                            
-                            // 创建文件记录
-                            SecurityFileManagement fileManagement = new SecurityFileManagement();
-                            fileManagement.setFileName(filename);
-                            fileManagement.setFilePath("securityConm/" + filename);
-                            fileManagement.setFileSize(size);
-                            fileManagement.setFileType(contentType);
-                            fileManagement.setFileCategory("UPLOAD");
-                            fileManagement.setModuleName(moduleName);
-                            fileManagement.setModuleCode(getShortClassName(className));
-                            fileManagement.setUploadTime(new Date());
-                            fileManagement.setUploadUser(username);
-                            fileManagement.setStatus("0");
-                            fileManagement.setRemark("系统自动记录(反射)-" + methodName);
-                            fileManagement.setRelatedUrl(ensureSecurityConmPrefix(relatedUrl));
-                            
-                            log.info("准备插入文件记录到数据库: {}", fileManagement.getFileName());
-                            int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
-                            log.info("文件记录插入结果: {} 行受影响, ID: {}", rows, fileManagement.getId());
-                            
-                            log.info("通过反射处理文件: {}", filename);
-                            fileProcessed = true;
-                        } catch (Exception e) {
-                            log.error("尝试通过反射处理文件失败", e);
-                        }
+                    if (!file.isEmpty()) {
+                        processMultipartFile(file, moduleName, getShortClassName(className),
+                                methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
+                        fileHandled = true;
                     }
                 }
-            }
-            
-            // 3. 处理导入类型的请求（Excel导入等）
-            if ((methodName.toLowerCase().contains("import") || uri.toLowerCase().contains("import")) && !fileProcessed) {
-                // 尝试从返回结果中获取文件信息
-                if (result instanceof AjaxResult) {
-                    AjaxResult ajaxResult = (AjaxResult) result;
-                    // 放宽条件，不再严格要求msg包含"导入"
-                    if (ajaxResult.isSuccess()) {
-                        log.info("检测到成功的导入操作，准备记录导入文件");
-                        // 创建导入文件记录
-                        SecurityFileManagement fileManagement = new SecurityFileManagement();
-                        fileManagement.setFileName(methodName + "_导入_" + System.currentTimeMillis());
-                        fileManagement.setFilePath("securityConm/" + methodName + "_导入_" + System.currentTimeMillis());
-                        fileManagement.setFileCategory("IMPORT");
-                        fileManagement.setModuleName(moduleName);
-                        fileManagement.setModuleCode(getShortClassName(className));
-                        fileManagement.setUploadTime(new Date());
-                        fileManagement.setUploadUser(username);
-                        fileManagement.setStatus("0");
-                        fileManagement.setRemark("系统自动记录-导入操作");
-                        fileManagement.setRelatedUrl(ensureSecurityConmPrefix(relatedUrl)); // 设置关联URL
-                        
-                        log.info("准备插入导入文件记录到数据库: {}", fileManagement.getFileName());
-                        int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
-                        log.info("导入文件记录插入结果: {} 行受影响", rows);
-                        
-                        log.info("记录导入操作: {}, 模块: {}, 用户: {}, 关联URL: {}", 
-                                methodName, moduleName, username, relatedUrl);
-                        fileProcessed = true;
-                    } else {
-                        log.warn("导入操作未成功，不记录文件信息");
-                    }
-                }
-            }
-            
-            // 检查请求中是否包含文件参数
-            if (!fileProcessed) {
-                try {
-                    if (request.getContentType() != null && 
-                        request.getContentType().toLowerCase().contains("multipart")) {
-                        log.info("检测到multipart请求，但未能从参数中提取文件，尝试从request中获取");
-                        // 记录一个通用的上传记录
-                        SecurityFileManagement fileManagement = new SecurityFileManagement();
-                        fileManagement.setFileName("未识别文件_" + System.currentTimeMillis());
-                        fileManagement.setFilePath("securityConm/" + uri);
-                        fileManagement.setFileCategory("UPLOAD");
-                        fileManagement.setModuleName(moduleName);
-                        fileManagement.setModuleCode(getShortClassName(className));
-                        fileManagement.setUploadTime(new Date());
-                        fileManagement.setUploadUser(username);
-                        fileManagement.setStatus("0");
-                        fileManagement.setRemark("系统自动记录-" + methodName + "(未能识别具体文件)");
-                        fileManagement.setRelatedUrl(ensureSecurityConmPrefix(relatedUrl));
-                        
-                        log.info("准备插入未识别文件记录到数据库");
-                        int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
-                        log.info("未识别文件记录插入结果: {} 行受影响", rows);
-                        
-                        fileProcessed = true;
-                    }
-                } catch (Exception e) {
-                    log.error("检查请求内容类型失败", e);
-                }
-            }
-            
-            if (!fileProcessed) {
-                log.warn("方法 {}.{} 可能包含文件上传，但未能识别文件参数", className, methodName);
             }
         } catch (Exception e) {
-            log.error("记录文件上传信息失败", e);
+            log.error("处理文件上传失败", e);
         }
     }
-    
+
     /**
-     * 处理上传的文件
+     * 处理上传的文件，返回文件管理记录ID
      */
-    private void processMultipartFile(MultipartFile file, String moduleName, String moduleCode, String methodName, String username, String fileCategory, String relatedUrl) {
-        if (file != null && !file.isEmpty()) {
-            String originalFilename = file.getOriginalFilename();
-            String contentType = file.getContentType();
-            long size = file.getSize();
-            
-            log.info("处理文件: {}, 类型: {}, 大小: {} 字节, 模块: {}", originalFilename, contentType, size, moduleName);
-            
-            if (StringUtils.isNotEmpty(originalFilename)) {
-                try {
-                    // 创建文件记录
-                    SecurityFileManagement fileManagement = new SecurityFileManagement();
-                    fileManagement.setFileName(originalFilename);
-                    fileManagement.setFilePath("securityConm/" + originalFilename); // 添加securityConm前缀到路径
-                    fileManagement.setFileSize(file.getSize());
-                    fileManagement.setFileType(file.getContentType());
-                    fileManagement.setFileCategory(fileCategory);
-                    fileManagement.setModuleName(moduleName);
-                    fileManagement.setModuleCode(moduleCode);
-                    fileManagement.setUploadTime(new Date());
-                    fileManagement.setUploadUser(username);
-                    fileManagement.setStatus("0");
-                    fileManagement.setRemark("系统自动记录-" + methodName);
-                    
-                    // 确保relatedUrl只有一个securityConm前缀
-                    relatedUrl = ensureSecurityConmPrefix(relatedUrl);
-                    fileManagement.setRelatedUrl(relatedUrl); // 设置关联URL
-                    
-                    // 提取关联ID（如果URL中包含ID参数）
-                    if (StringUtils.isNotEmpty(relatedUrl)) {
-                        try {
-                            // 尝试从URL中提取id参数
-                            if (relatedUrl.contains("id=")) {
-                                String idParam = relatedUrl.substring(relatedUrl.indexOf("id=") + 3);
-                                if (idParam.contains("&")) {
-                                    idParam = idParam.substring(0, idParam.indexOf("&"));
-                                }
-                                try {
-                                    Long relatedId = Long.parseLong(idParam);
-                                    fileManagement.setRelatedId(relatedId);
-                                    log.info("从URL中提取到关联ID: {}", relatedId);
-                                } catch (NumberFormatException nfe) {
-                                    log.debug("关联ID不是有效的数字: {}", idParam);
-                                }
-                            }
-                        } catch (Exception e) {
-                            log.debug("从URL提取关联ID失败", e);
-                        }
-                    }
-                    
-                    log.info("准备插入文件记录到数据库: {}, 模块: {}, 用户: {}", originalFilename, moduleName, username);
-                    int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
-                    log.info("文件记录插入结果: {} 行受影响, ID: {}", rows, fileManagement.getId());
-                    
-                    if (rows <= 0) {
-                        log.error("文件记录插入失败，受影响行数为0");
-                    } else {
-                        log.info("成功记录文件上传: {}, 文件: {}, 模块: {}, 用户: {}, 关联URL: {}", 
-                                methodName, originalFilename, moduleName, username, relatedUrl);
-                    }
-                } catch (Exception e) {
-                    log.error("插入文件记录到数据库失败: {}", e.getMessage(), e);
-                }
-            } else {
-                log.warn("文件名为空，无法处理文件");
-            }
-        } else {
-            log.warn("文件为空或无效，无法处理");
+    private Long processMultipartFile(MultipartFile file, String moduleName, String moduleCode,
+            String methodName, String username, String fileCategory, String relatedUrl, Long threadLocalRelatedId) {
+        if (file == null || file.isEmpty()) {
+            return null;
         }
+
+        String originalFilename = file.getOriginalFilename();
+        if (StringUtils.isEmpty(originalFilename)) {
+            return null;
+        }
+
+        try {
+            SecurityFileManagement fileManagement = new SecurityFileManagement();
+            fileManagement.setFileName(originalFilename);
+            fileManagement.setFilePath("securityConm/" + originalFilename);
+            fileManagement.setFileSize(file.getSize());
+            fileManagement.setFileType(file.getContentType());
+            fileManagement.setFileCategory(fileCategory);
+            fileManagement.setModuleName(moduleName);
+            fileManagement.setModuleCode(moduleCode);
+            fileManagement.setUploadTime(new Date());
+            fileManagement.setUploadUser(username);
+            fileManagement.setStatus("0");
+            fileManagement.setRemark("系统自动记录-" + methodName);
+            fileManagement.setRelatedUrl(relatedUrl);
+
+            // 设置关联ID
+            if (threadLocalRelatedId != null) {
+                fileManagement.setRelatedId(threadLocalRelatedId);
+                log.info("使用ThreadLocal中的关联ID: {}", threadLocalRelatedId);
+            }
+
+            int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
+            if (rows > 0) {
+                log.info("成功记录文件: {}, ID: {}, 关联ID: {}", originalFilename, fileManagement.getId(), fileManagement.getRelatedId());
+                return fileManagement.getId();
+            }
+        } catch (Exception e) {
+            log.error("记录文件信息失败: {}", e.getMessage(), e);
+        }
+        return null;
     }
     
     /**

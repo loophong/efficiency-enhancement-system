@@ -54,6 +54,13 @@
         <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
         where id = #{id}
     </select>
+    
+    <select id="selectLatestImportedRecords" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
+        <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
+        where related_id is null
+        order by create_time desc
+        limit 10
+    </select>
         
     <insert id="insertSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription" useGeneratedKeys="true" keyProperty="id">
         insert into security_environmental_organization_description

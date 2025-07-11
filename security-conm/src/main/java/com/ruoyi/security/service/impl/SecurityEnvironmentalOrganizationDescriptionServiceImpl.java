@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.security.mapper.SecurityEnvironmentalOrganizationDescriptionMapper;
 import com.ruoyi.security.domain.SecurityEnvironmentalOrganizationDescription;
 import com.ruoyi.security.service.ISecurityEnvironmentalOrganizationDescriptionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 环境识别Service业务层处理
@@ -181,5 +183,74 @@ public class SecurityEnvironmentalOrganizationDescriptionServiceImpl implements 
     public int deleteSecurityEnvironmentalOrganizationDescriptionById(Long id)
     {
         return securityEnvironmentalOrganizationDescriptionMapper.deleteSecurityEnvironmentalOrganizationDescriptionById(id);
+    }
+    
+    /**
+     * 更新最近导入的环境识别数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId) {
+        // 查询最近导入的数据
+        SecurityEnvironmentalOrganizationDescription query = new SecurityEnvironmentalOrganizationDescription();
+        // 按创建时间倒序排序，获取最近的记录
+        List<SecurityEnvironmentalOrganizationDescription> recentRecords = 
+            securityEnvironmentalOrganizationDescriptionMapper.selectLatestImportedRecords();
+        
+        if (recentRecords == null || recentRecords.isEmpty()) {
+            return 0;
+        }
+        
+        int updatedCount = 0;
+        
+        // 更新这些记录的relatedId
+        for (SecurityEnvironmentalOrganizationDescription record : recentRecords) {
+            record.setRelatedId(relatedId);
+            record.setUpdateTime(DateUtils.getNowDate());
+            updatedCount += securityEnvironmentalOrganizationDescriptionMapper.updateSecurityEnvironmentalOrganizationDescription(record);
+        }
+        
+        return updatedCount;
+    }
+
+    /**
+     * 批量新增环境识别
+     * 
+     * @param list 环境识别列表
+     * @return 结果
+     */
+    @Override
+    public int batchInsertSecurityEnvironmentalOrganizationDescription(List<SecurityEnvironmentalOrganizationDescription> list) {
+        Logger log = LoggerFactory.getLogger(SecurityEnvironmentalOrganizationDescriptionServiceImpl.class);
+        
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        
+        int successCount = 0;
+        for (SecurityEnvironmentalOrganizationDescription item : list) {
+            try {
+                // 设置创建时间
+                if (item.getCreateTime() == null) {
+                    item.setCreateTime(DateUtils.getNowDate());
+                }
+                
+                // 确保父ID不为空
+                if (item.getParentId() == null) {
+                    item.setParentId(0L);
+                }
+                
+                // 插入记录
+                successCount += securityEnvironmentalOrganizationDescriptionMapper.insertSecurityEnvironmentalOrganizationDescription(item);
+                
+            } catch (Exception e) {
+                log.error("批量插入环境识别数据失败: {}", e.getMessage(), e);
+            }
+        }
+        
+        log.info("批量插入环境识别数据成功，共 {} 条记录", successCount);
+        return successCount;
     }
 }
