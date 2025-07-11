@@ -154,7 +154,6 @@
 import { listEnvironmentidicaation, getEnvironmentidicaation, delEnvironmentidicaation, addEnvironmentidicaation, updateEnvironmentidicaation, importEnvironmentidicaation, importTemplate } from "@/api/security/environmentidicaation";
 import { getCurrentInstance, ref, reactive, toRefs, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import request from "@/utils/request";
 
 const { proxy } = getCurrentInstance();
 const router = useRouter();

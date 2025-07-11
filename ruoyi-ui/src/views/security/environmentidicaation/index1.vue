@@ -192,6 +192,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const route = useRoute();
 
 // 用于单元格合并的数据结构
 const mergeData = ref({
@@ -208,6 +209,7 @@ const data = reactive({
     demand: null,
     monitoringIndicators: null,
     monitoringFrequency: null,
+    relatedId: null,
     monitoringDepartment: null
   },
   rules: {
@@ -344,13 +346,16 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    partyInvolved: null,
-    demand: null,
-    monitoringIndicators: null,
-    monitoringFrequency: null,
-    monitoringDepartment: null
+    environment: null,
+    features: null,
+    description: null,
+    relatedId: null
   };
-  proxy.resetForm("RequireExpectPartyRef");
+  // 如果有关联ID查询参数，保留该值
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
+  proxy.resetForm("environmentidicaationRef");
 }
 
 /** 搜索按钮操作 */
@@ -455,7 +460,27 @@ function handleImportTemplate() {
   });
 }
 
-getList();
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+  
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联文件的相关方识别表");
+  }
+}
+
+// 初始化函数
+onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
+  // 加载数据
+  getList();
+});
+
 </script>
 
 <style scoped>

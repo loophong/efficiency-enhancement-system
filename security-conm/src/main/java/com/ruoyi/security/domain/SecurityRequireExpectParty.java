@@ -58,6 +58,8 @@ public class SecurityRequireExpectParty extends BaseEntity
     /** 审批部门 */
     @Excel(name = "审批部门", isExport = false)
     private String statusDepartment;
+    @Excel(name = "文件管理ID", isExport = false)
+    private Long relatedId;
 
     public void setId(Long id)
     {
@@ -148,6 +150,14 @@ public class SecurityRequireExpectParty extends BaseEntity
     public String getStatusDepartment()
     {
         return statusDepartment;
+    }
+
+    public Long getRelatedId() {
+        return relatedId;
+    }
+
+    public void setRelatedId(Long relatedId) {
+        this.relatedId = relatedId;
     }
 
     @Override

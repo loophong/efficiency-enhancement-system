@@ -1,6 +1,8 @@
 package com.ruoyi.security.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.security.domain.SecurityCompanyKeyWorks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.security.mapper.SecueityCompanyKpiMapper;
@@ -59,6 +61,18 @@ public class SecueityCompanyKpiServiceImpl implements ISecueityCompanyKpiService
     }
 
     /**
+     * 根据关联ID查询公司KPI列表
+     * 
+     * @param relatedId 关联ID
+     * @return 公司KPI集合
+     */
+    @Override
+    public List<SecueityCompanyKpi> selectSecueityCompanyKpiByRelatedId(Long relatedId)
+    {
+        return secueityCompanyKpiMapper.selectSecueityCompanyKpiByRelatedId(relatedId);
+    }
+
+    /**
      * 新增公司KPI
      * 
      * @param secueityCompanyKpi 公司KPI
@@ -104,6 +118,18 @@ public class SecueityCompanyKpiServiceImpl implements ISecueityCompanyKpiService
     public int deleteSecueityCompanyKpiById(Long id)
     {
         return secueityCompanyKpiMapper.deleteSecueityCompanyKpiById(id);
+    }
+
+    /**
+     * 根据关联ID删除公司KPI
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    @Override
+    public int deleteSecueityCompanyKpiByRelatedId(Long relatedId)
+    {
+        return secueityCompanyKpiMapper.deleteSecueityCompanyKpiByRelatedId(relatedId);
     }
 
     /**
@@ -280,5 +306,36 @@ public class SecueityCompanyKpiServiceImpl implements ISecueityCompanyKpiService
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条");
         }
         return successMsg.toString();
+    }
+
+    /**
+     * 更新最近导入的KPI数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId)
+    {
+        log.info("更新最近导入的KPI数据关联ID: {}", relatedId);
+        
+        // 查询最近导入的数据
+        List<SecueityCompanyKpi> recentRecords = secueityCompanyKpiMapper.selectLatestImportedRecords();
+        
+        if (recentRecords == null || recentRecords.isEmpty()) {
+            log.info("没有找到需要更新关联ID的KPI记录");
+            return 0;
+        }
+        
+        int updatedCount = 0;
+        
+        // 更新这些记录的relatedId
+        for (SecueityCompanyKpi record : recentRecords) {
+            record.setRelatedId(relatedId);
+            updatedCount += secueityCompanyKpiMapper.updateSecueityCompanyKpi(record);
+        }
+        
+        log.info("成功更新KPI数据关联ID，共更新{}条记录", updatedCount);
+        return updatedCount;
     }
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.ruoyi.security.service.*;
+import com.ruoyi.security.service.impl.SecurityRequireExpectPartyServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.aspectj.lang.JoinPoint;
@@ -31,10 +33,8 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.security.domain.SecurityFileManagement;
-import com.ruoyi.security.service.ISecurityEnvironmentalOrganizationDescriptionService;
-import com.ruoyi.security.service.ISecurityFileManagementService;
-import com.ruoyi.security.service.ISecuritySysMenuService;
 import com.ruoyi.security.utils.ThreadLocalContext;
+import com.ruoyi.security.service.ISecurityRiskOpportunityAssessmentService;
 
 /**
  * 文件上传切面，用于拦截所有上传方法
@@ -43,7 +43,7 @@ import com.ruoyi.security.utils.ThreadLocalContext;
 @Component
 public class FileUploadAspect {
     private static final Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
-    
+
     // 用于标记请求是否已处理文件的属性名
     private static final String FILE_PROCESSED_FLAG = "FILE_PROCESSED_FLAG";
     private static final String FILE_MANAGEMENT_ID = "FILE_MANAGEMENT_ID";
@@ -53,10 +53,16 @@ public class FileUploadAspect {
     
     @Autowired
     private ISecuritySysMenuService securitySysMenuService;
-    
     @Autowired
     private ISecurityEnvironmentalOrganizationDescriptionService environmentalService;
-
+    @Autowired
+    private ISecurityRequireExpectPartyService requireExpectPartyService;
+    @Autowired
+    private ISecurityRiskOpportunityAssessmentService riskAssessmentService;
+    @Autowired
+    private ISecurityCompanyKeyWorksService companyKeyWorksService;
+    @Autowired
+    private ISecueityCompanyKpiService secueityCompanyKpiService;
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
      */
@@ -86,8 +92,8 @@ public class FileUploadAspect {
     }
 
     /**
-     * 环绕通知，处理所有导入方法
-     */
+            * 环绕通知，处理所有导入方法
+ */
     @Around("execution(* com.ruoyi..controller..*.*import*(..))")
     public Object aroundImportMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
@@ -95,33 +101,33 @@ public class FileUploadAspect {
                 joinPoint.getTarget().getClass().getName(),
                 joinPoint.getSignature().getName());
 
-        // 获取当前请求
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                    // 获取当前请求
+                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
             return joinPoint.proceed();
         }
 
-        HttpServletRequest request = attributes.getRequest();
+                        HttpServletRequest request = attributes.getRequest();
         
         // 获取业务ID（从ThreadLocal中）
         Long threadLocalRelatedId = ThreadLocalContext.getRelatedId();
         
         // 获取Referer和当前URI
         String referer = request.getHeader("Referer");
-        String uri = request.getRequestURI();
+                        String uri = request.getRequestURI();
         
         // 构造relatedUrl，优先使用Referer
         String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
         relatedUrl = ensureSecurityConmPrefix(relatedUrl);
 
         // 获取当前用户
-        String username = SecurityUtils.getUsername();
+                        String username = SecurityUtils.getUsername();
 
-        // 获取模块名称
+                        // 获取模块名称
         String moduleName = getModuleNameFromUri(referer);
-        if ("未知模块".equals(moduleName)) {
-            moduleName = getModuleNameFromUri(uri);
-        }
+                        if ("未知模块".equals(moduleName)) {
+                            moduleName = getModuleNameFromUri(uri);
+                        }
 
         Long fileManagementId = null;
 
@@ -135,21 +141,21 @@ public class FileUploadAspect {
                     fileManagementId = processMultipartFile(
                         file,
                         moduleName,
-                        getShortClassName(joinPoint.getTarget().getClass().getSimpleName()),
-                        joinPoint.getSignature().getName(),
+                                getShortClassName(joinPoint.getTarget().getClass().getSimpleName()),
+                                joinPoint.getSignature().getName(),
                         username,
                         "IMPORT",
                         relatedUrl,
                         threadLocalRelatedId
                     );
 
-                    if (fileManagementId != null) {
+                        if (fileManagementId != null) {
                         // 将处理标志和文件管理记录ID存储到请求属性中
                         request.setAttribute(FILE_PROCESSED_FLAG, true);
                         request.setAttribute(FILE_MANAGEMENT_ID, fileManagementId);
                         
                         // 存储到ThreadLocal中
-                        ThreadLocalContext.setRelatedId(fileManagementId);
+                            ThreadLocalContext.setRelatedId(fileManagementId);
                         log.info("已将文件管理记录ID: {} 存储到ThreadLocal和请求属性中", fileManagementId);
                     }
                     break;
@@ -172,7 +178,7 @@ public class FileUploadAspect {
         
         return result;
     }
-
+    
     /**
      * 根据控制器类型更新关联 ID
      */
@@ -185,13 +191,24 @@ public class FileUploadAspect {
                 // 环境识别导入
                 updatedRows = environmentalService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新环境识别数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
-            } else if (controllerName.contains("SecurityAcceptanceEvaluation")) {
-                // 验收评价
-                updatedRows = getServiceAndUpdateRelatedId("acceptanceEvaluationService", fileManagementId);
-                log.info("已更新验收评价数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("RequireExpectParty")) {
+                // 相关方期望
+                updatedRows = requireExpectPartyService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新相关方期望数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            }
+                else if (controllerName.contains("RiskOpportunityAssessment")){
+                updatedRows = riskAssessmentService.updateLatestImportedRelatedId(fileManagementId);
+               //公司更新重点工作
+            } else if (controllerName.contains("CompanyKeyWorksController")) {
+                updatedRows = companyKeyWorksService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新重点工作ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecueityCompanyKpiController")) {
+                // 公司KPI
+                updatedRows = secueityCompanyKpiService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新公司KPI数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             } else if (controllerName.contains("SecurityAccidentCauseAnalysis")) {
-                // 事故原因分析
-                updatedRows = getServiceAndUpdateRelatedId("accidentCauseAnalysisService", fileManagementId);
+                // 事故原因分析secueityCompanyKpiService
+                updatedRows = secueityCompanyKpiService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新事故原因分析数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             } else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {
                 // 事故措施跟踪
@@ -318,14 +335,14 @@ public class FileUploadAspect {
         return 0;
     }
 
-    @Order(Integer.MAX_VALUE)
-    @AfterReturning("formManagementPointcut()")
-    public void afterFormManagement() {
-        // 清除ThreadLocal中的数据，防止内存泄漏
-        ThreadLocalContext.clearRelatedId();
-        log.debug("已清除ThreadLocal中的relatedId");
-    }
-
+@Order(Integer.MAX_VALUE)
+@AfterReturning("formManagementPointcut()")
+public void afterFormManagement() {
+    // 清除ThreadLocal中的数据，防止内存泄漏
+    ThreadLocalContext.clearRelatedId();
+    log.debug("已清除ThreadLocal中的relatedId");
+}
+    
     /**
      * 在上传方法返回后执行
      */
@@ -351,7 +368,7 @@ public class FileUploadAspect {
                 log.info("文件已在环绕通知中处理，跳过afterUpload处理");
                 return;
             }
-
+            
             // 获取当前ThreadLocal中的relatedId
             Long threadLocalRelatedId = ThreadLocalContext.getRelatedId();
             
@@ -395,7 +412,7 @@ public class FileUploadAspect {
                             processMultipartFile(file, moduleName, getShortClassName(className),
                                     methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
                             fileHandled = true;
-                        }
+                                    }
                     }
                 }
             }
@@ -413,11 +430,11 @@ public class FileUploadAspect {
                     }
                 }
             }
-        } catch (Exception e) {
+                        } catch (Exception e) {
             log.error("处理文件上传失败", e);
         }
     }
-
+    
     /**
      * 处理上传的文件，返回文件管理记录ID
      */
@@ -427,38 +444,38 @@ public class FileUploadAspect {
             return null;
         }
 
-        String originalFilename = file.getOriginalFilename();
+            String originalFilename = file.getOriginalFilename();
         if (StringUtils.isEmpty(originalFilename)) {
             return null;
         }
 
-        try {
-            SecurityFileManagement fileManagement = new SecurityFileManagement();
-            fileManagement.setFileName(originalFilename);
+                try {
+                    SecurityFileManagement fileManagement = new SecurityFileManagement();
+                    fileManagement.setFileName(originalFilename);
             fileManagement.setFilePath("securityConm/" + originalFilename);
-            fileManagement.setFileSize(file.getSize());
-            fileManagement.setFileType(file.getContentType());
-            fileManagement.setFileCategory(fileCategory);
-            fileManagement.setModuleName(moduleName);
-            fileManagement.setModuleCode(moduleCode);
-            fileManagement.setUploadTime(new Date());
-            fileManagement.setUploadUser(username);
-            fileManagement.setStatus("0");
-            fileManagement.setRemark("系统自动记录-" + methodName);
+                    fileManagement.setFileSize(file.getSize());
+                    fileManagement.setFileType(file.getContentType());
+                    fileManagement.setFileCategory(fileCategory);
+                    fileManagement.setModuleName(moduleName);
+                    fileManagement.setModuleCode(moduleCode);
+                    fileManagement.setUploadTime(new Date());
+                    fileManagement.setUploadUser(username);
+                    fileManagement.setStatus("0");
+                    fileManagement.setRemark("系统自动记录-" + methodName);
             fileManagement.setRelatedUrl(relatedUrl);
 
             // 设置关联ID
-            if (threadLocalRelatedId != null) {
-                fileManagement.setRelatedId(threadLocalRelatedId);
-                log.info("使用ThreadLocal中的关联ID: {}", threadLocalRelatedId);
+                    if (threadLocalRelatedId != null) {
+                        fileManagement.setRelatedId(threadLocalRelatedId);
+                        log.info("使用ThreadLocal中的关联ID: {}", threadLocalRelatedId);
             }
 
-            int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
+                    int rows = fileManagementService.insertSecurityFileManagement(fileManagement);
             if (rows > 0) {
                 log.info("成功记录文件: {}, ID: {}, 关联ID: {}", originalFilename, fileManagement.getId(), fileManagement.getRelatedId());
                 return fileManagement.getId();
-            }
-        } catch (Exception e) {
+                    }
+                } catch (Exception e) {
             log.error("记录文件信息失败: {}", e.getMessage(), e);
         }
         return null;

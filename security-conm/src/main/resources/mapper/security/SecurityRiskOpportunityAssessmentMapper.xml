@@ -19,10 +19,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="status"    column="status"    />
         <result property="statusDepartment"    column="status_department"    />
         <result property="statusTime"    column="status_time"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityRiskOpportunityAssessmentVo">
-        select id, activity, risk_opportunity, consequences, risk_level, response_measures, implementation_time, department, severity, frequency, risk, status, status_department, status_time from security_risk_opportunity_assessment
+        select id, activity, risk_opportunity, consequences, risk_level, response_measures, implementation_time, department, severity, frequency, risk, status, status_department, status_time,related_id from security_risk_opportunity_assessment
     </sql>
 
     <select id="selectSecurityRiskOpportunityAssessmentList" parameterType="SecurityRiskOpportunityAssessment" resultMap="SecurityRiskOpportunityAssessmentResult">
@@ -41,12 +42,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="statusDepartment != null  and statusDepartment != ''"> and status_department = #{statusDepartment}</if>
             <if test="statusTime != null "> and status_time = #{statusTime}</if>
+             <if test="relatedId != null "> and related_id = #{relatedId}</if>
         </where>
     </select>
     
     <select id="selectSecurityRiskOpportunityAssessmentById" parameterType="Long" resultMap="SecurityRiskOpportunityAssessmentResult">
         <include refid="selectSecurityRiskOpportunityAssessmentVo"/>
         where id = #{id}
+    </select>
+    <select id="selectLatestImportedRecords" resultType="com.ruoyi.security.domain.SecurityRiskOpportunityAssessment">
+        <include refid="selectSecurityRiskOpportunityAssessmentVo"/>
+        where related_id is null
+        order by  status_time desc
+        limit 10
     </select>
 
     <insert id="insertSecurityRiskOpportunityAssessment" parameterType="SecurityRiskOpportunityAssessment">
@@ -66,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status,</if>
             <if test="statusDepartment != null">status_department,</if>
             <if test="statusTime != null">status_time,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -82,6 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">#{status},</if>
             <if test="statusDepartment != null">#{statusDepartment},</if>
             <if test="statusTime != null">#{statusTime},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -101,6 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null">status = #{status},</if>
             <if test="statusDepartment != null">status_department = #{statusDepartment},</if>
             <if test="statusTime != null">status_time = #{statusTime},</if>
+            <if test="relatedId != null ">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>

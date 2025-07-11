@@ -1,6 +1,9 @@
 package com.ruoyi.security.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.security.domain.SecurityEnvironmentalOrganizationDescription;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.security.mapper.SecurityRequireExpectPartyMapper;
@@ -89,5 +92,34 @@ public class SecurityRequireExpectPartyServiceImpl implements ISecurityRequireEx
     public int deleteSecurityRequireExpectPartyById(Long id)
     {
         return securityRequireExpectPartyMapper.deleteSecurityRequireExpectPartyById(id);
+    }
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId) {
+        // 查询最近导入的数据
+        SecurityRequireExpectParty query = new SecurityRequireExpectParty();
+        // 按创建时间倒序排序，获取最近的记录
+        List<SecurityRequireExpectParty> recentRecords =
+                securityRequireExpectPartyMapper.selectLatestImportedRecords();
+
+        if (recentRecords == null || recentRecords.isEmpty()) {
+            return 0;
+        }
+
+        int updatedCount = 0;
+
+        // 更新这些记录的relatedId
+        for (SecurityRequireExpectParty record : recentRecords) {
+            record.setRelatedId(relatedId);
+            record.setUpdateTime(DateUtils.getNowDate());
+            updatedCount += securityRequireExpectPartyMapper.updateSecurityRequireExpectParty(record);
+        }
+
+        return updatedCount;
     }
 }

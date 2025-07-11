@@ -73,6 +73,9 @@ public class SecurityRiskOpportunityAssessment extends BaseEntity
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
     private Date statusTime;
+    /**关联ID**/
+    @Excel(name = "关联ID", isExport = false)
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -199,6 +202,14 @@ public class SecurityRiskOpportunityAssessment extends BaseEntity
     public Date getStatusTime() 
     {
         return statusTime;
+    }
+    public Long getRelatedId()
+    {
+        return relatedId;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
     }
 
     @Override

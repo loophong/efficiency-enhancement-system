@@ -20,6 +20,10 @@ public class SecueityCompanyKpi extends BaseEntity
     /** id */
     private Long id;
 
+    /** 关联ID */
+    @Excel(name = "关联ID", width = 15, type = Type.ALL)
+    private Long relatedId;
+
     /** 单位名称 */
     @Excel(name = "单位名称", width = 15, type = Type.ALL)
     private String unitName;
@@ -113,6 +117,17 @@ public class SecueityCompanyKpi extends BaseEntity
     {
         return id;
     }
+
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
+
     public void setUnitName(String unitName) 
     {
         this.unitName = unitName;
@@ -307,6 +322,7 @@ public class SecueityCompanyKpi extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
+            .append("relatedId", getRelatedId())
             .append("unitName", getUnitName())
             .append("category", getCategory())
             .append("indicatorName", getIndicatorName())

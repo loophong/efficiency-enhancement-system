@@ -345,12 +345,14 @@
 </template>
 
 <script setup name="Kpi">
-import { listKpi, getKpi, delKpi, addKpi, updateKpi, importKpi, downloadTemplate } from "@/api/security/kpi";
+import { listKpi, getKpi, delKpi, addKpi, updateKpi, importKpi} from "@/api/security/kpi";
 import { UploadFilled } from '@element-plus/icons-vue';
-import { ref, reactive, toRefs, getCurrentInstance } from 'vue';
+import { ref, reactive, toRefs, getCurrentInstance, watch } from 'vue';
+import axios from 'axios'; // 导入axios
+import { getToken } from '@/utils/auth'; // 导入获取token的函数
 
 const { proxy } = getCurrentInstance();
-
+const route = useRoute();
 const kpiList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -735,34 +737,48 @@ function uploadFile() {
     
     isLoading.value = true;
     const file = selectedFile.value.raw;
+    
+    // 调试信息
+    console.log('文件信息:', file.name, file.type, file.size);
+    
+    // 创建FormData并确保参数名正确
     const formData = new FormData();
     formData.append('excelFile', file);
     
-    // 添加日志，帮助调试
-    console.log('准备上传文件:', file.name, file.size);
+    // 检查FormData内容
+    for (let [key, value] of formData.entries()) {
+      console.log('FormData内容:', key, value instanceof File ? value.name : value);
+    }
     
-    importKpi(formData)
-      .then(response => {
-        console.log('上传成功:', response);
-        proxy.$modal.msgSuccess(response.msg || "导入成功");
+    // 使用axios直接发送请求，绕过request.js的处理
+    axios.post(import.meta.env.VITE_APP_BASE_API + '/security/kpi/importData', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': 'Bearer ' + getToken()
+      }
+    }).then(response => {
+      console.log('上传成功:', response);
+      if (response.data.code === 200) {
+        proxy.$modal.msgSuccess(response.data.msg || "导入成功");
         getList();
-        uploadDialogVisible.value = false;
-        selectedFile.value = null;
-      })
-      .catch(error => {
-        console.error('上传失败:', error);
-        if (error.response && error.response.data && error.response.data.msg) {
-          proxy.$modal.msgError(error.response.data.msg);
-        } else {
-          proxy.$modal.msgError(error.message || "导入失败");
-        }
-      })
-      .finally(() => {
-        isLoading.value = false;
-        if (proxy.$refs.uploadRef) {
-          proxy.$refs.uploadRef.clearFiles();
-        }
-      });
+      } else {
+        proxy.$modal.msgError(response.data.msg || "导入失败");
+      }
+      uploadDialogVisible.value = false;
+      selectedFile.value = null;
+    }).catch(error => {
+      console.error('上传失败:', error);
+      if (error.response && error.response.data && error.response.data.msg) {
+        proxy.$modal.msgError(error.response.data.msg);
+      } else {
+        proxy.$modal.msgError(error.message || "导入失败");
+      }
+    }).finally(() => {
+      isLoading.value = false;
+      if (proxy.$refs.uploadRef) {
+        proxy.$refs.uploadRef.clearFiles();
+      }
+    });
   } catch (error) {
     console.error('上传文件出错:', error);
     proxy.$modal.msgError("上传过程中发生错误");
@@ -909,7 +925,7 @@ function parseFormatInfo(beizhu) {
   if (!formatInfoMatch || !formatInfoMatch[1]) {
     return null;
   }
-  
+  const route = useRoute();
   const formatInfoStr = formatInfoMatch[1];
   const formatParts = formatInfoStr.split(';');
   const formatInfo = {};
@@ -979,7 +995,35 @@ function formatBeizhu(beizhu) {
   return beizhu;
 }
 
-getList();
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件KPI考核数据");
+    // 添加这行确保数据加载
+    getList();
+  }
+}
+
+// 监听路由参数变化
+watch(() => route.query.relatedId, (newVal, oldVal) => {
+  if (newVal !== oldVal) {
+    queryParams.value.relatedId = newVal;
+    getList();
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
+    getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>
 
 <style scoped>
@@ -987,3 +1031,4 @@ getList();
   margin: 16px 0;
 }
 </style>
+

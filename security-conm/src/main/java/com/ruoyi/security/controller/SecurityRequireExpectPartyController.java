@@ -107,6 +107,21 @@ public class SecurityRequireExpectPartyController extends BaseController
     {
         return toAjax(securityRequireExpectPartyService.deleteSecurityRequireExpectPartyByIds(ids));
     }
+
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public AjaxResult listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        if (relatedId == null) {
+            return AjaxResult.error("关联ID不能为空");
+        }
+
+        SecurityRequireExpectParty query = new SecurityRequireExpectParty();
+        query.setRelatedId(relatedId);
+        List<SecurityRequireExpectParty> list =
+                securityRequireExpectPartyService.selectSecurityRequireExpectPartyList(query);
+
+        return success(list);
+    }
     
     /**
      * 导入相关方期望数据
