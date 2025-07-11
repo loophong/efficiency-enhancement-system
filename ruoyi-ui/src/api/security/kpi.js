@@ -42,3 +42,34 @@ export function delKpi(id) {
     method: 'delete'
   })
 }
+
+// 导出公司KPI
+export function exportKpi(query) {
+  return request({
+    url: '/security/kpi/export',
+    method: 'get',
+    params: query,
+    responseType: 'blob'
+  })
+}
+
+// 导入公司KPI数据
+export function importKpi(data) {
+  return request({
+    url: '/security/kpi/importData',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 下载公司KPI导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/kpi/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}

@@ -42,3 +42,24 @@ export function delWorks(id) {
     method: 'delete'
   })
 }
+
+// 导入公司重点工作数据
+export function importFile(data) {
+  return request({
+    url: '/security/works/importData',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 下载公司重点工作导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/works/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}

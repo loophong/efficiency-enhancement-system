@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityFileManagementMapper">
+    
+    <resultMap type="SecurityFileManagement" id="SecurityFileManagementResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="fileType"    column="file_type"    />
+        <result property="fileCategory"    column="file_category"    />
+        <result property="moduleName"    column="module_name"    />
+        <result property="moduleCode"    column="module_code"    />
+        <result property="relatedId"    column="related_id"    />
+        <result property="relatedUrl"    column="related_url"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="uploadUser"    column="upload_user"    />
+        <result property="status"    column="status"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityFileManagementVo">
+        select id, file_name, file_path, file_size, file_type, file_category, module_name, module_code, related_id, related_url, upload_time, upload_user, status, remark, create_by, create_time, update_by, update_time from security_file_management
+    </sql>
+
+    <select id="selectSecurityFileManagementList" parameterType="SecurityFileManagement" resultMap="SecurityFileManagementResult">
+        <include refid="selectSecurityFileManagementVo"/>
+        <where>  
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileCategory != null  and fileCategory != ''"> and file_category = #{fileCategory}</if>
+            <if test="moduleName != null  and moduleName != ''"> and module_name like concat('%', #{moduleName}, '%')</if>
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
+            <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityFileManagementById" parameterType="Long" resultMap="SecurityFileManagementResult">
+        <include refid="selectSecurityFileManagementVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityFileManagement" parameterType="SecurityFileManagement" useGeneratedKeys="true" keyProperty="id">
+        insert into security_file_management
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name,</if>
+            <if test="filePath != null and filePath != ''">file_path,</if>
+            <if test="fileSize != null">file_size,</if>
+            <if test="fileType != null">file_type,</if>
+            <if test="fileCategory != null and fileCategory != ''">file_category,</if>
+            <if test="moduleName != null and moduleName != ''">module_name,</if>
+            <if test="moduleCode != null and moduleCode != ''">module_code,</if>
+            <if test="relatedId != null">related_id,</if>
+            <if test="relatedUrl != null">related_url,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="uploadUser != null">upload_user,</if>
+            <if test="status != null">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">#{fileName},</if>
+            <if test="filePath != null and filePath != ''">#{filePath},</if>
+            <if test="fileSize != null">#{fileSize},</if>
+            <if test="fileType != null">#{fileType},</if>
+            <if test="fileCategory != null and fileCategory != ''">#{fileCategory},</if>
+            <if test="moduleName != null and moduleName != ''">#{moduleName},</if>
+            <if test="moduleCode != null and moduleCode != ''">#{moduleCode},</if>
+            <if test="relatedId != null">#{relatedId},</if>
+            <if test="relatedUrl != null">#{relatedUrl},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="uploadUser != null">#{uploadUser},</if>
+            <if test="status != null">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityFileManagement" parameterType="SecurityFileManagement">
+        update security_file_management
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+            <if test="filePath != null and filePath != ''">file_path = #{filePath},</if>
+            <if test="fileSize != null">file_size = #{fileSize},</if>
+            <if test="fileType != null">file_type = #{fileType},</if>
+            <if test="fileCategory != null and fileCategory != ''">file_category = #{fileCategory},</if>
+            <if test="moduleName != null and moduleName != ''">module_name = #{moduleName},</if>
+            <if test="moduleCode != null and moduleCode != ''">module_code = #{moduleCode},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="relatedUrl != null">related_url = #{relatedUrl},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="uploadUser != null">upload_user = #{uploadUser},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityFileManagementById" parameterType="Long">
+        delete from security_file_management where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityFileManagementByIds" parameterType="String">
+        delete from security_file_management where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

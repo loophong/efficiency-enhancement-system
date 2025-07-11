@@ -97,6 +97,34 @@ export const constantRoutes = [
         meta: { title: '菜单树管理', icon: 'tree', affix: false }
       }
     ]
+  },
+  {
+    path: '/security/environmentidicaation',
+    component: Layout,
+    hidden: true,
+    permissions: ['security:environmentidicaation:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/security/environmentidicaation/index'),
+        name: 'Environmentidicaation',
+        meta: { title: '环境识别', activeMenu: '/security/environmentidicaation' }
+      }
+    ]
+  },
+  {
+    path: '/security/fileManagement',
+    component: Layout,
+    hidden: false,
+    permissions: ['security:fileManagement:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/security/fileManagement/index'),
+        name: 'FileManagement',
+        meta: { title: '文件管理', icon: 'file', activeMenu: '/security/fileManagement' }
+      }
+    ]
   }
 ]
 

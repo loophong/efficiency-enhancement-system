@@ -5,15 +5,13 @@ import com.ruoyi.security.domain.SecurityEnvironmentalOrganizationDescription;
 
 /**
  * 环境识别Service接口
- *
- * @author wang
- * @date 2025-03-05
+ * 
  */
-public interface ISecurityEnvironmentalOrganizationDescriptionService
+public interface ISecurityEnvironmentalOrganizationDescriptionService 
 {
     /**
      * 查询环境识别
-     *
+     * 
      * @param id 环境识别主键
      * @return 环境识别
      */
@@ -21,15 +19,23 @@ public interface ISecurityEnvironmentalOrganizationDescriptionService
 
     /**
      * 查询环境识别列表
-     *
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 环境识别集合
      */
     public List<SecurityEnvironmentalOrganizationDescription> selectSecurityEnvironmentalOrganizationDescriptionList(SecurityEnvironmentalOrganizationDescription securityEnvironmentalOrganizationDescription);
 
     /**
-     * 新增环境识别
+     * 构建树形结构列表
      *
+     * @param securityEnvironmentalOrganizationDescription 环境识别
+     * @return 树形结构列表
+     */
+    public List<SecurityEnvironmentalOrganizationDescription> buildTreeList(SecurityEnvironmentalOrganizationDescription securityEnvironmentalOrganizationDescription);
+
+    /**
+     * 新增环境识别
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -37,7 +43,7 @@ public interface ISecurityEnvironmentalOrganizationDescriptionService
 
     /**
      * 修改环境识别
-     *
+     * 
      * @param securityEnvironmentalOrganizationDescription 环境识别
      * @return 结果
      */
@@ -45,7 +51,7 @@ public interface ISecurityEnvironmentalOrganizationDescriptionService
 
     /**
      * 批量删除环境识别
-     *
+     * 
      * @param ids 需要删除的环境识别主键集合
      * @return 结果
      */
@@ -53,7 +59,7 @@ public interface ISecurityEnvironmentalOrganizationDescriptionService
 
     /**
      * 删除环境识别信息
-     *
+     * 
      * @param id 环境识别主键
      * @return 结果
      */

@@ -21,57 +21,57 @@ public class SecurityRiskOpportunityAssessment extends BaseEntity
     private Long id;
 
     /** 活动/过程 */
-    @Excel(name = "活动/过程")
+    @Excel(name = "活动/过程", sort = 1)
     private String activity;
 
     /** 风险和机遇 */
-    @Excel(name = "风险和机遇")
+    @Excel(name = "风险和机遇", sort = 2)
     private String riskOpportunity;
 
     /** 造成后果 */
-    @Excel(name = "造成后果")
+    @Excel(name = "造成后果", sort = 3)
     private String consequences;
 
     /** 风险等级 */
-    @Excel(name = "风险等级")
+    @Excel(name = "风险等级", sort = 4, readConverterExp = "高=高,中=一般,低=低")
     private String riskLevel;
 
     /** 应对措施 */
-    @Excel(name = "应对措施")
+    @Excel(name = "应对措施", sort = 5)
     private String responseMeasures;
 
     /** 实施时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "实施时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "实施时间", width = 30, dateFormat = "yyyy-MM-dd", sort = 6)
     private Date implementationTime;
 
     /** 实施部门 */
-    @Excel(name = "实施部门")
+    @Excel(name = "实施部门", sort = 7)
     private String department;
 
     /** 严重程度 */
-    @Excel(name = "严重程度")
+    @Excel(name = "严重程度", sort = 8)
     private String severity;
 
     /** 发生频次 */
-    @Excel(name = "发生频次")
+    @Excel(name = "发生频次", sort = 9)
     private String frequency;
 
     /** 风险系数 */
-    @Excel(name = "风险系数")
+    @Excel(name = "风险系数", isExport = false)
     private String risk;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
+    @Excel(name = "审批状态", isExport = false)
     private Long status;
 
     /** 审批部门 */
-    @Excel(name = "审批部门")
+    @Excel(name = "审批部门", isExport = false)
     private String statusDepartment;
 
     /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
     private Date statusTime;
 
     public void setId(Long id) 

@@ -24,6 +24,9 @@ import 'virtual:svg-icons-register'
 import SvgIcon from '@/components/SvgIcon'
 import elementIcons from '@/components/SvgIcon/svgicon'
 
+// 安全模块文件监控已移除
+// import initSecurityFileMonitor from '@/views/security/fileManagement/init'
+
 import './permission' // permission control
 
 import { useDict } from '@/utils/dict'
@@ -69,6 +72,8 @@ app.use(router)
 app.use(store)
 app.use(plugins)
 app.use(elementIcons)
+// 安全模块文件监控已移除
+// initSecurityFileMonitor(app)
 app.component('svg-icon', SvgIcon)
 
 directive(app)

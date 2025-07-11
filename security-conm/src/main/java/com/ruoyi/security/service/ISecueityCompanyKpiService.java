@@ -58,4 +58,13 @@ public interface ISecueityCompanyKpiService
      * @return 结果
      */
     public int deleteSecueityCompanyKpiById(Long id);
+    
+    /**
+     * 导入KPI数据
+     * 
+     * @param kpiList KPI数据列表
+     * @param operName 操作人
+     * @return 结果
+     */
+    public String importKpi(List<SecueityCompanyKpi> kpiList, String operName);
 }

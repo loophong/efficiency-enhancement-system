@@ -5,6 +5,9 @@
 </template>
 
 <script setup name="Index">
+// 安全模块文件监控已移除
+// import '../views/security/fileManagement/initWatcher'; // 导入文件监听器
+import { ref } from 'vue';
 const version = ref('3.8.9')
 
 function goTarget(url) {

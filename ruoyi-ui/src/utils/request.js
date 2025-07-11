@@ -123,13 +123,16 @@ service.interceptors.response.use(res => {
 )
 
 // 通用下载方法
-export function download(url, params, filename, config) {
+export function download(url, params, filename, method) {
   downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)", })
-  return service.post(url, params, {
-    transformRequest: [(params) => { return tansParams(params) }],
+  return service.request({
+    url: url,
+    method: method || 'post',
+    params: method === 'get' ? params : undefined,
+    data: method !== 'get' ? params : undefined,
+    transformRequest: [(params) => { return method !== 'get' ? tansParams(params) : undefined }],
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    responseType: 'blob',
-    ...config
+    responseType: 'blob'
   }).then(async (data) => {
     const isBlob = blobValidate(data);
     if (isBlob) {

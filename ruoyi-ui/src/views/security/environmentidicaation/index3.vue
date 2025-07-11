@@ -45,6 +45,9 @@
           />
         </el-select>
       </el-form-item>
+
+      <!-- 注释掉审批状态查询 -->
+      <!--
       <el-form-item label="审批状态" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择审批状态" clearable>
           <el-option
@@ -55,6 +58,8 @@
           />
         </el-select>
       </el-form-item>
+      -->
+
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -137,16 +142,25 @@
           <span>{{ parseTime(scope.row.reviewDepartmentTime2, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+
+      <!-- 注释掉审批状态表格列 -->
+      <!--
       <el-table-column label="审批状态" align="center" prop="status">
         <template #default="scope">
           <dict-tag :options="security_status" :value="scope.row.status"/>
         </template>
       </el-table-column>
+      -->
+
+      <!-- 注释掉审批时间表格列 -->
+      <!--
       <el-table-column label="审批时间" align="center" prop="statusTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.statusTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      -->
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:record:edit']">修改</el-button>
@@ -228,6 +242,9 @@
                           placeholder="请选择日期2">
           </el-date-picker>
         </el-form-item>
+
+        <!-- 注释掉审批状态表单项 -->
+        <!--
         <el-form-item label="审批状态" prop="status">
           <el-select v-model="form.status" placeholder="请选择审批状态">
             <el-option
@@ -238,6 +255,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        -->
+
+        <!-- 注释掉审批时间表单项 -->
+        <!--
         <el-form-item label="审批时间" prop="statusTime">
           <el-date-picker clearable
                           v-model="form.statusTime"
@@ -246,6 +267,8 @@
                           placeholder="请选择审批时间">
           </el-date-picker>
         </el-form-item>
+        -->
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -284,7 +307,7 @@ const data = reactive({
     reviewer: null,
     reviewDepartment1: null,
     reviewDepartment2: null,
-    status: null,
+    // status: null,  // 注释掉审批状态参数
   },
   rules: {
     reviewFileName: [
@@ -332,8 +355,8 @@ function reset() {
     issueResolutionResults: null,
     reviewDepartment2: null,
     reviewDepartmentTime2: null,
-    status: null,
-    statusTime: null
+    // status: null,       // 注释掉审批状态字段
+    // statusTime: null    // 注释掉审批时间字段
   };
   proxy.resetForm("recordRef");
 }
