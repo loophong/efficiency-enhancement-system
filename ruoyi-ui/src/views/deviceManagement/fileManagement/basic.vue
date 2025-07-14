@@ -47,6 +47,7 @@
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['file:basic:export']">导出</el-button>
       </el-col>
+
       <el-col :span="1.5">
         <el-button type="info" plain icon="Refresh" @click="resetGetList"
           v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
@@ -189,6 +190,7 @@ const router = useRouter();
 const route = useRoute();
 
 let routerDeviceNum = route.query.deviceNum;
+
 
 const data = reactive({
   form: {},

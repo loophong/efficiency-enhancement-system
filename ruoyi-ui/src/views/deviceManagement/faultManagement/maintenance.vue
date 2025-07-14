@@ -91,6 +91,9 @@
         <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['system:table:export']">导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -214,6 +217,7 @@
 
 <script setup name="Maintenance">
 import { listTable, getTable, delTable, addTable, updateTable, uploadFile } from "@/api/device/maintenanceTable/table";
+import { listTemplate } from "@/api/device/fileTable/template";
 import { ElMessage } from 'element-plus';
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -222,10 +226,11 @@ import { ElMessageBox } from 'element-plus'
 
 import VueOfficeDocx from '@vue-office/docx'
 import '@vue-office/docx/lib/index.css'
+import { useWindowScroll } from "@vueuse/core";
 
 const { proxy } = getCurrentInstance();
 const { device_fault_analysis } = proxy.useDict('device_fault_analysis');
-
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 
 
 const tableList = ref([]);
@@ -443,7 +448,7 @@ function handleDelete(row) {
 
 /** 跳转按钮操作 */
 function handleToRoute(row, module, destination) {
-  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum ,from:'maintenance'} });
+  router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { deviceNum: row.deviceNum, from: 'maintenance' } });
 }
 
 
@@ -576,7 +581,12 @@ function handleExport() {
     ...queryParams.value
   }, `table_${new Date().getTime()}.xlsx`)
 }
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateMaintenance}`)
+    window.open(`${baseUrl}${r.rows[0].templateMaintenance}`)
+  })
+}
 // getList();
 </script>
 

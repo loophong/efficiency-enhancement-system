@@ -110,6 +110,9 @@
                 </span>
               </el-dialog>
             </el-col>
+            <el-col :span="1.5">
+              <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
+            </el-col>
             <!-- <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
@@ -121,7 +124,7 @@
           </el-row>
 
           <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border stripe>
-            <!-- <el-table-column type="selection" width="55" align="center" /> -->
+            <el-table-column type="selection" width="55" align="center" />
             <!-- <el-table-column label="主键id" align="center" prop="groupId" /> -->
             <el-table-column label="序号" align="center" prop="orderNum" width="80" />
             <el-table-column label="设备类别" align="center" prop="deviceType" width="180" />
@@ -328,6 +331,7 @@
 
 <script setup name="Plan">
 import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList, resetPlan } from "@/api/device/maintenanceTable/groupPlan";
+import { listTemplate } from "@/api/device/fileTable/template";
 import majorPlan from "./majorPlan.vue"
 import record from "./record.vue"
 import { ElMessage } from 'element-plus'
@@ -367,6 +371,7 @@ const currentUserId = ref(0);
 
 const rowForProps = reactive({})
 const majorGroup = ref('班组')
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 
 const data = reactive({
   form: {},
@@ -795,6 +800,11 @@ function handleExport() {
     ...queryParams.value
   }, `plan_${new Date().getTime()}.xlsx`)
 }
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateGroup}`)
+    window.open(`${baseUrl}${r.rows[0].templateGroup}`)
+  })
+}
 getList();
 </script>

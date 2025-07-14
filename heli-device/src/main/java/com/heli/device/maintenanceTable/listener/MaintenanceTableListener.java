@@ -2,6 +2,7 @@ package com.heli.device.maintenanceTable.listener;
 
 
 import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.heli.device.maintenanceTable.domain.DeviceMaintenanceTable;
@@ -74,6 +75,7 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
     }
 
 
+
     /**
      * 将读取到的内容写入DB
      */
@@ -95,4 +97,28 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
         }
 
     }
+
+    /**
+     * 捕获解析异常，记录失败行号和列号
+     */
+    @Override
+    public void onException(Exception exception, AnalysisContext analysisContext) {
+        log.error("读取 Excel 时发生异常");
+
+        // 区分异常类型
+        if (exception instanceof ExcelDataConvertException) {
+            ExcelDataConvertException convertException = (ExcelDataConvertException) exception;
+            int rowIndex = convertException.getRowIndex(); // 获取异常行号（从0开始）
+            int columnIndex = convertException.getColumnIndex(); // 获取异常列号（从0开始）
+
+            log.error("【行号 {}，列号 {}】解析失败: {}", rowIndex + 1, columnIndex + 1, exception.getMessage());
+        } else {
+            log.error("未知异常: {}", exception.getMessage());
+        }
+
+        // 根据需求决定是否中断解析（默认继续解析）
+        // 如果希望中断解析，抛出异常即可：
+        // throw new RuntimeException(exception);
+    }
+
 }

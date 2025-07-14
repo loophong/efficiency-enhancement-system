@@ -65,6 +65,9 @@
           </span>
         </el-dialog>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport"
           v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
@@ -87,7 +90,7 @@
     </el-row>
 
     <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border>
-      <!-- <el-table-column type="selection" width="55" align="center" /> -->
+      <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键id" align="center" prop="majorId" /> -->
       <!-- <el-table-column label="序号" align="center" prop="majorOrder" /> -->
       <el-table-column label="设备名称" align="center" prop="majorName" width="160" />
@@ -693,9 +696,9 @@
     <!-- 添加或修改专业计划保养对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form ref="planRef" :model="form" :rules="rules" label-width="120px">
-        <!-- <el-form-item label="序号" prop="majorOrder">
+        <el-form-item label="序号" prop="majorOrder">
           <el-input v-model="form.majorOrder" placeholder="请输入序号" />
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="设备名称" prop="majorName">
           <el-input v-model="form.majorName" placeholder="请输入设备名称" />
         </el-form-item>
@@ -1317,6 +1320,7 @@
 
 <script setup name="majorPlan">
 import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList } from "@/api/device/maintenanceTable/majorPlan";
+import { listTemplate } from "@/api/device/fileTable/template";
 import { ElMessage } from 'element-plus'
 import record from "./record.vue"
 import { format } from 'date-fns';
@@ -1350,6 +1354,7 @@ const currentUserName = ref("");
 const currentUserId = ref(0);
 const ifTip = ref(true);
 const needShow = reactive({});
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 //级联选择器
 const cascaderValue = ref([])
 const cascaderProps = {
@@ -1750,6 +1755,11 @@ function handleExport() {
     ...queryParams.value
   }, `plan_${new Date().getTime()}.xlsx`)
 }
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateMajor}`)
+    window.open(`${baseUrl}${r.rows[0].templateMajor}`)
+  })
+}
 getList();
 </script>

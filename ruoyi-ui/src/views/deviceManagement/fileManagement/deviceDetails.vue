@@ -87,6 +87,9 @@
         <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['file:details:export']">导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -191,12 +194,13 @@
 
 <script setup name="Details">
 import { listDetails, getDetails, delDetails, addDetails, updateDetails, uploadFile } from "@/api/device/fileTable/details";
+import { listTemplate } from "@/api/device/fileTable/template";
 import { ElMessage } from 'element-plus'
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 
 const { proxy } = getCurrentInstance();
-
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 const detailsList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -520,6 +524,11 @@ function handleExport() {
     ...queryParams.value
   }, `details_${new Date().getTime()}.xlsx`)
 }
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateDetails}`)
+    window.open(`${baseUrl}${r.rows[0].templateDetails}`)
+  })
+}
 // getList();
 </script>

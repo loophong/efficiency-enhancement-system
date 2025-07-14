@@ -22,7 +22,7 @@ public interface IDeviceMaintenanceTableService
      * @return 2.设备故障记录(导入)
      */
     public DeviceMaintenanceTable selectDeviceMaintenanceTableByMaintenanceTableId(Long maintenanceTableId);
-    public R<String> readFaultRecordsToDB(String fileName, InputStream inputStream);
+    public Integer readFaultRecordsToDB(String fileName, InputStream inputStream);
 
 
     /**
