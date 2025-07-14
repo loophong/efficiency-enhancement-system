@@ -38,6 +38,7 @@ public class SupplierReturnRate implements Serializable
     /** 供应商编码 */
     @Excel(name = "供应商代码")
     @ExcelProperty(value = "供应商代码")
+    @ExcelIgnore
     private String supplierCode;
 
     /** 供应商名称 */
@@ -62,18 +63,52 @@ public class SupplierReturnRate implements Serializable
     @ExcelIgnore
     private Double score;
 
-    /** 2 */
-    @Excel(name = "2")
-    @ExcelProperty(value = "2")
-    @ExcelIgnore
-    private String two;
-
-    /** 3 */
-    @Excel(name = "3")
-    @ExcelProperty(value = "3")
-    @ExcelIgnore
-    private String three;
-
+//    /** 2 */
+//    @Excel(name = "2")
+//    @ExcelProperty(value = "2")
+//    @ExcelIgnore
+//    private String two;
+//
+//    /** 3 */
+//    @Excel(name = "3")
+//    @ExcelProperty(value = "3")
+//    @ExcelIgnore
+//    private String three;
+//@ExcelProperty(index = 12)
+//private String one;
+//
+//    @ExcelProperty(index = 22)
+//    private String two;
+//
+//    @ExcelProperty(index = 32)
+//    private String three;
+//
+//    @ExcelProperty(index = 42)
+//    private String four;
+//
+//    @ExcelProperty(index = 52)
+//    private String five;
+//
+//    @ExcelProperty(index = 62)
+//    private String six;
+//
+//    @ExcelProperty(index = 72)
+//    private String seven;
+//
+//    @ExcelProperty(index = 82)
+//    private String eight;
+//
+//    @ExcelProperty(index = 92)
+//    private String nine;
+//
+//    @ExcelProperty(index = 102)
+//    private String ten;
+//
+//    @ExcelProperty(index = 112)
+//    private String eleven;
+//
+//    @ExcelProperty(index = 122)
+//    private String twelve;
 
 
 }

@@ -51,8 +51,8 @@ public class SupplierRectificationTimeliness implements Serializable
     private String specificContent;
 
     /** 配合程度 */
-    @Excel(name = "配合程度")
-    @ExcelProperty(value = "配合程度")
+    @Excel(name = "配合程度", dictType = "supplier_cooperation_degree")
+//    @ExcelProperty(value = "配合程度")
     private Long cooperationDegree;
 
     /** 上传时间 */
@@ -66,10 +66,10 @@ public class SupplierRectificationTimeliness implements Serializable
     @ExcelProperty(value = "得分")
     private Long score;
 
-    /** 填报人 */
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String uploadName;
+//    /** 填报人 */
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String uploadName;
 
 
 }

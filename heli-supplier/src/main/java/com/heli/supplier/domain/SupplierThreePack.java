@@ -68,30 +68,30 @@ public class SupplierThreePack implements Serializable {
     @ExcelProperty(value = "具体三包事项")
     private String specificWarrantyItems;
 
-    /** 填报时间 */
-    @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "填报时间")
-    private Date happenTime;
-
-    /** 填报人 */
-    @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String reporter;
-
+//    /** 填报时间 */
+//    @ExcelIgnore
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "填报时间")
+//    private Date happenTime;
+//
+//    /** 填报人 */
+//    @ExcelIgnore
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String reporter;
+//
     /** 分数 */
     @Excel(name = "分数")
     private Double score;
 
-    /** 备选1 */
-    @ExcelIgnore
-    @Excel(name = "备选1")
-    private String one;
-
-    /** 备选2 */
-    @ExcelIgnore
-    @Excel(name = "备选2")
-    private String two;
+//    /** 备选1 */
+//    @ExcelIgnore
+//    @Excel(name = "备选1")
+//    private String one;
+//
+//    /** 备选2 */
+//    @ExcelIgnore
+//    @Excel(name = "备选2")
+//    private String two;
 }
