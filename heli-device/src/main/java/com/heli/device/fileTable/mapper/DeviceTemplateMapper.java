@@ -1,7 +1,7 @@
-package com.heli.device.maintenanceTable.mapper;
+package com.heli.device.fileTable.mapper;
 
 import java.util.List;
-import com.heli.device.maintenanceTable.domain.DeviceTemplate;
+import com.heli.device.fileTable.domain.DeviceTemplate;
 
 /**
  * 设备导入模板文件Mapper接口

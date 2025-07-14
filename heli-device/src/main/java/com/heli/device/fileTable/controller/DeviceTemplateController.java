@@ -1,4 +1,4 @@
-package com.heli.device.maintenanceTable.controller;
+package com.heli.device.fileTable.controller;
 
 import java.util.List;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,8 +16,8 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.heli.device.maintenanceTable.domain.DeviceTemplate;
-import com.heli.device.maintenanceTable.service.IDeviceTemplateService;
+import com.heli.device.fileTable.domain.DeviceTemplate;
+import com.heli.device.fileTable.service.IDeviceTemplateService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
 
