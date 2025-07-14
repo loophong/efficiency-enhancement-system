@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,6 +22,7 @@ import com.ruoyi.security.domain.SecurityUnacceptableRiskList;
 import com.ruoyi.security.service.ISecurityUnacceptableRiskListService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.security.utils.UnacceptableRiskExcelUtil;
 
 /**
  * 不可接受风险清单Controller
@@ -55,7 +58,8 @@ public class SecurityUnacceptableRiskListController extends BaseController
     public void export(HttpServletResponse response, SecurityUnacceptableRiskList securityUnacceptableRiskList)
     {
         List<SecurityUnacceptableRiskList> list = securityUnacceptableRiskListService.selectSecurityUnacceptableRiskListList(securityUnacceptableRiskList);
-        ExcelUtil<SecurityUnacceptableRiskList> util = new ExcelUtil<SecurityUnacceptableRiskList>(SecurityUnacceptableRiskList.class);
+        // 使用自定义的Excel工具类，支持合并单元格
+        UnacceptableRiskExcelUtil util = new UnacceptableRiskExcelUtil();
         util.exportExcel(response, list, "不可接受风险清单数据");
     }
 
@@ -100,5 +104,29 @@ public class SecurityUnacceptableRiskListController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityUnacceptableRiskListService.deleteSecurityUnacceptableRiskListByIds(ids));
+    }
+    
+    /**
+     * 导入不可接受风险清单数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:unacceptablerisklist:import')")
+    @Log(title = "不可接受风险清单", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, @RequestParam(value = "updateSupport", required = false, defaultValue = "false") boolean updateSupport) throws Exception
+    {
+        String message = securityUnacceptableRiskListService.importData(file, updateSupport);
+        return success(message);
+    }
+    
+    /**
+     * 下载不可接受风险清单导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:unacceptablerisklist:import')")
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response) throws Exception
+    {
+        // 使用自定义的Excel工具类，支持合并单元格
+        UnacceptableRiskExcelUtil util = new UnacceptableRiskExcelUtil();
+        util.importTemplateExcel(response, "不可接受风险清单");
     }
 }

@@ -14,10 +14,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="effectiveness"    column="effectiveness"    />
         <result property="applicableClauses"    column="applicable_clauses"    />
         <result property="complianceStatus"    column="compliance_status"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityComplianceEvaluationRecordsVo">
-        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness, applicable_clauses, compliance_status from security_compliance_evaluation_records
+        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness, applicable_clauses, compliance_status, related_id from security_compliance_evaluation_records
     </sql>
 
     <select id="selectSecurityComplianceEvaluationRecordsList" parameterType="SecurityComplianceEvaluationRecords" resultMap="SecurityComplianceEvaluationRecordsResult">
@@ -31,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveness != null  and effectiveness != ''"> and effectiveness like concat('%', #{effectiveness}, '%')</if>
             <if test="applicableClauses != null  and applicableClauses != ''"> and applicable_clauses like concat('%', #{applicableClauses}, '%')</if>
             <if test="complianceStatus != null  and complianceStatus != ''"> and compliance_status like concat('%', #{complianceStatus}, '%')</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -50,6 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveness != null">effectiveness,</if>
             <if test="applicableClauses != null">applicable_clauses,</if>
             <if test="complianceStatus != null">compliance_status,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="regulationName != null and regulationName != ''">#{regulationName},</if>
@@ -60,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveness != null">#{effectiveness},</if>
             <if test="applicableClauses != null">#{applicableClauses},</if>
             <if test="complianceStatus != null">#{complianceStatus},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -74,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveness != null">effectiveness = #{effectiveness},</if>
             <if test="applicableClauses != null">applicable_clauses = #{applicableClauses},</if>
             <if test="complianceStatus != null">compliance_status = #{complianceStatus},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -88,4 +93,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 查询最近导入的记录 -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityComplianceEvaluationRecordsResult">
+        <include refid="selectSecurityComplianceEvaluationRecordsVo"/>
+        where related_id is null
+        order by id desc
+        limit 1000
+    </select>
+    
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_compliance_evaluation_records
+        set related_id = #{relatedId}
+        where related_id is null
+        order by id desc
+        limit 1000
+    </update>
 </mapper>

@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="trainingMonth"    column="training_month"    />
         <result property="assessmentMethod"    column="assessment_method"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEducationAnnualTrainingPlanVo">
-        select id, training_project_1, training_project_2, trainees, training_category_content, training_method, hours, training_month, assessment_method, remarks from security_education_annual_training_plan
+        select id, training_project_1, training_project_2, trainees, training_category_content, training_method, hours, training_month, assessment_method, remarks, related_id from security_education_annual_training_plan
     </sql>
 
     <select id="selectSecurityEducationAnnualTrainingPlanList" parameterType="SecurityEducationAnnualTrainingPlan" resultMap="SecurityEducationAnnualTrainingPlanResult">
@@ -33,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="trainingMonth != null  and trainingMonth != ''"> and training_month like concat('%', #{trainingMonth}, '%')</if>
             <if test="assessmentMethod != null  and assessmentMethod != ''"> and assessment_method like concat('%', #{assessmentMethod}, '%')</if>
             <if test="remarks != null  and remarks != ''"> and remarks like concat('%', #{remarks}, '%')</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -53,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="trainingMonth != null">training_month,</if>
             <if test="assessmentMethod != null">assessment_method,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="trainingProject1 != null">#{trainingProject1},</if>
@@ -64,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="trainingMonth != null">#{trainingMonth},</if>
             <if test="assessmentMethod != null">#{assessmentMethod},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -79,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="trainingMonth != null">training_month = #{trainingMonth},</if>
             <if test="assessmentMethod != null">assessment_method = #{assessmentMethod},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -93,4 +98,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_education_annual_training_plan
+        SET related_id = #{fileManagementId}
+        WHERE related_id IS NULL
+        OR related_id = 0
+        ORDER BY id DESC
+        LIMIT 500
+    </update>
 </mapper>

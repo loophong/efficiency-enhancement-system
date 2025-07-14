@@ -94,6 +94,24 @@
           v-hasPermi="['security:compliance:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:compliance:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+          v-hasPermi="['security:compliance:import']"
+        >下载模板</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -174,14 +192,43 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip">请上传.xlsx或.xls格式文件，且不超过5MB</div>
+        </template>
+      </el-upload>
+      <div style="margin-top: 20px; display: flex; justify-content: center;">
+        <el-button type="primary" @click="submitFileForm">确 定</el-button>
+        <el-button @click="upload.open = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Compliance">
 import { listCompliance, getCompliance, delCompliance, addCompliance, updateCompliance } from "@/api/security/compliance";
+import { getToken } from "@/utils/auth";
+import { ElMessage } from 'element-plus';
+import { UploadFilled } from '@element-plus/icons-vue';
 
 const { proxy } = getCurrentInstance();
-
+const route = useRoute();
 const complianceList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -191,6 +238,15 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 上传参数
+const upload = reactive({
+  open: false,
+  title: '',
+  url: '',
+  isUploading: false,
+  headers: { Authorization: "Bearer " + getToken() }
+});
 
 const data = reactive({
   form: {},
@@ -323,5 +379,60 @@ function handleExport() {
   }, `compliance_${new Date().getTime()}.xlsx`)
 }
 
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "导入合规性评价数据";
+  upload.open = true;
+  upload.url = import.meta.env.VITE_APP_BASE_API + "/security/compliance/import";
+}
+
+/** 下载模板操作 */
+function handleImportTemplate() {
+  const url = 'security/compliance/importTemplate';
+  proxy.download(url, {}, `compliance_template_${new Date().getTime()}.xlsx`, 'get');
+}
+
+/** 文件上传中处理 */
+function handleFileUploadProgress(event, file, fileList) {
+  upload.isUploading = true;
+}
+
+/** 文件上传成功处理 */
+function handleFileSuccess(response, file, fileList) {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  if (response.code === 200) {
+    ElMessage.success("导入成功");
+    getList();
+  } else {
+    ElMessage.error(response.msg);
+  }
+}
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
+}
+
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
+  }
+}
+
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
 getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>

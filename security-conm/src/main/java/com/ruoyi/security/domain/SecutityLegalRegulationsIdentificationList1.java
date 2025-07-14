@@ -45,6 +45,9 @@ public class SecutityLegalRegulationsIdentificationList1 extends BaseEntity
     /** 效力 */
     @Excel(name = "效力")
     private String effectiveness;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -109,6 +112,16 @@ public class SecutityLegalRegulationsIdentificationList1 extends BaseEntity
     {
         return effectiveness;
     }
+    
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -120,6 +133,7 @@ public class SecutityLegalRegulationsIdentificationList1 extends BaseEntity
             .append("issuanceRevisionDate", getIssuanceRevisionDate())
             .append("implementationDate", getImplementationDate())
             .append("effectiveness", getEffectiveness())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

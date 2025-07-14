@@ -94,17 +94,32 @@
           v-hasPermi="['security:legallist:export']"
         >导出</el-button>
       </el-col>
-        <el-col :span="1.5">
-        <el-button @click="handleImport" type="success" plain icon="Upload">
-          导入
-        </el-button>
+      <el-col :span="1.5">
+        <!-- 自定义导入按钮 -->
+        <el-button
+          type="success"
+          plain
+          icon="Upload"
+          @click="handleCustomImport"
+          v-hasPermi="['security:legallist:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Download"
+          @click="handleDownloadTemplate"
+          v-hasPermi="['security:legallist:import']"
+        >下载模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="legallistList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <!-- <el-table-column label="序号" align="center" prop="id" /> -->
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="法律法规名称" align="center" prop="regulationName" />
       <el-table-column label="文号" align="center" prop="documentNumber" />
       <el-table-column label="发布单位" align="center" prop="issuingUnit" />
@@ -175,31 +190,43 @@
       </template>
     </el-dialog>
 
-            <!-- 文件上传弹窗 -->
-      <el-dialog title="环境法律法规识别清单" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
-      <el-form :model="form" ref="form" label-width="90px">
-        <el-form-item label="上传表类：">
-          <span style="color: rgb(68, 140, 39);">环境法律法规识别清单</span>
+    <!-- 自定义文件上传对话框 -->
+    <el-dialog title="Excel导入" v-model="importDialogVisible" width="35%" @close="resetImportDialog">
+      <el-form label-width="90px">
+        <el-form-item label="导入模块：">
+          <span style="color: rgb(68, 140, 39)">环境法律法规识别清单</span>
           <br>
         </el-form-item>
         <el-form-item label="上传文件：">
-          <input type="file" ref="inputFile" @change="checkFile"/>
-          <br>
+          <div class="custom-upload-container">
+            <input
+              type="file"
+              ref="fileInput"
+              style="display: none"
+              @change="handleFileChange"
+              accept=".xlsx,.xls"
+            />
+            <el-button type="primary" @click="triggerFileSelect" size="small">选择文件</el-button>
+            <span v-if="selectedFile" class="file-name">{{ selectedFile.name }}</span>
+            <span v-else class="no-file">未选择文件</span>
+          </div>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
-        <el-button @click="cancelUpload">取 消</el-button>
-        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
-        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
-      </span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="importDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitImportFile" :loading="importLoading">确 定</el-button>
+        </div>
+      </template>
     </el-dialog>
-
   </div>
 </template>
 
 <script setup name="Legallist">
-import { listLegallist, getLegallist, delLegallist, addLegallist, updateLegallist,importFile} from "@/api/security/legallist";
-
+import { listLegallist, getLegallist, delLegallist, addLegallist, updateLegallist, importFile, downloadTemplate } from "@/api/security/legallist";
+import request from '@/utils/request';
+import { getToken } from '@/utils/auth';
+const route = useRoute();
 const { proxy } = getCurrentInstance();
 
 const legallistList = ref([]);
@@ -211,10 +238,12 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-// 上传文件
-const uploadDialogVisible = ref(false);
-const inputFile = ref(null);
-const isLoading = ref(false);
+
+// 自定义文件上传相关
+const fileInput = ref(null);
+const selectedFile = ref(null);
+const importDialogVisible = ref(false);
+const importLoading = ref(false);
 
 const data = reactive({
   form: {},
@@ -226,7 +255,8 @@ const data = reactive({
     issuingUnit: null,
     issuanceRevisionDate: null,
     implementationDate: null,
-    effectiveness: null
+    effectiveness: null,
+    relatedId: null
   },
   rules: {
     regulationName: [
@@ -289,6 +319,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+      if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加安全法律法规识别清单";
 }
@@ -343,61 +376,152 @@ function handleExport() {
   }, `legallist_${new Date().getTime()}.xlsx`)
 }
 
-/** 表单重置 */
-function resetUpload() {
-  if (inputFile.value) {
-    inputFile.value.value = "";
+/** 下载模板按钮操作 */
+function handleDownloadTemplate() {
+  downloadTemplate().then(response => {
+    const blob = new Blob([response]);
+    const fileName = `环境法律法规识别清单模板_${new Date().getTime()}.xlsx`;
+    if ('download' in document.createElement('a')) {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.style.display = 'none';
+      link.href = URL.createObjectURL(blob);
+      document.body.appendChild(link);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    } else {
+      navigator.msSaveBlob(blob, fileName);
+    }
+  }).catch(err => {
+    console.error('下载模板失败', err);
+    proxy.$modal.msgError('下载模板失败，请联系管理员！');
+  });
+}
+
+/** 触发自定义导入对话框 */
+function handleCustomImport() {
+  importDialogVisible.value = true;
+  selectedFile.value = null;
+}
+
+/** 触发文件选择 */
+function triggerFileSelect() {
+  fileInput.value.click();
+}
+
+/** 处理文件选择变更 */
+function handleFileChange(event) {
+  const files = event.target.files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    
+    if (fileExt !== 'xlsx' && fileExt !== 'xls') {
+      proxy.$modal.msgError('只能上传Excel文件！');
+      resetFileInput();
+      return;
+    }
+    
+    selectedFile.value = file;
   }
 }
 
-/** 取消上传 */
-function cancelUpload() {
-  uploadDialogVisible.value = false;
-  resetUpload();
-}
-/** 导入按钮操作 */
-function handleImport() {
-  resetUpload();
-  uploadDialogVisible.value = true;
+/** 重置文件输入框 */
+function resetFileInput() {
+  if (fileInput.value) {
+    fileInput.value.value = '';
+  }
+  selectedFile.value = null;
 }
 
-/** excel文件上传 */
-function uploadFile() {
-  if (inputFile.value && inputFile.value.files.length > 0) {
-    isLoading.value = true;
-    const file = inputFile.value.files[0];
-    console.log(inputFile.value);
-    console.log(file);
-    const formData = new FormData();
+/** 重置导入对话框 */
+function resetImportDialog() {
+  resetFileInput();
+  importLoading.value = false;
+}
 
-    formData.append('excelFile', file);
-    importFile(formData).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
-      getList();
-      uploadDialogVisible.value = false;
-      isLoading.value = false;
-    }).catch(() => {
-      proxy.$modal.msgError("导入失败");
-      isLoading.value = false;
-    }).finally(() => {
-      resetUpload();
-    });
-  } else {
-    proxy.$modal.msgError("请选择文件");
+/** 提交导入文件 */
+function submitImportFile() {
+  if (!selectedFile.value) {
+    proxy.$modal.msgError('请选择文件');
+    return;
+  }
+  
+  importLoading.value = true;
+  
+  // 创建FormData对象
+  const formData = new FormData();
+  formData.append('file', selectedFile.value);
+  
+  // 发送请求
+  request({
+    url: '/security/legallist/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + getToken()
+    }
+  }).then(response => {
+    proxy.$modal.msgSuccess(response.msg || '导入成功');
+    importDialogVisible.value = false;
+    importLoading.value = false;
+    resetFileInput();
+    getList(); // 刷新列表
+  }).catch(error => {
+    console.error('导入失败:', error);
+    let errorMsg = '导入失败';
+    if (error.response && error.response.data) {
+      errorMsg = error.response.data.message || error.response.data.msg || errorMsg;
+    } else if (error.message) {
+      errorMsg = error.message;
+    }
+    proxy.$modal.msgError(errorMsg);
+    importLoading.value = false;
+  });
+}
+
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
   }
 }
 
-/** 检查文件是否为excel */
-function checkFile() {
-  const file = inputFile.value.files[0];
-  const fileName = file.name;
-  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
-
-  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
-    proxy.$modal.msgError("只能上传 Excel 文件！");
-    resetUpload();
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
+    getList();
   }
-}
-
-getList();
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>
+
+<style scoped>
+.custom-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name {
+  color: #67C23A;
+  font-size: 14px;
+  word-break: break-all;
+  max-width: 250px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.no-file {
+  color: #909399;
+  font-size: 14px;
+}
+</style>

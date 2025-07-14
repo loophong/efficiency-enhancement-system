@@ -58,4 +58,20 @@ public interface AnnualEnvironmentalOccupationalHealthAndSafetyGoalsMapper
      * @return 结果
      */
     public int deleteAnnualEnvironmentalOccupationalHealthAndSafetyGoalsBySerialNumbers(Long[] serialNumbers);
+    
+    /**
+     * 批量插入年度环境职业健康安全目标、指标及工作分解
+     * 
+     * @param list 年度环境职业健康安全目标、指标及工作分解列表
+     * @return 结果
+     */
+    public int batchInsertAnnualEnvironmentalOccupationalHealthAndSafetyGoals(List<AnnualEnvironmentalOccupationalHealthAndSafetyGoals> list);
+    
+    /**
+     * 更新最近导入的数据关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的行数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

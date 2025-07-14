@@ -16,36 +16,40 @@ public class SecurityUnacceptableRiskList extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long id;
 
     /** 危险源点
  */
-    @Excel(name = "危险源点 ")
+    @Excel(name = "危险源点", needMerge = true)
     private String hazardSource;
 
     /** 重要危险源 */
-    @Excel(name = "重要危险源")
+    @Excel(name = "重要危险源", needMerge = true)
     private String significantHazard;
 
     /** 导致事故健康危害 */
-    @Excel(name = "导致事故健康危害")
+    @Excel(name = "导致事故健康危害", needMerge = true)
     private String accidentHealthHazards;
 
     /** 工序/ 设备/人员 */
-    @Excel(name = "工序/ 设备/人员")
+    @Excel(name = "工序/ 设备/人员", needMerge = true)
     private String processEquipmentPersonnel;
 
     /** 控制方法 */
-    @Excel(name = "控制方法")
+    @Excel(name = "控制方法", needMerge = true)
     private String controlMethods;
 
     /** 部门/工序 */
-    @Excel(name = "部门/工序")
+    @Excel(name = "部门/工序", needMerge = true)
     private String departmentProcess;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
+//    @Excel(name = "审批状态")
     private String statu;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -119,6 +123,16 @@ public class SecurityUnacceptableRiskList extends BaseEntity
     {
         return statu;
     }
+    
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -131,6 +145,7 @@ public class SecurityUnacceptableRiskList extends BaseEntity
             .append("controlMethods", getControlMethods())
             .append("departmentProcess", getDepartmentProcess())
             .append("statu", getStatu())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

@@ -1,11 +1,15 @@
-package com.heli.device.maintenanceTable.service.impl;
+package com.heli.device.fileTable.service.impl;
 
 import java.util.List;
+
+import com.heli.device.fileTable.domain.DeviceTemplate;
+import com.heli.device.fileTable.mapper.DeviceTemplateMapper;
+import com.heli.device.fileTable.service.IDeviceTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.heli.device.maintenanceTable.mapper.DeviceTemplateMapper;
-import com.heli.device.maintenanceTable.domain.DeviceTemplate;
-import com.heli.device.maintenanceTable.service.IDeviceTemplateService;
+
+
+
 
 /**
  * 设备导入模板文件Service业务层处理
@@ -14,7 +18,7 @@ import com.heli.device.maintenanceTable.service.IDeviceTemplateService;
  * @date 2025-07-11
  */
 @Service
-public class DeviceTemplateServiceImpl implements IDeviceTemplateService 
+public class DeviceTemplateServiceImpl implements IDeviceTemplateService
 {
     @Autowired
     private DeviceTemplateMapper deviceTemplateMapper;

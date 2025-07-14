@@ -12,10 +12,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="issuanceRevisionDate"    column="issuance_revision_date"    />
         <result property="implementationDate"    column="implementation_date"    />
         <result property="effectiveness"    column="effectiveness"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecutityLegalRegulationsIdentificationListVo">
-        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness from secutity_legal_regulations_identification_list
+        select id, regulation_name, document_number, issuing_unit, issuance_revision_date, implementation_date, effectiveness, related_id from secutity_legal_regulations_identification_list
     </sql>
 
     <select id="selectSecutityLegalRegulationsIdentificationListList" parameterType="SecutityLegalRegulationsIdentificationList" resultMap="SecutityLegalRegulationsIdentificationListResult">
@@ -27,6 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issuanceRevisionDate != null "> and issuance_revision_date = #{issuanceRevisionDate}</if>
             <if test="implementationDate != null "> and implementation_date = #{implementationDate}</if>
             <if test="effectiveness != null  and effectiveness != ''"> and effectiveness = #{effectiveness}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issuanceRevisionDate != null">issuance_revision_date,</if>
             <if test="implementationDate != null">implementation_date,</if>
             <if test="effectiveness != null">effectiveness,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="regulationName != null and regulationName != ''">#{regulationName},</if>
@@ -52,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issuanceRevisionDate != null">#{issuanceRevisionDate},</if>
             <if test="implementationDate != null">#{implementationDate},</if>
             <if test="effectiveness != null">#{effectiveness},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -64,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="issuanceRevisionDate != null">issuance_revision_date = #{issuanceRevisionDate},</if>
             <if test="implementationDate != null">implementation_date = #{implementationDate},</if>
             <if test="effectiveness != null">effectiveness = #{effectiveness},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -78,4 +83,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update secutity_legal_regulations_identification_list
+        set related_id = #{relatedId}
+        where related_id is null
+        order by id
+        limit 1000
+    </update>
 </mapper>

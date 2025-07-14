@@ -9,16 +9,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="activity"    column="activity"    />
         <result property="environmentalFactor"    column="environmental_factor"    />
         <result property="impactOfEnvironmentalFactor"    column="impact_of_environmental_factor"    />
-        <result property="evaluationOfEnvironmentalFactor"    column="evaluation_of_environmental_factor"    />
+        <result property="evaluationOfEnvironmentalFactorA"    column="evaluation_of_environmental_factor_a"    />
+        <result property="evaluationOfEnvironmentalFactorB"    column="evaluation_of_environmental_factor_b"    />
+        <result property="evaluationOfEnvironmentalFactorC"    column="evaluation_of_environmental_factor_c"    />
+        <result property="evaluationOfEnvironmentalFactorD"    column="evaluation_of_environmental_factor_d"    />
+        <result property="evaluationOfEnvironmentalFactorE"    column="evaluation_of_environmental_factor_e"    />
+        <result property="evaluationOfEnvironmentalFactorF"    column="evaluation_of_environmental_factor_f"    />
+        <result property="evaluationOfEnvironmentalFactorG"    column="evaluation_of_environmental_factor_g"    />
         <result property="environmentalImpact"    column="environmental_impact"    />
         <result property="tense"    column="tense"    />
-        <result property="status"    column="status"    />
         <result property="controlMeasures"    column="control_measures"    />
         <result property="statu"    column="statu"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecutityEnvironmentalFactorsImpactVo">
-        select id, activity, environmental_factor, impact_of_environmental_factor, evaluation_of_environmental_factor, environmental_impact, tense, status, control_measures, statu from secutity_environmental_factors_impact
+        select id, activity, environmental_factor, impact_of_environmental_factor, evaluation_of_environmental_factor_a, evaluation_of_environmental_factor_b, evaluation_of_environmental_factor_c, evaluation_of_environmental_factor_d, evaluation_of_environmental_factor_e, evaluation_of_environmental_factor_f, evaluation_of_environmental_factor_g, environmental_impact, tense, control_measures, statu, related_id from secutity_environmental_factors_impact
     </sql>
 
     <select id="selectSecutityEnvironmentalFactorsImpactList" parameterType="SecutityEnvironmentalFactorsImpact" resultMap="SecutityEnvironmentalFactorsImpactResult">
@@ -27,12 +33,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="activity != null  and activity != ''"> and activity = #{activity}</if>
             <if test="environmentalFactor != null  and environmentalFactor != ''"> and environmental_factor = #{environmentalFactor}</if>
             <if test="impactOfEnvironmentalFactor != null  and impactOfEnvironmentalFactor != ''"> and impact_of_environmental_factor = #{impactOfEnvironmentalFactor}</if>
-            <if test="evaluationOfEnvironmentalFactor != null  and evaluationOfEnvironmentalFactor != ''"> and evaluation_of_environmental_factor = #{evaluationOfEnvironmentalFactor}</if>
+            <if test="evaluationOfEnvironmentalFactorA != null  and evaluationOfEnvironmentalFactorA != ''"> and evaluation_of_environmental_factor_a = #{evaluationOfEnvironmentalFactorA}</if>
+            <if test="evaluationOfEnvironmentalFactorB != null  and evaluationOfEnvironmentalFactorB != ''"> and evaluation_of_environmental_factor_b = #{evaluationOfEnvironmentalFactorB}</if>
+            <if test="evaluationOfEnvironmentalFactorC != null  and evaluationOfEnvironmentalFactorC != ''"> and evaluation_of_environmental_factor_c = #{evaluationOfEnvironmentalFactorC}</if>
+            <if test="evaluationOfEnvironmentalFactorD != null  and evaluationOfEnvironmentalFactorD != ''"> and evaluation_of_environmental_factor_d = #{evaluationOfEnvironmentalFactorD}</if>
+            <if test="evaluationOfEnvironmentalFactorE != null  and evaluationOfEnvironmentalFactorE != ''"> and evaluation_of_environmental_factor_e = #{evaluationOfEnvironmentalFactorE}</if>
+            <if test="evaluationOfEnvironmentalFactorF != null  and evaluationOfEnvironmentalFactorF != ''"> and evaluation_of_environmental_factor_f = #{evaluationOfEnvironmentalFactorF}</if>
+            <if test="evaluationOfEnvironmentalFactorG != null  and evaluationOfEnvironmentalFactorG != ''"> and evaluation_of_environmental_factor_g = #{evaluationOfEnvironmentalFactorG}</if>
             <if test="environmentalImpact != null  and environmentalImpact != ''"> and environmental_impact = #{environmentalImpact}</if>
             <if test="tense != null  and tense != ''"> and tense = #{tense}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures = #{controlMeasures}</if>
             <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -47,23 +59,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="activity != null and activity != ''">activity,</if>
             <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor,</if>
             <if test="impactOfEnvironmentalFactor != null">impact_of_environmental_factor,</if>
-            <if test="evaluationOfEnvironmentalFactor != null">evaluation_of_environmental_factor,</if>
+            <if test="evaluationOfEnvironmentalFactorA != null">evaluation_of_environmental_factor_a,</if>
+            <if test="evaluationOfEnvironmentalFactorB != null">evaluation_of_environmental_factor_b,</if>
+            <if test="evaluationOfEnvironmentalFactorC != null">evaluation_of_environmental_factor_c,</if>
+            <if test="evaluationOfEnvironmentalFactorD != null">evaluation_of_environmental_factor_d,</if>
+            <if test="evaluationOfEnvironmentalFactorE != null">evaluation_of_environmental_factor_e,</if>
+            <if test="evaluationOfEnvironmentalFactorF != null">evaluation_of_environmental_factor_f,</if>
+            <if test="evaluationOfEnvironmentalFactorG != null">evaluation_of_environmental_factor_g,</if>
             <if test="environmentalImpact != null">environmental_impact,</if>
             <if test="tense != null">tense,</if>
-            <if test="status != null">status,</if>
             <if test="controlMeasures != null">control_measures,</if>
             <if test="statu != null">statu,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="activity != null and activity != ''">#{activity},</if>
             <if test="environmentalFactor != null and environmentalFactor != ''">#{environmentalFactor},</if>
             <if test="impactOfEnvironmentalFactor != null">#{impactOfEnvironmentalFactor},</if>
-            <if test="evaluationOfEnvironmentalFactor != null">#{evaluationOfEnvironmentalFactor},</if>
+            <if test="evaluationOfEnvironmentalFactorA != null">#{evaluationOfEnvironmentalFactorA},</if>
+            <if test="evaluationOfEnvironmentalFactorB != null">#{evaluationOfEnvironmentalFactorB},</if>
+            <if test="evaluationOfEnvironmentalFactorC != null">#{evaluationOfEnvironmentalFactorC},</if>
+            <if test="evaluationOfEnvironmentalFactorD != null">#{evaluationOfEnvironmentalFactorD},</if>
+            <if test="evaluationOfEnvironmentalFactorE != null">#{evaluationOfEnvironmentalFactorE},</if>
+            <if test="evaluationOfEnvironmentalFactorF != null">#{evaluationOfEnvironmentalFactorF},</if>
+            <if test="evaluationOfEnvironmentalFactorG != null">#{evaluationOfEnvironmentalFactorG},</if>
             <if test="environmentalImpact != null">#{environmentalImpact},</if>
             <if test="tense != null">#{tense},</if>
-            <if test="status != null">#{status},</if>
             <if test="controlMeasures != null">#{controlMeasures},</if>
             <if test="statu != null">#{statu},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -73,12 +97,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="activity != null and activity != ''">activity = #{activity},</if>
             <if test="environmentalFactor != null and environmentalFactor != ''">environmental_factor = #{environmentalFactor},</if>
             <if test="impactOfEnvironmentalFactor != null">impact_of_environmental_factor = #{impactOfEnvironmentalFactor},</if>
-            <if test="evaluationOfEnvironmentalFactor != null">evaluation_of_environmental_factor = #{evaluationOfEnvironmentalFactor},</if>
+            <if test="evaluationOfEnvironmentalFactorA != null">evaluation_of_environmental_factor_a = #{evaluationOfEnvironmentalFactorA},</if>
+            <if test="evaluationOfEnvironmentalFactorB != null">evaluation_of_environmental_factor_b = #{evaluationOfEnvironmentalFactorB},</if>
+            <if test="evaluationOfEnvironmentalFactorC != null">evaluation_of_environmental_factor_c = #{evaluationOfEnvironmentalFactorC},</if>
+            <if test="evaluationOfEnvironmentalFactorD != null">evaluation_of_environmental_factor_d = #{evaluationOfEnvironmentalFactorD},</if>
+            <if test="evaluationOfEnvironmentalFactorE != null">evaluation_of_environmental_factor_e = #{evaluationOfEnvironmentalFactorE},</if>
+            <if test="evaluationOfEnvironmentalFactorF != null">evaluation_of_environmental_factor_f = #{evaluationOfEnvironmentalFactorF},</if>
+            <if test="evaluationOfEnvironmentalFactorG != null">evaluation_of_environmental_factor_g = #{evaluationOfEnvironmentalFactorG},</if>
             <if test="environmentalImpact != null">environmental_impact = #{environmentalImpact},</if>
             <if test="tense != null">tense = #{tense},</if>
-            <if test="status != null">status = #{status},</if>
             <if test="controlMeasures != null">control_measures = #{controlMeasures},</if>
             <if test="statu != null">statu = #{statu},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -93,4 +123,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 批量插入环境因素清单数据 -->
+    <insert id="batchInsertImpacts" parameterType="java.util.List">
+        insert into secutity_environmental_factors_impact (
+          activity, environmental_factor, impact_of_environmental_factor, 
+          evaluation_of_environmental_factor_a, evaluation_of_environmental_factor_b, 
+          evaluation_of_environmental_factor_c, evaluation_of_environmental_factor_d, 
+          evaluation_of_environmental_factor_e, evaluation_of_environmental_factor_f, 
+          evaluation_of_environmental_factor_g, environmental_impact, tense, 
+          control_measures, statu, related_id
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+          (#{item.activity}, #{item.environmentalFactor}, #{item.impactOfEnvironmentalFactor}, 
+           #{item.evaluationOfEnvironmentalFactorA}, #{item.evaluationOfEnvironmentalFactorB}, 
+           #{item.evaluationOfEnvironmentalFactorC}, #{item.evaluationOfEnvironmentalFactorD}, 
+           #{item.evaluationOfEnvironmentalFactorE}, #{item.evaluationOfEnvironmentalFactorF}, 
+           #{item.evaluationOfEnvironmentalFactorG}, #{item.environmentalImpact}, #{item.tense}, 
+           #{item.controlMeasures}, #{item.statu}, #{item.relatedId})
+        </foreach>
+    </insert>
+    
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update secutity_environmental_factors_impact 
+        set related_id = #{relatedId}
+        where related_id is null
+    </update>
 </mapper>

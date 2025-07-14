@@ -1,4 +1,4 @@
-package com.heli.device.maintenanceTable.domain;
+package com.heli.device.fileTable.domain;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
