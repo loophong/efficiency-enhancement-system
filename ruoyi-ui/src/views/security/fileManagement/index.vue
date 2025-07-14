@@ -1,5 +1,42 @@
 <template>
   <div class="app-container">
+    <!-- 注释掉统计信息卡片
+    <el-row :gutter="20" class="mb20">
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card">
+          <div slot="header" class="clearfix">
+            <span>文件总数</span>
+          </div>
+          <div class="card-panel-num">{{ statistics.totalFiles || 0 }}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card">
+          <div slot="header" class="clearfix">
+            <span>上传文件</span>
+          </div>
+          <div class="card-panel-num">{{ statistics.uploadFiles || 0 }}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card">
+          <div slot="header" class="clearfix">
+            <span>导入文件</span>
+          </div>
+          <div class="card-panel-num">{{ statistics.importFiles || 0 }}</div>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover" class="stat-card">
+          <div slot="header" class="clearfix">
+            <span>模块数量</span>
+          </div>
+          <div class="card-panel-num">{{ statistics.moduleCount || 0 }}</div>
+        </el-card>
+      </el-col>
+    </el-row>
+    -->
+
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="文件名称" prop="fileName">
         <el-input
@@ -9,6 +46,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <!-- 注释掉文件分类查询
       <el-form-item label="文件分类" prop="fileCategory">
         <el-select v-model="queryParams.fileCategory" placeholder="请选择文件分类" clearable>
           <el-option
@@ -19,6 +57,7 @@
           />
         </el-select>
       </el-form-item>
+      -->
       <el-form-item label="模块名称" prop="moduleName">
         <el-input
           v-model="queryParams.moduleName"
@@ -104,6 +143,16 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
+      <!-- 注释掉监控按钮
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Monitor"
+          @click="handleMonitor"
+        >监控</el-button>
+      </el-col>
+      -->
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -114,11 +163,13 @@
       <el-table-column label="文件路径" align="center" prop="filePath" />
       <!-- <el-table-column label="文件大小(字节)" align="center" prop="fileSize" />
       <el-table-column label="文件类型(MIME类型)" align="center" prop="fileType" /> -->
+      <!-- 注释掉文件分类列
       <el-table-column label="文件分类" align="center" prop="fileCategory">
         <template #default="scope">
           <dict-tag :options="file_category" :value="scope.row.fileCategory"/>
         </template>
       </el-table-column>
+      -->
       <el-table-column label="所属模块名称" align="center" prop="moduleName" />
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
@@ -157,6 +208,7 @@
         <!-- <el-form-item label="文件大小(字节)" prop="fileSize">
           <el-input v-model="form.fileSize" placeholder="请输入文件大小(字节)" />
         </el-form-item> -->
+        <!-- 注释掉文件分类表单项
         <el-form-item label="文件分类" prop="fileCategory">
           <el-select v-model="form.fileCategory" placeholder="请选择文件分类">
             <el-option
@@ -167,6 +219,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        -->
         <el-form-item label="所属模块名称" prop="moduleName">
           <el-input v-model="form.moduleName" placeholder="请输入所属模块名称" />
         </el-form-item>
@@ -201,16 +254,58 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 注释掉文件监控对话框
+    <el-dialog title="文件监控" v-model="monitorOpen" width="800px" append-to-body>
+      <el-tabs v-model="activeTab">
+        <el-tab-pane label="最近上传" name="recent">
+          <el-table :data="recentFiles" stripe style="width: 100%">
+            <el-table-column prop="fileName" label="文件名称" width="180"></el-table-column>
+            <el-table-column prop="fileCategory" label="文件分类">
+              <template #default="scope">
+                <el-tag :type="scope.row.fileCategory === 'UPLOAD' ? 'primary' : 'success'">
+                  {{ scope.row.fileCategory === 'UPLOAD' ? '上传' : '导入' }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="moduleName" label="所属模块"></el-table-column>
+            <el-table-column prop="uploadTime" label="上传时间" width="180">
+              <template #default="scope">
+                <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="120">
+              <template #default="scope">
+                <el-button link type="primary" icon="View" @click="handleViewMonitor(scope.row)">查看</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="模块统计" name="stats">
+          <div id="moduleChart" style="width: 100%; height: 400px;"></div>
+        </el-tab-pane>
+      </el-tabs>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="handleRefreshMonitor">刷新</el-button>
+          <el-button @click="monitorOpen = false">关闭</el-button>
+        </div>
+      </template>
+    </el-dialog>
+    -->
   </div>
 </template>
 
 <script setup name="Filemanagement">
-import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement } from "@/api/security/filemanagement";
+import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted } from 'vue';
+import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+// 注释掉echarts导入
+// import * as echarts from 'echarts';
 
 const { proxy } = getCurrentInstance();
-const { file_category } = proxy.useDict('file_category');
+// 注释掉文件分类字典
+// const { file_category } = proxy.useDict('file_category');
 
 const filemanagementList = ref([]);
 const open = ref(false);
@@ -222,6 +317,21 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
+// 注释掉文件监控相关变量
+/*
+const monitorOpen = ref(false);
+const activeTab = ref('recent');
+const recentFiles = ref([]);
+const moduleStats = ref({});
+const statistics = ref({
+  totalFiles: 0,
+  uploadFiles: 0,
+  importFiles: 0,
+  moduleCount: 0
+});
+let moduleChart = null;
+*/
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -229,7 +339,8 @@ const data = reactive({
     pageSize: 10,
     fileName: null,
     filePath: null,
-    fileCategory: null,
+    // 注释掉fileCategory查询参数
+    // fileCategory: null,
     moduleName: null,
     uploadTime: null,
     createBy: null,
@@ -242,9 +353,12 @@ const data = reactive({
     filePath: [
       { required: true, message: "文件路径不能为空", trigger: "blur" }
     ],
+    // 注释掉fileCategory验证规则
+    /*
     fileCategory: [
       { required: true, message: "文件分类(UPLOAD:上传文件/IMPORT:导入文件)不能为空", trigger: "change" }
     ],
+    */
     moduleName: [
       { required: true, message: "所属模块名称不能为空", trigger: "blur" }
     ],
@@ -267,6 +381,17 @@ function getList() {
     total.value = response.total;
     loading.value = false;
   });
+  
+  // 注释掉获取统计数据
+  /*
+  getFileStatistics().then(res => {
+    if (res.code === 200 && res.data) {
+      statistics.value = res.data;
+    }
+  }).catch(err => {
+    console.error("获取统计数据失败", err);
+  });
+  */
 }
 
 // 取消按钮
@@ -283,7 +408,8 @@ function reset() {
     filePath: null,
     fileSize: null,
     fileType: null,
-    fileCategory: null,
+    // 注释掉fileCategory
+    // fileCategory: null,
     moduleName: null,
     moduleCode: null,
     relatedId: null,
@@ -394,7 +520,53 @@ function handleView(row) {
   if (row.filePath && row.filePath.trim() !== '') {
     if (row.relatedUrl && row.relatedUrl.trim() !== '') {
       // 如果有关联URL，跳转到关联页面
-      proxy.$router.push(row.relatedUrl);
+      // 为所有页面添加关联ID参数
+      if (row.id) {
+        // 处理relatedUrl，确保只有一个securityConm前缀并保留原始参数
+        let processedUrl = row.relatedUrl;
+        let originalParams = '';
+        
+        // 提取原始URL中的参数部分
+        if (processedUrl.includes('?')) {
+          const parts = processedUrl.split('?');
+          processedUrl = parts[0];
+          originalParams = parts[1];
+        }
+        
+        // 先完全移除所有securityConm前缀
+        while (processedUrl.indexOf('securityConm/') === 0) {
+          processedUrl = processedUrl.substring('securityConm/'.length);
+        }
+        
+        // 确保URL以/开头
+        if (!processedUrl.startsWith('/')) {
+          processedUrl = '/' + processedUrl;
+        }
+        
+        // 添加一个securityConm前缀
+        processedUrl = '/securityConm' + processedUrl;
+        
+        // 重新添加原始参数（如果有）
+        if (originalParams) {
+          processedUrl = `${processedUrl}?${originalParams}`;
+        }
+        
+        // 构建带有关联ID参数的URL
+        const url = processedUrl.includes('?') 
+          ? `${processedUrl}&relatedId=${row.id}` 
+          : `${processedUrl}?relatedId=${row.id}`;
+        
+        // 如果需要添加来源模块信息
+        const finalUrl = row.moduleName 
+          ? `${url}&sourceModule=${encodeURIComponent(row.moduleName)}` 
+          : url;
+          
+        console.log("跳转到关联页面，带上关联ID:", finalUrl);
+        proxy.$router.push(finalUrl);
+      } else {
+        // 如果没有ID，直接跳转
+        proxy.$router.push(row.relatedUrl);
+      }
     } else {
       // 否则尝试打开文件
       window.open(row.filePath, '_blank');
@@ -404,9 +576,131 @@ function handleView(row) {
   }
 }
 
+// 注释掉监控相关函数
+/*
+function handleMonitor() {
+  monitorOpen.value = true;
+  getMonitorData();
+}
+
+function getMonitorData() {
+  getFileMonitorData(10).then(response => {
+    if (response.code === 200) {
+      recentFiles.value = response.data.recentFiles || [];
+      moduleStats.value = response.data.moduleStats || {};
+      
+      // 在下一个DOM更新周期渲染图表
+      proxy.$nextTick(() => {
+        renderModuleChart();
+      });
+    }
+  }).catch(error => {
+    proxy.$modal.msgError("获取监控数据失败: " + error);
+  });
+}
+
+function handleRefreshMonitor() {
+  getMonitorData();
+  proxy.$modal.msgSuccess("监控数据已刷新");
+}
+
+function handleViewMonitor(row) {
+  if (row.filePath && row.filePath.trim() !== '') {
+    if (row.relatedUrl && row.relatedUrl.trim() !== '') {
+      // 如果有关联URL，跳转到关联页面
+      proxy.$router.push(row.relatedUrl);
+      monitorOpen.value = false;
+    } else {
+      // 否则尝试打开文件
+      window.open(row.filePath, '_blank');
+    }
+  } else {
+    proxy.$modal.msgError("文件路径无效，无法查看");
+  }
+}
+
+function renderModuleChart() {
+  const chartDom = document.getElementById('moduleChart');
+  if (!chartDom) return;
+  
+  if (moduleChart) {
+    moduleChart.dispose();
+  }
+  
+  moduleChart = echarts.init(chartDom);
+  
+  const data = [];
+  for (const [key, value] of Object.entries(moduleStats.value)) {
+    data.push({
+      name: key,
+      value: value
+    });
+  }
+  
+  const option = {
+    title: {
+      text: '模块文件分布',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item',
+      formatter: '{a} <br/>{b}: {c} ({d}%)'
+    },
+    legend: {
+      orient: 'vertical',
+      left: 'left',
+      data: Object.keys(moduleStats.value)
+    },
+    series: [
+      {
+        name: '文件数量',
+        type: 'pie',
+        radius: '50%',
+        data: data,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  };
+  
+  moduleChart.setOption(option);
+}
+*/
+
 // 页面加载时获取列表数据
 onMounted(() => {
   getList();
 });
 
+// 注释掉页面销毁时释放图表资源
+/*
+onUnmounted(() => {
+  if (moduleChart) {
+    moduleChart.dispose();
+    moduleChart = null;
+  }
+});
+*/
 </script>
+
+<style scoped>
+/* 注释掉统计卡片样式
+.mb20 {
+  margin-bottom: 20px;
+}
+.stat-card {
+  height: 108px;
+}
+.card-panel-num {
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  color: #409EFF;
+}
+*/
+</style>

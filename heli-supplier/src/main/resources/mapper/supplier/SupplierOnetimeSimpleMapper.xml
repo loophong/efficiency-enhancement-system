@@ -11,13 +11,13 @@
         <result property="quantityPassRate"    column="quantity_pass_rate"    />
         <result property="updateMonth"    column="update_month"    />
         <result property="score"    column="score"    />
-        <result property="addName"    column="add_name"    />
-        <result property="one"    column="one"    />
-        <result property="two"    column="two"    />
+<!--        <result property="addName"    column="add_name"    />-->
+<!--        <result property="one"    column="one"    />-->
+<!--        <result property="two"    column="two"    />-->
     </resultMap>
 
     <sql id="selectSupplierOnetimeSimpleVo">
-        select id, supplier_code, supplier_name, quantity_pass_rate, update_month, score, add_name, one, two from supplier_onetime_simple
+        select id, supplier_code, supplier_name, quantity_pass_rate, update_month, score from supplier_onetime_simple
     </sql>
 
     <select id="selectSupplierOnetimeSimpleList" parameterType="SupplierOnetimeSimple" resultMap="SupplierOnetimeSimpleResult">
@@ -28,9 +28,9 @@
             <if test="quantityPassRate != null  and quantityPassRate != ''"> and quantity_pass_rate = #{quantityPassRate}</if>
             <if test="updateMonth != null "> and update_month = #{updateMonth}</if>
             <if test="score != null "> and score = #{score}</if>
-            <if test="addName != null  and addName != ''"> and add_name like concat('%', #{addName}, '%')</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
+<!--            <if test="addName != null  and addName != ''"> and add_name like concat('%', #{addName}, '%')</if>-->
+<!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
+<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
         </where>
     </select>
 
@@ -47,9 +47,9 @@
             <if test="quantityPassRate != null">quantity_pass_rate,</if>
             <if test="updateMonth != null">update_month,</if>
             <if test="score != null">score,</if>
-            <if test="addName != null">add_name,</if>
-            <if test="one != null">one,</if>
-            <if test="two != null">two,</if>
+<!--            <if test="addName != null">add_name,</if>-->
+<!--            <if test="one != null">one,</if>-->
+<!--            <if test="two != null">two,</if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
@@ -57,9 +57,9 @@
             <if test="quantityPassRate != null">#{quantityPassRate},</if>
             <if test="updateMonth != null">#{updateMonth},</if>
             <if test="score != null">#{score},</if>
-            <if test="addName != null">#{addName},</if>
-            <if test="one != null">#{one},</if>
-            <if test="two != null">#{two},</if>
+<!--            <if test="addName != null">#{addName},</if>-->
+<!--            <if test="one != null">#{one},</if>-->
+<!--            <if test="two != null">#{two},</if>-->
         </trim>
     </insert>
 
@@ -71,9 +71,9 @@
             <if test="quantityPassRate != null">quantity_pass_rate = #{quantityPassRate},</if>
             <if test="updateMonth != null">update_month = #{updateMonth},</if>
             <if test="score != null">score = #{score},</if>
-            <if test="addName != null">add_name = #{addName},</if>
-            <if test="one != null">one = #{one},</if>
-            <if test="two != null">two = #{two},</if>
+<!--            <if test="addName != null">add_name = #{addName},</if>-->
+<!--            <if test="one != null">one = #{one},</if>-->
+<!--            <if test="two != null">two = #{two},</if>-->
         </trim>
         where id = #{id}
     </update>

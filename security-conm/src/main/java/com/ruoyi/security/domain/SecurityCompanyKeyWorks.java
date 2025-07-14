@@ -93,6 +93,10 @@ public class SecurityCompanyKeyWorks extends BaseEntity
     /** 总分 */
     @Excel(name = "总分", width = 10)
     private String totalScore;
+    
+    /** 关联ID */
+    @Excel(name = "关联ID", isExport = false)
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -278,6 +282,16 @@ public class SecurityCompanyKeyWorks extends BaseEntity
     {
         return totalScore;
     }
+    
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -302,6 +316,7 @@ public class SecurityCompanyKeyWorks extends BaseEntity
             .append("q4CompletionResults", getQ4CompletionResults())
             .append("q4Score", getQ4Score())
             .append("totalScore", getTotalScore())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

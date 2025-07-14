@@ -64,4 +64,20 @@ public interface ISecurityEnvironmentalOrganizationDescriptionService
      * @return 结果
      */
     public int deleteSecurityEnvironmentalOrganizationDescriptionById(Long id);
+    
+    /**
+     * 更新最近导入的环境识别数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
+    
+    /**
+     * 批量新增环境识别
+     * 
+     * @param list 环境识别列表
+     * @return 结果
+     */
+    public int batchInsertSecurityEnvironmentalOrganizationDescription(List<SecurityEnvironmentalOrganizationDescription> list);
 }

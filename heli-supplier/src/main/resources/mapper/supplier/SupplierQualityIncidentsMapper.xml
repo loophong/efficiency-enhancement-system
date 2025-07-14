@@ -10,14 +10,14 @@
         <result property="supplierName"    column="supplier_name"    />
         <result property="uploadTime"    column="upload_time"    />
         <result property="incidentDescription"    column="incident_description"    />
-        <result property="score"    column="score"    />
-        <result property="uploadName"    column="upload_name"    />
-        <result property="one"    column="one"    />
-        <result property="two"    column="two"    />
+<!--        <result property="score"    column="score"    />-->
+<!--        <result property="uploadName"    column="upload_name"    />-->
+<!--        <result property="one"    column="one"    />-->
+<!--        <result property="two"    column="two"    />-->
     </resultMap>
 
     <sql id="selectSupplierQualityIncidentsVo">
-        select id, supplier_code, supplier_name, upload_time, incident_description, score, upload_name, one, two from supplier_quality_incidents
+        select id, supplier_code, supplier_name, upload_time, incident_description from supplier_quality_incidents
     </sql>
 
     <select id="selectSupplierQualityIncidentsList" parameterType="SupplierQualityIncidents" resultMap="SupplierQualityIncidentsResult">
@@ -27,10 +27,10 @@
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
             <if test="incidentDescription != null  and incidentDescription != ''"> and incident_description = #{incidentDescription}</if>
-            <if test="score != null "> and score = #{score}</if>
-            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
+<!--            <if test="score != null "> and score = #{score}</if>-->
+<!--            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>-->
+<!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
+<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
         </where>
     </select>
 
@@ -46,20 +46,20 @@
             <if test="supplierName != null">supplier_name,</if>
             <if test="uploadTime != null">upload_time,</if>
             <if test="incidentDescription != null">incident_description,</if>
-            <if test="score != null">score,</if>
-            <if test="uploadName != null">upload_name,</if>
-            <if test="one != null">one,</if>
-            <if test="two != null">two,</if>
+<!--            <if test="score != null">score,</if>-->
+<!--            <if test="uploadName != null">upload_name,</if>-->
+<!--            <if test="one != null">one,</if>-->
+<!--            <if test="two != null">two,</if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="uploadTime != null">#{uploadTime},</if>
             <if test="incidentDescription != null">#{incidentDescription},</if>
-            <if test="score != null">#{score},</if>
-            <if test="uploadName != null">#{uploadName},</if>
-            <if test="one != null">#{one},</if>
-            <if test="two != null">#{two},</if>
+<!--            <if test="score != null">#{score},</if>-->
+<!--            <if test="uploadName != null">#{uploadName},</if>-->
+<!--            <if test="one != null">#{one},</if>-->
+<!--            <if test="two != null">#{two},</if>-->
         </trim>
     </insert>
 
@@ -70,10 +70,10 @@
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="uploadTime != null">upload_time = #{uploadTime},</if>
             <if test="incidentDescription != null">incident_description = #{incidentDescription},</if>
-            <if test="score != null">score = #{score},</if>
-            <if test="uploadName != null">upload_name = #{uploadName},</if>
-            <if test="one != null">one = #{one},</if>
-            <if test="two != null">two = #{two},</if>
+<!--            <if test="score != null">score = #{score},</if>-->
+<!--            <if test="uploadName != null">upload_name = #{uploadName},</if>-->
+<!--            <if test="one != null">one = #{one},</if>-->
+<!--            <if test="two != null">two = #{two},</if>-->
         </trim>
         where id = #{id}
     </update>

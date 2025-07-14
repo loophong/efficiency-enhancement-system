@@ -242,4 +242,39 @@ public class SecurityCompanyKeyWorksController extends BaseController
             }
         }
     }
+    
+    /**
+     * 根据关联ID查询公司重点工作列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:works:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        startPage();
+        List<SecurityCompanyKeyWorks> list = securityCompanyKeyWorksService.selectSecurityCompanyKeyWorksByRelatedId(relatedId);
+        return getDataTable(list);
+    }
+    
+    /**
+     * 更新公司重点工作的关联ID
+     */
+    @PreAuthorize("@ss.hasPermi('security:works:edit')")
+    @Log(title = "公司重点工作", businessType = BusinessType.UPDATE)
+    @PutMapping("/updateRelatedId/{id}/{relatedId}")
+    public AjaxResult updateRelatedId(@PathVariable("id") Long id, @PathVariable("relatedId") Long relatedId)
+    {
+        return toAjax(securityCompanyKeyWorksService.updateSecurityCompanyKeyWorksRelatedId(id, relatedId));
+    }
+    
+    /**
+     * 更新最近导入的公司重点工作的关联ID
+     */
+    @PreAuthorize("@ss.hasPermi('security:works:edit')")
+    @Log(title = "公司重点工作", businessType = BusinessType.UPDATE)
+    @PutMapping("/updateLatestImportedRelatedId/{relatedId}")
+    public AjaxResult updateLatestImportedRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        int count = securityCompanyKeyWorksService.updateLatestImportedRelatedId(relatedId);
+        return AjaxResult.success("成功更新 " + count + " 条记录的关联ID");
+    }
 }

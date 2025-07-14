@@ -100,11 +100,11 @@ public class SupplierTwoReviewScore {
     @ExcelProperty(value = "上传时间")
     private Date time;
 
-    /**
-     * 填报人
-     */
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String uploadName;
+//    /**
+//     * 填报人
+//     */
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String uploadName;
 
 }

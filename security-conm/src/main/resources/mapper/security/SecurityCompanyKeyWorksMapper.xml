@@ -25,10 +25,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="q4CompletionResults"    column="q4_completion_results"    />
         <result property="q4Score"    column="q4_score"    />
         <result property="totalScore"    column="total_score"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityCompanyKeyWorksVo">
-        select id, unit_name, key_work_name, current_status_and_causes, target, weight_1, weight_2, q1_focus_implementation, q1_completion_results, q1_score, q2_focus_implementation, q2_completion_results, q2_score, q3_focus_implementation, q3_completion_results, q3_score, q4_focus_implementation, q4_completion_results, q4_score, total_score from security_company_key_works
+        select id, unit_name, key_work_name, current_status_and_causes, target, weight_1, weight_2, q1_focus_implementation, q1_completion_results, q1_score, q2_focus_implementation, q2_completion_results, q2_score, q3_focus_implementation, q3_completion_results, q3_score, q4_focus_implementation, q4_completion_results, q4_score, total_score, related_id from security_company_key_works
     </sql>
 
     <select id="selectSecurityCompanyKeyWorksList" parameterType="SecurityCompanyKeyWorks" resultMap="SecurityCompanyKeyWorksResult">
@@ -53,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="q4CompletionResults != null  and q4CompletionResults != ''"> and q4_completion_results like concat('%', #{q4CompletionResults}, '%')</if>
             <if test="q4Score != null  and q4Score != ''"> and q4_score = #{q4Score}</if>
             <if test="totalScore != null  and totalScore != ''"> and total_score = #{totalScore}</if>
+            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -83,6 +85,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="q4CompletionResults != null">q4_completion_results,</if>
             <if test="q4Score != null">q4_score,</if>
             <if test="totalScore != null">total_score,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="unitName != null and unitName != ''">#{unitName},</if>
@@ -104,6 +107,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="q4CompletionResults != null">#{q4CompletionResults},</if>
             <if test="q4Score != null">#{q4Score},</if>
             <if test="totalScore != null">#{totalScore},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -129,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="q4CompletionResults != null">q4_completion_results = #{q4CompletionResults},</if>
             <if test="q4Score != null">q4_score = #{q4Score},</if>
             <if test="totalScore != null">total_score = #{totalScore},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -143,4 +148,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <select id="selectSecurityCompanyKeyWorksByRelatedId" parameterType="Long" resultMap="SecurityCompanyKeyWorksResult">
+        <include refid="selectSecurityCompanyKeyWorksVo"/>
+        where related_id = #{relatedId}
+    </select>
+    
+    <update id="updateSecurityCompanyKeyWorksRelatedId">
+        update security_company_key_works
+        set related_id = #{param2}
+        where id = #{param1}
+    </update>
+    
+    <select id="selectLatestImportedRecords" resultMap="SecurityCompanyKeyWorksResult">
+        <include refid="selectSecurityCompanyKeyWorksVo"/>
+        where related_id is null
+        order by id desc
+        limit 10
+    </select>
 </mapper>

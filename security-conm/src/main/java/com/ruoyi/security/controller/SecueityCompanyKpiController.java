@@ -56,6 +56,17 @@ public class SecueityCompanyKpiController extends BaseController
     }
 
     /**
+     * 根据关联ID查询公司KPI列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:kpi:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public AjaxResult listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        List<SecueityCompanyKpi> list = secueityCompanyKpiService.selectSecueityCompanyKpiByRelatedId(relatedId);
+        return success(list);
+    }
+
+    /**
      * 导出公司KPI列表
      */
     @PreAuthorize("@ss.hasPermi('security:kpi:export')")
@@ -110,6 +121,17 @@ public class SecueityCompanyKpiController extends BaseController
     {
         return toAjax(secueityCompanyKpiService.deleteSecueityCompanyKpiByIds(ids));
     }
+
+    /**
+     * 根据关联ID删除公司KPI
+     */
+    @PreAuthorize("@ss.hasPermi('security:kpi:remove')")
+    @Log(title = "公司KPI", businessType = BusinessType.DELETE)
+    @DeleteMapping("/deleteByRelatedId/{relatedId}")
+    public AjaxResult removeByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        return toAjax(secueityCompanyKpiService.deleteSecueityCompanyKpiByRelatedId(relatedId));
+    }
     
     /**
      * 下载公司KPI导入模板
@@ -131,10 +153,19 @@ public class SecueityCompanyKpiController extends BaseController
     public AjaxResult importData(@RequestParam("excelFile") MultipartFile file) throws Exception
     {
         try {
+            log.info("接收到文件上传请求，文件名：{}，文件大小：{}，内容类型：{}", 
+                file.getOriginalFilename(), file.getSize(), file.getContentType());
+            
+            // 检查文件是否为空
+            if (file.isEmpty()) {
+                log.error("上传的文件为空");
+                return error("上传的文件为空");
+            }
+            
             ExcelUtil<SecueityCompanyKpi> util = new ExcelUtil<SecueityCompanyKpi>(SecueityCompanyKpi.class);
             List<SecueityCompanyKpi> kpiList = util.importExcel(file.getInputStream());
             
-            log.info("开始导入KPI数据，共{}条记录", kpiList.size());
+            log.info("成功解析Excel文件，共{}条记录", kpiList.size());
             
             String operName = getUsername();
             String message = secueityCompanyKpiService.importKpi(kpiList, operName);

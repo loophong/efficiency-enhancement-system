@@ -90,4 +90,56 @@ public class SecurityCompanyKeyWorksServiceImpl implements ISecurityCompanyKeyWo
     {
         return securityCompanyKeyWorksMapper.deleteSecurityCompanyKeyWorksById(id);
     }
+    
+    /**
+     * 根据关联ID查询公司重点工作列表
+     * 
+     * @param relatedId 关联ID
+     * @return 公司重点工作集合
+     */
+    @Override
+    public List<SecurityCompanyKeyWorks> selectSecurityCompanyKeyWorksByRelatedId(Long relatedId)
+    {
+        return securityCompanyKeyWorksMapper.selectSecurityCompanyKeyWorksByRelatedId(relatedId);
+    }
+    
+    /**
+     * 更新公司重点工作的关联ID
+     * 
+     * @param id 公司重点工作ID
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    @Override
+    public int updateSecurityCompanyKeyWorksRelatedId(Long id, Long relatedId)
+    {
+        return securityCompanyKeyWorksMapper.updateSecurityCompanyKeyWorksRelatedId(id, relatedId);
+    }
+    
+    /**
+     * 更新最近导入的公司重点工作的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId)
+    {
+        // 查询最近导入的数据
+        List<SecurityCompanyKeyWorks> recentRecords = securityCompanyKeyWorksMapper.selectLatestImportedRecords();
+        
+        if (recentRecords == null || recentRecords.isEmpty()) {
+            return 0;
+        }
+        
+        int updatedCount = 0;
+        
+        // 更新这些记录的relatedId
+        for (SecurityCompanyKeyWorks record : recentRecords) {
+            record.setRelatedId(relatedId);
+            updatedCount += securityCompanyKeyWorksMapper.updateSecurityCompanyKeyWorks(record);
+        }
+        
+        return updatedCount;
+    }
 }

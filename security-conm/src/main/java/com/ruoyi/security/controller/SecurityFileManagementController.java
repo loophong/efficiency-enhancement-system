@@ -1,6 +1,8 @@
 package com.ruoyi.security.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.IOException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
@@ -21,6 +24,7 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.file.FileUtils;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.security.domain.SecurityFileManagement;
+import com.ruoyi.security.domain.FileStatistics;
 import com.ruoyi.security.service.ISecurityFileManagementService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -29,6 +33,7 @@ import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.ruoyi.common.utils.DateUtils;
 
 /**
  * 文件管理Controller
@@ -163,5 +168,47 @@ public class SecurityFileManagementController extends BaseController
             response.setCharacterEncoding("utf-8");
             response.getWriter().println("{\"code\":500,\"msg\":\"" + e.getMessage() + "\"}");
         }
+    }
+    
+    /**
+     * 获取文件统计信息
+     */
+    @GetMapping("/statistics")
+    public AjaxResult getFileStatistics()
+    {
+        FileStatistics statistics = securityFileManagementService.getFileStatistics();
+        return success(statistics);
+    }
+    
+    /**
+     * 获取文件监控数据（最近上传文件和模块统计）
+     */
+    @GetMapping("/monitor")
+    public AjaxResult getMonitorData(@RequestParam(defaultValue = "10") int limit)
+    {
+        // 获取最近上传的文件
+        List<SecurityFileManagement> recentFiles = securityFileManagementService.getRecentFiles(limit);
+        
+        // 获取模块统计
+        Map<String, Integer> moduleStats = securityFileManagementService.getModuleStatistics();
+        
+        // 组装返回数据
+        Map<String, Object> result = new HashMap<>();
+        result.put("recentFiles", recentFiles);
+        result.put("moduleStats", moduleStats);
+        
+        return success(result);
+    }
+    
+    /**
+     * 记录文件上传
+     */
+    @PostMapping("/record")
+    public AjaxResult recordFileUpload(@RequestBody SecurityFileManagement fileManagement)
+    {
+        fileManagement.setUploadTime(DateUtils.getNowDate());
+        fileManagement.setCreateTime(DateUtils.getNowDate());
+        fileManagement.setStatus("0");
+        return toAjax(securityFileManagementService.insertSecurityFileManagement(fileManagement));
     }
 }

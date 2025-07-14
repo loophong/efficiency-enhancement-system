@@ -58,4 +58,7 @@ public interface SecurityRiskOpportunityAssessmentMapper
      * @return 结果
      */
     public int deleteSecurityRiskOpportunityAssessmentByIds(Long[] ids);
+
+    List<SecurityRiskOpportunityAssessment> selectLatestImportedRecords();
+
 }

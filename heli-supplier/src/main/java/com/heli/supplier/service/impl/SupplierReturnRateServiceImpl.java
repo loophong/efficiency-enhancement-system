@@ -7,8 +7,9 @@ import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.heli.supplier.listener.ComplexHeaderReturnRateListener;
 import com.heli.supplier.listener.OnetimeSimpleListener;
-import com.heli.supplier.listener.ReturnRateListener;
+//import com.heli.supplier.listener.ReturnRateListener;  ///原来的监听器
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -112,10 +113,17 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
             this.remove(new QueryWrapper<>());
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
+
             try {
-                EasyExcel.read(excelFile.getInputStream(), SupplierReturnRate.class,
-                                new ReturnRateListener(supplierReturnRateMapper,uploadMonth))
-                                .sheet().doRead();
+
+                EasyExcel.read(excelFile.getInputStream(),
+                                new ComplexHeaderReturnRateListener(supplierReturnRateMapper, uploadMonth))
+//                                SupplierReturnRate.class, new ReturnRateListener(supplierReturnRateMapper,uploadMonth))
+
+                        .sheet("Sheet2").headRowNumber(2)
+                        .doRead();
+//                                .sheet(1).doRead();
+
                log.info("读取文件成功: {}", fileName);
             } catch (Exception e) {
                 log.info("读取文件失败: {}", e.getMessage());

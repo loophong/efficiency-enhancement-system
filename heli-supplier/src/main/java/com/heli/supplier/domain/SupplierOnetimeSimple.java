@@ -65,26 +65,26 @@ public class SupplierOnetimeSimple implements Serializable {
     @ExcelProperty(value = "上传月份")
     private Date updateMonth;
 
-    /**
-     * 填报人
-     */
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String addName;
+//    /**
+//     * 填报人
+//     */
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String addName;
 
     /** 分数 */
     @Excel(name = "分数")
     private Double score;
 
-    /** 备选1 */
-    @Excel(name = "备选1")
-    @ExcelIgnore
-    private String one;
-
-    /** 备选2 */
-    @Excel(name = "备选2")
-    @ExcelIgnore
-    private String two;
+//    /** 备选1 */
+//    @Excel(name = "备选1")
+//    @ExcelIgnore
+//    private String one;
+//
+//    /** 备选2 */
+//    @Excel(name = "备选2")
+//    @ExcelIgnore
+//    private String two;
 
 
 }

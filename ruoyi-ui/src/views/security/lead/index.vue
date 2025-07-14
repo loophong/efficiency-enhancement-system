@@ -397,7 +397,7 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
+const route = useRoute();
 /** 查询公司重点工作列表 */
 function getList() {
   loading.value = true;
@@ -623,7 +623,25 @@ function handleDownloadTemplate() {
   proxy.download('security/works/importTemplate', {}, `公司重点工作导入模板_${new Date().getTime()}.xlsx`, 'post');
 }
 
-getList();
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加风载关联文件的公司重点工作");
+  }
+}
+
+onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
+  // 加载数据
+  getList();
+});
 </script>
 
 <style scoped>

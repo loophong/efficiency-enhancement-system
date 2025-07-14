@@ -28,6 +28,14 @@ public interface ISecueityCompanyKpiService
     public List<SecueityCompanyKpi> selectSecueityCompanyKpiList(SecueityCompanyKpi secueityCompanyKpi);
 
     /**
+     * 根据关联ID查询公司KPI列表
+     * 
+     * @param relatedId 关联ID
+     * @return 公司KPI集合
+     */
+    public List<SecueityCompanyKpi> selectSecueityCompanyKpiByRelatedId(Long relatedId);
+
+    /**
      * 新增公司KPI
      * 
      * @param secueityCompanyKpi 公司KPI
@@ -60,6 +68,14 @@ public interface ISecueityCompanyKpiService
     public int deleteSecueityCompanyKpiById(Long id);
     
     /**
+     * 根据关联ID删除公司KPI
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int deleteSecueityCompanyKpiByRelatedId(Long relatedId);
+    
+    /**
      * 导入KPI数据
      * 
      * @param kpiList KPI数据列表
@@ -67,4 +83,12 @@ public interface ISecueityCompanyKpiService
      * @return 结果
      */
     public String importKpi(List<SecueityCompanyKpi> kpiList, String operName);
+
+    /**
+     * 更新最近导入的KPI数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

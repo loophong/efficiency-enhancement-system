@@ -58,4 +58,11 @@ public interface SecurityEnvironmentalOrganizationDescriptionMapper
      * @return 结果
      */
     public int deleteSecurityEnvironmentalOrganizationDescriptionByIds(Long[] ids);
+    
+    /**
+     * 查询最近导入的环境识别记录
+     * 
+     * @return 最近导入的环境识别记录列表
+     */
+    public List<SecurityEnvironmentalOrganizationDescription> selectLatestImportedRecords();
 }

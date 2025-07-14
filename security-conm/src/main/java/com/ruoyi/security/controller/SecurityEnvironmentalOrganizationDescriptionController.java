@@ -37,6 +37,10 @@ import java.io.OutputStream;
 
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.security.utils.FileImportUtil;
+import com.ruoyi.security.utils.ThreadLocalContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 环境识别Controller
@@ -248,6 +252,25 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
     }
     
     /**
+     * 根据关联ID查询环境识别列表
+     */
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public AjaxResult listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        if (relatedId == null) {
+            return AjaxResult.error("关联ID不能为空");
+        }
+        
+        SecurityEnvironmentalOrganizationDescription query = new SecurityEnvironmentalOrganizationDescription();
+        query.setRelatedId(relatedId);
+        
+        List<SecurityEnvironmentalOrganizationDescription> list = 
+            securityEnvironmentalOrganizationDescriptionService.selectSecurityEnvironmentalOrganizationDescriptionList(query);
+        
+        return success(list);
+    }
+    
+    /**
      * 新增环境识别
      */
     @PreAuthorize("@ss.hasPermi('security:environmentidicaation:add')")
@@ -288,6 +311,7 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
     @PostMapping("/import")
     public AjaxResult importData(@RequestParam("file") MultipartFile file) {
         try {
+            // 使用原有逻辑导入数据
             ExcelUtil<SecurityEnvironmentalOrganizationDescription> util = new ExcelUtil<>(SecurityEnvironmentalOrganizationDescription.class);
             List<SecurityEnvironmentalOrganizationDescription> list = util.importExcel(file.getInputStream());
             
@@ -333,11 +357,67 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
                 successCount += securityEnvironmentalOrganizationDescriptionService.insertSecurityEnvironmentalOrganizationDescription(item);
             }
             
-            return AjaxResult.success("导入成功，共" + successCount + "条数据");
+            return AjaxResult.success("导入成功，共 " + successCount + " 条数据");
         } catch (Exception e) {
             throw new ServiceException("导入失败：" + e.getMessage());
         }
     }
+    
+    /**
+     * 原有的导入逻辑，当没有关联 ID 时使用
+     */
+//    private AjaxResult importDataWithoutRelatedId(MultipartFile file) {
+//        try {
+//            ExcelUtil<SecurityEnvironmentalOrganizationDescription> util = new ExcelUtil<>(SecurityEnvironmentalOrganizationDescription.class);
+//            List<SecurityEnvironmentalOrganizationDescription> list = util.importExcel(file.getInputStream());
+//
+//            // 自动补齐环境字段
+//            String lastEnv = null;
+//            for (SecurityEnvironmentalOrganizationDescription item : list) {
+//                if (item == null) continue;
+//
+//                // 处理环境字段
+//                if (item.getEnvironment() != null && !item.getEnvironment().trim().isEmpty()) {
+//                    lastEnv = item.getEnvironment();
+//                } else {
+//                    item.setEnvironment(lastEnv);
+//                }
+//
+//                // 设置创建时间
+//                if (item.getCreateTime() == null) {
+//                    item.setCreateTime(DateUtils.getNowDate());
+//                }
+//
+//                // 初始化父ID为0(顶级节点)
+//                if (item.getParentId() == null) {
+//                    item.setParentId(0L);
+//                }
+//            }
+//
+//            // 过滤有效行
+//            List<SecurityEnvironmentalOrganizationDescription> validList = list.stream()
+//                .filter(item -> item != null && (
+//                    (item.getEnvironment() != null && !item.getEnvironment().trim().isEmpty())
+//                    || (item.getFeatures() != null && !item.getFeatures().trim().isEmpty())
+//                    || (item.getDescription() != null && !item.getDescription().trim().isEmpty())
+//                ))
+//                .collect(Collectors.toList());
+//
+//            if (validList.isEmpty()) {
+//                return AjaxResult.error("导入失败：无有效数据");
+//            }
+//
+//            // 插入数据
+//            int successCount = 0;
+//            for (SecurityEnvironmentalOrganizationDescription item : validList) {
+//                successCount += securityEnvironmentalOrganizationDescriptionService.insertSecurityEnvironmentalOrganizationDescription(item);
+//            }
+//
+//            return AjaxResult.success("导入成功，共 " + successCount + " 条数据");
+//        } catch (Exception e) {
+//            throw new ServiceException("导入失败：" + e.getMessage());
+//        }
+//    }
 
     /**
      * 下载导入模板（只包含三个字段，并合并单元格）

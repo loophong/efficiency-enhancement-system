@@ -9,6 +9,14 @@ export function listKpi(query) {
   })
 }
 
+// 根据关联ID查询公司KPI列表
+export function listKpiByRelatedId(relatedId) {
+  return request({
+    url: '/security/kpi/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}
+
 // 查询公司KPI详细
 export function getKpi(id) {
   return request({
@@ -43,33 +51,41 @@ export function delKpi(id) {
   })
 }
 
+// 根据关联ID删除公司KPI
+export function delKpiByRelatedId(relatedId) {
+  return request({
+    url: '/security/kpi/deleteByRelatedId/' + relatedId,
+    method: 'delete'
+  })
+}
+
 // 导出公司KPI
 export function exportKpi(query) {
   return request({
     url: '/security/kpi/export',
     method: 'get',
-    params: query,
-    responseType: 'blob'
-  })
-}
-
-// 导入公司KPI数据
-export function importKpi(data) {
-  return request({
-    url: '/security/kpi/importData',
-    method: 'post',
-    data: data,
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
+    params: query
   })
 }
 
 // 下载公司KPI导入模板
-export function downloadTemplate() {
+export function importTemplate() {
   return request({
     url: '/security/kpi/importTemplate',
+    method: 'post'
+  })
+}
+
+// 导入公司KPI数据
+export function importKpi(file) {
+  const formData = new FormData();
+  formData.append('excelFile', file);
+  return request({
+    url: '/security/kpi/importData',
     method: 'post',
-    responseType: 'blob'
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
   })
 }

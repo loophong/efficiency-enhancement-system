@@ -58,4 +58,15 @@ public interface SecurityRequireExpectPartyMapper
      * @return 结果
      */
     public int deleteSecurityRequireExpectPartyByIds(Long[] ids);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param fileManagementId 文件管理ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long fileManagementId);
+
+
+    List<SecurityRequireExpectParty> selectLatestImportedRecords();
 }

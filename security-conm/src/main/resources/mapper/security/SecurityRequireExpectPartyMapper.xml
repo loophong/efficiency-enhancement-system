@@ -15,10 +15,11 @@
         <result property="fillTime"    column="fill_time"    />
         <result property="status"    column="status"    />
         <result property="statusDepartment"    column="status_department"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityRequireExpectPartyVo">
-        select id, party_involved, demand_, monitoring_indicators, monitoring_frequency, monitoring_department, approval_time, fill_time, status, status_department from security_require_expect_party
+        select id, party_involved, demand_, monitoring_indicators, monitoring_frequency, monitoring_department, approval_time, fill_time, status, status_department, related_id from security_require_expect_party
     </sql>
 
     <select id="selectSecurityRequireExpectPartyList" parameterType="SecurityRequireExpectParty" resultMap="SecurityRequireExpectPartyResult">
@@ -33,12 +34,19 @@
             <if test="fillTime != null "> and fill_time = #{fillTime}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="statusDepartment != null  and statusDepartment != ''"> and status_department = #{statusDepartment}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
 
     <select id="selectSecurityRequireExpectPartyById" parameterType="Long" resultMap="SecurityRequireExpectPartyResult">
         <include refid="selectSecurityRequireExpectPartyVo"/>
         where id = #{id}
+    </select>
+    <select id="selectLatestImportedRecords" resultType="com.ruoyi.security.domain.SecurityRequireExpectParty">
+        <include refid="selectSecurityRequireExpectPartyVo"/>
+        where related_id is null
+        order by fill_time desc
+        limit 10
     </select>
 
     <insert id="insertSecurityRequireExpectParty" parameterType="SecurityRequireExpectParty" useGeneratedKeys="true" keyProperty="id">
@@ -53,6 +61,7 @@
             <if test="fillTime != null">fill_time,</if>
             <if test="status != null">status,</if>
             <if test="statusDepartment != null">status_department,</if>
+            <if test="relatedId != null">related_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="partyInvolved != null">#{partyInvolved},</if>
@@ -64,6 +73,7 @@
             <if test="fillTime != null">#{fillTime},</if>
             <if test="status != null">#{status},</if>
             <if test="statusDepartment != null">#{statusDepartment},</if>
+            <if test="relatedId != null">#{relatedId},</if>
         </trim>
     </insert>
 
@@ -79,6 +89,7 @@
             <if test="fillTime != null">fill_time = #{fillTime},</if>
             <if test="status != null">status = #{status},</if>
             <if test="statusDepartment != null">status_department = #{statusDepartment},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -93,4 +104,21 @@
             #{id}
         </foreach>
     </delete>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_require_expect_party
+        SET related_id = #{fileManagementId}
+        WHERE related_id IS NULL
+        AND fill_time >= (
+            SELECT IFNULL(
+                (
+                    SELECT MIN(fill_time)
+                    FROM security_require_expect_party
+                    WHERE related_id IS NULL
+                ),
+                (SELECT MAX(fill_time) FROM security_require_expect_party)
+            )
+        )
+    </update>
 </mapper>

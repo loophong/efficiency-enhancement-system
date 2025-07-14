@@ -58,4 +58,29 @@ public interface ISecurityCompanyKeyWorksService
      * @return 结果
      */
     public int deleteSecurityCompanyKeyWorksById(Long id);
+    
+    /**
+     * 根据关联ID查询公司重点工作列表
+     * 
+     * @param relatedId 关联ID
+     * @return 公司重点工作集合
+     */
+    public List<SecurityCompanyKeyWorks> selectSecurityCompanyKeyWorksByRelatedId(Long relatedId);
+    
+    /**
+     * 更新公司重点工作的关联ID
+     * 
+     * @param id 公司重点工作ID
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateSecurityCompanyKeyWorksRelatedId(Long id, Long relatedId);
+    
+    /**
+     * 更新最近导入的公司重点工作的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }
