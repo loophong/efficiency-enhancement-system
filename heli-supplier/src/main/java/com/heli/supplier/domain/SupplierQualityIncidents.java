@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -72,20 +73,20 @@ public class SupplierQualityIncidents
     private String incidentDescription;
 
     /** 分数 */
-    @Excel(name = "分数")
-    private Double score;
-
-    /** 填报人 */
-    @Excel(name = "填报人")
-    private String uploadName;
-
-    /** 备选1 */
-    @ExcelIgnore
-    @Excel(name = "备选1")
-    private String one;
-
-    /** 备选2 */
-    @ExcelIgnore
-    @Excel(name = "备选2")
-    private String two;
+//    @Excel(name = "分数")
+//    private Double score;
+//
+//    /** 填报人 */
+//    @Excel(name = "填报人")
+//    private String uploadName;
+//
+//    /** 备选1 */
+//    @ExcelIgnore
+//    @Excel(name = "备选1")
+//    private String one;
+//
+//    /** 备选2 */
+//    @ExcelIgnore
+//    @Excel(name = "备选2")
+//    private String two;
 }

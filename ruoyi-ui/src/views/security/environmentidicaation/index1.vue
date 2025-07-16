@@ -41,42 +41,6 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="审批时间" prop="approvalTime">
-        <el-date-picker clearable
-                        v-model="queryParams.approvalTime"
-                        type="date"
-                        value-format="YYYY-MM-DD"
-                        placeholder="请选择审批时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="填报时间" prop="fillTime">
-        <el-date-picker clearable
-                        v-model="queryParams.fillTime"
-                        type="date"
-                        value-format="YYYY-MM-DD"
-                        placeholder="请选择填报时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="审批状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择审批状态" clearable>
-          <el-option
-              v-for="dict in security_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审批部门" prop="statusDepartment">
-        <el-select v-model="queryParams.statusDepartment" placeholder="请选择审批部门" clearable>
-          <el-option
-              v-for="dict in security_department_review"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -122,37 +86,51 @@
             v-hasPermi="['security:RequireExpectParty:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-upload
+          :show-file-list="false"
+          :before-upload="beforeImport"
+          accept=".xlsx,.xls"
+        >
+          <el-button
+            type="info"
+            plain
+            icon="Upload"
+            v-hasPermi="['security:RequireExpectParty:import']"
+          >导入</el-button>
+        </el-upload>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+          v-hasPermi="['security:RequireExpectParty:import']"
+        >模板下载</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="RequireExpectPartyList" @selection-change="handleSelectionChange">
+    <el-table 
+      v-loading="loading" 
+      :data="flatData" 
+      @selection-change="handleSelectionChange"
+      :span-method="spanMethod"
+      border
+      class="thick-border-table"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" width="55" align="center">
+        <template #default="scope">
+          <span>{{ scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="相关方类型" align="center" prop="partyInvolved" />
       <el-table-column label="需求和期望" align="center" prop="demand" />
       <el-table-column label="监测指标" align="center" prop="monitoringIndicators" />
       <el-table-column label="监测频率" align="center" prop="monitoringFrequency" />
       <el-table-column label="监测部门" align="center" prop="monitoringDepartment" />
-      <el-table-column label="审批时间" align="center" prop="approvalTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.approvalTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="填报时间" align="center" prop="fillTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.fillTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批部门" align="center" prop="statusDepartment">
-        <template #default="scope">
-          <dict-tag :options="security_department_review" :value="scope.row.statusDepartment"/>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:RequireExpectParty:edit']">修改</el-button>
@@ -187,42 +165,6 @@
         <el-form-item label="监测部门" prop="monitoringDepartment">
           <el-input v-model="form.monitoringDepartment" placeholder="请输入监测部门" />
         </el-form-item>
-        <el-form-item label="审批时间" prop="approvalTime">
-          <el-date-picker clearable
-                          v-model="form.approvalTime"
-                          type="date"
-                          value-format="YYYY-MM-DD"
-                          placeholder="请选择审批时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="填报时间" prop="fillTime">
-          <el-date-picker clearable
-                          v-model="form.fillTime"
-                          type="date"
-                          value-format="YYYY-MM-DD"
-                          placeholder="请选择填报时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="审批状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择审批状态">
-            <el-option
-                v-for="dict in security_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审批部门" prop="statusDepartment">
-          <el-select v-model="form.statusDepartment" placeholder="请选择审批部门">
-            <el-option
-                v-for="dict in security_department_review"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -235,12 +177,13 @@
 </template>
 
 <script setup name="RequireExpectParty">
-import { listRequireExpectParty, getRequireExpectParty, delRequireExpectParty, addRequireExpectParty, updateRequireExpectParty } from "@/api/security/RequireExpectParty";
+import { listRequireExpectParty, getRequireExpectParty, delRequireExpectParty, addRequireExpectParty, updateRequireExpectParty, importRequireExpectParty, importTemplate } from "@/api/security/RequireExpectParty";
+import { getCurrentInstance, ref, reactive, toRefs } from 'vue';
 
 const { proxy } = getCurrentInstance();
-const { security_department_review, security_status } = proxy.useDict('security_department_review', 'security_status');
 
-const RequireExpectPartyList = ref([]);
+// 数据定义
+const flatData = ref([]); // 扁平化数据数组
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -249,6 +192,13 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const route = useRoute();
+
+// 用于单元格合并的数据结构
+const mergeData = ref({
+  partyInvolved: {}, // 相关方类型合并信息
+  demand: {} // 需求和期望合并信息
+});
 
 const data = reactive({
   form: {},
@@ -259,13 +209,16 @@ const data = reactive({
     demand: null,
     monitoringIndicators: null,
     monitoringFrequency: null,
-    monitoringDepartment: null,
-    approvalTime: null,
-    fillTime: null,
-    status: null,
-    statusDepartment: null
+    relatedId: null,
+    monitoringDepartment: null
   },
   rules: {
+    partyInvolved: [
+      { required: true, message: "相关方类型不能为空", trigger: "blur" }
+    ],
+    demand: [
+      { required: true, message: "需求和期望不能为空", trigger: "blur" }
+    ]
   }
 });
 
@@ -275,10 +228,112 @@ const { queryParams, form, rules } = toRefs(data);
 function getList() {
   loading.value = true;
   listRequireExpectParty(queryParams.value).then(response => {
-    RequireExpectPartyList.value = response.rows;
+    // 处理数据，保持原始顺序
+    const list = response.rows;
+    
+    // 初始化合并单元格数据
+    const partyInvolvedSpans = {};
+    const demandSpans = {};
+    
+    // 按相关方类型分组
+    const typeGroups = {};
+    list.forEach((item, index) => {
+      const type = item.partyInvolved || '';
+      if (!typeGroups[type]) {
+        typeGroups[type] = [];
+        partyInvolvedSpans[index] = 1; // 记录每个类型的起始位置
+      } else {
+        partyInvolvedSpans[index] = 0; // 非起始行不显示
+      }
+      typeGroups[type].push({...item, index});
+    });
+    
+    // 在每个相关方类型内，按需求和期望分组
+    Object.keys(typeGroups).forEach(type => {
+      const typeItems = typeGroups[type];
+      const demandGroups = {};
+      
+      typeItems.forEach(item => {
+        const demand = item.demand || '';
+        if (!demandGroups[demand]) {
+          demandGroups[demand] = [];
+          demandSpans[item.index] = 1; // 记录每个需求的起始位置
+        } else {
+          demandSpans[item.index] = 0; // 非起始行不显示
+        }
+        demandGroups[demand].push(item);
+      });
+      
+      // 更新相关方类型的合并行数
+      const firstIndex = typeItems[0].index;
+      partyInvolvedSpans[firstIndex] = typeItems.length;
+      
+      // 更新每个需求和期望的合并行数
+      Object.keys(demandGroups).forEach(demand => {
+        const demandItems = demandGroups[demand];
+        const firstDemandIndex = demandItems[0].index;
+        demandSpans[firstDemandIndex] = demandItems.length;
+      });
+    });
+    
+    // 保存合并信息
+    mergeData.value = {
+      partyInvolved: partyInvolvedSpans,
+      demand: demandSpans
+    };
+    
+    // 保存扁平化数据
+    flatData.value = list;
     total.value = response.total;
     loading.value = false;
   });
+}
+
+// 合并单元格方法
+function spanMethod({ row, column, rowIndex, columnIndex }) {
+  // 序号列不合并
+  if (columnIndex === 1) {
+    return {
+      rowspan: 1,
+      colspan: 1
+    };
+  }
+  
+  // 相关方类型列合并
+  if (columnIndex === 2) {
+    const rowspan = mergeData.value.partyInvolved[rowIndex];
+    if (rowspan !== undefined) {
+      return {
+        rowspan: rowspan,
+        colspan: rowspan ? 1 : 0
+      };
+    }
+    return {
+      rowspan: 1,
+      colspan: 1
+    };
+  }
+  
+  // 需求和期望列合并
+  if (columnIndex === 3) {
+    const rowspan = mergeData.value.demand[rowIndex];
+    if (rowspan !== undefined) {
+      return {
+        rowspan: rowspan,
+        colspan: rowspan ? 1 : 0
+      };
+    }
+    return {
+      rowspan: 1,
+      colspan: 1
+    };
+  }
+  
+  // 其他列不合并
+  return {
+    rowspan: 1,
+    colspan: 1
+  };
 }
 
 // 取消按钮
@@ -291,17 +346,16 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    partyInvolved: null,
-    demand: null,
-    monitoringIndicators: null,
-    monitoringFrequency: null,
-    monitoringDepartment: null,
-    approvalTime: null,
-    fillTime: null,
-    status: null,
-    statusDepartment: null
+    environment: null,
+    features: null,
+    description: null,
+    relatedId: null
   };
-  proxy.resetForm("RequireExpectPartyRef");
+  // 如果有关联ID查询参数，保留该值
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
+  proxy.resetForm("environmentidicaationRef");
 }
 
 /** 搜索按钮操作 */
@@ -380,5 +434,71 @@ function handleExport() {
   }, `RequireExpectParty_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+// 导入前校验
+function beforeImport(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  importRequireExpectParty(formData).then(res => {
+    proxy.$modal.msgSuccess(res.msg || "导入成功");
+    getList();
+  }).catch((error) => {
+    console.error("导入失败:", error);
+    proxy.$modal.msgError("导入失败: " + (error.message || "未知错误"));
+  });
+  return false; // 阻止自动上传
+}
+
+// 下载模板
+function handleImportTemplate() {
+  importTemplate().then(response => {
+    const blob = new Blob([response], { type: "application/vnd.ms-excel" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "相关方期望导入模板.xlsx";
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  });
+}
+
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+  
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联文件的相关方识别表");
+  }
+}
+
+// 初始化函数
+onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
+  // 加载数据
+  getList();
+});
+
 </script>
+
+<style scoped>
+.thick-border-table :deep(.el-table__inner-wrapper)::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  content: '';
+  z-index: 1;
+  pointer-events: none;
+  box-shadow: 0 0 0 2px #000000 inset; /* 外框加粗 */
+}
+.thick-border-table :deep(.el-table__cell),
+.thick-border-table :deep(.el-table th),
+.thick-border-table :deep(.el-table td) {
+  border-width: 2px !important;
+  border-color: #000000 !important;
+}
+</style>

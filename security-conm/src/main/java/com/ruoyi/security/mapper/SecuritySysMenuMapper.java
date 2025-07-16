@@ -10,4 +10,12 @@ public interface SecuritySysMenuMapper {
     int deleteMenuById(Long menuId);
     securitysysmenu selectMenuById(Long menuId);
     int hasChildByMenuId(Long menuId);
+    
+    /**
+     * 根据路径查询菜单
+     * 
+     * @param path 路径
+     * @return 菜单对象
+     */
+    securitysysmenu selectMenuByPath(String path);
 }

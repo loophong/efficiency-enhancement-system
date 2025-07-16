@@ -12,13 +12,13 @@
         <result property="specificContent"    column="specific_content"    />
         <result property="happenTime"    column="happen_time"    />
         <result property="score"    column="score"    />
-        <result property="reporter"    column="reporter"    />
-        <result property="one"    column="one"    />
-        <result property="two"    column="two"    />
+<!--        <result property="reporter"    column="reporter"    />-->
+<!--        <result property="one"    column="one"    />-->
+<!--        <result property="two"    column="two"    />-->
     </resultMap>
 
     <sql id="selectSupplierSelfTestReportsVo">
-        select id, supplier_code, supplier_name, responsibility_judgment_time, specific_content, happen_time, score, reporter, one, two from supplier_self_test_reports
+        select id, supplier_code, supplier_name, responsibility_judgment_time, specific_content, happen_time, score from supplier_self_test_reports
     </sql>
 
     <select id="selectSupplierSelfTestReportsList" parameterType="SupplierSelfTestReports" resultMap="SupplierSelfTestReportsResult">
@@ -30,9 +30,9 @@
             <if test="specificContent != null  and specificContent != ''"> and specific_content = #{specificContent}</if>
             <if test="happenTime != null "> and happen_time = #{happenTime}</if>
             <if test="score != null "> and score = #{score}</if>
-            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
+<!--            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>-->
+<!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
+<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
         </where>
     </select>
 
@@ -51,9 +51,9 @@
             <if test="specificContent != null">specific_content,</if>
             <if test="happenTime != null">happen_time,</if>
             <if test="score != null">score,</if>
-            <if test="reporter != null">reporter,</if>
-            <if test="one != null">one,</if>
-            <if test="two != null">two,</if>
+<!--            <if test="reporter != null">reporter,</if>-->
+<!--            <if test="one != null">one,</if>-->
+<!--            <if test="two != null">two,</if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -63,9 +63,9 @@
             <if test="specificContent != null">#{specificContent},</if>
             <if test="happenTime != null">#{happenTime},</if>
             <if test="score != null">#{score},</if>
-            <if test="reporter != null">#{reporter},</if>
-            <if test="one != null">#{one},</if>
-            <if test="two != null">#{two},</if>
+<!--            <if test="reporter != null">#{reporter},</if>-->
+<!--            <if test="one != null">#{one},</if>-->
+<!--            <if test="two != null">#{two},</if>-->
         </trim>
     </insert>
 
@@ -78,9 +78,9 @@
             <if test="specificContent != null">specific_content = #{specificContent},</if>
             <if test="happenTime != null">happen_time = #{happenTime},</if>
             <if test="score != null">score = #{score},</if>
-            <if test="reporter != null">reporter = #{reporter},</if>
-            <if test="one != null">one = #{one},</if>
-            <if test="two != null">two = #{two},</if>
+<!--            <if test="reporter != null">reporter = #{reporter},</if>-->
+<!--            <if test="one != null">one = #{one},</if>-->
+<!--            <if test="two != null">two = #{two},</if>-->
         </trim>
         where id = #{id}
     </update>

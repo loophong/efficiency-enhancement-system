@@ -10,4 +10,12 @@ public interface ISecuritySysMenuService {
     int deleteMenuById(Long menuId);
     securitysysmenu selectMenuById(Long menuId);
     boolean hasChildByMenuId(Long menuId);
+    
+    /**
+     * 根据路径获取菜单名称
+     * 
+     * @param path 路径
+     * @return 菜单名称
+     */
+    String getMenuNameByPath(String path);
 }

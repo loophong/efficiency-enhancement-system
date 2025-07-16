@@ -51,10 +51,10 @@ public class SupplierImportance
     @ExcelProperty(value = "供货金额")
     private Long amount;
 
-    /** 采购金额占比 */
-    @Excel(name = "采购金额占比")
-    @ExcelProperty(value = "采购金额占比")
-    private String percentage;
+//    /** 采购金额占比 */
+//    @Excel(name = "采购金额占比")
+//    @ExcelProperty(value = "采购金额占比")
+//    private String percentage;
 
     /** 得分 */
     @Excel(name = "得分")
@@ -67,20 +67,20 @@ public class SupplierImportance
     @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
-    /** 备选1 */
-    @Excel(name = "备选1")
-    @ExcelIgnore
-    private String one;
-
-    /** 备选2 */
-    @Excel(name = "备选2")
-    @ExcelIgnore
-    private String two;
-
-    /** 备选3 */
-    @Excel(name = "备选3")
-    @ExcelIgnore
-    private String three;
+//    /** 备选1 */
+//    @Excel(name = "备选1")
+//    @ExcelIgnore
+//    private String one;
+//
+//    /** 备选2 */
+//    @Excel(name = "备选2")
+//    @ExcelIgnore
+//    private String two;
+//
+//    /** 备选3 */
+//    @Excel(name = "备选3")
+//    @ExcelIgnore
+//    private String three;
 
 
 }

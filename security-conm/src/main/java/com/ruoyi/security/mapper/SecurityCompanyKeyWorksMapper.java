@@ -58,4 +58,28 @@ public interface SecurityCompanyKeyWorksMapper
      * @return 结果
      */
     public int deleteSecurityCompanyKeyWorksByIds(Long[] ids);
+    
+    /**
+     * 根据关联ID查询公司重点工作列表
+     * 
+     * @param relatedId 关联ID
+     * @return 公司重点工作集合
+     */
+    public List<SecurityCompanyKeyWorks> selectSecurityCompanyKeyWorksByRelatedId(Long relatedId);
+    
+    /**
+     * 更新公司重点工作的关联ID
+     * 
+     * @param id 公司重点工作ID
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateSecurityCompanyKeyWorksRelatedId(Long id, Long relatedId);
+    
+    /**
+     * 查询最近导入的没有关联ID的记录
+     * 
+     * @return 公司重点工作集合
+     */
+    public List<SecurityCompanyKeyWorks> selectLatestImportedRecords();
 }

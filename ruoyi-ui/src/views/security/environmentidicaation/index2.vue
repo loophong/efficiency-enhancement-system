@@ -26,14 +26,12 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="实施部门" prop="department">
-        <el-select v-model="queryParams.department" placeholder="请选择实施部门" clearable>
-          <el-option
-              v-for="dict in security_department_review"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
+        <el-input
+            v-model="queryParams.department"
+            placeholder="请输入实施部门"
+            clearable
+            @keyup.enter="handleQuery"
+        />
       </el-form-item>
       <el-form-item label="严重程度" prop="severity">
         <el-input
@@ -50,42 +48,6 @@
             clearable
             @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="风险系数" prop="risk">
-        <el-input
-            v-model="queryParams.risk"
-            placeholder="请输入风险系数"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="审批状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择审批状态" clearable>
-          <el-option
-              v-for="dict in security_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审批部门" prop="statusDepartment">
-        <el-select v-model="queryParams.statusDepartment" placeholder="请选择审批部门" clearable>
-          <el-option
-              v-for="dict in security_department_review"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审批时间" prop="statusTime">
-        <el-date-picker clearable
-                        v-model="queryParams.statusTime"
-                        type="date"
-                        value-format="YYYY-MM-DD"
-                        placeholder="请选择审批时间">
-        </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -132,45 +94,56 @@
             v-hasPermi="['security:assessment:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+        >模板下载</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="assessmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="活动/过程" align="center" prop="activity" />
       <el-table-column label="风险和机遇" align="center" prop="riskOpportunity" />
       <el-table-column label="造成后果" align="center" prop="consequences" />
-      <el-table-column label="风险等级" align="center" prop="riskLevel" />
+      <el-table-column label="风险等级" align="center" prop="riskLevel">
+        <template #default="scope">
+          <div v-if="scope.row.riskLevel === '高'">
+            <el-tag type="danger">{{ scope.row.riskLevel }}</el-tag>
+          </div>
+          <div v-else-if="scope.row.riskLevel === '一般'">
+            <el-tag type="warning">{{ scope.row.riskLevel }}</el-tag>
+          </div>
+          <div v-else-if="scope.row.riskLevel === '低'">
+            <el-tag type="success">{{ scope.row.riskLevel }}</el-tag>
+          </div>
+          <div v-else>
+            {{ scope.row.riskLevel }}
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column label="应对措施" align="center" prop="responseMeasures" />
       <el-table-column label="实施时间" align="center" prop="implementationTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.implementationTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="实施部门" align="center" prop="department">
-        <template #default="scope">
-          <dict-tag :options="security_department_review" :value="scope.row.department"/>
-        </template>
-      </el-table-column>
+      <el-table-column label="实施部门" align="center" prop="department" />
       <el-table-column label="严重程度" align="center" prop="severity" />
       <el-table-column label="发生频次" align="center" prop="frequency" />
       <el-table-column label="风险系数" align="center" prop="risk" />
-      <el-table-column label="审批状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批部门" align="center" prop="statusDepartment">
-        <template #default="scope">
-          <dict-tag :options="security_department_review" :value="scope.row.statusDepartment"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批时间" align="center" prop="statusTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.statusTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:assessment:edit']">修改</el-button>
@@ -200,7 +173,11 @@
           <el-input v-model="form.consequences" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="风险等级" prop="riskLevel">
-          <el-input v-model="form.riskLevel" placeholder="请输入风险等级" />
+          <el-select v-model="form.riskLevel" placeholder="请选择风险等级">
+            <el-option label="高" value="高"></el-option>
+            <el-option label="一般" value="一般"></el-option>
+            <el-option label="低" value="低"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="应对措施" prop="responseMeasures">
           <el-input v-model="form.responseMeasures" type="textarea" placeholder="请输入内容" />
@@ -214,14 +191,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="实施部门" prop="department">
-          <el-select v-model="form.department" placeholder="请选择实施部门">
-            <el-option
-                v-for="dict in security_department_review"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
+          <el-input v-model="form.department" placeholder="请输入实施部门" />
         </el-form-item>
         <el-form-item label="严重程度" prop="severity">
           <el-input v-model="form.severity" placeholder="请输入严重程度" />
@@ -232,34 +202,6 @@
         <el-form-item label="风险系数" prop="risk">
           <el-input v-model="form.risk" placeholder="请输入风险系数" />
         </el-form-item>
-        <el-form-item label="审批状态" prop="status">
-          <el-select v-model="form.status" placeholder="请选择审批状态">
-            <el-option
-                v-for="dict in security_status"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审批部门" prop="statusDepartment">
-          <el-select v-model="form.statusDepartment" placeholder="请选择审批部门">
-            <el-option
-                v-for="dict in security_department_review"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="审批时间" prop="statusTime">
-          <el-date-picker clearable
-                          v-model="form.statusTime"
-                          type="date"
-                          value-format="YYYY-MM-DD"
-                          placeholder="请选择审批时间">
-          </el-date-picker>
-        </el-form-item>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -268,14 +210,45 @@
         </div>
       </template>
     </el-dialog>
+    
+    <!-- 导入对话框 -->
+    <el-dialog title="导入风险和机遇评估数据" v-model="uploadDialogVisible" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :on-error="handleFileError"
+        :auto-upload="false"
+        name="excelFile"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip">请上传 .xlsx 或 .xls 格式文件</div>
+        </template>
+      </el-upload>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitFileForm" :loading="upload.isUploading">确 定</el-button>
+        <el-button @click="uploadDialogVisible = false">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Assessment">
-import {listAssessment, getAssessment, delAssessment, addAssessment, updateAssessment} from "@/api/security/assessment";
+import {listAssessment, getAssessment, delAssessment, addAssessment, updateAssessment, importFile, getImportTemplate} from "@/api/security/assessment";
+import { getCurrentInstance, ref, reactive, toRefs } from 'vue';
+import { Check, UploadFilled } from '@element-plus/icons-vue';
+import { getToken } from "@/utils/auth";
 
 const {proxy} = getCurrentInstance();
-const {security_department_review, security_status} = proxy.useDict('security_department_review', 'security_status');
+const {security_status} = proxy.useDict('security_status');
 
 const assessmentList = ref([]);
 const open = ref(false);
@@ -286,6 +259,17 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const uploadDialogVisible = ref(false);
+
+// 上传参数
+const upload = reactive({
+  // 是否禁用上传
+  isUploading: false,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/assessment/import"
+});
 
 const data = reactive({
   form: {},
@@ -300,11 +284,7 @@ const data = reactive({
     implementationTime: null,
     department: null,
     severity: null,
-    frequency: null,
-    risk: null,
-    status: null,
-    statusDepartment: null,
-    statusTime: null
+    frequency: null
   },
   rules: {
     activity: [
@@ -315,7 +295,7 @@ const data = reactive({
     ],
   }
 });
-
+const route = useRoute();
 const {queryParams, form, rules} = toRefs(data);
 
 /** 查询风险和机遇评估及控制措施列表 */
@@ -346,11 +326,7 @@ function reset() {
     implementationTime: null,
     department: null,
     severity: null,
-    frequency: null,
-    risk: null,
-    status: null,
-    statusDepartment: null,
-    statusTime: null
+    frequency: null
   };
   proxy.resetForm("assessmentRef");
 }
@@ -432,5 +408,61 @@ function handleExport() {
   }, `assessment_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 导入按钮操作 */
+function handleImport() {
+  uploadDialogVisible.value = true;
+}
+
+/** 下载模板操作 */
+function handleImportTemplate() {
+  // 使用GET请求下载模板
+  window.location.href = import.meta.env.VITE_APP_BASE_API + "/security/assessment/importTemplate";
+}
+
+// 文件上传中处理
+function handleFileUploadProgress() {
+  upload.isUploading = true;
+}
+
+// 文件上传成功处理
+function handleFileSuccess(response) {
+  upload.isUploading = false;
+  uploadDialogVisible.value = false;
+  proxy.$refs.uploadRef.clearFiles();
+  proxy.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+}
+
+// 文件上传失败处理
+function handleFileError(error) {
+  upload.isUploading = false;
+  proxy.$modal.msgError("导入失败，请检查数据格式是否正确");
+}
+
+// 提交上传文件
+function submitFileForm() {
+  proxy.$refs.uploadRef.submit();
+}
+
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加风险和机遇评估及控制措施表");
+  }
+}
+
+// 初始化函数
+onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
+  // 加载数据
+  getList();
+});
+
 </script>

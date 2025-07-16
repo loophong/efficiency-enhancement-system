@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.heli.device.fileTable.mapper.DeviceTemplateMapper">
+    
+    <resultMap type="DeviceTemplate" id="DeviceTemplateResult">
+        <result property="templateId"    column="template_id"    />
+        <result property="templateGroup"    column="template_group"    />
+        <result property="templateMajor"    column="template_major"    />
+        <result property="templateMaintenance"    column="template_maintenance"    />
+        <result property="templateIndicator"    column="template_indicator"    />
+        <result property="templateDetails"    column="template_details"    />
+    </resultMap>
+
+    <sql id="selectDeviceTemplateVo">
+        select template_id, template_group, template_major, template_maintenance, template_indicator, template_details from device_template
+    </sql>
+
+    <select id="selectDeviceTemplateList" parameterType="DeviceTemplate" resultMap="DeviceTemplateResult">
+        <include refid="selectDeviceTemplateVo"/>
+        <where>  
+            <if test="templateGroup != null  and templateGroup != ''"> and template_group = #{templateGroup}</if>
+            <if test="templateMajor != null  and templateMajor != ''"> and template_major = #{templateMajor}</if>
+            <if test="templateMaintenance != null  and templateMaintenance != ''"> and template_maintenance = #{templateMaintenance}</if>
+            <if test="templateIndicator != null  and templateIndicator != ''"> and template_indicator = #{templateIndicator}</if>
+            <if test="templateDetails != null  and templateDetails != ''"> and template_details = #{templateDetails}</if>
+        </where>
+    </select>
+    
+    <select id="selectDeviceTemplateByTemplateId" parameterType="Long" resultMap="DeviceTemplateResult">
+        <include refid="selectDeviceTemplateVo"/>
+        where template_id = #{templateId}
+    </select>
+
+    <insert id="insertDeviceTemplate" parameterType="DeviceTemplate" useGeneratedKeys="true" keyProperty="templateId">
+        insert into device_template
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="templateGroup != null">template_group,</if>
+            <if test="templateMajor != null">template_major,</if>
+            <if test="templateMaintenance != null">template_maintenance,</if>
+            <if test="templateIndicator != null">template_indicator,</if>
+            <if test="templateDetails != null">template_details,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="templateGroup != null">#{templateGroup},</if>
+            <if test="templateMajor != null">#{templateMajor},</if>
+            <if test="templateMaintenance != null">#{templateMaintenance},</if>
+            <if test="templateIndicator != null">#{templateIndicator},</if>
+            <if test="templateDetails != null">#{templateDetails},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDeviceTemplate" parameterType="DeviceTemplate">
+        update device_template
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="templateGroup != null">template_group = #{templateGroup},</if>
+            <if test="templateMajor != null">template_major = #{templateMajor},</if>
+            <if test="templateMaintenance != null">template_maintenance = #{templateMaintenance},</if>
+            <if test="templateIndicator != null">template_indicator = #{templateIndicator},</if>
+            <if test="templateDetails != null">template_details = #{templateDetails},</if>
+        </trim>
+        where template_id = #{templateId}
+    </update>
+
+    <delete id="deleteDeviceTemplateByTemplateId" parameterType="Long">
+        delete from device_template where template_id = #{templateId}
+    </delete>
+
+    <delete id="deleteDeviceTemplateByTemplateIds" parameterType="String">
+        delete from device_template where template_id in 
+        <foreach item="templateId" collection="array" open="(" separator="," close=")">
+            #{templateId}
+        </foreach>
+    </delete>
+</mapper>

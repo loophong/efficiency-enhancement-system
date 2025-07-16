@@ -9,12 +9,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="supplierCode"    column="supplier_code"    />
         <result property="supplierName"    column="supplier_name"    />
         <result property="score"    column="score"    />
-        <result property="modelScore"    column="model_score"    />
+<!--        <result property="modelScore"    column="model_score"    />-->
         <result property="uploadTime"    column="upload_time"    />
     </resultMap>
 
     <sql id="selectSupplierRiskVo">
-        select id, supplier_code, supplier_name, score, model_score, upload_time from supplier_risk
+        select id, supplier_code, supplier_name, score, upload_time from supplier_risk
     </sql>
 
     <select id="selectSupplierRiskList" parameterType="SupplierRisk" resultMap="SupplierRiskResult">
@@ -23,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="score != null "> and score = #{score}</if>
-            <if test="modelScore != null "> and model_score = #{modelScore}</if>
+<!--            <if test="modelScore != null "> and model_score = #{modelScore}</if>-->
             <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
         </where>
     </select>
@@ -39,14 +39,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code,</if>
             <if test="supplierName != null">supplier_name,</if>
             <if test="score != null">score,</if>
-            <if test="modelScore != null">model_score,</if>
+<!--            <if test="modelScore != null">model_score,</if>-->
             <if test="uploadTime != null">upload_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="score != null">#{score},</if>
-            <if test="modelScore != null">#{modelScore},</if>
+<!--            <if test="modelScore != null">#{modelScore},</if>-->
             <if test="uploadTime != null">#{uploadTime},</if>
          </trim>
     </insert>
@@ -57,7 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="score != null">score = #{score},</if>
-            <if test="modelScore != null">model_score = #{modelScore},</if>
+<!--            <if test="modelScore != null">model_score = #{modelScore},</if>-->
             <if test="uploadTime != null">upload_time = #{uploadTime},</if>
         </trim>
         where id = #{id}

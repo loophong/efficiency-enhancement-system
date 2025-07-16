@@ -19,64 +19,84 @@ public class SecurityCompanyKeyWorks extends BaseEntity
     private Long id;
 
     /** 单位名称 */
-    @Excel(name = "单位名称")
+    @Excel(name = "单位名称", width = 15)
     private String unitName;
 
     /** 重点工作名称 */
-    @Excel(name = "重点工作名称")
+    @Excel(name = "重点工作名称", width = 20)
     private String keyWorkName;
 
     /** 现状及要因  */
-    @Excel(name = "现状及要因 ")
+    @Excel(name = "现状及要因", width = 30)
     private String currentStatusAndCauses;
 
     /** 目标 */
-    @Excel(name = "目标")
+    @Excel(name = "目标", width = 20)
     private String target;
 
     /** 权重1 */
-    @Excel(name = "权重1")
+    @Excel(name = "权重1", width = 10)
     private String weight1;
 
     /** 权重2 */
-    @Excel(name = "权重2")
+    @Excel(name = "权重2", width = 10)
     private String weight2;
 
-    /** 一季度重点实施事项 	 */
-    @Excel(name = "一季度重点实施事项 	")
+    /** 一季度重点实施事项 */
+    @Excel(name = "一季度重点实施事项", width = 30)
     private String q1FocusImplementation;
 
-    /** 完成结果 */
-    @Excel(name = "完成结果")
+    /** 一季度完成结果 */
+    @Excel(name = "一季度完成结果", width = 30)
     private String q1CompletionResults;
 
-    /** 得分 */
-    @Excel(name = "得分")
+    /** 一季度得分 */
+    @Excel(name = "一季度得分", width = 10)
     private String q1Score;
 
-    /** 二季度重点实施事项 	 */
-    @Excel(name = "二季度重点实施事项 	")
+    /** 二季度重点实施事项 */
+    @Excel(name = "二季度重点实施事项", width = 30)
     private String q2FocusImplementation;
 
-    /** 完成结果 */
-    @Excel(name = "完成结果")
+    /** 二季度完成结果 */
+    @Excel(name = "二季度完成结果", width = 30)
     private String q2CompletionResults;
 
-    /** 得分 */
-    @Excel(name = "得分")
+    /** 二季度得分 */
+    @Excel(name = "二季度得分", width = 10)
     private String q2Score;
 
     /** 三季度重点实施事项 */
-    @Excel(name = "三季度重点实施事项")
+    @Excel(name = "三季度重点实施事项", width = 30)
     private String q3FocusImplementation;
 
-    /** 完成结果 */
-    @Excel(name = "完成结果")
+    /** 三季度完成结果 */
+    @Excel(name = "三季度完成结果", width = 30)
     private String q3CompletionResults;
 
-    /** 得分 */
-    @Excel(name = "得分")
+    /** 三季度得分 */
+    @Excel(name = "三季度得分", width = 10)
     private String q3Score;
+    
+    /** 四季度重点实施事项 */
+    @Excel(name = "四季度重点实施事项", width = 30)
+    private String q4FocusImplementation;
+
+    /** 四季度完成结果 */
+    @Excel(name = "四季度完成结果", width = 30)
+    private String q4CompletionResults;
+
+    /** 四季度得分 */
+    @Excel(name = "四季度得分", width = 10)
+    private String q4Score;
+    
+    /** 总分 */
+    @Excel(name = "总分", width = 10)
+    private String totalScore;
+    
+    /** 关联ID */
+    @Excel(name = "关联ID", isExport = false)
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -222,6 +242,56 @@ public class SecurityCompanyKeyWorks extends BaseEntity
     {
         return q3Score;
     }
+    
+    public void setQ4FocusImplementation(String q4FocusImplementation) 
+    {
+        this.q4FocusImplementation = q4FocusImplementation;
+    }
+
+    public String getQ4FocusImplementation() 
+    {
+        return q4FocusImplementation;
+    }
+    
+    public void setQ4CompletionResults(String q4CompletionResults) 
+    {
+        this.q4CompletionResults = q4CompletionResults;
+    }
+
+    public String getQ4CompletionResults() 
+    {
+        return q4CompletionResults;
+    }
+    
+    public void setQ4Score(String q4Score) 
+    {
+        this.q4Score = q4Score;
+    }
+
+    public String getQ4Score() 
+    {
+        return q4Score;
+    }
+    
+    public void setTotalScore(String totalScore) 
+    {
+        this.totalScore = totalScore;
+    }
+
+    public String getTotalScore() 
+    {
+        return totalScore;
+    }
+    
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -242,6 +312,11 @@ public class SecurityCompanyKeyWorks extends BaseEntity
             .append("q3FocusImplementation", getQ3FocusImplementation())
             .append("q3CompletionResults", getQ3CompletionResults())
             .append("q3Score", getQ3Score())
+            .append("q4FocusImplementation", getQ4FocusImplementation())
+            .append("q4CompletionResults", getQ4CompletionResults())
+            .append("q4Score", getQ4Score())
+            .append("totalScore", getTotalScore())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

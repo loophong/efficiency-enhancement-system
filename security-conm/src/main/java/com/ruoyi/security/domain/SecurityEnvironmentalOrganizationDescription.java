@@ -1,7 +1,5 @@
 package com.ruoyi.security.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -9,15 +7,13 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 环境识别对象 Security_environmental_organization_description
- *
- * @author wang
- * @date 2025-03-05
+ * 
  */
 public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 序号 */
+    /** 主键 */
     private Long id;
 
     /** 环境 */
@@ -31,92 +27,99 @@ public class SecurityEnvironmentalOrganizationDescription extends BaseEntity
     /** 环境要素描述 */
     @Excel(name = "环境要素描述")
     private String description;
+    
+    /** 父ID */
+    private Long parentId;
 
-    /** 审批状态 */
-    private String approvalStatus;
+    /** 关联ID */
+    private Long relatedId;
 
-    /** 审批科室 */
-    private String approvalDept;
+    /** 子项列表 */
+    private java.util.List<SecurityEnvironmentalOrganizationDescription> children;
 
-    /** 审批时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date approvalTime;
-
-    public void setId(Long id)
+    public void setId(Long id) 
     {
         this.id = id;
     }
 
-    public Long getId()
+    public Long getId() 
     {
         return id;
     }
-    public void setEnvironment(String environment)
+    
+    public void setEnvironment(String environment) 
     {
         this.environment = environment;
     }
 
-    public String getEnvironment()
+    public String getEnvironment() 
     {
         return environment;
     }
-    public void setFeatures(String features)
+    
+    public void setFeatures(String features) 
     {
         this.features = features;
     }
 
-    public String getFeatures()
+    public String getFeatures() 
     {
         return features;
     }
-    public void setDescription(String description)
+    
+    public void setDescription(String description) 
     {
         this.description = description;
     }
 
-    public String getDescription()
+    public String getDescription() 
     {
         return description;
     }
-    public void setApprovalStatus(String approvalStatus)
+    
+    public void setParentId(Long parentId) 
     {
-        this.approvalStatus = approvalStatus;
+        this.parentId = parentId;
     }
 
-    public String getApprovalStatus()
+    public Long getParentId() 
     {
-        return approvalStatus;
+        return parentId;
     }
-    public void setApprovalDept(String approvalDept)
+    
+    public void setRelatedId(Long relatedId) 
     {
-        this.approvalDept = approvalDept;
-    }
-
-    public String getApprovalDept()
-    {
-        return approvalDept;
-    }
-    public void setApprovalTime(Date approvalTime)
-    {
-        this.approvalTime = approvalTime;
+        this.relatedId = relatedId;
     }
 
-    public Date getApprovalTime()
+    public Long getRelatedId() 
     {
-        return approvalTime;
+        return relatedId;
+    }
+    
+    public java.util.List<SecurityEnvironmentalOrganizationDescription> getChildren() 
+    {
+        return children;
+    }
+
+    public void setChildren(java.util.List<SecurityEnvironmentalOrganizationDescription> children) 
+    {
+        this.children = children;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-                .append("id", getId())
-                .append("environment", getEnvironment())
-                .append("features", getFeatures())
-                .append("description", getDescription())
-                .append("approvalStatus", getApprovalStatus())
-                .append("approvalDept", getApprovalDept())
-                .append("approvalTime", getApprovalTime())
-                .toString();
+            .append("id", getId())
+            .append("environment", getEnvironment())
+            .append("features", getFeatures())
+            .append("description", getDescription())
+            .append("createTime", getCreateTime())
+            .append("updateTime", getUpdateTime())
+            .append("createBy", getCreateBy())
+            .append("updateBy", getUpdateBy())
+            .append("parentId", getParentId())
+            .append("relatedId", getRelatedId())
+            .toString();
     }
 }

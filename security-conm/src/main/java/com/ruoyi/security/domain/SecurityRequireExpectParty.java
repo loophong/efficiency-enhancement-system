@@ -18,14 +18,15 @@ public class SecurityRequireExpectParty extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long id;
 
     /** 相关方类型 */
-    @Excel(name = "相关方类型")
+    @Excel(name = "相关方类型", needMerge = true)
     private String partyInvolved;
 
     /** 需求和期望 */
-    @Excel(name = "需求和期望")
+    @Excel(name = "需求和期望", needMerge = true)
     private String demand;
 
     /** 监测指标 */
@@ -42,21 +43,23 @@ public class SecurityRequireExpectParty extends BaseEntity
 
     /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
     private Date approvalTime;
 
     /** 填报时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "填报时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
     private Date fillTime;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
+    @Excel(name = "审批状态", isExport = false)
     private String status;
 
     /** 审批部门 */
-    @Excel(name = "审批部门")
+    @Excel(name = "审批部门", isExport = false)
     private String statusDepartment;
+    @Excel(name = "文件管理ID", isExport = false)
+    private Long relatedId;
 
     public void setId(Long id)
     {
@@ -147,6 +150,14 @@ public class SecurityRequireExpectParty extends BaseEntity
     public String getStatusDepartment()
     {
         return statusDepartment;
+    }
+
+    public Long getRelatedId() {
+        return relatedId;
+    }
+
+    public void setRelatedId(Long relatedId) {
+        this.relatedId = relatedId;
     }
 
     @Override

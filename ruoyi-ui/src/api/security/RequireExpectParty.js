@@ -42,3 +42,24 @@ export function delRequireExpectParty(id) {
     method: 'delete'
   })
 }
+
+// 导入相关方期望
+export function importRequireExpectParty(formData) {
+  return request({
+    url: '/security/RequireExpectParty/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 下载导入模板
+export function importTemplate() {
+  return request({
+    url: '/security/RequireExpectParty/import/template',
+    method: 'get',
+    responseType: 'blob'
+  })
+}

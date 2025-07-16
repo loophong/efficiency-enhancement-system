@@ -41,20 +41,16 @@ public class DeviceMaintenanceTableServiceImpl implements IDeviceMaintenanceTabl
      * @return {@link R }<{@link String }>
      */
     @Override
-    public R<String> readFaultRecordsToDB(String fileName, InputStream inputStream) {
+    public Integer readFaultRecordsToDB(String fileName, InputStream inputStream) {
         try {
-//            log.info("开始读取文件: {}", fileName);
-            // 读取文件前清空数据库
-//            log.info("开始清空数据库");
-//            enterpriseManagementSalaryTableMapper.clearSalaryTableAllInfo();
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
             EasyExcel.read(inputStream, DeviceMaintenanceTable.class, new MaintenanceTableListener(deviceMaintenanceTableMapper)).sheet().headRowNumber(1).doRead();
-            return R.ok("读取" + fileName + "文件成功");
+            return 1;
         } catch (Exception e) {
             e.printStackTrace();
             log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
-            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+            return 0;
         }
     }
 

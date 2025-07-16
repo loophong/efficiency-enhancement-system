@@ -456,11 +456,11 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 
         // 遍历每个发生记录，判断回函是否及时
         for (SupplierHappen happen : list) {
-            Date completeTime = happen.getCompleteTime();
+            Date completeTime = happen.getReplyTime();
             Date deadline = happen.getDeadline();
 
             // 判断完成时间是否晚于截止时间
-            if (completeTime != null && deadline != null && completeTime.after(deadline)) {
+            if ((completeTime != null && deadline != null && completeTime.after(deadline))|| completeTime == null) {
                 // 如果回函不及时，扣除 40 分
                 feedbackCount++;
             }

@@ -2,10 +2,18 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="90px">
       <el-form-item label="项目名" prop="indicatorName">
-        <el-input v-model="queryParams.indicatorName" placeholder="请输入项目名" clearable @keyup.enter="handleQuery" />
+        <el-select v-model="queryParams.indicatorName" placeholder="请输入项目名" clearable @keyup.enter="handleQuery"
+          style="width: 200px;" filterable>
+          <el-option v-for="item in nameOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <!-- <el-input v-model="queryParams.indicatorName" placeholder="请输入项目名" clearable @keyup.enter="handleQuery" /> -->
       </el-form-item>
       <el-form-item label="年份" prop="indicatorTime">
-        <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
+        <el-select v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery"
+          style="width: 200px;" filterable>
+          <el-option v-for="item in timeOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <!-- <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" /> -->
       </el-form-item>
       <!-- <el-form-item label="开始月" prop="indicatorTime">
         <el-input v-model="queryParams.indicatorTime" placeholder="请输入年份" clearable @keyup.enter="handleQuery" />
@@ -27,7 +35,7 @@
       <el-form-item label="目标值下限" prop="indicatorDown">
         <el-input v-model="queryParams.indicatorDown" placeholder="请输入目标值下限" clearable @keyup.enter="handleQuery" />
       </el-form-item>
-      <el-form-item label="一月" prop="indicatorJan">
+      <!-- <el-form-item label="一月" prop="indicatorJan">
         <el-input v-model="queryParams.indicatorJan" placeholder="请输入一月数据" clearable @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="二月" prop="indicatorFeb">
@@ -62,7 +70,7 @@
       </el-form-item>
       <el-form-item label="十二月" prop="indicatorDec">
         <el-input v-model="queryParams.indicatorDec" placeholder="请输入十二月数据" clearable @keyup.enter="handleQuery" />
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -112,6 +120,9 @@
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="exportAll"
           v-hasPermi="['device:count:export']">导出</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -308,7 +319,8 @@
 </template>
 
 <script setup name="Count">
-import { listCount, getCount, delCount, addCount, updateCount, uploadFile } from "@/api/device/maintenanceTable/count";
+import { listCount, getCount, delCount, addCount, updateCount, uploadFile, uniqueNameList, uniqueTimeList } from "@/api/device/maintenanceTable/count";
+import { listTemplate } from "@/api/device/fileTable/template";
 import countChart from "./countChart.vue"
 import * as XLSX from "xlsx";
 //导出为word
@@ -351,6 +363,9 @@ const drawerUrl = ref("");
 const daterangeIndicatorTime = ref([]);
 const chartData = reactive({})
 const visibleMonths = ref([]);
+const nameOptions = ref([]);
+const timeOptions = ref([]);
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 
 const data = reactive({
   form: {},
@@ -395,7 +410,12 @@ const data = reactive({
 
 const { queryParams, form, rules, formExport, rulesExport } = toRefs(data);
 
-
+uniqueNameList().then(r => {
+  nameOptions.value = r.rows
+})
+uniqueTimeList().then(r => {
+  timeOptions.value = r.rows
+})
 
 const monthMap = {
   '01': '一月',
@@ -906,6 +926,11 @@ watch(openChart, async (newVal) => {
     }, 300);  // 200-500ms 根据实际性能调整
   }
 });
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateIndicator}`)
+    window.open(`${baseUrl}${r.rows[0].templateIndicator}`)
+  })
+}
 getList();
 </script>

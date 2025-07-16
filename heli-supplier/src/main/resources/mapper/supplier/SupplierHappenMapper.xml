@@ -1,45 +1,53 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.supplier.mapper.SupplierHappenMapper">
-    
+
     <resultMap type="SupplierHappen" id="SupplierHappenResult">
         <result property="id"    column="id"    />
         <result property="supplierCode"    column="supplier_code"    />
         <result property="supplierName"    column="supplier_name"    />
         <result property="happenTime"    column="happen_time"    />
-        <result property="fileName"    column="file_name"    />
-        <result property="fileUrl"    column="file_url"    />
-        <result property="completeTime"    column="complete_time"    />
         <result property="deadline"    column="deadline"    />
-        <result property="uploadName"    column="upload_name"    />
-        <result property="one"    column="one"    />
-        <result property="two"    column="two"    />
-        <result property="three"    column="three"    />
+        <result property="feedbackFileName"    column="feedback_file_name"    />
+        <result property="feedbackFileUrl"    column="feedback_file_url"    />
+        <result property="replyFileName"    column="reply_file_name"    />
+        <result property="replyFileUrl"    column="reply_file_url"    />
+        <result property="replyTime"    column="reply_time"    />
+        <result property="replyStatus"    column="reply_status"    />
+<!--        <result property="createTime"    column="create_time"    />-->
+<!--        <result property="createBy"    column="create_by"    />-->
+<!--        <result property="one"    column="one"    />-->
+<!--        <result property="two"    column="two"    />-->
+<!--        <result property="three"    column="three"    />-->
     </resultMap>
 
     <sql id="selectSupplierHappenVo">
-        select id, supplier_code, supplier_name, happen_time, file_name, file_url, complete_time, deadline, upload_name, one, two, three from supplier_happen
+        select id, supplier_code, supplier_name, happen_time, deadline, feedback_file_name, feedback_file_url, reply_file_name, reply_file_url, reply_time, reply_status   from supplier_happen
     </sql>
 
     <select id="selectSupplierHappenList" parameterType="SupplierHappen" resultMap="SupplierHappenResult">
         <include refid="selectSupplierHappenVo"/>
-        <where>  
+        <where>
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="happenTime != null "> and happen_time = #{happenTime}</if>
-            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
-            <if test="fileUrl != null  and fileUrl != ''"> and file_url = #{fileUrl}</if>
-            <if test="completeTime != null "> and complete_time = #{completeTime}</if>
             <if test="deadline != null "> and deadline = #{deadline}</if>
-            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
-            <if test="three != null  and three != ''"> and three = #{three}</if>
+            <if test="feedbackFileName != null  and feedbackFileName != ''"> and feedback_file_name like concat('%', #{feedbackFileName}, '%')</if>
+            <if test="feedbackFileUrl != null  and feedbackFileUrl != ''"> and feedback_file_url = #{feedbackFileUrl}</if>
+            <if test="replyFileName != null  and replyFileName != ''"> and reply_file_name like concat('%', #{replyFileName}, '%')</if>
+            <if test="replyFileUrl != null  and replyFileUrl != ''"> and reply_file_url = #{replyFileUrl}</if>
+            <if test="replyTime != null "> and reply_time = #{replyTime}</if>
+            <if test="replyStatus != null  and replyStatus != ''"> and reply_status = #{replyStatus}</if>
+<!--            <if test="createTime != null "> and create_time = #{createTime}</if>-->
+<!--            <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>-->
+<!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
+<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
+<!--            <if test="three != null  and three != ''"> and three = #{three}</if>-->
         </where>
     </select>
-    
+
     <select id="selectSupplierHappenById" parameterType="Long" resultMap="SupplierHappenResult">
         <include refid="selectSupplierHappenVo"/>
         where id = #{id}
@@ -52,29 +60,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code,</if>
             <if test="supplierName != null">supplier_name,</if>
             <if test="happenTime != null">happen_time,</if>
-            <if test="fileName != null">file_name,</if>
-            <if test="fileUrl != null">file_url,</if>
-            <if test="completeTime != null">complete_time,</if>
             <if test="deadline != null">deadline,</if>
-            <if test="uploadName != null">upload_name,</if>
-            <if test="one != null">one,</if>
-            <if test="two != null">two,</if>
-            <if test="three != null">three,</if>
-         </trim>
+            <if test="feedbackFileName != null">feedback_file_name,</if>
+            <if test="feedbackFileUrl != null">feedback_file_url,</if>
+            <if test="replyFileName != null">reply_file_name,</if>
+            <if test="replyFileUrl != null">reply_file_url,</if>
+            <if test="replyTime != null">reply_time,</if>
+            <if test="replyStatus != null">reply_status,</if>
+<!--            <if test="createTime != null">create_time,</if>-->
+<!--            <if test="createBy != null">create_by,</if>-->
+<!--            <if test="one != null">one,</if>-->
+<!--            <if test="two != null">two,</if>-->
+<!--            <if test="three != null">three,</if>-->
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="happenTime != null">#{happenTime},</if>
-            <if test="fileName != null">#{fileName},</if>
-            <if test="fileUrl != null">#{fileUrl},</if>
-            <if test="completeTime != null">#{completeTime},</if>
             <if test="deadline != null">#{deadline},</if>
-            <if test="uploadName != null">#{uploadName},</if>
-            <if test="one != null">#{one},</if>
-            <if test="two != null">#{two},</if>
-            <if test="three != null">#{three},</if>
-         </trim>
+            <if test="feedbackFileName != null">#{feedbackFileName},</if>
+            <if test="feedbackFileUrl != null">#{feedbackFileUrl},</if>
+            <if test="replyFileName != null">#{replyFileName},</if>
+            <if test="replyFileUrl != null">#{replyFileUrl},</if>
+            <if test="replyTime != null">#{replyTime},</if>
+            <if test="replyStatus != null">#{replyStatus},</if>
+<!--            <if test="createTime != null">#{createTime},</if>-->
+<!--            <if test="createBy != null">#{createBy},</if>-->
+<!--            <if test="one != null">#{one},</if>-->
+<!--            <if test="two != null">#{two},</if>-->
+<!--            <if test="three != null">#{three},</if>-->
+        </trim>
     </insert>
 
     <update id="updateSupplierHappen" parameterType="SupplierHappen">
@@ -83,14 +99,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="happenTime != null">happen_time = #{happenTime},</if>
-            <if test="fileName != null">file_name = #{fileName},</if>
-            <if test="fileUrl != null">file_url = #{fileUrl},</if>
-            <if test="completeTime != null">complete_time = #{completeTime},</if>
             <if test="deadline != null">deadline = #{deadline},</if>
-            <if test="uploadName != null">upload_name = #{uploadName},</if>
-            <if test="one != null">one = #{one},</if>
-            <if test="two != null">two = #{two},</if>
-            <if test="three != null">three = #{three},</if>
+            <if test="feedbackFileName != null">feedback_file_name = #{feedbackFileName},</if>
+            <if test="feedbackFileUrl != null">feedback_file_url = #{feedbackFileUrl},</if>
+            <if test="replyFileName != null">reply_file_name = #{replyFileName},</if>
+            <if test="replyFileUrl != null">reply_file_url = #{replyFileUrl},</if>
+<!--            <if test="replyTime != null">reply_time = #{replyTime},</if>-->
+            reply_time = #{replyTime,jdbcType=TIMESTAMP},
+            <if test="replyStatus != null">reply_status = #{replyStatus},</if>
+<!--            <if test="createTime != null">create_time = #{createTime},</if>-->
+<!--            <if test="createBy != null">create_by = #{createBy},</if>-->
+<!--            <if test="one != null">one = #{one},</if>-->
+<!--            <if test="two != null">two = #{two},</if>-->
+<!--            <if test="three != null">three = #{three},</if>-->
         </trim>
         where id = #{id}
     </update>
@@ -100,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSupplierHappenByIds" parameterType="String">
-        delete from supplier_happen where id in 
+        delete from supplier_happen where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

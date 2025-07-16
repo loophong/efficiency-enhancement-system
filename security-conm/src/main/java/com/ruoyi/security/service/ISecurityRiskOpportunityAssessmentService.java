@@ -1,6 +1,7 @@
 package com.ruoyi.security.service;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.security.domain.SecurityRiskOpportunityAssessment;
 
 /**
@@ -58,4 +59,15 @@ public interface ISecurityRiskOpportunityAssessmentService
      * @return 结果
      */
     public int deleteSecurityRiskOpportunityAssessmentById(Long id);
+    
+    /**
+     * 导入风险和机遇评估及控制措施数据
+     * 
+     * @param file 导入文件
+     * @return 结果
+     */
+    public String importAssessment(MultipartFile file);
+
+    int updateLatestImportedRelatedId(Long fileManagementId);
+
 }

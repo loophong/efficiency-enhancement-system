@@ -92,7 +92,7 @@ public class SupplierQualityIncidentsController extends BaseController {
                         .eq("supplier_name", supplierName);
 
         supplierQualityIncidents.setSupplierCode(supplierCode);
-        supplierQualityIncidents.setUploadName(getUsername());
+//        supplierQualityIncidents.setUploadName(getUsername());
         log.info("supplierQualityIncidents:" + supplierQualityIncidents);
 
         return toAjax(supplierQualityIncidentsService.insertSupplierQualityIncidents(supplierQualityIncidents));

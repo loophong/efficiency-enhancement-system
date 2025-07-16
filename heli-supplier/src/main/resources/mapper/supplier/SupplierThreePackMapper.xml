@@ -12,15 +12,15 @@
         <result property="plannedDeliveryTime"    column="planned_delivery_time"    />
         <result property="actualDeliveryTime"    column="actual_delivery_time"    />
         <result property="specificWarrantyItems"    column="specific_warranty_items"    />
-        <result property="happenTime"    column="happen_time"    />
-        <result property="reporter"    column="reporter"    />
+<!--        <result property="happenTime"    column="happen_time"    />-->
+<!--        <result property="reporter"    column="reporter"    />-->
         <result property="score"    column="score"    />
-        <result property="one"    column="one"    />
-        <result property="two"    column="two"    />
+<!--        <result property="one"    column="one"    />-->
+<!--        <result property="two"    column="two"    />-->
     </resultMap>
 
     <sql id="selectSupplierThreePackVo">
-        select id, supplier_code, supplier_name, responsibility_judgment_time, planned_delivery_time, actual_delivery_time, specific_warranty_items, happen_time, reporter, score, one, two from supplier_three_pack
+        select id, supplier_code, supplier_name, responsibility_judgment_time, planned_delivery_time, actual_delivery_time, specific_warranty_items,score from supplier_three_pack
     </sql>
 
     <select id="selectSupplierThreePackList" parameterType="SupplierThreePack" resultMap="SupplierThreePackResult">
@@ -32,11 +32,11 @@
             <if test="plannedDeliveryTime != null "> and planned_delivery_time = #{plannedDeliveryTime}</if>
             <if test="actualDeliveryTime != null "> and actual_delivery_time = #{actualDeliveryTime}</if>
             <if test="specificWarrantyItems != null  and specificWarrantyItems != ''"> and specific_warranty_items = #{specificWarrantyItems}</if>
-            <if test="happenTime != null "> and happen_time = #{happenTime}</if>
-            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>
+<!--            <if test="happenTime != null "> and happen_time = #{happenTime}</if>-->
+<!--            <if test="reporter != null  and reporter != ''"> and reporter = #{reporter}</if>-->
             <if test="score != null "> and score = #{score}</if>
-            <if test="one != null  and one != ''"> and one = #{one}</if>
-            <if test="two != null  and two != ''"> and two = #{two}</if>
+<!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
+<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
         </where>
     </select>
 
@@ -54,11 +54,11 @@
             <if test="plannedDeliveryTime != null">planned_delivery_time,</if>
             <if test="actualDeliveryTime != null">actual_delivery_time,</if>
             <if test="specificWarrantyItems != null">specific_warranty_items,</if>
-            <if test="happenTime != null">happen_time,</if>
-            <if test="reporter != null">reporter,</if>
+<!--            <if test="happenTime != null">happen_time,</if>-->
+<!--            <if test="reporter != null">reporter,</if>-->
             <if test="score != null">score,</if>
-            <if test="one != null">one,</if>
-            <if test="two != null">two,</if>
+<!--            <if test="one != null">one,</if>-->
+<!--            <if test="two != null">two,</if>-->
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
@@ -67,11 +67,11 @@
             <if test="plannedDeliveryTime != null">#{plannedDeliveryTime},</if>
             <if test="actualDeliveryTime != null">#{actualDeliveryTime},</if>
             <if test="specificWarrantyItems != null">#{specificWarrantyItems},</if>
-            <if test="happenTime != null">#{happenTime},</if>
-            <if test="reporter != null">#{reporter},</if>
+<!--            <if test="happenTime != null">#{happenTime},</if>-->
+<!--            <if test="reporter != null">#{reporter},</if>-->
             <if test="score != null">#{score},</if>
-            <if test="one != null">#{one},</if>
-            <if test="two != null">#{two},</if>
+<!--            <if test="one != null">#{one},</if>-->
+<!--            <if test="two != null">#{two},</if>-->
         </trim>
     </insert>
 
@@ -84,11 +84,11 @@
             <if test="plannedDeliveryTime != null">planned_delivery_time = #{plannedDeliveryTime},</if>
             <if test="actualDeliveryTime != null">actual_delivery_time = #{actualDeliveryTime},</if>
             <if test="specificWarrantyItems != null">specific_warranty_items = #{specificWarrantyItems},</if>
-            <if test="happenTime != null">happen_time = #{happenTime},</if>
-            <if test="reporter != null">reporter = #{reporter},</if>
+<!--            <if test="happenTime != null">happen_time = #{happenTime},</if>-->
+<!--            <if test="reporter != null">reporter = #{reporter},</if>-->
             <if test="score != null">score = #{score},</if>
-            <if test="one != null">one = #{one},</if>
-            <if test="two != null">two = #{two},</if>
+<!--            <if test="one != null">one = #{one},</if>-->
+<!--            <if test="two != null">two = #{two},</if>-->
         </trim>
         where id = #{id}
     </update>

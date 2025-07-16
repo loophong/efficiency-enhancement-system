@@ -167,26 +167,26 @@ public class SupplierEvaluate implements Serializable
     @ExcelProperty(value = "结束时间")
     private Date endTime;
 
-    /** 备1 */
-    @ExcelIgnore
-    @Excel(name = "备1")
-    private String one;
-
-    /** 备2 */
-    @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "备2", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date two;
-
-    /** 备3 */
-    @ExcelIgnore
-    @Excel(name = "备3")
-    private String three;
-
-    /** 入库标识符 */
-    @ExcelIgnore
-    @Excel(name = "入库标识符")
-    private Integer storageFlag;
+//    /** 备1 */
+//    @ExcelIgnore
+//    @Excel(name = "备1")
+//    private String one;
+//
+//    /** 备2 */
+//    @ExcelIgnore
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "备2", width = 30, dateFormat = "yyyy-MM-dd")
+//    private Date two;
+//
+//    /** 备3 */
+//    @ExcelIgnore
+//    @Excel(name = "备3")
+//    private String three;
+//
+//    /** 入库标识符 */
+//    @ExcelIgnore
+//    @Excel(name = "入库标识符")
+//    private Integer storageFlag;
 
 
 }

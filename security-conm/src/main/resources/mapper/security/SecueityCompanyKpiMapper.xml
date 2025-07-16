@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecueityCompanyKpi" id="SecueityCompanyKpiResult">
         <result property="id"    column="id"    />
+        <result property="relatedId"    column="related_id"    />
         <result property="unitName"    column="unit_name"    />
         <result property="category"    column="category"    />
         <result property="indicatorName"    column="indicator_name"    />
@@ -30,12 +31,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSecueityCompanyKpiVo">
-        select id, unit_name, category, indicator_name, unit_of_measurement, year, annual_target_value, evaluation_frequency, weight, q1_target_value, q1_result, q1_verified_value, q2_target_value, q2_result, q2_verified_value, q3_target_value, q3_result, q3_verified_value, q4_target_value, q4_result, q4_verified_value, beizhu from secueity_company_kpi
+        select id, related_id, unit_name, category, indicator_name, unit_of_measurement, year, annual_target_value, evaluation_frequency, weight, q1_target_value, q1_result, q1_verified_value, q2_target_value, q2_result, q2_verified_value, q3_target_value, q3_result, q3_verified_value, q4_target_value, q4_result, q4_verified_value, beizhu from secueity_company_kpi
     </sql>
 
     <select id="selectSecueityCompanyKpiList" parameterType="SecueityCompanyKpi" resultMap="SecueityCompanyKpiResult">
         <include refid="selectSecueityCompanyKpiVo"/>
         <where>  
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
             <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
             <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="indicatorName != null  and indicatorName != ''"> and indicator_name like concat('%', #{indicatorName}, '%')</if>
@@ -65,16 +67,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
+    <select id="selectSecueityCompanyKpiByRelatedId" parameterType="Long" resultMap="SecueityCompanyKpiResult">
+        <include refid="selectSecueityCompanyKpiVo"/>
+        where related_id = #{relatedId}
+    </select>
+    <select id="selectLatestImportedRecords" resultType="com.ruoyi.security.domain.SecueityCompanyKpi">
+        <include refid="selectSecueityCompanyKpiVo"/>
+        where related_id is null
+        order by id desc
+        limit 10
+    </select>
+
     <insert id="insertSecueityCompanyKpi" parameterType="SecueityCompanyKpi" useGeneratedKeys="true" keyProperty="id">
         insert into secueity_company_kpi
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="unitName != null and unitName != ''">unit_name,</if>
-            <if test="category != null and category != ''">category,</if>
-            <if test="indicatorName != null and indicatorName != ''">indicator_name,</if>
-            <if test="unitOfMeasurement != null and unitOfMeasurement != ''">unit_of_measurement,</if>
-            <if test="year != null and year != ''">year,</if>
-            <if test="annualTargetValue != null">annual_target_value,</if>
-            <if test="evaluationFrequency != null and evaluationFrequency != ''">evaluation_frequency,</if>
+            <if test="relatedId != null">related_id,</if>
+            unit_name,
+            category,
+            indicator_name,
+            unit_of_measurement,
+            year,
+            annual_target_value,
+            evaluation_frequency,
             <if test="weight != null">weight,</if>
             <if test="q1TargetValue != null">q1_target_value,</if>
             <if test="q1Result != null">q1_result,</if>
@@ -91,13 +105,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="beizhu != null">beizhu,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="unitName != null and unitName != ''">#{unitName},</if>
-            <if test="category != null and category != ''">#{category},</if>
-            <if test="indicatorName != null and indicatorName != ''">#{indicatorName},</if>
-            <if test="unitOfMeasurement != null and unitOfMeasurement != ''">#{unitOfMeasurement},</if>
-            <if test="year != null and year != ''">#{year},</if>
-            <if test="annualTargetValue != null">#{annualTargetValue},</if>
-            <if test="evaluationFrequency != null and evaluationFrequency != ''">#{evaluationFrequency},</if>
+            <if test="relatedId != null">#{relatedId},</if>
+            #{unitName},
+            #{category},
+            #{indicatorName},
+            #{unitOfMeasurement},
+            #{year},
+            #{annualTargetValue},
+            #{evaluationFrequency},
             <if test="weight != null">#{weight},</if>
             <if test="q1TargetValue != null">#{q1TargetValue},</if>
             <if test="q1Result != null">#{q1Result},</if>
@@ -118,6 +133,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSecueityCompanyKpi" parameterType="SecueityCompanyKpi">
         update secueity_company_kpi
         <trim prefix="SET" suffixOverrides=",">
+            <if test="relatedId != null">related_id = #{relatedId},</if>
             <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
             <if test="category != null and category != ''">category = #{category},</if>
             <if test="indicatorName != null and indicatorName != ''">indicator_name = #{indicatorName},</if>
@@ -152,5 +168,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="deleteSecueityCompanyKpiByRelatedId" parameterType="Long">
+        delete from secueity_company_kpi where related_id = #{relatedId}
     </delete>
 </mapper>

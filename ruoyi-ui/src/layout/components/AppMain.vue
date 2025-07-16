@@ -15,6 +15,7 @@
 import iframeToggle from "./IframeToggle/index"
 import useTagsViewStore from '@/store/modules/tagsView'
 
+
 const route = useRoute()
 const tagsViewStore = useTagsViewStore()
 
@@ -22,6 +23,7 @@ onMounted(() => {
   addIframe()
 })
 
+// 修正 watch API 用法
 watch((route) => {
   addIframe()
 })

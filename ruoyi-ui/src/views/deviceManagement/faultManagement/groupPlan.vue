@@ -110,6 +110,9 @@
                 </span>
               </el-dialog>
             </el-col>
+            <el-col :span="1.5">
+              <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
+            </el-col>
             <!-- <el-col :span="1.5">
             <el-button type="warning" plain icon="Download" @click="handleExport"
               v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
@@ -121,7 +124,7 @@
           </el-row>
 
           <el-table v-loading="loading" :data="planList" @selection-change="handleSelectionChange" border stripe>
-            <!-- <el-table-column type="selection" width="55" align="center" /> -->
+            <el-table-column type="selection" width="55" align="center" />
             <!-- <el-table-column label="主键id" align="center" prop="groupId" /> -->
             <el-table-column label="序号" align="center" prop="orderNum" width="80" />
             <el-table-column label="设备类别" align="center" prop="deviceType" width="180" />
@@ -328,6 +331,7 @@
 
 <script setup name="Plan">
 import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList, resetPlan } from "@/api/device/maintenanceTable/groupPlan";
+import { listTemplate } from "@/api/device/fileTable/template";
 import majorPlan from "./majorPlan.vue"
 import record from "./record.vue"
 import { ElMessage } from 'element-plus'
@@ -353,6 +357,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const notifyOffset = ref(0);
+const ifTip = ref(true);
 const showDialog = ref(false);
 const showCurrent = ref(false);
 const title = ref("");
@@ -366,6 +371,7 @@ const currentUserId = ref(0);
 
 const rowForProps = reactive({})
 const majorGroup = ref('班组')
+const baseUrl = import.meta.env.VITE_APP_BASE_API;
 
 const data = reactive({
   form: {},
@@ -515,34 +521,71 @@ function parseStatus(input) {
 
 /** 查询班组计划保养列表 */
 function getList() {
+
   loading.value = true;
   listPlan(queryParams.value).then(response => {
     planList.value = response.rows;
     total.value = response.total;
+    if (ifTip.value) {
+      //消息通知
+      tipList().then(result => {
+        listForTip.value = result.rows
+        const tmp = JSON.parse(JSON.stringify(result.rows))
+        tmp.forEach(element => {
+          if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+            showNotification('自主保全计划')
+          }
+          if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+            showNotification('自主保全计划')
+          }
+          if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+            showNotification('自主保全计划')
+          }
+          if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+            showNotification('自主保全计划')
+          }
+        });
+        console.log('ListForTipGroup------>', listForTip.value)
+        listForTip.value.forEach(i => {
+          if (i.monthFour == null || i.monthFour === '') {
+            // const maintenanceCycle = i.maintenanceCycle;
+            // const lastCompleteTime = i.lastCompleteTime;
+            if (i.maintenanceCycle == '1') {
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
+            } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
+            } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
+            } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
+            }
+            // try {
+            //   let date = new Date(lastCompleteTime);
+            //   let weeks = parseInt(maintenanceCycle, 10);
+            //   if (isNaN(weeks)) {
+            //     throw new Error("maintenanceCycle 必须是有效的数字");
+            //   }
+            //   date.setDate(date.getDate() + weeks * 7); 1
+            //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
+            //   if (isThisWeek(formattedDate)) {
+            //     i.monthFour = '待提交'
+            //     showNotification('自主保全计划', '待提交')
+            //   }
+            // } catch (error) {
+            //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
+            // }
+          }
+        });
+      })
+      // const tmpHandle = JSON.parse(JSON.stringify(response.rows))
+      // console.log({ tmpHandle })
 
-    //消息通知
-    tipList().then(result => {
-      listForTip.value = result.rows
-      const tmp = JSON.parse(JSON.stringify(result.rows))
-      tmp.forEach(element => {
-        if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-      });
-      console.log('ListForTipGroup------>', listForTip.value)
-      listForTip.value.forEach(i => {
+      planList.value.forEach(i => {
         if (i.monthFour == null || i.monthFour === '') {
-          // const maintenanceCycle = i.maintenanceCycle;
-          // const lastCompleteTime = i.lastCompleteTime;
           if (i.maintenanceCycle == '1') {
             i.monthFour = '待提交'
             showNotification('自主保全计划', '待提交')
@@ -556,6 +599,8 @@ function getList() {
             i.monthFour = '待提交'
             showNotification('自主保全计划', '待提交')
           }
+          // const maintenanceCycle = i.maintenanceCycle;
+          // const lastCompleteTime = i.lastCompleteTime;
           // try {
           //   let date = new Date(lastCompleteTime);
           //   let weeks = parseInt(maintenanceCycle, 10);
@@ -573,61 +618,24 @@ function getList() {
           // }
         }
       });
-    })
-    const tmpHandle = JSON.parse(JSON.stringify(response.rows))
-    console.log({ tmpHandle })
-
-    planList.value.forEach(i => {
-      if (i.monthFour == null || i.monthFour === '') {
-        if (i.maintenanceCycle == '1') {
-          i.monthFour = '待提交'
-          showNotification('自主保全计划', '待提交')
-        } else if (i.maintenanceCycle == '2' && !i.monthThree) {
-          i.monthFour = '待提交'
-          showNotification('自主保全计划', '待提交')
-        } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
-          i.monthFour = '待提交'
-          showNotification('自主保全计划', '待提交')
-        } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
-          i.monthFour = '待提交'
-          showNotification('自主保全计划', '待提交')
+      listForTip.value.forEach(element => {
+        if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+          showNotification('自主保全计划')
         }
-        // const maintenanceCycle = i.maintenanceCycle;
-        // const lastCompleteTime = i.lastCompleteTime;
-        // try {
-        //   let date = new Date(lastCompleteTime);
-        //   let weeks = parseInt(maintenanceCycle, 10);
-        //   if (isNaN(weeks)) {
-        //     throw new Error("maintenanceCycle 必须是有效的数字");
-        //   }
-        //   date.setDate(date.getDate() + weeks * 7); 1
-        //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
-        //   if (isThisWeek(formattedDate)) {
-        //     i.monthFour = '待提交'
-        //     showNotification('自主保全计划', '待提交')
-        //   }
-        // } catch (error) {
-        //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
-        // }
-      }
-    });
-    listForTip.value.forEach(element => {
-      if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-        showNotification('自主保全计划')
-      }
-      if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-        showNotification('自主保全计划')
-      }
-      if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-        showNotification('自主保全计划')
-      }
-      if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-        showNotification('自主保全计划')
-      }
-    });
+        if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+          showNotification('自主保全计划')
+        }
+        if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+          showNotification('自主保全计划')
+        }
+        if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+          showNotification('自主保全计划')
+        }
+      });
+      ifTip.value = false
+    }
     loading.value = false;
   });
-
 }
 
 // 取消按钮
@@ -792,6 +800,11 @@ function handleExport() {
     ...queryParams.value
   }, `plan_${new Date().getTime()}.xlsx`)
 }
-
+function downloadTemplate() {
+  listTemplate().then(r => {
+    console.log(`${baseUrl}${r.rows[0].templateGroup}`)
+    window.open(`${baseUrl}${r.rows[0].templateGroup}`)
+  })
+}
 getList();
 </script>

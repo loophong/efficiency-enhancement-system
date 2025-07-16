@@ -85,13 +85,9 @@ public interface DeviceMaintenanceTableMapper extends BaseMapper<DeviceMaintenan
                                        @Param("faultPhenomenon") String faultPhenomenon,
                                        @Param("reportedTime") String reportedTime);
     /**
-     * 查询故障树 TODO 带查询条件待完成
+     * 查询故障树 带查询条件待完成
      *
-     * @param deviceNum           设备编号
-     * @param reportedTimeStart   报修开始时间
-     * @param reportedTimeEnd     报修结束时间
-     * @param resolutionTimeStart 解决开始时间
-     * @param resolutionTimeEnd   解决结束时间
+
      * @return {@link List }<{@link DeviceMaintenanceTable }>
      */
 //    @Select("SELECT * FROM device_maintenance_table " +

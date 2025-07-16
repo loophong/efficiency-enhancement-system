@@ -42,3 +42,24 @@ export function delAssessment(id) {
     method: 'delete'
   })
 }
+
+// 导入风险和机遇评估及控制措施数据
+export function importFile(formData) {
+  return request({
+    url: '/security/assessment/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}
+
+// 下载导入模板
+export function getImportTemplate() {
+  return request({
+    url: '/security/assessment/importTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}

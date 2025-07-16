@@ -3,6 +3,8 @@ package com.heli.device.maintenanceTable.controller;
 import java.io.InputStream;
 import java.util.List;
 
+import com.heli.device.maintenanceTable.mapper.DeviceIndicatorCountMapper;
+import com.heli.device.maintenanceTable.mapper.DeviceMaintenanceTableMapper;
 import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,9 @@ public class DeviceIndicatorCountController extends BaseController
     @Autowired
     private IDeviceIndicatorCountService deviceIndicatorCountService;
 
+    @Autowired
+    private DeviceIndicatorCountMapper deviceIndicatorCountMapper;
+
     /**
      * 查询设备指标分析列表
      */
@@ -50,6 +55,28 @@ public class DeviceIndicatorCountController extends BaseController
     {
         startPage();
         List<DeviceIndicatorCount> list = deviceIndicatorCountService.selectDeviceIndicatorCountList(deviceIndicatorCount);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询 indicator_name 的去重值
+     */
+//    @PreAuthorize("@ss.hasPermi('fault:indicator:list')")
+    @GetMapping("/uniqueName")
+    public TableDataInfo uniqueNameList()
+    {
+        List<String> list = deviceIndicatorCountMapper.selectDistinctIndicatorName();
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询 indicator_time 的去重值
+     */
+//    @PreAuthorize("@ss.hasPermi('fault:indicator:list')")
+    @GetMapping("/uniqueTime")
+    public TableDataInfo uniqueTimeList()
+    {
+        List<String> list = deviceIndicatorCountMapper.selectDistinctIndicatorTime();
         return getDataTable(list);
     }
 

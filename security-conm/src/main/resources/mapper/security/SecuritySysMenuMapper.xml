@@ -87,4 +87,8 @@
     <select id="hasChildByMenuId" parameterType="Long" resultType="int">
         select count(1) from security_sys_menu where parent_id = #{menuId}
     </select>
+    
+    <select id="selectMenuByPath" parameterType="String" resultMap="SecuritySysMenuResult">
+        select * from security_sys_menu where path = #{path} limit 1
+    </select>
 </mapper>

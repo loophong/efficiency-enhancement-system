@@ -98,12 +98,19 @@
       :span-method="spanEnvironmentMethod"
       border
       class="thick-border-table"
+      :cell-style="{ 'white-space': 'pre-wrap', 'word-break': 'break-all' }"
+      :row-style="{ height: 'auto' }"
+      :header-row-style="{ height: '55px' }"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="环境" align="center" prop="environment" />
-      <el-table-column label="环境要素" align="center" prop="features" />
-      <el-table-column label="环境要素描述" align="center" prop="description" />
-      <el-table-column label="操作" align="center">
+      <el-table-column label="环境" align="center" prop="environment" min-width="120" show-overflow-tooltip />
+      <el-table-column label="环境要素" align="center" prop="features" min-width="120" show-overflow-tooltip />
+      <el-table-column label="环境要素描述" align="center" min-width="200" :show-overflow-tooltip="false">
+        <template #default="scope">
+          <div class="description-cell">{{ formatText(scope.row.description) }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" width="120">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:environmentidicaation:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:environmentidicaation:remove']">删除</el-button>
@@ -126,15 +133,11 @@
         <el-form-item label="环境" prop="environment">
           <el-input v-model="form.environment" placeholder="请输入环境" />
         </el-form-item>
-        <el-table :data="form.children" v-if="form.id && form.children && form.children.length > 0">
-          <el-table-column label="环境要素" prop="features" />
-          <el-table-column label="环境要素描述" prop="description" />
-        </el-table>
         <el-form-item label="环境要素" prop="features">
           <el-input v-model="form.features" placeholder="请输入环境要素" />
         </el-form-item>
         <el-form-item label="环境要素描述" prop="description">
-          <el-input v-model="form.description" placeholder="请输入环境要素描述" />
+          <el-input v-model="form.description" type="textarea" placeholder="请输入环境要素描述" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -149,168 +152,276 @@
 
 <script setup name="Environmentidicaation">
 import { listEnvironmentidicaation, getEnvironmentidicaation, delEnvironmentidicaation, addEnvironmentidicaation, updateEnvironmentidicaation, importEnvironmentidicaation, importTemplate } from "@/api/security/environmentidicaation";
-import { getCurrentInstance, ref, reactive, toRefs } from 'vue';
+import { getCurrentInstance, ref, reactive, toRefs, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const { proxy } = getCurrentInstance();
+const router = useRouter();
+const route = useRoute();
 
-// 資料定義
-const flatData = ref([]); // 新增：攤平成一維陣列
-const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
-const spanArr = ref([]); // 用於記錄每個環境的起始 index
-
+// 数据定义
 const data = reactive({
-  form: {},
+  // 遮罩层
+  loading: true,
+  // 选中数组
+  ids: [],
+  // 非单个禁用
+  single: true,
+  // 非多个禁用
+  multiple: true,
+  // 显示搜索条件
+  showSearch: true,
+  // 总条数
+  total: 0,
+  // 环境识别表格数据
+  environmentidicaationList: [],
+  // 弹出层标题
+  title: "",
+  // 是否显示弹出层
+  open: false,
+  // 表单参数
+  form: {
+    id: null,
+    environment: null,
+    features: null,
+    description: null,
+    relatedId: null  // 添加关联ID字段
+  },
+  // 查询参数
   queryParams: {
     pageNum: 1,
     pageSize: 10,
     environment: null,
-    features: null
+    features: null,
+    relatedId: null  // 添加关联ID查询参数
   },
-  rules: {}
+  rules: {},
 });
 
-const { queryParams, form, rules } = toRefs(data);
-let title = ref("");
+// 解构响应式对象
+const { queryParams, form, rules, loading, showSearch, ids, single, multiple, total, open, title, environmentidicaationList } = toRefs(data);
 
-/** 查詢環境識別列表 */
+// 数据定义
+const flatData = ref([]); // 扁平化一维数组
+const spanArr = ref([]); // 用于记录每个环境的起始 index
+
+// 初始化函数
+onMounted(() => {
+  // 检查URL参数中是否有关联ID
+  checkRelatedId();
+  // 加载数据
+  getList();
+});
+
+/**
+ * 检查URL参数中是否有关联ID
+ */
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+  
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联文件的环境识别记录");
+  }
+}
+
+/** 查询环境识别列表 */
 function getList() {
   loading.value = true;
   listEnvironmentidicaation(queryParams.value).then(response => {
-    // 攤平成一維陣列
-    const tempArr = [];
-    const spanArrTemp = [];
-    let pos = 0;
-
-    // 以環境分組
-    const envMap = {};
-    response.rows.forEach(item => {
-      if (!envMap[item.environment]) {
-        envMap[item.environment] = [];
-      }
-      envMap[item.environment].push(item);
-    });
-
-    Object.keys(envMap).forEach(env => {
-      const group = envMap[env];
-      group.forEach((item, idx) => {
-        tempArr.push({
-          ...item,
-          environment: env
-        });
-        // 記錄每個環境的第一行 index
-        if (idx === 0) {
-          spanArrTemp.push(pos);
-        }
-        pos++;
-      });
-    });
-
-    flatData.value = tempArr;
-    spanArr.value = spanArrTemp;
+    if (!response || !response.rows) {
+      loading.value = false;
+      return;
+    }
+    
+    // 处理数据
+    processData(response.rows);
+    environmentidicaationList.value = response.rows;
     total.value = response.total;
+    
     loading.value = false;
   });
 }
 
-// 合併單元格方法
-function spanEnvironmentMethod({ row, column, rowIndex, columnIndex }) {
-  if (column.property === 'environment') {
-    const index = spanArr.value.indexOf(rowIndex);
-    if (index > -1) {
-      // 找到該環境的第一行
-      // 計算該環境有幾行
-      const env = row.environment;
-      const count = flatData.value.filter(item => item.environment === env).length;
-      return {
-        rowspan: count,
-        colspan: 1
-      };
+// 环境数据处理
+function processData(data) {
+  if (!data || !Array.isArray(data)) {
+    console.warn("processData接收到非数组数据:", data);
+    flatData.value = [];
+    spanArr.value = [];
+    return;
+  }
+
+  console.log("处理数据:", data.length, "条记录");
+  
+  // 初始化spanArr
+  spanArr.value = [];
+  
+  // 对数据进行排序，确保相同环境的记录连续
+  const sortedData = [...data].sort((a, b) => {
+    if (!a.environment) return 1;
+    if (!b.environment) return -1;
+    return a.environment.localeCompare(b.environment);
+  });
+  
+  // 计算span，为每组相同环境的记录设置合并单元格
+  if (sortedData.length > 0) {
+    let currentEnv = sortedData[0].environment;
+    let count = 1;
+    let startIndex = 0;
+    
+    // 初始化为0
+    for (let i = 0; i < sortedData.length; i++) {
+      spanArr.value.push(0);
     }
+    
+    // 计算合并单元格
+    for (let i = 1; i < sortedData.length; i++) {
+      if (sortedData[i].environment === currentEnv) {
+        count++;
+      } else {
+        // 更新前一组环境的span值
+        spanArr.value[startIndex] = count;
+        // 开始新的一组
+        currentEnv = sortedData[i].environment;
+        startIndex = i;
+        count = 1;
+      }
+    }
+    
+    // 处理最后一组
+    spanArr.value[startIndex] = count;
+  }
+  
+  // 输出调试信息
+  console.log("spanArr:", spanArr.value);
+  console.log("处理后数据:", sortedData.length, "条记录");
+  
+  // 将数据扁平化为一维数组
+  flatData.value = sortedData;
+}
+
+// 合并单元格方法
+function spanEnvironmentMethod({ row, column, rowIndex, columnIndex }) {
+  // 第一列是选择框，不合并
+  if (columnIndex === 0) {
     return {
-      rowspan: 0,
-      colspan: 0
+      rowspan: 1,
+      colspan: 1
     };
   }
+  
+  // 第二列是环境字段，需要合并
+  if (columnIndex === 1) {
+    if (spanArr.value[rowIndex] > 0) {
+      return {
+        rowspan: spanArr.value[rowIndex],
+        colspan: 1
+      };
+    } else {
+      return {
+        rowspan: 0,
+        colspan: 0
+      };
+    }
+  }
+  
+  // 其他列不合并
   return {
     rowspan: 1,
     colspan: 1
-    };
+  };
 }
 
-// 取消按鈕
+/** 格式化文本，保留换行符 */
+function formatText(text) {
+  if (!text) return '';
+  return text.replace(/\\n/g, '\n');
+}
+
+// 取消按钮
 function cancel() {
   open.value = false;
   reset();
 }
 
-// 表單重置
+// 表单重置
 function reset() {
   form.value = {
     id: null,
     environment: null,
     features: null,
     description: null,
-    children: []
+    relatedId: null
   };
+  // 如果有关联ID查询参数，保留该值
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   proxy.resetForm("environmentidicaationRef");
 }
 
-/** 搜索按鈕操作 */
+/** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
 }
 
-/** 重置按鈕操作 */
+/** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
   handleQuery();
 }
 
-// 多選框選中資料
+// 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
 
-/** 新增按鈕操作 */
+/** 新增按钮操作 */
 function handleAdd() {
   reset();
+  // 如果有关联ID，自动填充到表单中
+  if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
-  title.value = "添加環境識別";
+  title.value = "添加环境识别";
 }
 
-/** 修改按鈕操作 */
+/** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
-
-  // 如果是子項，獲取父項
-  if (row.parentId) {
-    getEnvironmentidicaation(row.parentId).then(response => {
-      form.value = {
-        ...response.data,
-        children: [row]
-      };
-      open.value = true;
-      title.value = "修改環境識別";
-    });
-  } else {
-    getEnvironmentidicaation(row.id).then(response => {
-      form.value = response.data;
-      open.value = true;
-      title.value = "修改環境識別";
-    });
+  if (!row || !row.id) {
+    proxy.$modal.msgError("无效的数据行");
+    return;
   }
+  
+  const _id = row.id || ids.value[0];
+  console.log("编辑数据，ID:", _id);
+  
+  getEnvironmentidicaation(_id).then(response => {
+    if (!response || !response.data) {
+      proxy.$modal.msgError("获取数据失败");
+      return;
+    }
+    
+    form.value = response.data;
+    open.value = true;
+    title.value = "修改环境识别信息";
+  }).catch(error => {
+    console.error("获取详情失败:", error);
+    proxy.$modal.msgError("获取详情失败");
+  });
 }
 
-/** 提交按鈕 */
+/** 提交按钮 */
 function submitForm() {
   proxy.$refs["environmentidicaationRef"].validate(valid => {
     if (valid) {
@@ -331,18 +442,18 @@ function submitForm() {
   });
 }
 
-/** 刪除按鈕操作 */
+/** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否確認刪除環境識別編號為"' + _ids + '"的數據項？').then(function() {
+  proxy.$modal.confirm('是否确认删除环境识别编号为"' + _ids + '"的数据项？').then(function() {
     return delEnvironmentidicaation(_ids);
   }).then(() => {
     getList();
-    proxy.$modal.msgSuccess("刪除成功");
+    proxy.$modal.msgSuccess("删除成功");
   }).catch(() => {});
 }
 
-/** 導出按鈕操作 */
+/** 导出按钮操作 */
 function handleExport() {
   proxy.download('security/environmentidicaation/export', {
     ...queryParams.value
@@ -351,31 +462,40 @@ function handleExport() {
 
 // 导入前校验
 function beforeImport(file) {
+  loading.value = true;
   const formData = new FormData();
   formData.append("file", file);
+  
   importEnvironmentidicaation(formData).then(res => {
-    proxy.$modal.msgSuccess(res.msg || "导入成功");
-    getList();
-  }).catch(() => {
-    proxy.$modal.msgError("导入失败");
+    if (res.code === 200) {
+      proxy.$modal.msgSuccess(res.msg);
+      getList();
+    } else {
+      proxy.$modal.msgError(res.msg);
+    }
+  }).catch(err => {
+    console.error("导入失败:", err);
+    proxy.$modal.msgError("导入失败: " + (err.message || "未知错误"));
+  }).finally(() => {
+    loading.value = false;
   });
-  return false; // 阻止自动上传
+  return false;
 }
 
-// 下载模板
+/** 下载导入模板 */
 function handleImportTemplate() {
   importTemplate().then(response => {
-    const blob = new Blob([response], { type: "application/vnd.ms-excel" });
+    if (!response) {
+    return;
+  }
+    const blob = new Blob([response]);
     const link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
+    link.href = URL.createObjectURL(blob);
     link.download = "环境识别导入模板.xlsx";
     link.click();
-    window.URL.revokeObjectURL(link.href);
+    URL.revokeObjectURL(link.href);
   });
 }
-
-// 初始化加載數據
-getList();
 </script>
 
 <style scoped>
@@ -395,5 +515,29 @@ getList();
 .thick-border-table :deep(.el-table td) {
   border-width: 2px !important;
   border-color: #000000 !important;
+  padding: 8px !important; /* 增加单元格内边距 */
+}
+
+/* 自动换行样式 */
+.thick-border-table :deep(.cell) {
+  white-space: pre-wrap !important;
+  line-height: 1.5;
+  word-break: break-all;
+  min-height: 24px;
+}
+
+/* 表格行高度自适应 */
+.thick-border-table :deep(.el-table__row) {
+  height: auto !important;
+}
+
+/* 描述单元格样式 */
+.description-cell {
+  text-align: left;
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.6;
+  padding: 4px 0;
+  min-height: 24px;
 }
 </style>

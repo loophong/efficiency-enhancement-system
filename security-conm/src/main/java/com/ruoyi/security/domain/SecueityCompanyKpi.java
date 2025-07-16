@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.annotation.Excel.Type;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -19,88 +20,92 @@ public class SecueityCompanyKpi extends BaseEntity
     /** id */
     private Long id;
 
+    /** 关联ID */
+    @Excel(name = "关联ID", width = 15, type = Type.ALL)
+    private Long relatedId;
+
     /** 单位名称 */
-    @Excel(name = "单位名称")
+    @Excel(name = "单位名称", width = 15, type = Type.ALL)
     private String unitName;
 
     /** 分类 */
-    @Excel(name = "分类")
+    @Excel(name = "分类", width = 15, type = Type.ALL)
     private String category;
 
     /** 指标名称 */
-    @Excel(name = "指标名称")
+    @Excel(name = "指标名称", width = 20, type = Type.ALL)
     private String indicatorName;
 
     /** 单位 */
-    @Excel(name = "单位")
+    @Excel(name = "单位", width = 10, type = Type.ALL)
     private String unitOfMeasurement;
 
     /** 年份 */
-    @Excel(name = "年份")
+    @Excel(name = "年份", width = 10, type = Type.ALL)
     private String year;
 
     /** 目标值 */
-    @Excel(name = "目标值")
+    @Excel(name = "年度目标值", width = 15, type = Type.ALL)
     private BigDecimal annualTargetValue;
 
     /** 考核频次 */
-    @Excel(name = "考核频次")
+    @Excel(name = "考核频次", width = 10, readConverterExp = "年度=年度,季度=季度,半年度=半年度", type = Type.ALL)
     private String evaluationFrequency;
 
     /** 权重 */
-    @Excel(name = "权重")
+    @Excel(name = "权重", width = 10, suffix = "%", type = Type.ALL)
     private BigDecimal weight;
 
     /** 一季度目标值 */
-    @Excel(name = "一季度目标值")
+    @Excel(name = "一季度目标值", width = 15)
     private BigDecimal q1TargetValue;
 
     /** 一季度结果（1-3月） */
-    @Excel(name = "一季度结果", readConverterExp = "1=-3月")
+    @Excel(name = "一季度结果值", width = 15)
     private BigDecimal q1Result;
 
     /** 一季度核定值 */
-    @Excel(name = "一季度核定值")
+    @Excel(name = "一季度核定值", width = 10)
     private BigDecimal q1VerifiedValue;
 
     /** 二季度目标值 */
-    @Excel(name = "二季度目标值")
+    @Excel(name = "二季度目标值", width = 15)
     private BigDecimal q2TargetValue;
 
     /** 二季度结果（1-6月） */
-    @Excel(name = "二季度结果", readConverterExp = "1=-6月")
+    @Excel(name = "二季度结果值", width = 15)
     private BigDecimal q2Result;
 
     /** 二季度核定值 */
-    @Excel(name = "二季度核定值")
+    @Excel(name = "二季度核定值", width = 10)
     private BigDecimal q2VerifiedValue;
 
     /** 三季度目标值 */
-    @Excel(name = "三季度目标值")
+    @Excel(name = "三季度目标值", width = 15)
     private BigDecimal q3TargetValue;
 
     /** 三季度结果（1-9月） */
-    @Excel(name = "三季度结果", readConverterExp = "1=-9月")
+    @Excel(name = "三季度结果值", width = 15)
     private BigDecimal q3Result;
 
     /** 三季度核定值 */
-    @Excel(name = "三季度核定值")
+    @Excel(name = "三季度核定值", width = 10)
     private BigDecimal q3VerifiedValue;
 
     /** 四季度目标值 */
-    @Excel(name = "四季度目标值")
-    private String q4TargetValue;
+    @Excel(name = "四季度目标值", width = 15)
+    private BigDecimal q4TargetValue;
 
     /** 四季度结果（1-12月） */
-    @Excel(name = "四季度结果", readConverterExp = "1=-12月")
-    private String q4Result;
+    @Excel(name = "四季度结果值", width = 15)
+    private BigDecimal q4Result;
 
     /** 四季度核定值 */
-    @Excel(name = "四季度核定值")
-    private String q4VerifiedValue;
+    @Excel(name = "四季度核定值", width = 10)
+    private BigDecimal q4VerifiedValue;
 
     /** 备注 */
-    @Excel(name = "备注")
+    @Excel(name = "备注", width = 30, type = Type.ALL)
     private String beizhu;
 
     public void setId(Long id) 
@@ -112,6 +117,17 @@ public class SecueityCompanyKpi extends BaseEntity
     {
         return id;
     }
+
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
+
     public void setUnitName(String unitName) 
     {
         this.unitName = unitName;
@@ -265,30 +281,30 @@ public class SecueityCompanyKpi extends BaseEntity
     {
         return q3VerifiedValue;
     }
-    public void setQ4TargetValue(String q4TargetValue) 
+    public void setQ4TargetValue(BigDecimal q4TargetValue) 
     {
         this.q4TargetValue = q4TargetValue;
     }
 
-    public String getQ4TargetValue() 
+    public BigDecimal getQ4TargetValue() 
     {
         return q4TargetValue;
     }
-    public void setQ4Result(String q4Result) 
+    public void setQ4Result(BigDecimal q4Result) 
     {
         this.q4Result = q4Result;
     }
 
-    public String getQ4Result() 
+    public BigDecimal getQ4Result() 
     {
         return q4Result;
     }
-    public void setQ4VerifiedValue(String q4VerifiedValue) 
+    public void setQ4VerifiedValue(BigDecimal q4VerifiedValue) 
     {
         this.q4VerifiedValue = q4VerifiedValue;
     }
 
-    public String getQ4VerifiedValue() 
+    public BigDecimal getQ4VerifiedValue() 
     {
         return q4VerifiedValue;
     }
@@ -306,6 +322,7 @@ public class SecueityCompanyKpi extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
+            .append("relatedId", getRelatedId())
             .append("unitName", getUnitName())
             .append("category", getCategory())
             .append("indicatorName", getIndicatorName())
@@ -327,6 +344,11 @@ public class SecueityCompanyKpi extends BaseEntity
             .append("q4Result", getQ4Result())
             .append("q4VerifiedValue", getQ4VerifiedValue())
             .append("beizhu", getBeizhu())
+            .append("createBy", getCreateBy())
+            .append("createTime", getCreateTime())
+            .append("updateBy", getUpdateBy())
+            .append("updateTime", getUpdateTime())
+            .append("remark", getRemark())
             .toString();
     }
 }

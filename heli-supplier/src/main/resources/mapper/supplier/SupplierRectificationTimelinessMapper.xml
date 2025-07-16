@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="cooperationDegree"    column="cooperation_degree"    />
         <result property="month"    column="month"    />
         <result property="score"    column="score"    />
-        <result property="uploadName"    column="upload_name"    />
+<!--        <result property="uploadName"    column="upload_name"    />-->
     </resultMap>
 
     <sql id="selectSupplierRectificationTimelinessVo">
@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cooperationDegree != null "> and cooperation_degree = #{cooperationDegree}</if>
             <if test="month != null "> and month = #{month}</if>
             <if test="score != null "> and score = #{score}</if>
-            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>
+<!--            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>-->
         </where>
     </select>
     
@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cooperationDegree != null">cooperation_degree,</if>
             <if test="month != null">month,</if>
             <if test="score != null">score,</if>
-            <if test="uploadName != null">upload_name,</if>
+<!--            <if test="uploadName != null">upload_name,</if>-->
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
@@ -55,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cooperationDegree != null">#{cooperationDegree},</if>
             <if test="month != null">#{month},</if>
             <if test="score != null">#{score},</if>
-            <if test="uploadName != null">#{uploadName},</if>
+<!--            <if test="uploadName != null">#{uploadName},</if>-->
          </trim>
     </insert>
 
@@ -68,7 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cooperationDegree != null">cooperation_degree = #{cooperationDegree},</if>
             <if test="month != null">month = #{month},</if>
             <if test="score != null">score = #{score},</if>
-            <if test="uploadName != null">upload_name = #{uploadName},</if>
+<!--            <if test="uploadName != null">upload_name = #{uploadName},</if>-->
         </trim>
         where id = #{id}
     </update>

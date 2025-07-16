@@ -50,10 +50,10 @@ public class SupplierRisk implements Serializable
     @ExcelProperty(value = "得分")
     private Long score;
 
-    /** 模型得分 */
-    @Excel(name = "模型得分")
-    @ExcelProperty(value = "模型得分")
-    private Long modelScore;
+//    /** 模型得分 */
+//    @Excel(name = "模型得分")
+//    @ExcelProperty(value = "模型得分")
+//    private Long modelScore;
 
     /** 上传时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
