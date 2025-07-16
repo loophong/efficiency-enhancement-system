@@ -60,46 +60,46 @@ public class SupplierChange
     @ExcelProperty(value = "具体内容")
     private String specificContent;
 
-    /** 得分 */
-    @ExcelIgnore
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
-    private Double score;
+//    /** 得分 */
+//    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
+//    private Double score;
 
 
 
-    /** 发生次数 */
-    @ExcelIgnore
-    @Excel(name = "发生次数")
-    @ExcelProperty(value = "发生次数")
-    private Long happenNumber;
-
-
-    /** 发生时间 */
-    @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "发生时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "发生时间")
-    private Date happenTime;
-
-
-    /** 填报人 */
-    @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String reporter;
-
-
-
-    /** 备选2 */
-    @ExcelIgnore
-    @Excel(name = "备选2")
-    private String two;
-
-    /** 备选3 */
-    @ExcelIgnore
-    @Excel(name = "备选3")
-    private String three;
+//    /** 发生次数 */
+//    @ExcelIgnore
+//    @Excel(name = "发生次数")
+//    @ExcelProperty(value = "发生次数")
+//    private Long happenNumber;
+//
+//
+//    /** 发生时间 */
+//    @ExcelIgnore
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "发生时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "发生时间")
+//    private Date happenTime;
+//
+//
+//    /** 填报人 */
+//    @ExcelIgnore
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String reporter;
+//
+//
+//
+//    /** 备选2 */
+//    @ExcelIgnore
+//    @Excel(name = "备选2")
+//    private String two;
+//
+//    /** 备选3 */
+//    @ExcelIgnore
+//    @Excel(name = "备选3")
+//    private String three;
 
 
 }

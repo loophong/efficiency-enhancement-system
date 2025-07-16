@@ -38,38 +38,51 @@ public class SupplierHappen
     @Excel(name = "发生时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date happenTime;
 
-    /** 文件名称 */
-    @Excel(name = "文件名称")
-    private String fileName;
 
-    /** 文件路径 */
-    @Excel(name = "文件路径")
-    private String fileUrl;
-
-    /** 完成时间 */
+    /** 回函截止时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "完成时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date completeTime;
-
-    /** 截止时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "截止时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "回函截止时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date deadline;
 
-    /** 填报人 */
-    @Excel(name = "填报人")
-    private String uploadName;
+    /** 反馈单文件名 */
+    @Excel(name = "反馈单文件名")
+    private String feedbackFileName;
 
-    /** 备选1 */
-    @Excel(name = "备选1")
-    private String one;
+    /** 反馈单附件路径 */
+    @Excel(name = "反馈单附件路径")
+    private String feedbackFileUrl;
 
-    /** 备选2 */
-    @Excel(name = "备选2")
-    private String two;
+    /** 回函文件名 */
+    @Excel(name = "回函文件名")
+    private String replyFileName;
 
-    /** 备选3 */
-    @Excel(name = "备选3")
-    private String three;
+    /** 回函附件路径 */
+    @Excel(name = "回函附件路径")
+    private String replyFileUrl;
+
+    /** 回函上传时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "回函上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date replyTime;
+
+    /** 回函状态 */
+    @Excel(name = "回函状态")
+    private String replyStatus;
+
+//    /** 填报人 */
+//    @Excel(name = "填报人")
+//    private String uploadName;
+//
+//    /** 备选1 */
+//    @Excel(name = "备选1")
+//    private String one;
+//
+//    /** 备选2 */
+//    @Excel(name = "备选2")
+//    private String two;
+//
+//    /** 备选3 */
+//    @Excel(name = "备选3")
+//    private String three;
 
 }

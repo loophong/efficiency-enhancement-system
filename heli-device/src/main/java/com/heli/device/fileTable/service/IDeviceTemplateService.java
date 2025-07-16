@@ -1,9 +1,7 @@
 package com.heli.device.fileTable.service;
 
-import com.heli.device.fileTable.domain.DeviceTemplate;
-
 import java.util.List;
-
+import com.heli.device.fileTable.domain.DeviceTemplate;
 
 /**
  * 设备导入模板文件Service接口

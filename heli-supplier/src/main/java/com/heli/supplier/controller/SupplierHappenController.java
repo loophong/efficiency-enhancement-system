@@ -57,6 +57,16 @@ public class SupplierHappenController extends BaseController
     public void export(HttpServletResponse response, SupplierHappen supplierHappen)
     {
         List<SupplierHappen> list = supplierHappenService.selectSupplierHappenList(supplierHappen);
+        // 动态设置回函状态
+        for (SupplierHappen vo : list) {
+            if (vo.getReplyTime() == null) {
+                vo.setReplyStatus("未回函");
+            } else if (vo.getDeadline() != null && vo.getReplyTime().after(vo.getDeadline())) {
+                vo.setReplyStatus("回函不及时");
+            } else {
+                vo.setReplyStatus("已回函");
+            }
+        }
         ExcelUtil<SupplierHappen> util = new ExcelUtil<SupplierHappen>(SupplierHappen.class);
         util.exportExcel(response, list, "质量通知单数据");
     }

@@ -63,25 +63,25 @@ public class SupplierSelfTestReports implements Serializable {
     @ExcelProperty(value = "发生时间")
     private Date happenTime;
 
-    /** 填报人 */
-    @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
-    private String reporter;
+//    /** 填报人 */
+//    @ExcelIgnore
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
+//    private String reporter;
 
     /** 分数 */
     @Excel(name = "分数")
     @ExcelProperty(value = "分数")
     private Double score;
 
-
-    /** 备选1 */
-    @ExcelIgnore
-    @Excel(name = "备选1")
-    private String one;
-
-    /** 备选2 */
-    @ExcelIgnore
-    @Excel(name = "备选2")
-    private String two;
+//
+//    /** 备选1 */
+//    @ExcelIgnore
+//    @Excel(name = "备选1")
+//    private String one;
+//
+//    /** 备选2 */
+//    @ExcelIgnore
+//    @Excel(name = "备选2")
+//    private String two;
 }

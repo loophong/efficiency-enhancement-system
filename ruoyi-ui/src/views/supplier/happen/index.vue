@@ -159,6 +159,7 @@
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:happen:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['supplier:happen:remove']">删除</el-button>
+          <el-button link type="warning" icon="Message" @click="handleReply(scope.row)" v-hasPermi="['supplier:happen:reply']">回函</el-button>
         </template>
       </el-table-column>
     </el-table>

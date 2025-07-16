@@ -147,20 +147,20 @@ public class SupplierChangeServiceImpl extends ServiceImpl<SupplierChangeMapper,
      * @param occurrenceCount
      * @return
      */
-    private Double calculateScore(Long formLeibie, long occurrenceCount) {
-        final double BASE_SCORE = 100;
-        final double MODULE_PERCENTAGE = 0.03;
-        double deduction = 0;
-
-        if (formLeibie == 20) { // 股份共有供应商
-            deduction = occurrenceCount * 20;
-        } else if (formLeibie == 40) { // 自主供应商
-            deduction = occurrenceCount * 40;
-        }
-
-        double finalScore = Math.max(BASE_SCORE - deduction, 0); // 确保分数不会变成负数
-        return finalScore * MODULE_PERCENTAGE; // 取模块得分
-    }
+//    private Double calculateScore(Long formLeibie, long occurrenceCount) {
+//        final double BASE_SCORE = 100;
+//        final double MODULE_PERCENTAGE = 0.03;
+//        double deduction = 0;
+//
+//        if (formLeibie == 20) { // 股份共有供应商
+//            deduction = occurrenceCount * 20;
+//        } else if (formLeibie == 40) { // 自主供应商
+//            deduction = occurrenceCount * 40;
+//        }
+//
+//        double finalScore = Math.max(BASE_SCORE - deduction, 0); // 确保分数不会变成负数
+//        return finalScore * MODULE_PERCENTAGE; // 取模块得分
+//    }
 
 
 //    public int countOccurrencesBySupplierCode(String supplierCode) {
