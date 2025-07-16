@@ -1,6 +1,7 @@
 package com.ruoyi.security.service;
 
 import java.util.List;
+import java.io.InputStream;
 import com.ruoyi.security.domain.SecurityEducationAnnualTrainingPlan;
 
 /**
@@ -58,4 +59,21 @@ public interface ISecurityEducationAnnualTrainingPlanService
      * @return 结果
      */
     public int deleteSecurityEducationAnnualTrainingPlanById(Long id);
+    
+    /**
+     * 导入年度培训计划数据
+     * 
+     * @param is 输入流
+     * @param updateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @return 结果
+     */
+    public String importData(InputStream is, Boolean updateSupport);
+    
+    /**
+     * 更新最近导入记录的关联ID
+     * 
+     * @param fileManagementId 文件管理ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long fileManagementId);
 }

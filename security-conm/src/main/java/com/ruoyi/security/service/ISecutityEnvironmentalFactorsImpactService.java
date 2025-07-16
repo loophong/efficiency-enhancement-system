@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
  * 环境因素清单Service接口
  * 
  * @author wang
- * @date 2025-03-26
+ * @date 2025-07-14
  */
 public interface ISecutityEnvironmentalFactorsImpactService 
 {
@@ -59,6 +59,21 @@ public interface ISecutityEnvironmentalFactorsImpactService
      * @return 结果
      */
     public int deleteSecutityEnvironmentalFactorsImpactById(Long id);
-
-    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
+    
+    /**
+     * 导入环境因素清单数据
+     * 
+     * @param file 导入文件
+     * @param updateSupport 是否更新已存在数据
+     * @return 结果
+     */
+    public String importData(MultipartFile file, boolean updateSupport);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

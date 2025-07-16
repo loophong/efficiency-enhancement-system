@@ -18,10 +18,11 @@ public class SecurityHazardSourceList extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long id;
 
     /** 作业活动 */
-    @Excel(name = "作业活动")
+    @Excel(name = "作业活动", needMerge = true)
     private String activity;
 
     /** 危险源 */
@@ -37,7 +38,7 @@ public class SecurityHazardSourceList extends BaseEntity
     private String possibleConsequences;
 
     /** 评价方式(LEC) */
-    @Excel(name = "评价方式(LEC)")
+//    @Excel(name = "评价方式(LEC)")
     private String evaluationMethod;
 
     /** L */
@@ -65,17 +66,20 @@ public class SecurityHazardSourceList extends BaseEntity
     private String controlMeasures;
 
     /** 审核人 */
-    @Excel(name = "审核人")
+//    @Excel(name = "审核人")
     private String auditor;
 
     /** 批准人 */
-    @Excel(name = "批准人")
+//    @Excel(name = "批准人")
     private String approver;
 
     /** 时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @Excel(name = "时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date time;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -212,6 +216,16 @@ public class SecurityHazardSourceList extends BaseEntity
     {
         return time;
     }
+    
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -231,6 +245,7 @@ public class SecurityHazardSourceList extends BaseEntity
             .append("auditor", getAuditor())
             .append("approver", getApprover())
             .append("time", getTime())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

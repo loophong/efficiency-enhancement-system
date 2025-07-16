@@ -20,10 +20,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="auditor"    column="auditor"    />
         <result property="approver"    column="approver"    />
         <result property="time"    column="time"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityHazardSourceListVo">
-        select id, activity, hazard_source, hazard_mode, possible_consequences, evaluation_method, evaluation_a, evaluation_b, evaluation_c, evaluation_sanjiaoxing, risk_level, control_measures, auditor, approver, time from security_hazard_source_list
+        select id, activity, hazard_source, hazard_mode, possible_consequences, evaluation_method, evaluation_a, evaluation_b, evaluation_c, evaluation_sanjiaoxing, risk_level, control_measures, auditor, approver, time, related_id from security_hazard_source_list
     </sql>
 
     <select id="selectSecurityHazardSourceListList" parameterType="SecurityHazardSourceList" resultMap="SecurityHazardSourceListResult">
@@ -43,6 +44,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="auditor != null  and auditor != ''"> and auditor = #{auditor}</if>
             <if test="approver != null  and approver != ''"> and approver = #{approver}</if>
             <if test="time != null "> and time = #{time}</if>
+            <if test="relatedId != null "> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -68,6 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="auditor != null">auditor,</if>
             <if test="approver != null">approver,</if>
             <if test="time != null">time,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="activity != null and activity != ''">#{activity},</if>
@@ -84,6 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="auditor != null">#{auditor},</if>
             <if test="approver != null">#{approver},</if>
             <if test="time != null">#{time},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -104,6 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="auditor != null">auditor = #{auditor},</if>
             <if test="approver != null">approver = #{approver},</if>
             <if test="time != null">time = #{time},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -118,4 +123,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 批量插入危险源清单数据 -->
+    <insert id="batchInsertRiskList" parameterType="java.util.List">
+        insert into security_hazard_source_list (
+          activity, hazard_source, hazard_mode, possible_consequences, 
+          evaluation_method, evaluation_a, evaluation_b, evaluation_c, 
+          evaluation_sanjiaoxing, risk_level, control_measures, 
+          auditor, approver, time, related_id
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+          (#{item.activity}, #{item.hazardSource}, #{item.hazardMode}, #{item.possibleConsequences}, 
+           #{item.evaluationMethod}, #{item.evaluationA}, #{item.evaluationB}, #{item.evaluationC}, 
+           #{item.evaluationSanjiaoxing}, #{item.riskLevel}, #{item.controlMeasures}, 
+           #{item.auditor}, #{item.approver}, #{item.time}, #{item.relatedId})
+        </foreach>
+    </insert>
+    
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_hazard_source_list 
+        set related_id = #{relatedId}
+        where related_id is null
+    </update>
 </mapper>

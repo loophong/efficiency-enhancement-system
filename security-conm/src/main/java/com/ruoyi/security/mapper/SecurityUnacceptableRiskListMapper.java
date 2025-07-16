@@ -58,4 +58,20 @@ public interface SecurityUnacceptableRiskListMapper
      * @return 结果
      */
     public int deleteSecurityUnacceptableRiskListByIds(Long[] ids);
+    
+    /**
+     * 批量插入不可接受风险清单数据
+     * 
+     * @param list 不可接受风险清单数据列表
+     * @return 结果
+     */
+    public int batchInsertRiskList(List<SecurityUnacceptableRiskList> list);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

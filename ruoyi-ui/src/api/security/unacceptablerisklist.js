@@ -42,3 +42,30 @@ export function delUnacceptablerisklist(id) {
     method: 'delete'
   })
 }
+
+// 导出不可接受风险清单
+export function exportUnacceptablerisklist(query) {
+  return request({
+    url: '/security/unacceptablerisklist/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 导入不可接受风险清单数据
+export function importUnacceptablerisklist(data) {
+  return request({
+    url: '/security/unacceptablerisklist/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载不可接受风险清单模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/unacceptablerisklist/importTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}

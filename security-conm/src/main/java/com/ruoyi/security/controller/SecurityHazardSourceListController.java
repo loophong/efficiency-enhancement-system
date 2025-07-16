@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,6 +21,7 @@ import com.ruoyi.security.domain.SecurityHazardSourceList;
 import com.ruoyi.security.service.ISecurityHazardSourceListService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.security.utils.HazardSourceExcelUtil;
 
 /**
  * 危险源清单Controller
@@ -55,7 +57,8 @@ public class SecurityHazardSourceListController extends BaseController
     public void export(HttpServletResponse response, SecurityHazardSourceList securityHazardSourceList)
     {
         List<SecurityHazardSourceList> list = securityHazardSourceListService.selectSecurityHazardSourceListList(securityHazardSourceList);
-        ExcelUtil<SecurityHazardSourceList> util = new ExcelUtil<SecurityHazardSourceList>(SecurityHazardSourceList.class);
+        // 使用自定义的Excel工具类，支持合并单元格
+        HazardSourceExcelUtil util = new HazardSourceExcelUtil();
         util.exportExcel(response, list, "危险源清单数据");
     }
 
@@ -100,5 +103,29 @@ public class SecurityHazardSourceListController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityHazardSourceListService.deleteSecurityHazardSourceListByIds(ids));
+    }
+    
+    /**
+     * 导入危险源清单数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:risklist:import')")
+    @Log(title = "危险源清单", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        String message = securityHazardSourceListService.importData(file, updateSupport);
+        return success(message);
+    }
+    
+    /**
+     * 下载危险源清单导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:risklist:import')")
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        // 使用自定义的Excel工具类，支持合并单元格
+        HazardSourceExcelUtil util = new HazardSourceExcelUtil();
+        util.importTemplateExcel(response, "危险源清单数据");
     }
 }

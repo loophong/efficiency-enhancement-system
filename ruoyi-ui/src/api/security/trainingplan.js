@@ -42,3 +42,21 @@ export function delTrainingplan(id) {
     method: 'delete'
   })
 }
+
+// 导入年度培训计划数据
+export function importTrainingplan(data) {
+  return request({
+    url: '/security/trainingplan/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载年度培训计划导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/trainingplan/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}

@@ -42,3 +42,29 @@ export function delImportantfactors(id) {
     method: 'delete'
   })
 }
+
+// 导出公司级重要环境因素清单
+export function exportImportantfactors(query) {
+  return request({
+    url: '/security/importantfactors/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 导入公司级重要环境因素清单数据
+export function importData(data) {
+  return request({
+    url: '/security/importantfactors/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载公司级重要环境因素清单导入模板
+export function importTemplate() {
+  return request({
+    url: '/security/importantfactors/importTemplate',
+    method: 'post'
+  })
+}

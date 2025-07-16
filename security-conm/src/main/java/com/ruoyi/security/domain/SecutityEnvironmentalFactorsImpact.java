@@ -9,13 +9,14 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 环境因素清单对象 secutity_environmental_factors_impact
  * 
  * @author wang
- * @date 2025-03-26
+ * @date 2025-07-14
  */
 public class SecutityEnvironmentalFactorsImpact extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long id;
 
     /** 作业活动 */
@@ -30,29 +31,53 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
     @Excel(name = "环境影响")
     private String impactOfEnvironmentalFactor;
 
-    /** 环境因素评价 */
-    @Excel(name = "环境因素评价")
-    private String evaluationOfEnvironmentalFactor;
+    /** A */
+    @Excel(name = "A")
+    private String evaluationOfEnvironmentalFactorA;
+
+    /** B */
+    @Excel(name = "B")
+    private String evaluationOfEnvironmentalFactorB;
+
+    /** C */
+    @Excel(name = "C")
+    private String evaluationOfEnvironmentalFactorC;
+
+    /** D */
+    @Excel(name = "D")
+    private String evaluationOfEnvironmentalFactorD;
+
+    /** E */
+    @Excel(name = "E")
+    private String evaluationOfEnvironmentalFactorE;
+
+    /** F */
+    @Excel(name = "F")
+    private String evaluationOfEnvironmentalFactorF;
+
+    /** G */
+    @Excel(name = "G")
+    private String evaluationOfEnvironmentalFactorG;
 
     /** 环境影响程度 */
     @Excel(name = "环境影响程度")
     private String environmentalImpact;
 
-    /** 时态 */
-    @Excel(name = "时态")
+    /** 时态/状态 */
+    @Excel(name = "时态/状态")
     private String tense;
-
-    /** 状态 */
-    @Excel(name = "状态")
-    private String status;
 
     /** 控制措施 */
     @Excel(name = "控制措施")
     private String controlMeasures;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
+//    @Excel(name = "审批状态")
     private String statu;
+
+    /** 关联ID */
+//    @Excel(name = "关联ID")
+    private String relatedId;
 
     public void setId(Long id) 
     {
@@ -90,14 +115,68 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
     {
         return impactOfEnvironmentalFactor;
     }
-    public void setEvaluationOfEnvironmentalFactor(String evaluationOfEnvironmentalFactor) 
+    public void setEvaluationOfEnvironmentalFactorA(String evaluationOfEnvironmentalFactorA) 
     {
-        this.evaluationOfEnvironmentalFactor = evaluationOfEnvironmentalFactor;
+        this.evaluationOfEnvironmentalFactorA = evaluationOfEnvironmentalFactorA;
     }
 
-    public String getEvaluationOfEnvironmentalFactor() 
+    public String getEvaluationOfEnvironmentalFactorA() 
     {
-        return evaluationOfEnvironmentalFactor;
+        return evaluationOfEnvironmentalFactorA;
+    }
+    public void setEvaluationOfEnvironmentalFactorB(String evaluationOfEnvironmentalFactorB) 
+    {
+        this.evaluationOfEnvironmentalFactorB = evaluationOfEnvironmentalFactorB;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorB() 
+    {
+        return evaluationOfEnvironmentalFactorB;
+    }
+    public void setEvaluationOfEnvironmentalFactorC(String evaluationOfEnvironmentalFactorC) 
+    {
+        this.evaluationOfEnvironmentalFactorC = evaluationOfEnvironmentalFactorC;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorC() 
+    {
+        return evaluationOfEnvironmentalFactorC;
+    }
+    public void setEvaluationOfEnvironmentalFactorD(String evaluationOfEnvironmentalFactorD) 
+    {
+        this.evaluationOfEnvironmentalFactorD = evaluationOfEnvironmentalFactorD;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorD() 
+    {
+        return evaluationOfEnvironmentalFactorD;
+    }
+    public void setEvaluationOfEnvironmentalFactorE(String evaluationOfEnvironmentalFactorE) 
+    {
+        this.evaluationOfEnvironmentalFactorE = evaluationOfEnvironmentalFactorE;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorE() 
+    {
+        return evaluationOfEnvironmentalFactorE;
+    }
+    public void setEvaluationOfEnvironmentalFactorF(String evaluationOfEnvironmentalFactorF) 
+    {
+        this.evaluationOfEnvironmentalFactorF = evaluationOfEnvironmentalFactorF;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorF() 
+    {
+        return evaluationOfEnvironmentalFactorF;
+    }
+    public void setEvaluationOfEnvironmentalFactorG(String evaluationOfEnvironmentalFactorG) 
+    {
+        this.evaluationOfEnvironmentalFactorG = evaluationOfEnvironmentalFactorG;
+    }
+
+    public String getEvaluationOfEnvironmentalFactorG() 
+    {
+        return evaluationOfEnvironmentalFactorG;
     }
     public void setEnvironmentalImpact(String environmentalImpact) 
     {
@@ -117,15 +196,6 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
     {
         return tense;
     }
-    public void setStatus(String status) 
-    {
-        this.status = status;
-    }
-
-    public String getStatus() 
-    {
-        return status;
-    }
     public void setControlMeasures(String controlMeasures) 
     {
         this.controlMeasures = controlMeasures;
@@ -144,6 +214,15 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
     {
         return statu;
     }
+    public void setRelatedId(String relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public String getRelatedId() 
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -152,12 +231,18 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
             .append("activity", getActivity())
             .append("environmentalFactor", getEnvironmentalFactor())
             .append("impactOfEnvironmentalFactor", getImpactOfEnvironmentalFactor())
-            .append("evaluationOfEnvironmentalFactor", getEvaluationOfEnvironmentalFactor())
+            .append("evaluationOfEnvironmentalFactorA", getEvaluationOfEnvironmentalFactorA())
+            .append("evaluationOfEnvironmentalFactorB", getEvaluationOfEnvironmentalFactorB())
+            .append("evaluationOfEnvironmentalFactorC", getEvaluationOfEnvironmentalFactorC())
+            .append("evaluationOfEnvironmentalFactorD", getEvaluationOfEnvironmentalFactorD())
+            .append("evaluationOfEnvironmentalFactorE", getEvaluationOfEnvironmentalFactorE())
+            .append("evaluationOfEnvironmentalFactorF", getEvaluationOfEnvironmentalFactorF())
+            .append("evaluationOfEnvironmentalFactorG", getEvaluationOfEnvironmentalFactorG())
             .append("environmentalImpact", getEnvironmentalImpact())
             .append("tense", getTense())
-            .append("status", getStatus())
             .append("controlMeasures", getControlMeasures())
             .append("statu", getStatu())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

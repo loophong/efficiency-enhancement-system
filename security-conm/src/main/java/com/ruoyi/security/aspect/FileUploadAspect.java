@@ -36,6 +36,7 @@ import com.ruoyi.security.domain.SecurityFileManagement;
 import com.ruoyi.security.utils.ThreadLocalContext;
 import com.ruoyi.security.service.ISecurityRiskOpportunityAssessmentService;
 
+
 /**
  * 文件上传切面，用于拦截所有上传方法
  */
@@ -63,6 +64,25 @@ public class FileUploadAspect {
     private ISecurityCompanyKeyWorksService companyKeyWorksService;
     @Autowired
     private ISecueityCompanyKpiService secueityCompanyKpiService;
+    @Autowired
+    private IAnnualEnvironmentalOccupationalHealthAndSafetyGoalsService annualEnvironmentalOccupationalHealthAndSafetyGoalsService;
+    @Autowired
+    private ISecurityCompanyImportantEnvironmentalFactorsService importantFactorsService;
+    @Autowired
+    private ISecutityEnvironmentalFactorsImpactService impactService;
+    @Autowired
+    private ISecurityHazardSourceListService hazardSourceListService;
+    @Autowired
+    private ISecurityUnacceptableRiskListService unacceptableRiskListService;
+    @Autowired
+    private ISecutityLegalRegulationsIdentificationList1Service regulationsIdentificationList1Service;
+    @Autowired
+    private ISecutityLegalRegulationsIdentificationListService regulationsIdentificationListService;
+    @Autowired
+    private ISecurityComplianceEvaluationRecordsService securityComplianceEvaluationRecordsService;
+    @Autowired
+    private ISecurityEducationAnnualTrainingPlanService securityEducationAnnualTrainingPlanService;
+    
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
      */
@@ -210,8 +230,45 @@ public class FileUploadAspect {
                 // 事故原因分析secueityCompanyKpiService
                 updatedRows = secueityCompanyKpiService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新事故原因分析数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
-            } else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {
+            } else if (controllerName.contains("AnnualEnvironmentalOccupationalHealthAndSafetyGoals") || controllerName.contains("HealthAndSafetyGoals")) {
+                // 年度环境职业健康安全目标
+                updatedRows = annualEnvironmentalOccupationalHealthAndSafetyGoalsService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新年度环境职业健康安全目标数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityCompanyImportantEnvironmentalFactors")) {
+                // 重要环境因素
+                updatedRows = importantFactorsService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新重要环境因素数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecutityEnvironmentalFactorsImpact") || controllerName.contains("SecurityImpact")) {
+                // 环境因素清单
+                updatedRows = impactService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新环境因素清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardSourceList") || controllerName.contains("SecurityRisklist")) {
+                // 危险源清单
+                updatedRows = hazardSourceListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新危险源清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityUnacceptableRiskList") || controllerName.contains("Unacceptablerisklist")) {
+                // 不可接受风险清单
+                updatedRows = unacceptableRiskListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新不可接受风险清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecutityLegalRegulationsIdentificationList1") || controllerName.contains("RegulationsIdentificationList1")) {
+                // 安全法律法规识别清单
+                updatedRows = regulationsIdentificationList1Service.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新安全法律法规识别清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if(controllerName.contains("SecutityLegalRegulationsIdentificationList")|| controllerName.contains("RegulationsIdentificationList")) {
+                // 安全法律法规识别清单
+                updatedRows = regulationsIdentificationListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新安全法律法规识别清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityComplianceEvaluationRecords") || controllerName.contains("Compliance")) {
+                // 合规性评价记录
+                updatedRows = securityComplianceEvaluationRecordsService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新合规性评价记录数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEducationAnnualTrainingPlan") || controllerName.contains("SecurityTrainingplan")) {
+                // 年度培训计划
+                updatedRows = securityEducationAnnualTrainingPlanService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新年度培训计划数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            }
                 // 事故措施跟踪
+                else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {
                 updatedRows = getServiceAndUpdateRelatedId("accidentMeasuresTrackingService", fileManagementId);
                 log.info("已更新事故措施跟踪数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             } else if (controllerName.contains("SecurityAnnualPlan")) {
@@ -278,6 +335,10 @@ public class FileUploadAspect {
                 // 文件管理
                 updatedRows = getServiceAndUpdateRelatedId("fileManagementService", fileManagementId);
                 log.info("已更新文件管理数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityLegalRegulationsIdentificationList1")) {
+                // 安全法律法规识别清单
+                updatedRows = regulationsIdentificationList1Service.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新安全法律法规识别清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             } else {
                 // 其他 security 控制器，通用处理
                 log.info("未找到匹配的服务类，尝试通用处理: {}", controllerName);
