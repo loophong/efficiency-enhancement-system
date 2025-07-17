@@ -30,14 +30,18 @@ public class SecurityControlledDocumentDistributionDirectoryListener implements 
         log.info("解析到一条数据:{}", registerInfoExcel);
 //        securityControlledDocumentDistributionDirectoryMapper.insertSecurityControlledDocumentDistributionDirectory(registerInfoExcel);
         if(registerInfoExcel.getFileName() != null && !registerInfoExcel.getFileName().startsWith("接收人")){
-            if(registerInfoExcel.getReceivingUnit() == null){
+            // 处理单元格合并：如果接收单位为空，使用前一条记录的接收单位
+            if(registerInfoExcel.getReceivingUnit() == null && !cacheDataList.isEmpty()){
                 registerInfoExcel.setReceivingUnit(cacheDataList.get(cacheDataList.size() - 1).getReceivingUnit());
             }
+
+            // 清除ID，让数据库自动生成
+            registerInfoExcel.setId(null);
+            // 清除关联ID，稍后通过updateLatestImportedRelatedId方法设置
+            registerInfoExcel.setRelatedId(null);
+
             cacheDataList.add(registerInfoExcel);
         }
-
-
-
     }
 
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {

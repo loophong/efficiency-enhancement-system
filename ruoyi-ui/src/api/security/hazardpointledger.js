@@ -42,3 +42,29 @@ export function delHazardpointledger(id) {
     method: 'delete'
   })
 }
+
+// 导入有点害台账
+export function importHazardpointledger(data) {
+  return request({
+    url: '/security/hazardpointledger/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/hazardpointledger/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+
+// 根据关联ID查询有点害台账列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: `/security/hazardpointledger/listByRelatedId/${relatedId}`,
+    method: 'get'
+  })
+}

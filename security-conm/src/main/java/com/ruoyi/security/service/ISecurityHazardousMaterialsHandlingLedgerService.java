@@ -53,9 +53,25 @@ public interface ISecurityHazardousMaterialsHandlingLedgerService
 
     /**
      * 删除危化品处理台账信息
-     * 
+     *
      * @param id 危化品处理台账主键
      * @return 结果
      */
     public int deleteSecurityHazardousMaterialsHandlingLedgerById(Long id);
+
+    /**
+     * 导入Excel数据到数据库
+     *
+     * @param originalFilename 原始文件名
+     * @param excelFile Excel文件
+     */
+    void readSalaryExcelToDB(String originalFilename, org.springframework.web.multipart.MultipartFile excelFile);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

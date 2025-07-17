@@ -58,4 +58,19 @@ public interface SecurityHazardousChemicalInventoryMapper
      * @return 结果
      */
     public int deleteSecurityHazardousChemicalInventoryByIds(String[] ids);
+
+    /**
+     * 查询最近导入的记录（未关联ID的记录）
+     *
+     * @return 危险化学品台账集合
+     */
+    public List<SecurityHazardousChemicalInventory> selectLatestImportedRecords();
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

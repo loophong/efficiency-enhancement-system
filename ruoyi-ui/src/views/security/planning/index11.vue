@@ -91,6 +91,11 @@
           导入
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button @click="handleDownloadTemplate" type="info" plain icon="Download">
+          下载模板
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -152,21 +157,37 @@
 
             <!-- 文件上传弹窗 -->
     <el-dialog title="作废受控文件收回销毁登记表" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
-      <el-form :model="form" ref="form" label-width="90px">
+      <el-form :model="uploadForm" ref="uploadFormRef" label-width="90px">
         <el-form-item label="上传表类：">
           <span style="color: rgb(68, 140, 39);">作废受控文件收回销毁登记表</span>
-          <br>
         </el-form-item>
         <el-form-item label="上传文件：">
-          <input type="file" ref="inputFile" @change="checkFile"/>
-          <br>
+          <el-upload
+            ref="uploadRef"
+            :file-list="fileList"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+            :on-remove="handleFileRemove"
+            :limit="1"
+            accept=".xlsx,.xls,.xlsm"
+            drag
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+            <template #tip>
+              <div class="el-upload__tip">只能上传 xlsx/xls/xlsm 文件，且不超过 10MB</div>
+            </template>
+          </el-upload>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
-        <el-button @click="cancelUpload">取 消</el-button>
-        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
-        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
-      </span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="cancelUpload">取 消</el-button>
+          <el-button type="primary" @click="uploadFile" :loading="isLoading">
+            {{ isLoading ? '上传中' : '确 定' }}
+          </el-button>
+        </div>
+      </template>
     </el-dialog>
 
 
@@ -174,13 +195,16 @@
 </template>
 
 <script setup name="Obsoleteregister">
-import { listObsoleteregister, getObsoleteregister, delObsoleteregister, addObsoleteregister, updateObsoleteregister,importFile } from "@/api/security/obsoleteregister";
+import { listObsoleteregister, getObsoleteregister, delObsoleteregister, addObsoleteregister, updateObsoleteregister,importFile, downloadTemplate, listByRelatedId } from "@/api/security/obsoleteregister";
 
+const route = useRoute();
 const { proxy } = getCurrentInstance();
 // 上传文件
 const uploadDialogVisible = ref(false);
-const inputFile = ref(null);
+const uploadRef = ref(null);
+const fileList = ref([]);
 const isLoading = ref(false);
+const uploadForm = ref({});
 const obsoleteregisterList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -216,11 +240,32 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询作废受控文件收回销毁登记列表 */
 function getList() {
   loading.value = true;
-  listObsoleteregister(queryParams.value).then(response => {
-    obsoleteregisterList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
-  });
+
+  // 检查URL参数中是否有关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log('检测到关联ID参数:', relatedId);
+    // 使用关联ID进行筛选查询
+    listByRelatedId(relatedId).then(response => {
+      obsoleteregisterList.value = response.rows;
+      total.value = response.total;
+      loading.value = false;
+      proxy.$modal.msgInfo(`已筛选显示关联ID为 ${relatedId} 的数据，共 ${response.total} 条记录`);
+    }).catch(() => {
+      loading.value = false;
+    });
+  } else {
+    // 正常查询所有数据
+    listObsoleteregister(queryParams.value).then(response => {
+      obsoleteregisterList.value = response.rows;
+      total.value = response.total;
+      loading.value = false;
+    }).catch(() => {
+      loading.value = false;
+      proxy.$modal.msgError("查询数据失败");
+    });
+  }
 }
 
 // 取消按钮
@@ -327,8 +372,10 @@ function handleImport() {
 }
 /** 表单重置 */
 function resetUpload() {
-  if (inputFile.value) {
-    inputFile.value.value = "";
+  fileList.value = [];
+  uploadForm.value = {};
+  if (uploadRef.value) {
+    uploadRef.value.clearFiles();
   }
 }
 
@@ -338,43 +385,91 @@ function cancelUpload() {
   resetUpload();
 }
 
+/** 文件选择变化 */
+function handleFileChange(file, files) {
+  fileList.value = files;
+  const fileName = file.name;
+  const fileExt = fileName.split(".").pop().toLowerCase();
+
+  if (!["xlsx", "xls", "xlsm"].includes(fileExt)) {
+    proxy.$modal.msgError("只能上传 Excel 文件！");
+    handleFileRemove(file, files);
+    return false;
+  }
+
+  if (file.size > 10 * 1024 * 1024) {
+    proxy.$modal.msgError("文件大小不能超过 10MB！");
+    handleFileRemove(file, files);
+    return false;
+  }
+}
+
+/** 文件移除 */
+function handleFileRemove(file, files) {
+  fileList.value = files;
+}
+
 /** excel文件上传 */
 function uploadFile() {
-  if (inputFile.value && inputFile.value.files.length > 0) {
-    isLoading.value = true;
-    const file = inputFile.value.files[0];
-    console.log(inputFile.value);
-    console.log(file);
-    const formData = new FormData();
-
-    formData.append('excelFile', file);
-    importFile(formData).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
-      getList();
-      uploadDialogVisible.value = false;
-      isLoading.value = false;
-    }).catch(() => {
-      proxy.$modal.msgError("导入失败");
-      isLoading.value = false;
-    }).finally(() => {
-      resetUpload();
-    });
-  } else {
+  if (fileList.value.length === 0) {
     proxy.$modal.msgError("请选择文件");
+    return;
   }
-}
 
-/** 检查文件是否为excel */
-function checkFile() {
-  const file = inputFile.value.files[0];
-  const fileName = file.name;
-  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
+  isLoading.value = true;
+  const file = fileList.value[0].raw;
+  const formData = new FormData();
 
-  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
-    proxy.$modal.msgError("只能上传 Excel 文件！");
+  formData.append('excelFile', file);
+
+  importFile(formData).then(() => {
+    proxy.$modal.msgSuccess("导入成功");
+    getList();
+    uploadDialogVisible.value = false;
+  }).catch((error) => {
+    console.error("导入失败:", error);
+    proxy.$modal.msgError("导入失败，请检查文件格式和内容");
+  }).finally(() => {
+    isLoading.value = false;
     resetUpload();
+  });
+}
+
+/** 下载模板 */
+function handleDownloadTemplate() {
+  downloadTemplate().then(response => {
+    const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = '作废受控文件收回销毁登记导入模板.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    proxy.$modal.msgSuccess("模板下载成功");
+  }).catch(() => {
+    proxy.$modal.msgError("模板下载失败");
+  });
+}
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
   }
 }
 
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
 getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>

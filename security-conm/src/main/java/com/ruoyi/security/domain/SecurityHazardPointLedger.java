@@ -19,34 +19,37 @@ public class SecurityHazardPointLedger extends BaseEntity
     private Long id;
 
     /** 评价单元 */
-    @Excel(name = "评价单元")
+    @Excel(name = "序号", width = 10, prompt = "序号，可以为空，会自动继承上一行的值")
     private String evaluationUnit;
 
     /** 岗位 */
-    @Excel(name = "岗位")
+    @Excel(name = "岗位", width = 15, prompt = "岗位名称")
     private String position;
 
     /** 检测地点 */
-    @Excel(name = "检测地点")
+    @Excel(name = "检测地点", width = 20, prompt = "检测地点描述")
     private String inspectionLocation;
 
     /** 化学因素名称 */
-    @Excel(name = "化学因素名称")
+    @Excel(name = "化学因素名称", width = 25, prompt = "化学因素名称，如有多个请用逗号分隔")
     private String chemicalFactorName;
 
     /** 物理因素名称 */
-    @Excel(name = "物理因素名称")
+    @Excel(name = "物理因素名称", width = 25, prompt = "物理因素名称，如有多个请用逗号分隔")
     private String physicalFactorName;
 
     /** 生产性粉尘名称 */
-    @Excel(name = "生产性粉尘名称")
+    @Excel(name = "生产性粉尘名称", width = 25, prompt = "生产性粉尘名称，如有多个请用逗号分隔")
     private String productionDustName;
 
     /** 备注 */
-    @Excel(name = "备注")
+    @Excel(name = "备注", width = 30, prompt = "备注信息")
     private String remarks;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -114,9 +117,19 @@ public class SecurityHazardPointLedger extends BaseEntity
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -130,6 +143,7 @@ public class SecurityHazardPointLedger extends BaseEntity
             .append("physicalFactorName", getPhysicalFactorName())
             .append("productionDustName", getProductionDustName())
             .append("remarks", getRemarks())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

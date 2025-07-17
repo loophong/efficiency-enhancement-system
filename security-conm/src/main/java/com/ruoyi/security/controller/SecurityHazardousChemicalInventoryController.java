@@ -1,5 +1,6 @@
 package com.ruoyi.security.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,13 +47,13 @@ public class SecurityHazardousChemicalInventoryController extends BaseController
     @Log(title = "[危险化学物品上传]上传", businessType = BusinessType.IMPORT)
     @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
-        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+    public void importTable( MultipartFile file) {
+        log.info("传入的参数为 " + file.getName() + " 文件");
         try {
-            securityHazardousChemicalInventoryService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            securityHazardousChemicalInventoryService.readSalaryExcelToDB(file.getOriginalFilename(), file);
         } catch (Exception e) {
-            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            log.error("读取 " + file.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + file.getName() + " 文件失败");
         }
     }
 
@@ -79,6 +80,78 @@ public class SecurityHazardousChemicalInventoryController extends BaseController
         List<SecurityHazardousChemicalInventory> list = securityHazardousChemicalInventoryService.selectSecurityHazardousChemicalInventoryList(securityHazardousChemicalInventory);
         ExcelUtil<SecurityHazardousChemicalInventory> util = new ExcelUtil<SecurityHazardousChemicalInventory>(SecurityHazardousChemicalInventory.class);
         util.exportExcel(response, list, "危险化学品台账数据");
+    }
+
+    /**
+     * 下载危险化学品台账导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:inventory:import')")
+    @Log(title = "危险化学品台账模板", businessType = BusinessType.EXPORT)
+    @GetMapping("/template")
+    public void downloadTemplate(HttpServletResponse response)
+    {
+        // 创建示例数据
+        List<SecurityHazardousChemicalInventory> sampleData = createSampleData();
+
+        ExcelUtil<SecurityHazardousChemicalInventory> util = new ExcelUtil<SecurityHazardousChemicalInventory>(SecurityHazardousChemicalInventory.class);
+        util.exportExcel(response, sampleData, "危险化学品台账导入模板");
+    }
+
+    /**
+     * 创建示例数据
+     */
+    private List<SecurityHazardousChemicalInventory> createSampleData() {
+        List<SecurityHazardousChemicalInventory> sampleList = new ArrayList<>();
+
+        // 示例1：硫酸
+        SecurityHazardousChemicalInventory sample1 = new SecurityHazardousChemicalInventory();
+        sample1.setSubstanceName("硫酸");
+        sample1.setHazardousMaterialsNumber("81007");
+        sample1.setCasNumber("7664-93-9");
+        sample1.setFireDangerClass("乙类");
+        sample1.setAppearance("无色透明液体");
+        sample1.setMaxDesignStock("500L");
+        sample1.setAnnualUsage("2000L");
+        sample1.setDailyStock("50L");
+        sample1.setStorageLocation("化学品仓库A区");
+        sample1.setManagementResponsiblePerson("张三");
+        sample1.setContactNumber("13800138001");
+        sample1.setRemarks("强腐蚀性，需专人管理");
+        sampleList.add(sample1);
+
+        // 示例2：盐酸
+        SecurityHazardousChemicalInventory sample2 = new SecurityHazardousChemicalInventory();
+        sample2.setSubstanceName("盐酸");
+        sample2.setHazardousMaterialsNumber("81013");
+        sample2.setCasNumber("7647-01-0");
+        sample2.setFireDangerClass("乙类");
+        sample2.setAppearance("无色或微黄色液体");
+        sample2.setMaxDesignStock("300L");
+        sample2.setAnnualUsage("1200L");
+        sample2.setDailyStock("30L");
+        sample2.setStorageLocation("化学品仓库B区");
+        sample2.setManagementResponsiblePerson("李四");
+        sample2.setContactNumber("13800138002");
+        sample2.setRemarks("强酸性，避免与碱类接触");
+        sampleList.add(sample2);
+
+        // 示例3：丙酮
+        SecurityHazardousChemicalInventory sample3 = new SecurityHazardousChemicalInventory();
+        sample3.setSubstanceName("丙酮");
+        sample3.setHazardousMaterialsNumber("32067");
+        sample3.setCasNumber("67-64-1");
+        sample3.setFireDangerClass("甲类");
+        sample3.setAppearance("无色透明液体");
+        sample3.setMaxDesignStock("200L");
+        sample3.setAnnualUsage("800L");
+        sample3.setDailyStock("20L");
+        sample3.setStorageLocation("易燃品仓库");
+        sample3.setManagementResponsiblePerson("王五");
+        sample3.setContactNumber("13800138003");
+        sample3.setRemarks("易燃易挥发，远离火源");
+        sampleList.add(sample3);
+
+        return sampleList;
     }
 
     /**

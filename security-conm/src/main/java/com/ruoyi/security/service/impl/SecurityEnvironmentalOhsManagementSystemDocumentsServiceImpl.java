@@ -93,6 +93,50 @@ public class SecurityEnvironmentalOhsManagementSystemDocumentsServiceImpl implem
         return securityEnvironmentalOhsManagementSystemDocumentsMapper.deleteSecurityEnvironmentalOhsManagementSystemDocumentsById(id);
     }
 
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param fileManagementId 文件管理ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long fileManagementId) {
+        if (fileManagementId == null) {
+            log.warn("更新最近导入环境职业健康安全管理体系文件清单关联ID失败：fileManagementId为空");
+            return 0;
+        }
+
+        log.info("更新最近导入环境职业健康安全管理体系文件清单关联ID: {}", fileManagementId);
+
+        try {
+            // 方法一：直接使用批量更新SQL
+            int updatedCount = securityEnvironmentalOhsManagementSystemDocumentsMapper.updateLatestImportedRelatedId(fileManagementId);
+
+            if (updatedCount > 0) {
+                log.info("成功更新环境职业健康安全管理体系文件清单关联ID，共更新{}条记录", updatedCount);
+            } else {
+                log.info("没有找到需要更新关联ID的环境职业健康安全管理体系文件清单记录");
+
+                // 方法二：如果方法一未更新任何记录，则尝试获取最近导入的记录并逐个更新
+                List<SecurityEnvironmentalOhsManagementSystemDocuments> recentRecords =
+                    securityEnvironmentalOhsManagementSystemDocumentsMapper.selectLatestImportedRecords();
+
+                if (recentRecords != null && !recentRecords.isEmpty()) {
+                    for (SecurityEnvironmentalOhsManagementSystemDocuments record : recentRecords) {
+                        record.setRelatedId(fileManagementId);
+                        updatedCount += securityEnvironmentalOhsManagementSystemDocumentsMapper.updateSecurityEnvironmentalOhsManagementSystemDocuments(record);
+                    }
+                    log.info("使用方法二成功更新环境职业健康安全管理体系文件清单关联ID，共更新{}条记录", updatedCount);
+                }
+            }
+
+            return updatedCount;
+        } catch (Exception e) {
+            log.error("更新环境职业健康安全管理体系文件清单关联ID失败", e);
+            return 0;
+        }
+    }
+
     @Override
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
         try {

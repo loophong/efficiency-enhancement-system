@@ -54,3 +54,27 @@ export function importFile(formData) {
     }
   })
 }
+
+// 下载模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/obsoleteregister/downloadTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+// 根据相关id查询作废受控文件收回销毁登记列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/obsoleteregister/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}
+// //下载模板  
+// export function downloadTemplate() {
+//   return request({
+//     url: '/security/obsoleteregister/downloadTemplate',
+//     method: 'get'
+//   })
+// }

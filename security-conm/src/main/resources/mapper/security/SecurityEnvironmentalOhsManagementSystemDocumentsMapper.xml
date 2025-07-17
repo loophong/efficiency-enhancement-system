@@ -9,10 +9,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="systemName"    column="system_name"    />
         <result property="documentNumber"    column="document_number"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEnvironmentalOhsManagementSystemDocumentsVo">
-        select id, system_name, document_number, remarks from security_environmental_ohs_management_system_documents
+        select id, system_name, document_number, remarks, related_id from security_environmental_ohs_management_system_documents
     </sql>
 
     <select id="selectSecurityEnvironmentalOhsManagementSystemDocumentsList" parameterType="SecurityEnvironmentalOhsManagementSystemDocuments" resultMap="SecurityEnvironmentalOhsManagementSystemDocumentsResult">
@@ -21,6 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="systemName != null  and systemName != ''"> and system_name like concat('%', #{systemName}, '%')</if>
             <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
             <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -35,11 +37,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="systemName != null and systemName != ''">system_name,</if>
             <if test="documentNumber != null">document_number,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="systemName != null and systemName != ''">#{systemName},</if>
             <if test="documentNumber != null">#{documentNumber},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -49,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="systemName != null and systemName != ''">system_name = #{systemName},</if>
             <if test="documentNumber != null">document_number = #{documentNumber},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -58,9 +63,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityEnvironmentalOhsManagementSystemDocumentsByIds" parameterType="String">
-        delete from security_environmental_ohs_management_system_documents where id in 
+        delete from security_environmental_ohs_management_system_documents where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_environmental_ohs_management_system_documents
+        SET related_id = #{fileManagementId}
+        WHERE related_id IS NULL
+        AND id >= (
+            SELECT min_id FROM (
+                SELECT IFNULL(
+                    (
+                        SELECT MIN(id)
+                        FROM security_environmental_ohs_management_system_documents
+                        WHERE related_id IS NULL
+                    ),
+                    (SELECT MAX(id) FROM security_environmental_ohs_management_system_documents)
+                ) as min_id
+            ) as temp_table
+        )
+    </update>
+
+    <!-- 查询最近导入的记录 -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityEnvironmentalOhsManagementSystemDocumentsResult">
+        <include refid="selectSecurityEnvironmentalOhsManagementSystemDocumentsVo"/>
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 1000
+    </select>
 </mapper>

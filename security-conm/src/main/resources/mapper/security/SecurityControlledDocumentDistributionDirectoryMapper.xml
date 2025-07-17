@@ -9,18 +9,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="fileName"    column="file_name"    />
         <result property="documentNumber"    column="document_number"    />
         <result property="receivingUnit"    column="receiving_unit"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityControlledDocumentDistributionDirectoryVo">
-        select id, file_name, document_number, receiving_unit from security_controlled_document_distribution_directory
+        select id, file_name, document_number, receiving_unit, related_id from security_controlled_document_distribution_directory
     </sql>
 
     <select id="selectSecurityControlledDocumentDistributionDirectoryList" parameterType="SecurityControlledDocumentDistributionDirectory" resultMap="SecurityControlledDocumentDistributionDirectoryResult">
         <include refid="selectSecurityControlledDocumentDistributionDirectoryVo"/>
-        <where>  
+        <where>
             <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
             <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
             <if test="receivingUnit != null  and receivingUnit != ''"> and receiving_unit = #{receivingUnit}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -35,11 +37,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileName != null and fileName != ''">file_name,</if>
             <if test="documentNumber != null">document_number,</if>
             <if test="receivingUnit != null">receiving_unit,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fileName != null and fileName != ''">#{fileName},</if>
             <if test="documentNumber != null">#{documentNumber},</if>
             <if test="receivingUnit != null">#{receivingUnit},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 <!--    <insert id="batchInsert">-->
@@ -54,10 +58,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--    </insert>-->
 
     <insert id="batchInsert" parameterType="list">
-        insert into security_controlled_document_distribution_directory(id,file_name,document_number,receiving_unit)
+        insert into security_controlled_document_distribution_directory(file_name,document_number,receiving_unit,related_id)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.id}, #{item.fileName}, #{item.documentNumber}, #{item.receivingUnit})
+            (#{item.fileName}, #{item.documentNumber}, #{item.receivingUnit}, #{item.relatedId})
         </foreach>
     </insert>
 
@@ -67,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
             <if test="documentNumber != null">document_number = #{documentNumber},</if>
             <if test="receivingUnit != null">receiving_unit = #{receivingUnit},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -76,9 +81,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityControlledDocumentDistributionDirectoryByIds" parameterType="String">
-        delete from security_controlled_document_distribution_directory where id in 
+        delete from security_controlled_document_distribution_directory where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 查询最近导入的记录 -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityControlledDocumentDistributionDirectoryResult">
+        <include refid="selectSecurityControlledDocumentDistributionDirectoryVo"/>
+        where related_id is null
+        order by id desc
+        limit 1000
+    </select>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_controlled_document_distribution_directory
+        set related_id = #{relatedId}
+        where related_id is null
+        order by id desc
+        limit 1000
+    </update>
 </mapper>

@@ -13,10 +13,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="physicalFactorName"    column="physical_factor_name"    />
         <result property="productionDustName"    column="production_dust_name"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityHazardPointLedgerVo">
-        select id, evaluation_unit, position, inspection_location, chemical_factor_name, physical_factor_name, production_dust_name, remarks from security_hazard_point_ledger
+        select id, evaluation_unit, position, inspection_location, chemical_factor_name, physical_factor_name, production_dust_name, remarks, related_id from security_hazard_point_ledger
     </sql>
 
     <select id="selectSecurityHazardPointLedgerList" parameterType="SecurityHazardPointLedger" resultMap="SecurityHazardPointLedgerResult">
@@ -46,6 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="physicalFactorName != null">physical_factor_name,</if>
             <if test="productionDustName != null">production_dust_name,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="evaluationUnit != null and evaluationUnit != ''">#{evaluationUnit},</if>
@@ -55,6 +57,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="physicalFactorName != null">#{physicalFactorName},</if>
             <if test="productionDustName != null">#{productionDustName},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -68,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="physicalFactorName != null">physical_factor_name = #{physicalFactorName},</if>
             <if test="productionDustName != null">production_dust_name = #{productionDustName},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -77,9 +81,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityHazardPointLedgerByIds" parameterType="String">
-        delete from security_hazard_point_ledger where id in 
+        delete from security_hazard_point_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectByRelatedId" parameterType="Long" resultMap="SecurityHazardPointLedgerResult">
+        <include refid="selectSecurityHazardPointLedgerVo"/>
+        WHERE related_id = #{relatedId}
+        ORDER BY id ASC
+    </select>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_hazard_point_ledger
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 100
+    </update>
 </mapper>

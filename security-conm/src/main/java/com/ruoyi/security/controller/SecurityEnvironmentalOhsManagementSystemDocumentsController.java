@@ -109,13 +109,25 @@ public class SecurityEnvironmentalOhsManagementSystemDocumentsController extends
 
     @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
-        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+    public AjaxResult importTable(MultipartFile file) {
+        log.info("传入的参数为 " + file.getName() + " 文件");
         try {
-            securityEnvironmentalOhsManagementSystemDocumentsService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            securityEnvironmentalOhsManagementSystemDocumentsService.readSalaryExcelToDB(file.getOriginalFilename(), file);
+            return AjaxResult.success("导入成功");
         } catch (Exception e) {
-            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            log.error("读取 " + file.getName() + " 文件失败, 原因: {}", e.getMessage());
+            return AjaxResult.error("读取 " + file.getName() + " 文件失败：" + e.getMessage());
         }
+    }
+
+    /**
+     * 下载导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:OhsDocuments:export')")
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityEnvironmentalOhsManagementSystemDocuments> util = new ExcelUtil<SecurityEnvironmentalOhsManagementSystemDocuments>(SecurityEnvironmentalOhsManagementSystemDocuments.class);
+        util.importTemplateExcel(response, "环境职业健康安全管理体系文件清单数据");
     }
 }

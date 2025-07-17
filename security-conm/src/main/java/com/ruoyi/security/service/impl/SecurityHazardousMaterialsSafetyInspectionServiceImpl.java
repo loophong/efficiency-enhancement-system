@@ -3,6 +3,7 @@ package com.ruoyi.security.service.impl;
 import java.util.List;
 
 import com.alibaba.excel.EasyExcel;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.security.listener.HazardousMaterialsSafetyInspectioListener;
 import com.ruoyi.security.listener.SecurityEnvironmentalOhsRecordListListener;
 import lombok.extern.slf4j.Slf4j;
@@ -116,6 +117,32 @@ public class SecurityHazardousMaterialsSafetyInspectionServiceImpl implements IS
             e.printStackTrace();
             log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
 //            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId) {
+        if (relatedId == null) {
+            log.warn("更新最近导入危化品检查记录关联ID失败：relatedId为空");
+            return 0;
+        }
+
+        log.info("更新最近导入危化品检查记录关联ID: {}", relatedId);
+
+        try {
+            // 直接使用批量更新SQL
+            int updatedCount = securityHazardousMaterialsSafetyInspectionMapper.updateLatestImportedRelatedId(relatedId);
+            log.info("批量更新危化品检查记录关联ID成功，更新记录数: {}", updatedCount);
+            return updatedCount;
+        } catch (Exception e) {
+            log.error("更新危化品检查记录关联ID失败: {}", e.getMessage(), e);
+            return 0;
         }
     }
 }

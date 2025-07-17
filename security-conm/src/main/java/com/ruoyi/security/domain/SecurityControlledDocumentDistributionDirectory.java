@@ -31,7 +31,10 @@ public class SecurityControlledDocumentDistributionDirectory extends BaseEntity
     @ExcelProperty(value = "接收单位")
     private String receivingUnit;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -63,9 +66,18 @@ public class SecurityControlledDocumentDistributionDirectory extends BaseEntity
         this.receivingUnit = receivingUnit;
     }
 
-    public String getReceivingUnit() 
+    public String getReceivingUnit()
     {
         return receivingUnit;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -75,6 +87,7 @@ public class SecurityControlledDocumentDistributionDirectory extends BaseEntity
             .append("fileName", getFileName())
             .append("documentNumber", getDocumentNumber())
             .append("receivingUnit", getReceivingUnit())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

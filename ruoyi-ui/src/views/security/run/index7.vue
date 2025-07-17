@@ -94,10 +94,28 @@
           v-hasPermi="['security:hazardpointledger:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:hazardpointledger:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          @click="handleDownloadTemplate"
+          v-hasPermi="['security:hazardpointledger:list']"
+        >模板下载</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="hazardpointledgerList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="hazardpointledgerList" @selection-change="handleSelectionChange" :span-method="arraySpanMethod">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
       <el-table-column label="评价单元" align="center" prop="evaluationUnit" />
@@ -155,13 +173,49 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <span>仅允许导入xls、xlsx格式文件。请先下载模板按照格式填写数据。</span>
+            <br>
+            <span style="color: #909399; font-size: 12px;">注意：导入时会直接添加所有数据，包括重复数据。</span>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Hazardpointledger">
-import { listHazardpointledger, getHazardpointledger, delHazardpointledger, addHazardpointledger, updateHazardpointledger } from "@/api/security/hazardpointledger";
+import { listHazardpointledger, getHazardpointledger, delHazardpointledger, addHazardpointledger, updateHazardpointledger, downloadTemplate, listByRelatedId } from "@/api/security/hazardpointledger";
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
+import { useRoute } from 'vue-router';
 
 const { proxy } = getCurrentInstance();
+const route = useRoute();
 
 const hazardpointledgerList = ref([]);
 const open = ref(false);
@@ -172,6 +226,24 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 导入参数
+const upload = reactive({
+  // 是否显示弹出层（导入）
+  open: false,
+  // 弹出层标题（导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/hazardpointledger/importData"
+});
+
+// 合并单元格相关数据
+const spanArr = ref([]);
+const pos = ref(0);
 
 const data = reactive({
   form: {},
@@ -207,6 +279,8 @@ function getList() {
     hazardpointledgerList.value = response.rows;
     total.value = response.total;
     loading.value = false;
+    // 处理数据，为合并单元格做准备
+    processDataForMerge();
   });
 }
 
@@ -307,5 +381,536 @@ function handleExport() {
   }, `hazardpointledger_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "有点害台账导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download('security/hazardpointledger/importTemplate', {}, `有点害台账导入模板_${new Date().getTime()}.xlsx`, 'post');
+}
+
+/** 文件上传中处理 */
+const handleFileUploadProgress = (event, file, fileList) => {
+  upload.isUploading = true;
+};
+
+/** 文件上传成功处理 */
+const handleFileSuccess = (response, file, fileList) => {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+};
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
+}
+
+// 检查关联ID参数
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    loading.value = true;
+    // 使用关联ID进行筛选查询
+    listByRelatedId(relatedId).then(response => {
+      hazardpointledgerList.value = response.rows;
+      total.value = response.total;
+      loading.value = false;
+      // 处理数据，为合并单元格做准备
+      processDataForMerge();
+      proxy.$modal.msgSuccess(`已加载关联文件数据，共 ${response.total} 条记录`);
+    }).catch(() => {
+      loading.value = false;
+      proxy.$modal.msgError("加载关联数据失败");
+    });
+  }
+}
+
+/**
+ * 处理数据，为合并单元格做准备
+ */
+function processDataForMerge() {
+  // 重置合并数组
+  spanArr.value = [];
+  pos.value = 0;
+
+  if (!hazardpointledgerList.value || hazardpointledgerList.value.length === 0) {
+    return;
+  }
+
+  // 计算评价单元的合并信息
+  calculateSpanArray();
+}
+
+/**
+ * 计算合并数组 - 三级合并版本
+ * 层次：评价单元(序号) > 岗位 > 检测地点
+ */
+function calculateSpanArray() {
+  const data = hazardpointledgerList.value;
+  spanArr.value = [];
+
+  if (!data || data.length === 0) {
+    return;
+  }
+
+  console.log('开始计算三级合并，数据条数:', data.length);
+
+  // 初始化合并数组
+  for (let i = 0; i < data.length; i++) {
+    spanArr.value.push({
+      evaluationUnit: 1,
+      position: 1,
+      inspectionLocation: 1
+    });
+  }
+
+  // 计算评价单元合并
+  for (let i = 0; i < data.length; i++) {
+    if (spanArr.value[i].evaluationUnit === 0) continue;
+
+    let count = 1;
+    const currentValue = data[i].evaluationUnit || '';
+
+    // 向下查找相同的评价单元
+    for (let j = i + 1; j < data.length; j++) {
+      const nextValue = data[j].evaluationUnit || '';
+      // 检查是否为相同值或空值（空值应该继承上一行）
+      if (currentValue === nextValue ||
+          (isEmptyOrMergedValue(nextValue) && currentValue) ||
+          (!nextValue && currentValue)) {
+        count++;
+        spanArr.value[j].evaluationUnit = 0;
+      } else {
+        break;
+      }
+    }
+
+    spanArr.value[i].evaluationUnit = count;
+  }
+
+  // 计算岗位合并
+  for (let i = 0; i < data.length; i++) {
+    if (spanArr.value[i].position === 0) continue;
+
+    let count = 1;
+    const currentEvaluationUnit = data[i].evaluationUnit || '';
+    const currentPosition = data[i].position || '';
+
+    // 向下查找相同评价单元内的相同岗位
+    for (let j = i + 1; j < data.length; j++) {
+      const nextEvaluationUnit = data[j].evaluationUnit || '';
+      const nextPosition = data[j].position || '';
+
+      // 必须在同一个评价单元内
+      if (currentEvaluationUnit === nextEvaluationUnit ||
+          (isEmptyOrMergedValue(nextEvaluationUnit) && currentEvaluationUnit) ||
+          (!nextEvaluationUnit && currentEvaluationUnit)) {
+        // 检查岗位是否相同
+        if (currentPosition === nextPosition ||
+            (isEmptyOrMergedValue(nextPosition) && currentPosition) ||
+            (!nextPosition && currentPosition)) {
+          count++;
+          spanArr.value[j].position = 0;
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+
+    spanArr.value[i].position = count;
+  }
+
+  // 计算检测地点合并
+  for (let i = 0; i < data.length; i++) {
+    if (spanArr.value[i].inspectionLocation === 0) continue;
+
+    let count = 1;
+    const currentEvaluationUnit = data[i].evaluationUnit || '';
+    const currentPosition = data[i].position || '';
+    const currentInspectionLocation = data[i].inspectionLocation || '';
+
+    // 向下查找相同评价单元和岗位内的相同检测地点
+    for (let j = i + 1; j < data.length; j++) {
+      const nextEvaluationUnit = data[j].evaluationUnit || '';
+      const nextPosition = data[j].position || '';
+      const nextInspectionLocation = data[j].inspectionLocation || '';
+
+      // 必须在同一个评价单元和岗位内
+      if ((currentEvaluationUnit === nextEvaluationUnit ||
+           (isEmptyOrMergedValue(nextEvaluationUnit) && currentEvaluationUnit) ||
+           (!nextEvaluationUnit && currentEvaluationUnit)) &&
+          (currentPosition === nextPosition ||
+           (isEmptyOrMergedValue(nextPosition) && currentPosition) ||
+           (!nextPosition && currentPosition))) {
+        // 检查检测地点是否相同
+        if (currentInspectionLocation === nextInspectionLocation ||
+            (isEmptyOrMergedValue(nextInspectionLocation) && currentInspectionLocation) ||
+            (!nextInspectionLocation && currentInspectionLocation)) {
+          count++;
+          spanArr.value[j].inspectionLocation = 0;
+        } else {
+          break;
+        }
+      } else {
+        break;
+      }
+    }
+
+    spanArr.value[i].inspectionLocation = count;
+  }
+
+  // 输出调试信息
+  console.log('合并计算完成，合并数组:', spanArr.value);
+  console.log('数据预览:', data.slice(0, 5).map(item => ({
+    evaluationUnit: item.evaluationUnit,
+    position: item.position,
+    inspectionLocation: item.inspectionLocation
+  })));
+}
+
+/**
+ * 检测是否为空值或合并单元格
+ */
+function isEmptyOrMergedValue(value) {
+  if (!value) return true;
+
+  const trimmedValue = String(value).trim();
+
+  // 检查各种空值情况
+  return trimmedValue === '' ||
+         trimmedValue === 'null' ||
+         trimmedValue === 'NULL' ||
+         trimmedValue === '-' ||
+         trimmedValue === 'N/A' ||
+         trimmedValue === 'n/a';
+}
+
+/**
+ * 表格合并单元格方法
+ */
+function arraySpanMethod({ rowIndex, columnIndex }) {
+  if (!spanArr.value || spanArr.value.length === 0 || rowIndex >= spanArr.value.length) {
+    return [1, 1];
+  }
+
+  const spanInfo = spanArr.value[rowIndex];
+  if (!spanInfo) {
+    return [1, 1];
+  }
+
+  // 评价单元列（索引2）
+  if (columnIndex === 2) {
+    return [spanInfo.evaluationUnit, 1];
+  }
+
+  // 岗位列（索引3）
+  if (columnIndex === 3) {
+    return [spanInfo.position, 1];
+  }
+
+  // 检测地点列（索引4）
+  if (columnIndex === 4) {
+    return [spanInfo.inspectionLocation, 1];
+  }
+
+  return [1, 1];
+}
+
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
+    getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>
+
+<style scoped>
+/* 搜索区域样式 */
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-card {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-icon {
+  color: #409eff;
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.search-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.search-tips {
+  display: flex;
+  gap: 8px;
+}
+
+.search-form {
+  margin-top: 10px;
+}
+
+.search-buttons {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ebeef5;
+}
+
+.search-btn {
+  margin-right: 12px;
+  padding: 10px 24px;
+  font-weight: 500;
+}
+
+.reset-btn {
+  margin-right: 12px;
+  padding: 10px 24px;
+}
+
+.tips-btn {
+  padding: 10px 20px;
+}
+
+/* 表格区域样式 */
+.table-container {
+  margin-top: 20px;
+}
+
+.table-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.table-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-icon {
+  color: #409eff;
+  font-size: 18px;
+}
+
+.table-title span {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.data-count {
+  margin-left: 12px;
+}
+
+/* 美化表格样式 */
+.beautiful-table {
+  width: 100%;
+}
+
+.beautiful-table :deep(.el-table__header-wrapper) {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.beautiful-table :deep(.el-table__header th) {
+  background: transparent !important;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.beautiful-table :deep(.el-table__row) {
+  transition: all 0.3s ease;
+}
+
+.beautiful-table :deep(.el-table__row:hover) {
+  background-color: #f8f9fa !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.beautiful-table :deep(.el-table__row--striped) {
+  background-color: #fafbfc;
+}
+
+.beautiful-table :deep(.el-table__row--striped:hover) {
+  background-color: #f8f9fa !important;
+}
+
+/* 单元格内容样式 */
+.cell-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cell-icon {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.factor-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.factor-icon {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.factor-tag {
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.empty-text {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.remarks-content {
+  max-width: 150px;
+  word-break: break-word;
+}
+
+.remarks-text {
+  color: #495057;
+  line-height: 1.4;
+}
+
+/* 操作按钮样式 */
+.operation-column {
+  background-color: #f8f9fa !important;
+}
+
+.operation-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.op-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.op-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .search-form :deep(.el-row) {
+    margin-bottom: 10px;
+  }
+
+  .search-form :deep(.el-col) {
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-form :deep(.el-col) {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  .operation-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .op-btn {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* 加载状态优化 */
+.beautiful-table :deep(.el-loading-mask) {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(2px);
+}
+
+/* 合并单元格样式优化 */
+.beautiful-table :deep(.el-table__cell) {
+  border-right: 1px solid #ebeef5;
+}
+
+.beautiful-table :deep(.el-table__cell:last-child) {
+  border-right: none;
+}
+
+/* 选择框样式 */
+.beautiful-table :deep(.el-checkbox) {
+  transform: scale(1.1);
+}
+
+.beautiful-table :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
+  background-color: #409eff;
+  border-color: #409eff;
+}
+
+/* 标签样式优化 */
+.beautiful-table :deep(.el-tag) {
+  border: none;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.beautiful-table :deep(.el-tag--info) {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.beautiful-table :deep(.el-tag--warning) {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.beautiful-table :deep(.el-tag--success) {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+</style>

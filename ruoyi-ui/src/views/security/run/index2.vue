@@ -49,6 +49,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="是否合规" prop="isCompliant">
+        <el-input
+          v-model="queryParams.isCompliant"
+          placeholder="请输入是否合规"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -93,6 +101,29 @@
           @click="handleExport"
           v-hasPermi="['security:hazardousledger:export']"
         >导出</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <!-- 使用通用Excel导入组件 -->
+        <excel-import
+          import-url="/security/hazardousledger/import"
+          module-name="危化品处理台账"
+          module-code="security/hazardousledger"
+          button-text="导入"
+          button-type="success"
+          button-plain
+          button-icon="Upload"
+          @success="getList"
+        />
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            v-hasPermi="['security:hazardousledger:import']"
+        >模板下载
+        </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -150,6 +181,9 @@
         <el-form-item label="处理方法" prop="handlingMethod">
           <el-input v-model="form.handlingMethod" placeholder="请输入处理方法" />
         </el-form-item>
+        <el-form-item label="是否合规" prop="isCompliant">
+          <el-input v-model="form.isCompliant" placeholder="请输入是否合规（如：是、否、合规、不合规等）" />
+        </el-form-item>
         <el-form-item label="处理人" prop="handler">
           <el-input v-model="form.handler" placeholder="请输入处理人" />
         </el-form-item>
@@ -166,8 +200,10 @@
 
 <script setup name="Hazardousledger">
 import { listHazardousledger, getHazardousledger, delHazardousledger, addHazardousledger, updateHazardousledger } from "@/api/security/hazardousledger";
+import ExcelImport from "@/components/ExcelImport/index.vue";
 
 const { proxy } = getCurrentInstance();
+const route = useRoute();
 
 const hazardousledgerList = ref([]);
 const open = ref(false);
@@ -190,7 +226,8 @@ const data = reactive({
     handlingQuantity: null,
     handlingMethod: null,
     isCompliant: null,
-    handler: null
+    handler: null,
+    relatedId: null
   },
   rules: {
     handlingTime: [
@@ -207,9 +244,14 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询危化品处理台账列表 */
 function getList() {
   loading.value = true;
+  console.log('前端查询参数:', queryParams.value);
   listHazardousledger(queryParams.value).then(response => {
+    console.log('后端返回数据:', response);
     hazardousledgerList.value = response.rows;
     total.value = response.total;
+    loading.value = false;
+  }).catch(error => {
+    console.error('查询失败:', error);
     loading.value = false;
   });
 }
@@ -257,6 +299,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+    if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加危化品处理台账";
 }
@@ -311,5 +356,33 @@ function handleExport() {
   }, `hazardousledger_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 模板下载按钮操作 */
+function handleDownloadTemplate() {
+  // 使用 proxy.download 方法，指定 GET 请求
+  proxy.download('security/hazardousledger/template', {}, `危化品处理台账导入模板_${new Date().getTime()}.xlsx`, 'get');
+}
+
+
+
+// 检查关联ID参数
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
+  }
+}
+
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
+    getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>

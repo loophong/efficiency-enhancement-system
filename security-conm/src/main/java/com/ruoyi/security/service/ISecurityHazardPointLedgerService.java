@@ -53,9 +53,35 @@ public interface ISecurityHazardPointLedgerService
 
     /**
      * 删除有点害台账信息
-     * 
+     *
      * @param id 有点害台账主键
      * @return 结果
      */
     public int deleteSecurityHazardPointLedgerById(Long id);
+
+    /**
+     * 根据关联ID查询有点害台账列表
+     *
+     * @param relatedId 关联ID
+     * @return 有点害台账集合
+     */
+    public List<SecurityHazardPointLedger> selectByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
+
+    /**
+     * 导入有点害台账数据
+     *
+     * @param hazardPointLedgerList 有点害台账数据列表
+     * @param isUpdateSupport 是否更新支持
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importHazardPointLedgerList(List<SecurityHazardPointLedger> hazardPointLedgerList, Boolean isUpdateSupport, String operName);
 }

@@ -44,13 +44,20 @@ public class SecurityHazardousMaterialsHandlingLedger extends BaseEntity
 
     /** 是否合规 */
     @Excel(name = "是否合规")
-    private Integer isCompliant;
+    private String isCompliant;
 
     /** 处理人 */
     @Excel(name = "处理人")
     private String handler;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public SecurityHazardousMaterialsHandlingLedger() {
+        // 默认构造函数，不设置默认值，避免影响查询条件
+    }
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -104,12 +111,12 @@ public class SecurityHazardousMaterialsHandlingLedger extends BaseEntity
     {
         return handlingMethod;
     }
-    public void setIsCompliant(Integer isCompliant) 
+    public void setIsCompliant(String isCompliant)
     {
         this.isCompliant = isCompliant;
     }
 
-    public Integer getIsCompliant() 
+    public String getIsCompliant()
     {
         return isCompliant;
     }
@@ -118,9 +125,19 @@ public class SecurityHazardousMaterialsHandlingLedger extends BaseEntity
         this.handler = handler;
     }
 
-    public String getHandler() 
+    public String getHandler()
     {
         return handler;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -134,6 +151,7 @@ public class SecurityHazardousMaterialsHandlingLedger extends BaseEntity
             .append("handlingMethod", getHandlingMethod())
             .append("isCompliant", getIsCompliant())
             .append("handler", getHandler())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

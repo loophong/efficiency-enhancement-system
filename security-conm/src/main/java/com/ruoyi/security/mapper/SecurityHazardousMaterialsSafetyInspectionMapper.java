@@ -53,11 +53,26 @@ public interface SecurityHazardousMaterialsSafetyInspectionMapper
 
     /**
      * 批量删除危化品检查记录
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityHazardousMaterialsSafetyInspectionByIds(Long[] ids);
+
+    /**
+     * 查询最近导入的记录（未关联ID的记录）
+     *
+     * @return 危化品检查记录集合
+     */
+    public List<SecurityHazardousMaterialsSafetyInspection> selectLatestImportedRecords();
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 
     void batchInsert(List<SecurityHazardousMaterialsSafetyInspection> List);
 }

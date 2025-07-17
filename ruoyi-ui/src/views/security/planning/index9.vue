@@ -75,12 +75,22 @@
           @success="getList"
         />
       </el-col>
+      <!-- 添加下载模板按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Document"
+          @click="handleDownloadTemplate"
+          v-hasPermi="['security:OhsDocuments:export']"
+        >下载模板</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="OhsDocumentsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="制度名称" align="center" prop="systemName" />
       <el-table-column label="编号" align="center" prop="documentNumber" />
       <el-table-column label="备注" align="center" prop="remarks" />
@@ -126,7 +136,7 @@
 <script setup name="OhsDocuments">
 import { listOhsDocuments, getOhsDocuments, delOhsDocuments, addOhsDocuments, updateOhsDocuments } from "@/api/security/OhsDocuments";
 import ExcelImport from "@/components/ExcelImport/index.vue";
-
+const route = useRoute();
 const { proxy } = getCurrentInstance();
 const OhsDocumentsList = ref([]);
 const open = ref(false);
@@ -259,5 +269,28 @@ function handleExport() {
   }, `OhsDocuments_${new Date().getTime()}.xlsx`)
 }
 
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download('security/OhsDocuments/importTemplate', {}, `OhsDocuments_template_${new Date().getTime()}.xlsx`);
+}
+
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
+  }
+}
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
 getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>

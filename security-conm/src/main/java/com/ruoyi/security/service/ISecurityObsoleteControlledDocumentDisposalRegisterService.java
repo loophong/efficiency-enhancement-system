@@ -2,6 +2,7 @@ package com.ruoyi.security.service;
 
 import java.util.List;
 import com.ruoyi.security.domain.SecurityObsoleteControlledDocumentDisposalRegister;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -61,4 +62,12 @@ public interface ISecurityObsoleteControlledDocumentDisposalRegisterService
     public int deleteSecurityObsoleteControlledDocumentDisposalRegisterById(Long id);
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

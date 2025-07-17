@@ -42,3 +42,29 @@ export function delOccupationaPersonnelList(id) {
     method: 'delete'
   })
 }
+
+// 导入危险职业岗位人员清单及管理台帐
+export function importOccupationaPersonnelList(data) {
+  return request({
+    url: '/security/OccupationaPersonnelList/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载导入模板（使用简单稳定的模板）
+export function downloadTemplate() {
+  return request({
+    url: '/security/OccupationaPersonnelList/importTemplateSimple',
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+
+// 根据关联ID查询危险职业岗位人员清单及管理台帐列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: `/security/OccupationaPersonnelList/listByRelatedId/${relatedId}`,
+    method: 'get'
+  })
+}

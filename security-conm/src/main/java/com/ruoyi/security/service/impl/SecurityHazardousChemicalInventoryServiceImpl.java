@@ -2,6 +2,7 @@ package com.ruoyi.security.service.impl;
 
 import java.util.List;
 import com.alibaba.excel.EasyExcel;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.security.listener.HazardousChemicalInventoryListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +106,7 @@ public class SecurityHazardousChemicalInventoryServiceImpl implements ISecurityH
 
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecurityHazardousChemicalInventory.class,
-                        new HazardousChemicalInventoryListener(securityHazardousChemicalInventoryMapper)).headRowNumber(4).sheet().doRead();
+                        new HazardousChemicalInventoryListener(securityHazardousChemicalInventoryMapper)).headRowNumber(2).sheet().doRead();
 
                 log.info("读取文件成功: {}", fileName);
 
@@ -118,6 +119,55 @@ public class SecurityHazardousChemicalInventoryServiceImpl implements ISecurityH
             e.printStackTrace();
             log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
 //            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
+        }
+    }
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId) {
+        if (relatedId == null) {
+            log.warn("更新最近导入危险化学品台账关联ID失败：relatedId为空");
+            return 0;
+        }
+
+        log.info("更新最近导入危险化学品台账关联ID: {}", relatedId);
+
+        try {
+            // 方法一：直接使用批量更新SQL
+            int updatedCount = securityHazardousChemicalInventoryMapper.updateLatestImportedRelatedId(relatedId);
+            log.info("批量更新危险化学品台账关联ID成功，更新记录数: {}", updatedCount);
+            return updatedCount;
+        } catch (Exception e) {
+            log.error("更新危险化学品台账关联ID失败: {}", e.getMessage(), e);
+
+            // 方法二：如果批量更新失败，尝试逐条更新
+            try {
+                List<SecurityHazardousChemicalInventory> recentRecords =
+                        securityHazardousChemicalInventoryMapper.selectLatestImportedRecords();
+
+                if (recentRecords == null || recentRecords.isEmpty()) {
+                    log.info("没有找到需要更新关联ID的危险化学品台账记录");
+                    return 0;
+                }
+
+                int updatedCount = 0;
+                for (SecurityHazardousChemicalInventory record : recentRecords) {
+                    record.setRelatedId(relatedId);
+                    record.setUpdateTime(DateUtils.getNowDate());
+                    updatedCount += securityHazardousChemicalInventoryMapper.updateSecurityHazardousChemicalInventory(record);
+                }
+
+                log.info("逐条更新危险化学品台账关联ID成功，更新记录数: {}", updatedCount);
+                return updatedCount;
+            } catch (Exception ex) {
+                log.error("逐条更新危险化学品台账关联ID也失败: {}", ex.getMessage(), ex);
+                return 0;
+            }
         }
     }
 }

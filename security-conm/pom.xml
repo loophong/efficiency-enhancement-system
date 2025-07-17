@@ -9,7 +9,7 @@
         <version>3.8.9</version>
     </parent>
 
-    <artifactId>security-conm</artifactId>
+    <artifactId>heli-security</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

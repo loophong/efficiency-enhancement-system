@@ -112,13 +112,38 @@ public class SecurityControlledDocumentDistributionDirectoryController extends B
 
     @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
+    public AjaxResult importTable( MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {
             securityControlledDocumentDistributionDirectoryService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            return AjaxResult.success("导入成功");
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            return AjaxResult.error("读取 " + excelFile.getName() + " 文件失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 下载受控文件发放目录导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityControlledDocumentDistributionDirectory> util = new ExcelUtil<SecurityControlledDocumentDistributionDirectory>(SecurityControlledDocumentDistributionDirectory.class);
+        util.importTemplateExcel(response, "受控文件发放目录数据");
+    }
+
+    /**
+     * 根据关联ID查询受控文件发放目录列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:controlleddirectory:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        startPage();
+        SecurityControlledDocumentDistributionDirectory query = new SecurityControlledDocumentDistributionDirectory();
+        query.setRelatedId(relatedId);
+        List<SecurityControlledDocumentDistributionDirectory> list = securityControlledDocumentDistributionDirectoryService.selectSecurityControlledDocumentDistributionDirectoryList(query);
+        return getDataTable(list);
     }
 }

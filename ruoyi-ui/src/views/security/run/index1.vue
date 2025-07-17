@@ -9,22 +9,22 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="检查人" prop="inspecter">
+      <!-- <el-form-item label="检查人" prop="inspecter">
         <el-input
           v-model="queryParams.inspecter"
           placeholder="请输入检查人"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="检查时间" prop="inspectionTime">
+      </el-form-item> -->
+      <!-- <el-form-item label="检查时间" prop="inspectionTime">
         <el-date-picker clearable
           v-model="queryParams.inspectionTime"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择检查时间">
         </el-date-picker>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -71,8 +71,26 @@
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button @click="handleImport" type="success" plain icon="Upload">
-          导入
+        <!-- 使用通用Excel导入组件替换原有导入功能 -->
+        <excel-import
+          import-url="/security/hazardousinspection/import"
+          module-name="危化品检查记录"
+          module-code="security/hazardousinspection"
+          button-text="导入"
+          button-type="success"
+          button-plain
+          button-icon="Upload"
+          @success="getList"
+        />
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            v-hasPermi="['security:hazardousinspection:import']"
+        >模板下载
         </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -84,12 +102,12 @@
       <el-table-column label="检查项目" align="center" prop="inspectionItem" />
       <el-table-column label="检查标准" align="center" prop="inspectionStandard" />
       <el-table-column label="检查记录" align="center" prop="inspectionRecord" />
-      <el-table-column label="检查人" align="center" prop="inspecter" />
+      <!-- <el-table-column label="检查人" align="center" prop="inspecter" />
       <el-table-column label="检查时间" align="center" prop="inspectionTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.inspectionTime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:hazardousinspection:edit']">修改</el-button>
@@ -106,30 +124,6 @@
       @pagination="getList"
     />
 
-
-       <!-- 文件上传弹窗 -->
-       <el-dialog title="危险化学品检查记录" v-model="uploadDialogVisible" width="35%" @close="resetUpload">
-      <el-form :model="form" ref="form" label-width="90px">
-        <el-form-item label="上传表类：">
-          <span style="color: rgb(68, 140, 39);">危险化学品检查记录</span>
-          <br>
-        </el-form-item>
-
-        <el-form-item label="上传文件：">
-          <input type="file" ref="inputFile" @change="checkFile"/>
-          <br>
-        </el-form-item>
-      </el-form>
-
-      <span slot="footer" class="dialog-footer" style="display: flex; justify-content: center;">
-        <el-button @click="cancelUpload">取 消</el-button>
-        <el-button type="primary" @click="uploadFile" v-if="!isLoading">确 定</el-button>
-        <el-button type="primary" v-if="isLoading" :loading="true">上传中</el-button>
-      </span>
-    </el-dialog>
-
-
-
     <!-- 添加或修改危化品检查记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="hazardousinspectionRef" :model="form" :rules="rules" label-width="80px">
@@ -142,7 +136,7 @@
         <el-form-item label="检查记录" prop="inspectionRecord">
           <el-input v-model="form.inspectionRecord" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="检查人" prop="inspecter">
+        <!-- <el-form-item label="检查人" prop="inspecter">
           <el-input v-model="form.inspecter" placeholder="请输入检查人" />
         </el-form-item>
         <el-form-item label="检查时间" prop="inspectionTime">
@@ -152,7 +146,7 @@
             value-format="YYYY-MM-DD"
             placeholder="请选择检查时间">
           </el-date-picker>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -165,9 +159,11 @@
 </template>
 
 <script setup name="Hazardousinspection">
-import { listHazardousinspection, getHazardousinspection, delHazardousinspection, addHazardousinspection, updateHazardousinspection,importFile } from "@/api/security/hazardousinspection";
+import { listHazardousinspection, getHazardousinspection, delHazardousinspection, addHazardousinspection, updateHazardousinspection } from "@/api/security/hazardousinspection";
+import ExcelImport from "@/components/ExcelImport/index.vue";
 
 const { proxy } = getCurrentInstance();
+const route = useRoute();
 
 const hazardousinspectionList = ref([]);
 const open = ref(false);
@@ -188,7 +184,8 @@ const data = reactive({
     inspectionStandard: null,
     inspectionRecord: null,
     inspecter: null,
-    inspectionTime: null
+    inspectionTime: null,
+    relatedId: null
   },
   rules: {
     inspectionItem: [
@@ -250,6 +247,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+    if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加危化品检查记录";
 }
@@ -304,66 +304,33 @@ function handleExport() {
   }, `hazardousinspection_${new Date().getTime()}.xlsx`)
 }
 
-//上传文件
-const uploadDialogVisible = ref(false);
-const inputFile = ref(null);
-const isLoading = ref(false);
-
-/** 导入按钮操作 */
-function handleImport() {
-  resetUpload();
-  uploadDialogVisible.value = true;
+/** 模板下载按钮操作 */
+function handleDownloadTemplate() {
+  // 使用 proxy.download 方法，指定 GET 请求
+  proxy.download('security/hazardousinspection/template', {}, `危化品检查记录导入模板_${new Date().getTime()}.xlsx`, 'get');
 }
 
-/** 表单重置 */
-function resetUpload() {
-  if (inputFile.value) {
-    inputFile.value.value = "";
+
+
+// 检查关联ID参数
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
   }
 }
 
-/** 取消上传 */
-function cancelUpload() {
-  uploadDialogVisible.value = false;
-  resetUpload();
-}
-
-/** excel文件上传 */
-function uploadFile() {
-  if (inputFile.value && inputFile.value.files.length > 0) {
-    isLoading.value = true;
-    const file = inputFile.value.files[0];
-    console.log(inputFile.value);
-    console.log(file);
-    const formData = new FormData();
-    formData.append('excelFile', file);
-    importFile(formData).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
-      getList();
-      uploadDialogVisible.value = false;
-      isLoading.value = false;
-    }).catch(() => {
-      proxy.$modal.msgError("导入失败");
-      isLoading.value = false;
-    }).finally(() => {
-      resetUpload();
-    });
-  } else {
-    proxy.$modal.msgError("请选择文件");
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
+    getList();
   }
-}
-
-/** 检查文件是否为excel */
-function checkFile() {
-  const file = inputFile.value.files[0];
-  const fileName = file.name;
-  const fileExt = fileName.split(".").pop(); // 获取文件的扩展名
-
-  if (fileExt.toLowerCase() !== "xlsx" && fileExt.toLowerCase() !== "xlsm" && fileExt.toLowerCase() !== "xls") {
-    proxy.$modal.msgError("只能上传 Excel 文件！");
-    resetUpload();
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
   }
-}
-
-getList();
+});
 </script>

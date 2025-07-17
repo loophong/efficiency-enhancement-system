@@ -151,6 +151,16 @@
           @success="getList"
         />
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            v-hasPermi="['security:inventory:import']"
+        >模板下载
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -244,7 +254,7 @@
 <script setup name="Inventory">
 import {listInventory, getInventory, delInventory, addInventory, updateInventory } from "@/api/security/inventory";
 import ExcelImport from "@/components/ExcelImport/index.vue";
-
+const route = useRoute();
 const { proxy } = getCurrentInstance();
 const inventoryList = ref([]);
 const open = ref(false);
@@ -337,6 +347,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+    if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加危险化学品台账";
 }
@@ -392,6 +405,32 @@ function handleExport() {
   }, `inventory_${new Date().getTime()}.xlsx`)
 }
 
+/** 模板下载按钮操作 */
+function handleDownloadTemplate() {
+  // 使用 proxy.download 方法，指定 GET 请求
+  proxy.download('security/inventory/template', {}, `危险化学品台账导入模板_${new Date().getTime()}.xlsx`, 'get');
+}
+
+// 检查关联ID参数
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
+  }
+}
+
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
 getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>
   

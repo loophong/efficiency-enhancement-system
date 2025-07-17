@@ -82,7 +82,23 @@ public class FileUploadAspect {
     private ISecurityComplianceEvaluationRecordsService securityComplianceEvaluationRecordsService;
     @Autowired
     private ISecurityEducationAnnualTrainingPlanService securityEducationAnnualTrainingPlanService;
-    
+    @Autowired
+    private ISecurityEnvironmentalOhsManagementSystemDocumentsService securityEnvironmentalOhsManagementSystemDocumentsService;
+    @Autowired
+    private ISecurityControlledDocumentDistributionDirectoryService securityControlledDocumentDistributionDirectoryService;
+    @Autowired
+    private ISecurityObsoleteControlledDocumentDisposalRegisterService securityObsoleteControlledDocumentDisposalRegisterService;
+    @Autowired
+    private ISecurityHazardousChemicalInventoryService securityHazardousChemicalInventoryService;
+    @Autowired
+    private ISecurityHazardousMaterialsSafetyInspectionService securityHazardousMaterialsSafetyInspectionService;
+    @Autowired
+    private ISecurityHazardousMaterialsHandlingLedgerService securityHazardousMaterialsHandlingLedgerService;
+    @Autowired
+    private ISecurityOccupationalHazardPositionPersonnelListService securityOccupationalHazardPositionPersonnelListService;
+    @Autowired
+    private ISecurityHazardPointLedgerService securityHazardPointLedgerService;
+
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
      */
@@ -185,17 +201,31 @@ public class FileUploadAspect {
 
         // 执行原始方法
         Object result = joinPoint.proceed();
-        
-        // 如果导入成功且有文件管理记录ID，更新关联ID
-        if (result instanceof AjaxResult && fileManagementId != null) {
-            AjaxResult ajaxResult = (AjaxResult) result;
-            if (ajaxResult.isSuccess()) {
-                String className = joinPoint.getTarget().getClass().getSimpleName();
+
+        // 如果有文件管理记录ID，更新关联ID
+        if (fileManagementId != null) {
+            String className = joinPoint.getTarget().getClass().getSimpleName();
+
+            // 处理不同的返回类型
+            boolean shouldUpdateRelatedId = false;
+
+            if (result instanceof AjaxResult) {
+                AjaxResult ajaxResult = (AjaxResult) result;
+                shouldUpdateRelatedId = ajaxResult.isSuccess();
+            } else if (result == null || result instanceof Void) {
+                // 对于void返回类型，如果没有抛出异常，认为执行成功
+                shouldUpdateRelatedId = true;
+            } else {
+                // 对于其他返回类型，也认为执行成功
+                shouldUpdateRelatedId = true;
+            }
+
+            if (shouldUpdateRelatedId) {
                 log.info("导入成功，准备更新关联ID: {}，控制器类名: {}", fileManagementId, className);
                 updateRelatedIdForSecurityController(className, fileManagementId);
             }
         }
-        
+
         return result;
     }
     
@@ -266,6 +296,27 @@ public class FileUploadAspect {
                 // 年度培训计划
                 updatedRows = securityEducationAnnualTrainingPlanService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新年度培训计划数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            }
+               else if (controllerName.contains("SecurityHazardousChemicalInventory") || controllerName.contains("HazardousChemicalInventory")){
+                // 危险化学品台账
+                updatedRows = securityHazardousChemicalInventoryService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新危险化学品台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardousMaterialsSafetyInspection") || controllerName.contains("HazardousMaterialsSafetyInspection") || controllerName.contains("hazardousinspection")){
+                // 危化品检查记录
+                updatedRows = securityHazardousMaterialsSafetyInspectionService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新危化品检查记录的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardousMaterialsHandlingLedger") || controllerName.contains("HazardousMaterialsHandlingLedger") || controllerName.contains("hazardousledger")){
+                // 危化品处理台账
+                updatedRows = securityHazardousMaterialsHandlingLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新危化品处理台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityOccupationalHazardPositionPersonnelList") || controllerName.contains("OccupationaPersonnelList")){
+                // 危险职业岗位人员清单及管理台帐
+                updatedRows = securityOccupationalHazardPositionPersonnelListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新危险职业岗位人员清单及管理台帐的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityHazardPointLedger") || controllerName.contains("HazardPointLedger") || controllerName.contains("hazardpointledger")){
+                // 有害台账
+                updatedRows = securityHazardPointLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新有害台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             }
                 // 事故措施跟踪
                 else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {
@@ -339,6 +390,18 @@ public class FileUploadAspect {
                 // 安全法律法规识别清单
                 updatedRows = regulationsIdentificationList1Service.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新安全法律法规识别清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEnvironmentalOhsManagementSystemDocuments")) {
+                // 环境职业健康安全管理体系文件清单
+                updatedRows = securityEnvironmentalOhsManagementSystemDocumentsService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新环境职业健康安全管理体系文件清单数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityControlledDocumentDistributionDirectory") || controllerName.contains("Controlleddirectory")) {
+                // 受控文件发放目录
+                updatedRows = securityControlledDocumentDistributionDirectoryService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新受控文件发放目录数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityObsoleteControlledDocumentDisposalRegister") || controllerName.contains("Obsoleteregister")) {
+                // 作废受控文件收回销毁登记
+                updatedRows = securityObsoleteControlledDocumentDisposalRegisterService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新作废受控文件收回销毁登记数据的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             } else {
                 // 其他 security 控制器，通用处理
                 log.info("未找到匹配的服务类，尝试通用处理: {}", controllerName);

@@ -18,8 +18,29 @@
           <br>
         </el-form-item>
         <el-form-item label="上传文件：">
-          <input type="file" ref="inputFile" @change="checkFile"/>
-          <br>
+          <div class="file-upload-container">
+            <input
+              type="file"
+              ref="inputFile"
+              @change="checkFile"
+              accept=".xlsx,.xls"
+              style="display: none;"
+            />
+            <el-button
+              type="primary"
+              plain
+              @click="triggerFileSelect"
+              icon="el-icon-upload"
+            >
+              选择文件
+            </el-button>
+            <span v-if="selectedFileName" class="selected-file-name">
+              {{ selectedFileName }}
+            </span>
+            <span v-else class="file-tip">
+              请选择 Excel 文件（.xlsx, .xls）
+            </span>
+          </div>
         </el-form-item>
         <slot name="extra-form-items"></slot>
       </el-form>
@@ -108,13 +129,10 @@ export default {
   data() {
     return {
       uploadDialogVisible: false,
-      inputFile: null,
       isLoading: false,
-      form: {}
+      form: {},
+      selectedFileName: ''
     };
-  },
-  mounted() {
-    this.inputFile = this.$refs.inputFile;
   },
   methods: {
     /** 导入按钮操作 */
@@ -122,13 +140,25 @@ export default {
       this.resetUpload();
       this.uploadDialogVisible = true;
     },
+
+    /** 触发文件选择 */
+    triggerFileSelect() {
+      this.$nextTick(() => {
+        const inputElement = this.$refs.inputFile;
+        if (inputElement) {
+          inputElement.click();
+        }
+      });
+    },
     
     /** 表单重置 */
     resetUpload() {
-      if (this.inputFile) {
-        this.inputFile.value = "";
+      const inputElement = this.$refs.inputFile;
+      if (inputElement) {
+        inputElement.value = "";
       }
       this.form = {};
+      this.selectedFileName = '';
       this.$emit("reset");
     },
 
@@ -141,9 +171,10 @@ export default {
 
     /** excel文件上传 */
     uploadFile() {
-      if (this.inputFile && this.inputFile.files.length > 0) {
+      const inputElement = this.$refs.inputFile;
+      if (inputElement && inputElement.files.length > 0) {
         this.isLoading = true;
-        const file = this.inputFile.files[0];
+        const file = inputElement.files[0];
         
         // 构建参数
         const params = { ...this.extraParams };
@@ -177,12 +208,15 @@ export default {
           this.uploadDialogVisible = false;
           this.isLoading = false;
           this.resetUpload();
-          
-          // 添加文件信息到响应对象
-          response.file = file;
-          
+
+          // 安全地添加文件信息到响应对象
+          const responseData = response || {};
+          if (typeof responseData === 'object' && responseData !== null) {
+            responseData.file = file;
+          }
+
           // 触发成功事件
-          this.$emit("success", response);
+          this.$emit("success", responseData);
         }).catch(error => {
           this.$modal.msgError(error.message || "导入失败");
           this.isLoading = false;
@@ -194,12 +228,15 @@ export default {
     },
 
     /** 检查文件是否为excel */
-    checkFile() {
-      if (!this.inputFile || !this.inputFile.files || this.inputFile.files.length === 0) {
+    checkFile(event) {
+      const inputElement = this.$refs.inputFile;
+
+      if (!inputElement || !inputElement.files || inputElement.files.length === 0) {
+        this.selectedFileName = '';
         return;
       }
-      
-      const file = this.inputFile.files[0];
+
+      const file = inputElement.files[0];
       const fileName = file.name;
       const fileExt = fileName.split(".").pop().toLowerCase(); // 获取文件的扩展名
 
@@ -208,7 +245,9 @@ export default {
         this.resetUpload();
         return false;
       }
-      
+
+      // 显示选中的文件名
+      this.selectedFileName = fileName;
       this.$emit("file-selected", file);
       return true;
     },
@@ -219,4 +258,36 @@ export default {
     }
   }
 };
-</script> 
+</script>
+
+<style scoped>
+.file-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.selected-file-name {
+  color: #409eff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 8px;
+  background-color: #f0f9ff;
+  border: 1px solid #b3d8ff;
+  border-radius: 4px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-tip {
+  color: #909399;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.file-upload-container .el-button {
+  margin-right: 0;
+}
+</style>

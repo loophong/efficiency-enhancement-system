@@ -29,19 +29,22 @@ public class SecurityHazardousMaterialsSafetyInspection extends BaseEntity
     private String inspectionStandard;
 
     /** 检查挤入 */
-    @Excel(name = "检查挤入")
+    @Excel(name = "检查记录")
     private String inspectionRecord;
 
     /** 检查人 */
-    @Excel(name = "检查人")
+//    @Excel(name = "检查人")
     private String inspecter;
 
     /** 检查时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "检查时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @Excel(name = "检查时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date inspectionTime;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -91,9 +94,19 @@ public class SecurityHazardousMaterialsSafetyInspection extends BaseEntity
         this.inspectionTime = inspectionTime;
     }
 
-    public Date getInspectionTime() 
+    public Date getInspectionTime()
     {
         return inspectionTime;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -105,6 +118,7 @@ public class SecurityHazardousMaterialsSafetyInspection extends BaseEntity
             .append("inspectionRecord", getInspectionRecord())
             .append("inspecter", getInspecter())
             .append("inspectionTime", getInspectionTime())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

@@ -61,5 +61,13 @@ public interface ISecurityHazardousMaterialsSafetyInspectionService
     public int deleteSecurityHazardousMaterialsSafetyInspectionById(Long id);
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }
 

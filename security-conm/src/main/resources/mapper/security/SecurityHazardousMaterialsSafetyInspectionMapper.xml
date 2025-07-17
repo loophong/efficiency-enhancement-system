@@ -11,10 +11,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="inspectionRecord"    column="inspection_record"    />
         <result property="inspecter"    column="inspecter"    />
         <result property="inspectionTime"    column="inspection_time"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityHazardousMaterialsSafetyInspectionVo">
-        select id, inspection_item, inspection_standard, inspection_record, inspecter, inspection_time from security_hazardous_materials_safety_inspection
+        select id, inspection_item, inspection_standard, inspection_record, inspecter, inspection_time, related_id from security_hazardous_materials_safety_inspection
     </sql>
 
     <select id="selectSecurityHazardousMaterialsSafetyInspectionList" parameterType="SecurityHazardousMaterialsSafetyInspection" resultMap="SecurityHazardousMaterialsSafetyInspectionResult">
@@ -25,6 +26,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionRecord != null  and inspectionRecord != ''"> and inspection_record = #{inspectionRecord}</if>
             <if test="inspecter != null  and inspecter != ''"> and inspecter = #{inspecter}</if>
             <if test="inspectionTime != null "> and inspection_time = #{inspectionTime}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -41,6 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionRecord != null">inspection_record,</if>
             <if test="inspecter != null">inspecter,</if>
             <if test="inspectionTime != null">inspection_time,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="inspectionItem != null and inspectionItem != ''">#{inspectionItem},</if>
@@ -48,6 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionRecord != null">#{inspectionRecord},</if>
             <if test="inspecter != null">#{inspecter},</if>
             <if test="inspectionTime != null">#{inspectionTime},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
     <insert id="batchInsert" parameterType="list">
@@ -65,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionRecord != null">inspection_record = #{inspectionRecord},</if>
             <if test="inspecter != null">inspecter = #{inspecter},</if>
             <if test="inspectionTime != null">inspection_time = #{inspectionTime},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -74,9 +79,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityHazardousMaterialsSafetyInspectionByIds" parameterType="String">
-        delete from security_hazardous_materials_safety_inspection where id in 
+        delete from security_hazardous_materials_safety_inspection where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 查询最近导入的记录（未关联ID的记录） -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityHazardousMaterialsSafetyInspectionResult">
+        <include refid="selectSecurityHazardousMaterialsSafetyInspectionVo"/>
+        where related_id is null
+        order by create_time desc
+    </select>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_hazardous_materials_safety_inspection
+        set related_id = #{relatedId}
+        where related_id is null
+    </update>
 </mapper>

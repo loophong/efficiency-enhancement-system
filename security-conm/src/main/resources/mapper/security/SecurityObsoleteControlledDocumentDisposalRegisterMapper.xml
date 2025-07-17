@@ -11,10 +11,11 @@
         <result property="recyclingDepartment"    column="recycling_department"    />
         <result property="isDestroyed"    column="is_destroyed"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityObsoleteControlledDocumentDisposalRegisterVo">
-        select id, file_name, document_number, recycling_department, is_destroyed, remarks from security_obsolete_controlled_document_disposal_register
+        select id, file_name, document_number, recycling_department, is_destroyed, remarks, related_id from security_obsolete_controlled_document_disposal_register
     </sql>
 
     <select id="selectSecurityObsoleteControlledDocumentDisposalRegisterList" parameterType="SecurityObsoleteControlledDocumentDisposalRegister" resultMap="SecurityObsoleteControlledDocumentDisposalRegisterResult">
@@ -25,6 +26,7 @@
             <if test="recyclingDepartment != null  and recyclingDepartment != ''"> and recycling_department = #{recyclingDepartment}</if>
             <if test="isDestroyed != null  and isDestroyed != ''"> and is_destroyed = #{isDestroyed}</if>
             <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
 
@@ -41,6 +43,7 @@
             <if test="recyclingDepartment != null">recycling_department,</if>
             <if test="isDestroyed != null">is_destroyed,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fileName != null and fileName != ''">#{fileName},</if>
@@ -48,14 +51,15 @@
             <if test="recyclingDepartment != null">#{recyclingDepartment},</if>
             <if test="isDestroyed != null">#{isDestroyed},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
         </trim>
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into security_obsolete_controlled_document_disposal_register(file_name, document_number, recycling_department, is_destroyed, remarks)
+        insert into security_obsolete_controlled_document_disposal_register(file_name, document_number, recycling_department, is_destroyed, remarks, related_id)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.fileName}, #{item.documentNumber}, #{item.recyclingDepartment}, #{item.isDestroyed}, #{item.remarks})
+            (#{item.fileName}, #{item.documentNumber}, #{item.recyclingDepartment}, #{item.isDestroyed}, #{item.remarks}, #{item.relatedId})
         </foreach>
     </insert>
 
@@ -68,6 +72,7 @@
             <if test="recyclingDepartment != null">recycling_department = #{recyclingDepartment},</if>
             <if test="isDestroyed != null">is_destroyed = #{isDestroyed},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -82,4 +87,21 @@
             #{id}
         </foreach>
     </delete>
+
+    <!-- 查询最近导入的记录 -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityObsoleteControlledDocumentDisposalRegisterResult">
+        <include refid="selectSecurityObsoleteControlledDocumentDisposalRegisterVo"/>
+        where related_id is null
+        order by id desc
+        limit 1000
+    </select>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_obsolete_controlled_document_disposal_register
+        set related_id = #{relatedId}
+        where related_id is null
+        order by id desc
+        limit 1000
+    </update>
 </mapper>

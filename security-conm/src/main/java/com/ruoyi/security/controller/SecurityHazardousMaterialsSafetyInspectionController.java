@@ -1,5 +1,7 @@
 package com.ruoyi.security.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.ruoyi.common.exception.ServiceException;
@@ -113,14 +115,65 @@ public class SecurityHazardousMaterialsSafetyInspectionController extends BaseCo
      */
     @Log(title = "[危险检查记录i]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
-        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+    public void importTable( MultipartFile file) {
+        log.info("传入的参数为 " + file.getName() + " 文件");
         try {
-            securityHazardousMaterialsSafetyInspectionService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            securityHazardousMaterialsSafetyInspectionService.readSalaryExcelToDB(file.getOriginalFilename(), file);
         } catch (Exception e) {
-            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            log.error("读取 " + file.getName() + " 文件失败, 原因: {}", e.getMessage());
+            throw new ServiceException("读取 " + file.getName() + " 文件失败");
         }
+    }
+
+    /**
+     * 下载危化品检查记录导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:hazardousinspection:import')")
+    @Log(title = "危化品检查记录模板", businessType = BusinessType.EXPORT)
+    @GetMapping("/template")
+    public void downloadTemplate(HttpServletResponse response)
+    {
+        // 创建示例数据
+        List<SecurityHazardousMaterialsSafetyInspection> sampleData = createSampleData();
+
+        ExcelUtil<SecurityHazardousMaterialsSafetyInspection> util = new ExcelUtil<SecurityHazardousMaterialsSafetyInspection>(SecurityHazardousMaterialsSafetyInspection.class);
+        util.exportExcel(response, sampleData, "危化品检查记录导入模板");
+    }
+
+    /**
+     * 创建示例数据
+     */
+    private List<SecurityHazardousMaterialsSafetyInspection> createSampleData() {
+        List<SecurityHazardousMaterialsSafetyInspection> sampleList = new ArrayList<>();
+
+        // 示例1：储存区域检查
+        SecurityHazardousMaterialsSafetyInspection sample1 = new SecurityHazardousMaterialsSafetyInspection();
+        sample1.setInspectionItem("储存区域通风系统");
+        sample1.setInspectionStandard("通风良好，无异味");
+        sample1.setInspectionRecord("通风系统正常运行，无异常");
+        sample1.setInspecter("张三");
+        sample1.setInspectionTime(new Date());
+        sampleList.add(sample1);
+
+        // 示例2：安全标识检查
+        SecurityHazardousMaterialsSafetyInspection sample2 = new SecurityHazardousMaterialsSafetyInspection();
+        sample2.setInspectionItem("安全警示标识");
+        sample2.setInspectionStandard("标识清晰完整");
+        sample2.setInspectionRecord("部分标识模糊，需要更换");
+        sample2.setInspecter("李四");
+        sample2.setInspectionTime(new Date());
+        sampleList.add(sample2);
+
+        // 示例3：防护设备检查
+        SecurityHazardousMaterialsSafetyInspection sample3 = new SecurityHazardousMaterialsSafetyInspection();
+        sample3.setInspectionItem("个人防护设备");
+        sample3.setInspectionStandard("防护服、手套、护目镜齐全");
+        sample3.setInspectionRecord("防护设备齐全，状态良好");
+        sample3.setInspecter("王五");
+        sample3.setInspectionTime(new Date());
+        sampleList.add(sample3);
+
+        return sampleList;
     }
 
 }

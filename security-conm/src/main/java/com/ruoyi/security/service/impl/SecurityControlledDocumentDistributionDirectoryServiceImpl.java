@@ -121,4 +121,48 @@ public class SecurityControlledDocumentDistributionDirectoryServiceImpl implemen
 //            return R.fail("读取文件失败,当前上传的文件为：" + fileName);
         }
     }
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId) {
+        if (relatedId == null) {
+            log.warn("更新最近导入受控文件发放目录关联ID失败：relatedId为空");
+            return 0;
+        }
+
+        log.info("更新最近导入受控文件发放目录关联ID: {}", relatedId);
+
+        try {
+            // 方法一：直接使用批量更新SQL
+            int updatedCount = securityControlledDocumentDistributionDirectoryMapper.updateLatestImportedRelatedId(relatedId);
+
+            if (updatedCount > 0) {
+                log.info("成功更新受控文件发放目录关联ID，共更新{}条记录", updatedCount);
+            } else {
+                log.info("没有找到需要更新关联ID的受控文件发放目录记录");
+
+                // 方法二：如果方法一未更新任何记录，则尝试获取最近导入的记录并逐个更新
+                List<SecurityControlledDocumentDistributionDirectory> recentRecords =
+                    securityControlledDocumentDistributionDirectoryMapper.selectLatestImportedRecords();
+
+                if (recentRecords != null && !recentRecords.isEmpty()) {
+                    for (SecurityControlledDocumentDistributionDirectory record : recentRecords) {
+                        record.setRelatedId(relatedId);
+                        updatedCount += securityControlledDocumentDistributionDirectoryMapper.updateSecurityControlledDocumentDistributionDirectory(record);
+                    }
+                    log.info("使用方法二成功更新受控文件发放目录关联ID，共更新{}条记录", updatedCount);
+                }
+            }
+
+            return updatedCount;
+        } catch (Exception e) {
+            log.error("更新受控文件发放目录关联ID失败", e);
+            return 0;
+        }
+    }
 }

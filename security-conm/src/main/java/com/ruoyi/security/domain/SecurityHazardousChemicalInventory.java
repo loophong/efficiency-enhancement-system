@@ -79,4 +79,7 @@ public class SecurityHazardousChemicalInventory extends BaseEntity {
     @Excel(name = "备注")
     private String remarks;
 
+    /** 关联ID */
+    private Long relatedId;
+
 }

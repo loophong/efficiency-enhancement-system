@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="duringJobHealthCheckup"    column="during_job_health_checkup"    />
         <result property="postJobHealthCheckup"    column="post_job_health_checkup"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityOccupationalHazardPositionPersonnelListVo">
-        select id, team_name, name, gender, job_type, exposure_factors, pre_job_health_checkup, during_job_health_checkup, post_job_health_checkup, remarks from security_occupational_hazard_position_personnel_list
+        select id, team_name, name, gender, job_type, exposure_factors, pre_job_health_checkup, during_job_health_checkup, post_job_health_checkup, remarks, related_id from security_occupational_hazard_position_personnel_list
     </sql>
 
     <select id="selectSecurityOccupationalHazardPositionPersonnelListList" parameterType="SecurityOccupationalHazardPositionPersonnelList" resultMap="SecurityOccupationalHazardPositionPersonnelListResult">
@@ -49,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="duringJobHealthCheckup != null">during_job_health_checkup,</if>
             <if test="postJobHealthCheckup != null">post_job_health_checkup,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="teamName != null and teamName != ''">#{teamName},</if>
@@ -60,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="duringJobHealthCheckup != null">#{duringJobHealthCheckup},</if>
             <if test="postJobHealthCheckup != null">#{postJobHealthCheckup},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -75,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="duringJobHealthCheckup != null">during_job_health_checkup = #{duringJobHealthCheckup},</if>
             <if test="postJobHealthCheckup != null">post_job_health_checkup = #{postJobHealthCheckup},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -84,9 +88,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityOccupationalHazardPositionPersonnelListByIds" parameterType="String">
-        delete from security_occupational_hazard_position_personnel_list where id in 
+        delete from security_occupational_hazard_position_personnel_list where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_occupational_hazard_position_personnel_list
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 100
+    </update>
+
+    <select id="selectByRelatedId" parameterType="Long" resultMap="SecurityOccupationalHazardPositionPersonnelListResult">
+        <include refid="selectSecurityOccupationalHazardPositionPersonnelListVo"/>
+        WHERE related_id = #{relatedId}
+        ORDER BY id ASC
+    </select>
 </mapper>

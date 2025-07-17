@@ -54,3 +54,20 @@ export function importFile(formData) {
     }
   })
 }
+
+// 下载受控文件发放目录导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/controlleddirectory/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}
+
+// 根据关联ID查询受控文件发放目录列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: `/security/controlleddirectory/listByRelatedId/${relatedId}`,
+    method: 'get'
+  })
+}

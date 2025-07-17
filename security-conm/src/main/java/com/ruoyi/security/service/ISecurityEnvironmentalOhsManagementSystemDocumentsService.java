@@ -54,11 +54,20 @@ public interface ISecurityEnvironmentalOhsManagementSystemDocumentsService
 
     /**
      * 删除环境职业健康安全管理体系文件清单信息
-     * 
+     *
      * @param id 环境职业健康安全管理体系文件清单主键
      * @return 结果
      */
     public int deleteSecurityEnvironmentalOhsManagementSystemDocumentsById(Long id);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param fileManagementId 文件管理ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long fileManagementId);
+
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
 }

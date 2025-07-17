@@ -30,7 +30,10 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
     @Excel(name = "备注")
     private String remarks;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -62,9 +65,18 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -74,6 +86,7 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
             .append("systemName", getSystemName())
             .append("documentNumber", getDocumentNumber())
             .append("remarks", getRemarks())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

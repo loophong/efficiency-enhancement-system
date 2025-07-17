@@ -13,10 +13,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="handlingMethod"    column="handling_method"    />
         <result property="isCompliant"    column="is_compliant"    />
         <result property="handler"    column="handler"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityHazardousMaterialsHandlingLedgerVo">
-        select id, handling_time, chemical_name, user_in_charge, handling_quantity, handling_method, is_compliant, handler from security_hazardous_materials_handling_ledger
+        select id, handling_time, chemical_name, user_in_charge, handling_quantity, handling_method, is_compliant, handler, related_id from security_hazardous_materials_handling_ledger
     </sql>
 
     <select id="selectSecurityHazardousMaterialsHandlingLedgerList" parameterType="SecurityHazardousMaterialsHandlingLedger" resultMap="SecurityHazardousMaterialsHandlingLedgerResult">
@@ -27,8 +28,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userInCharge != null  and userInCharge != ''"> and user_in_charge = #{userInCharge}</if>
             <if test="handlingQuantity != null "> and handling_quantity = #{handlingQuantity}</if>
             <if test="handlingMethod != null  and handlingMethod != ''"> and handling_method = #{handlingMethod}</if>
-            <if test="isCompliant != null "> and is_compliant = #{isCompliant}</if>
+            <if test="isCompliant != null and isCompliant != ''"> and is_compliant like concat('%', #{isCompliant}, '%')</if>
             <if test="handler != null  and handler != ''"> and handler = #{handler}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -47,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handlingMethod != null">handling_method,</if>
             <if test="isCompliant != null">is_compliant,</if>
             <if test="handler != null">handler,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="handlingTime != null">#{handlingTime},</if>
@@ -56,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handlingMethod != null">#{handlingMethod},</if>
             <if test="isCompliant != null">#{isCompliant},</if>
             <if test="handler != null">#{handler},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -69,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="handlingMethod != null">handling_method = #{handlingMethod},</if>
             <if test="isCompliant != null">is_compliant = #{isCompliant},</if>
             <if test="handler != null">handler = #{handler},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -78,9 +83,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityHazardousMaterialsHandlingLedgerByIds" parameterType="String">
-        delete from security_hazardous_materials_handling_ledger where id in 
+        delete from security_hazardous_materials_handling_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 查询最近导入的记录（未关联ID的记录） -->
+    <select id="selectLatestImportedRecords" resultMap="SecurityHazardousMaterialsHandlingLedgerResult">
+        <include refid="selectSecurityHazardousMaterialsHandlingLedgerVo"/>
+        where related_id is null
+        order by create_time desc
+    </select>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_hazardous_materials_handling_ledger
+        set related_id = #{relatedId}
+        where related_id is null
+    </update>
 </mapper>

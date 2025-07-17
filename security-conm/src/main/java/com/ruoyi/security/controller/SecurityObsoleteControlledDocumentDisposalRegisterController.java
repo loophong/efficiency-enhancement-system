@@ -109,13 +109,38 @@ public class SecurityObsoleteControlledDocumentDisposalRegisterController extend
 
     @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
+    public AjaxResult importTable( MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {
             securityObsoleteControlledDocumentDisposalRegisterService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            return AjaxResult.success("导入成功");
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            return AjaxResult.error("读取 " + excelFile.getName() + " 文件失败: " + e.getMessage());
         }
+    }
+
+    /**
+     * 下载作废受控文件收回销毁登记导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityObsoleteControlledDocumentDisposalRegister> util = new ExcelUtil<SecurityObsoleteControlledDocumentDisposalRegister>(SecurityObsoleteControlledDocumentDisposalRegister.class);
+        util.importTemplateExcel(response, "作废受控文件收回销毁登记数据");
+    }
+
+    /**
+     * 根据关联ID查询作废受控文件收回销毁登记列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:obsoleteregister:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        startPage();
+        SecurityObsoleteControlledDocumentDisposalRegister query = new SecurityObsoleteControlledDocumentDisposalRegister();
+        query.setRelatedId(relatedId);
+        List<SecurityObsoleteControlledDocumentDisposalRegister> list = securityObsoleteControlledDocumentDisposalRegisterService.selectSecurityObsoleteControlledDocumentDisposalRegisterList(query);
+        return getDataTable(list);
     }
 }
