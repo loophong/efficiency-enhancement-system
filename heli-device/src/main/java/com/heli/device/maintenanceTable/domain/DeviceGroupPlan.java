@@ -65,6 +65,10 @@ public class DeviceGroupPlan extends BaseEntity
     @ExcelProperty(index = 8)
     private String monthFour;
 
+    /** 消息设置 */
+    @ExcelIgnore
+    private String messageSet;
+
     @ExcelIgnore
     private String lastCompleteTime;
 
@@ -162,6 +166,16 @@ public class DeviceGroupPlan extends BaseEntity
         return monthFour;
     }
 
+    public void setMessageSet(String messageSet)
+    {
+        this.messageSet = messageSet;
+    }
+
+    public String getMessageSet()
+    {
+        return messageSet;
+    }
+
     public void setLastCompleteTime(String lastCompleteTime)
     {
         this.lastCompleteTime = lastCompleteTime;
@@ -195,6 +209,7 @@ public class DeviceGroupPlan extends BaseEntity
             .append("monthTwo", getMonthTwo())
             .append("monthThree", getMonthThree())
             .append("monthFour", getMonthFour())
+            .append("messageSet", getMessageSet())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())
             .append("updateBy", getUpdateBy())
