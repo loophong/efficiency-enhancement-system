@@ -1,6 +1,7 @@
 package com.ruoyi.security.mapper;
 
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import com.ruoyi.security.domain.SecurityEducationAnnualTrainingPlan;
 
 /**
@@ -58,4 +59,12 @@ public interface SecurityEducationAnnualTrainingPlanMapper
      * @return 结果
      */
     public int deleteSecurityEducationAnnualTrainingPlanByIds(Long[] ids);
+    
+    /**
+     * 更新最近导入的记录关联ID
+     * 
+     * @param fileManagementId 文件管理ID
+     * @return 更新记录数
+     */
+    public int updateLatestImportedRelatedId(@Param("fileManagementId") Long fileManagementId);
 }

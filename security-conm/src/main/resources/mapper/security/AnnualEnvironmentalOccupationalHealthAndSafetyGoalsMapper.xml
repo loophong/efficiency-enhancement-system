@@ -16,10 +16,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="approver"    column="approver"    />
         <result property="date"    column="date"    />
         <result property="status"    column="status"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsVo">
-        select serial_number, department_name, goal_item, goal_value, evaluation_result, remarks, compiler, auditor, approver, date, status from annual_environmental_occupational_health_and_safety_goals
+        select serial_number, department_name, goal_item, goal_value, evaluation_result, remarks, compiler, auditor, approver, date, status, related_id from annual_environmental_occupational_health_and_safety_goals
     </sql>
 
     <select id="selectAnnualEnvironmentalOccupationalHealthAndSafetyGoalsList" parameterType="AnnualEnvironmentalOccupationalHealthAndSafetyGoals" resultMap="AnnualEnvironmentalOccupationalHealthAndSafetyGoalsResult">
@@ -35,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="approver != null  and approver != ''"> and approver = #{approver}</if>
             <if test="date != null "> and date = #{date}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -56,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="approver != null">approver,</if>
             <if test="date != null">date,</if>
             <if test="status != null">status,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="departmentName != null and departmentName != ''">#{departmentName},</if>
@@ -68,6 +71,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="approver != null">#{approver},</if>
             <if test="date != null">#{date},</if>
             <if test="status != null">#{status},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -84,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="approver != null">approver = #{approver},</if>
             <if test="date != null">date = #{date},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where serial_number = #{serialNumber}
     </update>
@@ -98,4 +103,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{serialNumber}
         </foreach>
     </delete>
+    
+    <insert id="batchInsertAnnualEnvironmentalOccupationalHealthAndSafetyGoals" parameterType="java.util.List">
+        insert into annual_environmental_occupational_health_and_safety_goals
+        (department_name, goal_item, goal_value, evaluation_result, remarks, compiler, auditor, approver, date, status)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.departmentName}, #{item.goalItem}, #{item.goalValue}, #{item.evaluationResult}, 
+            #{item.remarks}, #{item.compiler}, #{item.auditor}, #{item.approver}, #{item.date}, #{item.status})
+        </foreach>
+    </insert>
+    
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update annual_environmental_occupational_health_and_safety_goals
+        set related_id = #{relatedId}
+        where related_id is null
+        and serial_number in (
+            select serial_number from (
+                select serial_number 
+                from annual_environmental_occupational_health_and_safety_goals 
+                where related_id is null 
+                order by serial_number desc
+            ) as temp
+        )
+    </update>
 </mapper>

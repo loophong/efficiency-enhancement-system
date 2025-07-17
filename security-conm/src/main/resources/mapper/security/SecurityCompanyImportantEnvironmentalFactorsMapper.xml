@@ -13,10 +13,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="temporalState"    column="temporal_state"    />
         <result property="controlMeasures"    column="control_measures"    />
         <result property="statu"    column="statu"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityCompanyImportantEnvironmentalFactorsVo">
-        select id, environmental_factor, environmental_impact, activity_product_service, department_process_position, temporal_state, control_measures, statu from security_company_important_environmental_factors
+        select id, environmental_factor, environmental_impact, activity_product_service, department_process_position, temporal_state, control_measures, statu, related_id from security_company_important_environmental_factors
     </sql>
 
     <select id="selectSecurityCompanyImportantEnvironmentalFactorsList" parameterType="SecurityCompanyImportantEnvironmentalFactors" resultMap="SecurityCompanyImportantEnvironmentalFactorsResult">
@@ -29,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="temporalState != null  and temporalState != ''"> and temporal_state like concat('%', #{temporalState}, '%')</if>
             <if test="controlMeasures != null  and controlMeasures != ''"> and control_measures like concat('%', #{controlMeasures}, '%')</if>
             <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -47,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="temporalState != null">temporal_state,</if>
             <if test="controlMeasures != null">control_measures,</if>
             <if test="statu != null">statu,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="environmentalFactor != null and environmentalFactor != ''">#{environmentalFactor},</if>
@@ -56,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="temporalState != null">#{temporalState},</if>
             <if test="controlMeasures != null">#{controlMeasures},</if>
             <if test="statu != null">#{statu},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -69,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="temporalState != null">temporal_state = #{temporalState},</if>
             <if test="controlMeasures != null">control_measures = #{controlMeasures},</if>
             <if test="statu != null">statu = #{statu},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -83,4 +88,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+    
+    <!-- 批量插入数据 -->
+    <insert id="batchInsertFactors" parameterType="java.util.List">
+        insert into security_company_important_environmental_factors (
+          environmental_factor, environmental_impact, activity_product_service, 
+          department_process_position, temporal_state, control_measures, statu,
+          related_id
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+          (#{item.environmentalFactor}, #{item.environmentalImpact}, #{item.activityProductService}, 
+           #{item.departmentProcessPosition}, #{item.temporalState}, #{item.controlMeasures}, 
+           #{item.statu}, #{item.relatedId})
+        </foreach>
+    </insert>
+    
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_company_important_environmental_factors 
+        set related_id = #{relatedId}
+        where related_id is null
+    </update>
 </mapper>

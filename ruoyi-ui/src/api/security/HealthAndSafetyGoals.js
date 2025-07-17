@@ -42,3 +42,20 @@ export function delHealthAndSafetyGoals(serialNumber) {
     method: 'delete'
   })
 }
+
+// 导入年度环境职业健康安全目标数据
+export function importHealthAndSafetyGoals(data) {
+  return request({
+    url: '/security/HealthAndSafetyGoals/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载年度环境职业健康安全目标导入模板
+export function getImportTemplate() {
+  return request({
+    url: '/security/HealthAndSafetyGoals/importTemplate',
+    method: 'get'
+  })
+}

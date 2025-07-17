@@ -2,6 +2,7 @@ package com.ruoyi.security.service;
 
 import java.util.List;
 import com.ruoyi.security.domain.SecurityUnacceptableRiskList;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 不可接受风险清单Service接口
@@ -58,4 +59,21 @@ public interface ISecurityUnacceptableRiskListService
      * @return 结果
      */
     public int deleteSecurityUnacceptableRiskListById(Long id);
+    
+    /**
+     * 导入不可接受风险清单数据
+     * 
+     * @param file 导入文件
+     * @param updateSupport 是否更新已存在数据
+     * @return 结果
+     */
+    public String importData(MultipartFile file, boolean updateSupport);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

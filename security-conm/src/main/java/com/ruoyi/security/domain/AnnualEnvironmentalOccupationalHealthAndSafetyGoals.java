@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.annotation.Excel.Type;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
@@ -18,10 +19,11 @@ public class AnnualEnvironmentalOccupationalHealthAndSafetyGoals extends BaseEnt
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long serialNumber;
 
     /** 部门 */
-    @Excel(name = "部门")
+    @Excel(name = "部门名称", needMerge = true)
     private String departmentName;
 
     /** 目标项 */
@@ -29,11 +31,11 @@ public class AnnualEnvironmentalOccupationalHealthAndSafetyGoals extends BaseEnt
     private String goalItem;
 
     /** 目标值 */
-    @Excel(name = "目标值")
+    @Excel(name = "目标值", cellType = Excel.ColumnType.TEXT)
     private String goalValue;
 
     /** 考核结果 */
-    @Excel(name = "考核结果")
+    @Excel(name = "考核结果", needMerge = true)
     private String evaluationResult;
 
     /** 备注 */
@@ -41,25 +43,26 @@ public class AnnualEnvironmentalOccupationalHealthAndSafetyGoals extends BaseEnt
     private String remarks;
 
     /** 汇编人 */
-    @Excel(name = "汇编人")
+
     private String compiler;
 
     /** 审核人 */
-    @Excel(name = "审核人")
+
     private String auditor;
 
     /** 批准人 */
-    @Excel(name = "批准人")
+
     private String approver;
 
     /** 日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
+
     private Date date;
 
     /** 审核状态 */
-    @Excel(name = "审核状态")
     private String status;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setSerialNumber(Long serialNumber) 
     {
@@ -160,6 +163,16 @@ public class AnnualEnvironmentalOccupationalHealthAndSafetyGoals extends BaseEnt
     {
         return status;
     }
+    
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
+
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
 
     @Override
     public String toString() {
@@ -175,6 +188,7 @@ public class AnnualEnvironmentalOccupationalHealthAndSafetyGoals extends BaseEnt
             .append("approver", getApprover())
             .append("date", getDate())
             .append("status", getStatus())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

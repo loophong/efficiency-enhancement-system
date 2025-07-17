@@ -229,8 +229,17 @@ public class ExcelUtil<T>
         this.excludeFields = fields;
     }
 
+    /**
+     * 初始化excel
+     * 
+     * @param list 导出数据集合
+     * @param sheetName 工作表的名称
+     * @param title 标题
+     * @param type 导出类型（EXPORT:导出数据；IMPORT：导入模板）
+     */
     public void init(List<T> list, String sheetName, String title, Type type)
     {
+        log.info("初始化Excel, sheetName: {}, title: {}, type: {}", sheetName, title, type);
         if (list == null)
         {
             list = new ArrayList<T>();
@@ -243,6 +252,7 @@ public class ExcelUtil<T>
         createWorkbook();
         createTitle();
         createSubHead();
+        log.info("Excel初始化完成, fields大小: {}", fields.size());
     }
 
     /**
@@ -353,12 +363,17 @@ public class ExcelUtil<T>
         this.type = Type.IMPORT;
         this.wb = WorkbookFactory.create(is);
         List<T> list = new ArrayList<T>();
+        log.info("开始导入Excel，type: {}, class: {}", type, clazz.getName());
+        
         // 如果指定sheet名,则取指定sheet中的内容 否则默认指向第1个sheet
         Sheet sheet = StringUtils.isNotEmpty(sheetName) ? wb.getSheet(sheetName) : wb.getSheetAt(0);
         if (sheet == null)
         {
+            log.error("文件sheet不存在");
             throw new IOException("文件sheet不存在");
         }
+        
+        log.info("读取到sheet: {}", sheet.getSheetName());
         boolean isXSSFWorkbook = !(wb instanceof HSSFWorkbook);
         Map<String, PictureData> pictures;
         if (isXSSFWorkbook)
@@ -369,14 +384,19 @@ public class ExcelUtil<T>
         {
             pictures = getSheetPictures03((HSSFSheet) sheet, (HSSFWorkbook) wb);
         }
+        
         // 获取最后一个非空行的行下标，比如总行数为n，则返回的为n-1
         int rows = sheet.getLastRowNum();
+        log.info("Excel中总行数: {}", rows + 1);
+        
         if (rows > 0)
         {
             // 定义一个map用于存放excel列的序号和field.
             Map<String, Integer> cellMap = new HashMap<String, Integer>();
             // 获取表头
             Row heard = sheet.getRow(titleNum);
+            log.info("表头行: {}, 物理单元格数: {}", titleNum, heard.getPhysicalNumberOfCells());
+            
             for (int i = 0; i < heard.getPhysicalNumberOfCells(); i++)
             {
                 Cell cell = heard.getCell(i);
@@ -384,37 +404,54 @@ public class ExcelUtil<T>
                 {
                     String value = this.getCellValue(heard, i).toString();
                     cellMap.put(value, i);
+                    log.info("表头单元格[{}]: {}", i, value);
                 }
                 else
                 {
                     cellMap.put(null, i);
+                    log.warn("表头单元格[{}]为空", i);
                 }
             }
+            
             // 有数据时才处理 得到类的所有field.
             List<Object[]> fields = this.getFields();
+            log.info("实体类字段数: {}", fields.size());
+            
             Map<Integer, Object[]> fieldsMap = new HashMap<Integer, Object[]>();
             for (Object[] objects : fields)
             {
+                Field field = (Field) objects[0];
                 Excel attr = (Excel) objects[1];
+                log.info("字段: {}, 注解名称: {}", field.getName(), attr.name());
+                
                 Integer column = cellMap.get(attr.name());
                 if (column != null)
                 {
                     fieldsMap.put(column, objects);
+                    log.info("字段[{}]对应Excel列索引: {}", field.getName(), column);
+                } else {
+                    log.warn("字段[{}]在Excel中未找到对应列", field.getName());
                 }
             }
+            
             for (int i = titleNum + 1; i <= rows; i++)
             {
                 // 从第2行开始取数据,默认第一行是表头.
                 Row row = sheet.getRow(i);
+                log.info("处理第{}行数据", i + 1);
+                
                 // 判断当前行是否是空行
                 if (isRowEmpty(row))
                 {
+                    log.warn("第{}行是空行，跳过", i + 1);
                     continue;
                 }
+                
                 T entity = null;
                 for (Map.Entry<Integer, Object[]> entry : fieldsMap.entrySet())
                 {
                     Object val = this.getCellValue(row, entry.getKey());
+                    log.debug("第{}行，第{}列的值: {}", i + 1, entry.getKey() + 1, val);
 
                     // 如果不存在实例则新建.
                     entity = (entity == null ? clazz.getDeclaredConstructor().newInstance() : entity);
@@ -600,8 +637,15 @@ public class ExcelUtil<T>
      */
     public AjaxResult importTemplateExcel(String sheetName, String title)
     {
-        this.init(null, sheetName, title, Type.IMPORT);
-        return exportExcel();
+        log.info("开始生成导入模板，sheetName: {}, title: {}, class: {}", sheetName, title, clazz.getName());
+        try {
+            this.init(null, sheetName, title, Type.IMPORT);
+            log.info("初始化完成，开始导出Excel");
+            return exportExcel();
+        } catch (Exception e) {
+            log.error("生成导入模板异常", e);
+            throw new RuntimeException("生成导入模板失败：" + e.getMessage());
+        }
     }
 
     /**
@@ -662,15 +706,20 @@ public class ExcelUtil<T>
         OutputStream out = null;
         try
         {
+            log.info("开始写入Excel工作表");
             writeSheet();
             String filename = encodingFilename(sheetName);
-            out = new FileOutputStream(getAbsoluteFile(filename));
+            log.info("生成文件名: {}", filename);
+            String absoluteFile = getAbsoluteFile(filename);
+            log.info("绝对路径: {}", absoluteFile);
+            out = new FileOutputStream(absoluteFile);
             wb.write(out);
+            log.info("Excel文件写入成功");
             return AjaxResult.success(filename);
         }
         catch (Exception e)
         {
-            log.error("导出Excel异常{}", e.getMessage());
+            log.error("导出Excel异常: {}", e.getMessage(), e);
             throw new UtilException("导出Excel失败，请联系网站管理员！");
         }
         finally
@@ -687,18 +736,23 @@ public class ExcelUtil<T>
     {
         // 取出一共有多少个sheet.
         int sheetNo = Math.max(1, (int) Math.ceil(list.size() * 1.0 / sheetSize));
+        log.info("开始创建工作表, 总共需要创建 {} 个sheet", sheetNo);
+        
         for (int index = 0; index < sheetNo; index++)
         {
+            log.info("创建第 {} 个sheet", index + 1);
             createSheet(sheetNo, index);
 
             // 产生一行
             Row row = sheet.createRow(rownum);
             int column = 0;
             // 写入各个字段的列头名称
+            log.info("开始写入列头, fields大小: {}", fields.size());
             for (Object[] os : fields)
             {
                 Field field = (Field) os[0];
                 Excel excel = (Excel) os[1];
+                log.info("处理字段: {}, 注解类型: {}", field.getName(), excel.type());
                 if (Collection.class.isAssignableFrom(field.getType()))
                 {
                     for (Field subField : subFields)
@@ -716,6 +770,8 @@ public class ExcelUtil<T>
             {
                 fillExcelData(index, row);
                 addStatisticsRow();
+            } else {
+                log.info("当前类型为: {}, 不填充数据", type);
             }
         }
     }
@@ -1525,9 +1581,48 @@ public class ExcelUtil<T>
      */
     private void createExcelField()
     {
-        this.fields = getFields();
+        this.fields = new ArrayList<Object[]>();
+        List<Field> tempFields = new ArrayList<>();
+        tempFields.addAll(Arrays.asList(clazz.getSuperclass().getDeclaredFields()));
+        tempFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+        log.info("开始创建Excel字段, 类: {}, 字段总数: {}", clazz.getName(), tempFields.size());
+        
+        for (Field field : tempFields)
+        {
+            // 单注解
+            if (field.isAnnotationPresent(Excel.class))
+            {
+                Excel excel = field.getAnnotation(Excel.class);
+                log.info("处理字段: {}, 注解类型: {}", field.getName(), excel.type());
+                
+                // 根据注解类型过滤字段
+                if (excel.type() == Type.ALL || excel.type() == type)
+                {
+                    addField(fields, field);
+                }
+            }
+
+            // 多注解
+            if (field.isAnnotationPresent(Excels.class))
+            {
+                Excels attrs = field.getAnnotation(Excels.class);
+                Excel[] excels = attrs.value();
+                for (Excel excel : excels)
+                {
+                    log.info("处理多注解字段: {}, 注解类型: {}", field.getName(), excel.type());
+                    if (excel.type() == Type.ALL || excel.type() == type)
+                    {
+                        addField(fields, field);
+                    }
+                }
+            }
+        }
+        log.info("Excel字段创建完成, 有效字段数: {}", fields.size());
+        
+        // 对字段进行排序并计算最大行高
         this.fields = this.fields.stream().sorted(Comparator.comparing(objects -> ((Excel) objects[1]).sort())).collect(Collectors.toList());
         this.maxHeight = getRowHeight();
+        log.info("Excel字段排序完成, 最大行高: {}", this.maxHeight);
     }
 
     /**

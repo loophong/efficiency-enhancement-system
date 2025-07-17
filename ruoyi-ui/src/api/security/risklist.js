@@ -42,3 +42,21 @@ export function delRisklist(id) {
     method: 'delete'
   })
 }
+
+// 导入危险源清单数据
+export function importRisklist(data) {
+  return request({
+    url: '/security/risklist/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载危险源清单模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/risklist/importTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}

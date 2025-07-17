@@ -54,4 +54,13 @@ export function importFile(formData) {
   })
 }
 
+// 下载安全/环境法律法规识别清单模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/legallist/importTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
 

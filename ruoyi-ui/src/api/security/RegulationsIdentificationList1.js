@@ -43,6 +43,25 @@ export function delRegulationsIdentificationList1(id) {
   })
 }
 
+// 导出安全法律法规识别清单
+export function exportRegulationsIdentificationList1(query) {
+  return request({
+    url: '/security/RegulationsIdentificationList1/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 下载安全法律法规识别清单模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/RegulationsIdentificationList1/importTemplate',
+    method: 'get',
+    responseType: 'blob'
+  })
+}
+
+// 导入安全法律法规识别清单
 export function importFile(formData) {
   return request({
     url: '/security/RegulationsIdentificationList1/import',

@@ -58,4 +58,12 @@ public interface SecutityLegalRegulationsIdentificationListMapper
      * @return 结果
      */
     public int deleteSecutityLegalRegulationsIdentificationListByIds(Long[] ids);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

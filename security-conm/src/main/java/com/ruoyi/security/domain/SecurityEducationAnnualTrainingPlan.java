@@ -16,6 +16,7 @@ public class SecurityEducationAnnualTrainingPlan extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号")
     private Long id;
 
     /** 培训项目1 */
@@ -53,6 +54,9 @@ public class SecurityEducationAnnualTrainingPlan extends BaseEntity
     /** 备注 */
     @Excel(name = "备注")
     private String remarks;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -144,6 +148,16 @@ public class SecurityEducationAnnualTrainingPlan extends BaseEntity
     {
         return remarks;
     }
+    
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
+    }
 
     @Override
     public String toString() {
@@ -158,6 +172,7 @@ public class SecurityEducationAnnualTrainingPlan extends BaseEntity
             .append("trainingMonth", getTrainingMonth())
             .append("assessmentMethod", getAssessmentMethod())
             .append("remarks", getRemarks())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }
