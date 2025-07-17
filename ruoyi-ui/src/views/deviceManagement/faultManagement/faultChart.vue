@@ -179,6 +179,7 @@ function initChart() {
         type: 'tree',
         id: 0,
         name: 'tree1',
+        initialTreeDepth: 1, // 默认只展开到二级节点
         data: [data],
         top: '10%',
         left: '15%',
@@ -187,7 +188,6 @@ function initChart() {
         symbolSize: 7,
         edgeShape: 'polyline',
         edgeForkPosition: '63%',
-        initialTreeDepth: 3,
         lineStyle: {
           width: 2
         },
