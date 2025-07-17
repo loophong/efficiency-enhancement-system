@@ -67,39 +67,42 @@ public class SupplierPayment{
     /**
      * 得分
      */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
     private Double score;
 
     /**
      * 模型得分
      */
-    @Excel(name = "模型得分")
-    @ExcelProperty(value = "模型得分")
+    @ExcelIgnore
+//    @Excel(name = "模型得分")
+//    @ExcelProperty(value = "模型得分")
     private Double modelScore;
 
     /**
      * 上传时间
      */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传时间")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
     /**
      * 备注1
      */
     @ExcelIgnore
-    @Excel(name = "备注1")
-    @ExcelProperty(value = "备注1")
+//    @Excel(name = "备注1")
+//    @ExcelProperty(value = "备注1")
     private String one;
 
     /**
      * 备注2
      */
     @ExcelIgnore
-    @Excel(name = "备注2")
-    @ExcelProperty(value = "备注2")
+//    @Excel(name = "备注2")
+//    @ExcelProperty(value = "备注2")
     private String two;
 
 }

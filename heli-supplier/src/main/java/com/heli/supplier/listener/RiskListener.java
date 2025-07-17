@@ -43,6 +43,9 @@ public class RiskListener implements ReadListener<SupplierRisk> {
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setUploadTime(uploadMonth);
             currentRow++;
+
+            calculateRiskScore(registerInfoExcel);
+
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
         }
@@ -72,5 +75,16 @@ public class RiskListener implements ReadListener<SupplierRisk> {
         log.info("开始写入数据库");
         supplierRiskMapper.insert(cacheDataList);
     }
+    private void calculateRiskScore(SupplierRisk supplierRisk) {
+        // 基础分
+        long baseScore = 100;
+        // 获取风险数量，如果为 null 则默认为 0
+        long riskNumber = (supplierRisk.getRiskNumber() != null) ? supplierRisk.getRiskNumber() : 0;
+        // 计算总扣分
+        double deduction = riskNumber * 10;
+        // 最终得分，不能小于 0
+        double finalScore = Math.max(baseScore - deduction, 0);
+        supplierRisk.setScore(Math.max(finalScore, 0));
 
+    }
 }

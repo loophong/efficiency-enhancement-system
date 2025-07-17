@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传时间" prop="uploadMonth">
+        <el-date-picker clearable
+          v-model="queryParams.uploadMonth"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item> 
       <!-- <el-form-item label="总条目数" prop="totalNumber">
         <el-input
           v-model="queryParams.totalNumber"
@@ -64,15 +72,8 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="上传月份" prop="uploadMonth">
-        <el-date-picker clearable
-          v-model="queryParams.uploadMonth"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传月份">
-        </el-date-picker>
-      </el-form-item> -->
+      </el-form-item>-->
+
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -136,11 +137,11 @@
       <el-table-column label="及时条目数" align="center" prop="timelyNumber" />
       <el-table-column label="不及时条目数" align="center" prop="notTimely" />
       <el-table-column label="供货及时率" align="center" prop="timelyDeliveryRate" />
-      <el-table-column label="及时率得分" align="center" prop="timelyRateScore" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
-      <el-table-column label="上传月份" align="center" prop="uploadMonth" width="180">
+      <el-table-column label="得分" align="center" prop="timelyRateScore" />
+      <!-- <el-table-column label="模型得分" align="center" prop="modelScore" /> -->
+      <el-table-column label="上传时间" align="center" prop="uploadMonth" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadMonth, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadMonth, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -180,17 +181,17 @@
         <el-form-item label="供货及时率" prop="timelyDeliveryRate">
           <el-input v-model="form.timelyDeliveryRate" placeholder="请输入供货及时率" />
         </el-form-item>
-        <el-form-item label="及时率得分" prop="timelyRateScore">
+        <!-- <el-form-item label="及时率得分" prop="timelyRateScore">
           <el-input v-model="form.timelyRateScore" placeholder="请输入及时率得分" />
         </el-form-item>
         <el-form-item label="模型得分" prop="modelScore">
           <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
-        </el-form-item>
-        <el-form-item label="上传月份" prop="uploadMonth">
+        </el-form-item> -->
+        <el-form-item label="上传时间" prop="uploadMonth">
           <el-date-picker clearable
             v-model="form.uploadMonth"
-            type="date"
-            value-format="YYYY-MM-DD"
+            type="month"
+            value-format="YYYY-MM"
             placeholder="请选择上传月份">
           </el-date-picker>
         </el-form-item>

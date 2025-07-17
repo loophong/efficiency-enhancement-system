@@ -80,7 +80,7 @@ public class SupplierImportanceController extends BaseController
     {
         List<SupplierImportance> list = supplierImportanceService.selectSupplierImportanceList(supplierImportance);
         ExcelUtil<SupplierImportance> util = new ExcelUtil<SupplierImportance>(SupplierImportance.class);
-        util.exportExcel(response, list, "重要度数据");
+        util.exportExcel(response, list, "重要度");
     }
 
     /**

@@ -44,11 +44,7 @@ public class SupplierPerformanceServicesCollaboration
     @ExcelProperty(value = {"供应商名称","供应商名称"},index = 1)
     private String supplierName;
 
-    /** 记录时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "记录时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "记录时间")
-    private Date time;
+
 
     /** 供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作 */
     @Excel(name = "供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作")
@@ -65,20 +61,29 @@ public class SupplierPerformanceServicesCollaboration
     @ExcelProperty(value = { "服务于协作","供应商如对采购员需求反馈不及时"},index = 4)
     private Long feedbackNotTimely;
 
+    /** 记录时间 */
+    @ExcelIgnore
+    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
+    private Date time;
+
     /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分",index = 5)
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分",index = 5)
     private Long score;
 
     /** 具体内容 */
-    @Excel(name = "具体内容")
-    @ExcelProperty(value = "具体内容")
+    @ExcelIgnore
+//    @Excel(name = "具体内容")
+//    @ExcelProperty(value = "具体内容")
     private String specificContent;
 
     /** 填报人 */
     @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
     private String uploadName;
 
 

@@ -17,7 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-
+     <el-form-item label="上传时间" prop="time">
+        <el-date-picker clearable
+          v-model="queryParams.time"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
       <!-- <el-form-item label="发票号" prop="invoiceNumber">
         <el-input
           v-model="queryParams.invoiceNumber"
@@ -26,14 +33,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item> -->
-      <!-- <el-form-item label="日期" prop="time">
-        <el-date-picker clearable
-          v-model="queryParams.time"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择日期">
-        </el-date-picker>
-      </el-form-item> -->
+ 
       <!-- <el-form-item label="填报人" prop="uploadName">
         <el-input
           v-model="queryParams.uploadName"
@@ -102,13 +102,15 @@
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <!-- <el-table-column label="发票号" align="center" prop="invoiceNumber" /> -->
       <!-- <el-table-column label="具体内容" align="center" prop="specificContent" /> -->
-      <el-table-column label="发生次数" align="center" prop="happenNumber" />
-      <el-table-column label="日期" align="center" prop="time" width="180">
+      <el-table-column label="价格诚信" align="center" prop="happenNumber" />
+
+      <el-table-column label="得分" align="center" prop="score" />
+      <el-table-column label="上传时间" align="center" prop="time" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.time, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="得分" align="center" prop="score" />
+
       <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
       <!-- <el-table-column label="备选" align="center" prop="one" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -139,20 +141,22 @@
         <!-- <el-form-item label="发票号" prop="invoiceNumber">
           <el-input v-model="form.invoiceNumber" placeholder="请输入发票号" />
         </el-form-item> -->
-        <el-form-item label="日期" prop="time">
+
+        <el-form-item label="价格诚信" prop="happenNumber">
+          <el-input v-model="form.happenNumber" placeholder="请输入价格诚信发生次数" />
+        </el-form-item>
+        <el-form-item label="上传时间" prop="time">
           <el-date-picker clearable
             v-model="form.time"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择日期">
+            type="month"
+            value-format="YYYY-MM"
+            placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
         <!-- <el-form-item label="具体内容" prop="specificContent">
           <el-input v-model="form.specificContent" placeholder="请输入具体内容" />
         </el-form-item> -->
-        <el-form-item label="发生次数" prop="happenNumber">
-          <el-input v-model="form.happenNumber" placeholder="请输入发生次数" />
-        </el-form-item>
+
         <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item> -->

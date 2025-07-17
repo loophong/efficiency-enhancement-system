@@ -76,7 +76,7 @@ public class SupplierPerformanceServicesCollaborationController extends BaseCont
     {
         List<SupplierPerformanceServicesCollaboration> list = supplierPerformanceServicesCollaborationService.selectSupplierPerformanceServicesCollaborationList(supplierPerformanceServicesCollaboration);
         ExcelUtil<SupplierPerformanceServicesCollaboration> util = new ExcelUtil<SupplierPerformanceServicesCollaboration>(SupplierPerformanceServicesCollaboration.class);
-        util.exportExcel(response, list, "服务与协作数据");
+        util.exportExcel(response, list, "服务与协作");
     }
 
     /**

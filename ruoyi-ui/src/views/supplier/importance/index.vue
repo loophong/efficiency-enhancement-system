@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+          v-model="queryParams.uploadTime"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
       <!-- <el-form-item label="供货金额" prop="amount" style="width: 320px;">
         <el-input
           v-model="queryParams.amount"
@@ -40,15 +48,8 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
-        <el-date-picker clearable
-          v-model="queryParams.uploadTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传时间">
-        </el-date-picker>
       </el-form-item> -->
+
       <!-- <el-form-item label="备选1" prop="one">
         <el-input
           v-model="queryParams.one"
@@ -133,11 +134,11 @@
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="供货金额" align="center" prop="amount" />
-      <el-table-column label="采购金额占比" align="center" prop="percentage" />
+      <!-- <el-table-column label="采购金额占比" align="center" prop="percentage" /> -->
       <el-table-column label="得分" align="center" prop="score" />
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="备选1" align="center" prop="one" />
@@ -171,17 +172,17 @@
         <el-form-item label="供货金额" prop="amount">
           <el-input v-model="form.amount" placeholder="请输入供货金额" />
         </el-form-item>
-        <el-form-item label="采购金额占比" prop="percentage">
+        <!-- <el-form-item label="采购金额占比" prop="percentage">
           <el-input v-model="form.percentage" placeholder="请输入采购金额占比" />
-        </el-form-item>
-        <el-form-item label="得分" prop="score">
+        </el-form-item> -->
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
             v-model="form.uploadTime"
-            type="date"
-            value-format="YYYY-MM-DD"
+            type="month"
+            value-format="YYYY-MM"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>

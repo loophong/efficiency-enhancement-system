@@ -79,7 +79,7 @@ public class SupplierPriceCompeteController extends BaseController
     {
         List<SupplierPriceCompete> list = supplierPriceCompeteService.selectSupplierPriceCompeteList(supplierPriceCompete);
         ExcelUtil<SupplierPriceCompete> util = new ExcelUtil<SupplierPriceCompete>(SupplierPriceCompete.class);
-        util.exportExcel(response, list, "价格竞争力数据");
+        util.exportExcel(response, list, "价格竞争力");
     }
 
     /**
