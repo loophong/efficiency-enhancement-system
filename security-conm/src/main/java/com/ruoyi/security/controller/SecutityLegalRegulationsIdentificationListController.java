@@ -99,15 +99,27 @@ public class SecutityLegalRegulationsIdentificationListController extends BaseCo
     {
         return toAjax(secutityLegalRegulationsIdentificationListService.deleteSecutityLegalRegulationsIdentificationListByIds(ids));
     }
-    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PreAuthorize("@ss.hasPermi('security:legallist:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
-        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+    public AjaxResult importTable(MultipartFile file) {
+        log.info("传入的参数为 " + file.getName() + " 文件");
         try {
-            secutityLegalRegulationsIdentificationListService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            secutityLegalRegulationsIdentificationListService.readSalaryExcelToDB(file.getOriginalFilename(), file);
+            return AjaxResult.success("导入成功");
         } catch (Exception e) {
-            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            log.error("读取 " + file.getName() + " 文件失败, 原因: {}", e.getMessage());
+            return AjaxResult.error("读取 " + file.getOriginalFilename() + " 文件失败: " + e.getMessage());
         }
+    }
+    
+    /**
+     * 下载环境法律法规识别清单导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:legallist:import')")
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecutityLegalRegulationsIdentificationList> util = new ExcelUtil<SecutityLegalRegulationsIdentificationList>(SecutityLegalRegulationsIdentificationList.class);
+        util.importTemplateExcel(response, "环境法律法规识别清单数据");
     }
 }

@@ -521,6 +521,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+    if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   targetFormats.annual = "";
   targetFormats.q1 = "";
   targetFormats.q2 = "";

@@ -59,5 +59,20 @@ public interface ISecutityLegalRegulationsIdentificationListService
      * @return 结果
      */
     public int deleteSecutityLegalRegulationsIdentificationListById(Long id);
+    
+    /**
+     * 从Excel文件中读取数据并保存到数据库
+     * 
+     * @param originalFilename 原始文件名
+     * @param excelFile Excel文件
+     */
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

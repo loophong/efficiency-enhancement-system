@@ -106,16 +106,28 @@ public class SecutityLegalRegulationsIdentificationList1Controller extends BaseC
     {
         return toAjax(secutityLegalRegulationsIdentificationList1Service.deleteSecutityLegalRegulationsIdentificationList1ByIds(ids));
     }
+    
+    /**
+     * 下载安全法律法规识别清单导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:RegulationsIdentificationList1:import')")
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecutityLegalRegulationsIdentificationList1> util = new ExcelUtil<SecutityLegalRegulationsIdentificationList1>(SecutityLegalRegulationsIdentificationList1.class);
+        util.importTemplateExcel(response, "安全法律法规识别清单数据");
+    }
 
-    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PreAuthorize("@ss.hasPermi('security:RegulationsIdentificationList1:import')")
     @PostMapping("/import")
-    public void importTable( MultipartFile excelFile) {
-        log.info("传入的参数为 " + excelFile.getName() + " 文件");
+    public AjaxResult importTable(MultipartFile file) {
+        log.info("传入的参数为 " + file.getName() + " 文件");
         try {
-            secutityLegalRegulationsIdentificationList1Service.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile);
+            secutityLegalRegulationsIdentificationList1Service.readSalaryExcelToDB(file.getOriginalFilename(), file);
+            return AjaxResult.success("导入成功");
         } catch (Exception e) {
-            log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
-            throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+            log.error("读取 " + file.getName() + " 文件失败, 原因: {}", e.getMessage());
+            return AjaxResult.error("读取 " + file.getOriginalFilename() + " 文件失败: " + e.getMessage());
         }
     }
 }

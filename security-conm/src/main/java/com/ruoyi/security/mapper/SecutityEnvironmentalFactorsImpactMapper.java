@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecutityEnvironmentalFactorsImpact;
  * 环境因素清单Mapper接口
  * 
  * @author wang
- * @date 2025-03-26
+ * @date 2025-07-14
  */
 public interface SecutityEnvironmentalFactorsImpactMapper 
 {
@@ -58,4 +58,20 @@ public interface SecutityEnvironmentalFactorsImpactMapper
      * @return 结果
      */
     public int deleteSecutityEnvironmentalFactorsImpactByIds(Long[] ids);
+    
+    /**
+     * 批量插入环境因素清单
+     * 
+     * @param impactList 环境因素清单列表
+     * @return 结果
+     */
+    public int batchInsertImpacts(List<SecutityEnvironmentalFactorsImpact> impactList);
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

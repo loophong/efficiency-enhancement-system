@@ -19,15 +19,15 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
     private Long id;
 
     /** 环境因素 */
-    @Excel(name = "环境因素")
+    @Excel(name = "环境因素", needMerge = true)
     private String environmentalFactor;
 
     /** 环境影响 */
-    @Excel(name = "环境影响")
+    @Excel(name = "环境影响", needMerge = true)
     private String environmentalImpact;
 
     /** 活动/生产/服务 */
-    @Excel(name = "活动/生产/服务")
+    @Excel(name = "活动/产品/服务")
     private String activityProductService;
 
     /** 部门/工序/岗位 */
@@ -39,12 +39,14 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
     private String temporalState;
 
     /** 管控措施 */
-    @Excel(name = "管控措施")
+    @Excel(name = "管控措施", needMerge = true)
     private String controlMeasures;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
     private String statu;
+    
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -54,6 +56,16 @@ public class SecurityCompanyImportantEnvironmentalFactors extends BaseEntity
     public Long getId() 
     {
         return id;
+    }
+    
+    public void setRelatedId(Long relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId() 
+    {
+        return relatedId;
     }
     public void setEnvironmentalFactor(String environmentalFactor) 
     {

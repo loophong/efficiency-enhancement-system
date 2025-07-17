@@ -102,6 +102,26 @@
           v-hasPermi="['security:trainingplan:export']"
         >导出</el-button>
       </el-col>
+      <!-- 添加导入按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:trainingplan:import']"
+        >导入</el-button>
+      </el-col>
+      <!-- 添加下载模板按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Document"
+          @click="handleDownloadTemplate"
+          v-hasPermi="['security:trainingplan:export']"
+        >下载模板</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -171,11 +191,41 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 添加导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。</span>
+            <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Trainingplan">
 import { listTrainingplan, getTrainingplan, delTrainingplan, addTrainingplan, updateTrainingplan } from "@/api/security/trainingplan";
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
 
 const { proxy } = getCurrentInstance();
 
@@ -188,6 +238,16 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 添加上传相关的数据对象
+const upload = reactive({
+  open: false,
+  title: '',
+  isUploading: false,
+  updateSupport: false,
+  headers: { Authorization: "Bearer " + getToken() },
+  url: import.meta.env.VITE_APP_BASE_API + "/security/trainingplan/importData"
+});
 
 const data = reactive({
   form: {},
@@ -320,6 +380,38 @@ function handleExport() {
   proxy.download('security/trainingplan/export', {
     ...queryParams.value
   }, `trainingplan_${new Date().getTime()}.xlsx`)
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "导入年度培训计划";
+  upload.open = true;
+  proxy.nextTick(() => {
+    proxy.$refs.uploadRef.clearFiles();
+  });
+}
+
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download('security/trainingplan/importTemplate', {}, `trainingplan_template_${new Date().getTime()}.xlsx`);
+}
+
+/** 文件上传中处理 */
+function handleFileUploadProgress(event) {
+  proxy.upload.isUploading = true;
+}
+
+/** 文件上传成功处理 */
+function handleFileSuccess(response) {
+  proxy.upload.open = false;
+  proxy.upload.isUploading = false;
+  proxy.$modal.msgSuccess("导入成功");
+  getList();
+}
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs.uploadRef.submit();
 }
 
 getList();

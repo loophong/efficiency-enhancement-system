@@ -42,3 +42,20 @@ export function delCompliance(id) {
     method: 'delete'
   })
 }
+
+// 导出合规性评价记录模板
+export function exportComplianceTemplate() {
+  return request({
+    url: '/security/compliance/importTemplate',
+    method: 'get'
+  })
+}
+
+// 导入合规性评价记录
+export function importCompliance(file) {
+  return request({
+    url: '/security/compliance/import',
+    method: 'post',
+    data: file
+  })
+}

@@ -113,4 +113,16 @@ public class SecutityLegalRegulationsIdentificationList1ServiceImpl implements I
             log.error("读取 " + originalFilename + " 文件失败, 原因: {}", e.getMessage());
         }
     }
+    
+    /**
+     * 更新最近导入数据的关联ID
+     * 
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    @Override
+    public int updateLatestImportedRelatedId(Long relatedId)
+    {
+        return secutityLegalRegulationsIdentificationList1Mapper.updateLatestImportedRelatedId(relatedId);
+    }
 }
