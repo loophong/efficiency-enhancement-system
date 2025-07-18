@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -100,5 +101,30 @@ public class SecuritySpecialOperationsPersonnelInfoController extends BaseContro
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securitySpecialOperationsPersonnelInfoService.deleteSecuritySpecialOperationsPersonnelInfoByIds(ids));
+    }
+
+    /**
+     * 获取特种作业人员信息导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecuritySpecialOperationsPersonnelInfo> util = new ExcelUtil<SecuritySpecialOperationsPersonnelInfo>(SecuritySpecialOperationsPersonnelInfo.class);
+        util.importTemplateExcel(response, "特种作业人员信息数据");
+    }
+
+    /**
+     * 导入特种作业人员信息数据
+     */
+    @Log(title = "特种作业人员信息", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:specialoperationspersonnelInfo:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecuritySpecialOperationsPersonnelInfo> util = new ExcelUtil<SecuritySpecialOperationsPersonnelInfo>(SecuritySpecialOperationsPersonnelInfo.class);
+        List<SecuritySpecialOperationsPersonnelInfo> personnelInfoList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = securitySpecialOperationsPersonnelInfoService.importSpecialOperationsPersonnelInfo(personnelInfoList, updateSupport, operName);
+        return success(message);
     }
 }

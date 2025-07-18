@@ -508,7 +508,19 @@ public class ExcelUtil<T>
                         }
                         else if (val instanceof Double)
                         {
-                            val = DateUtil.getJavaDate((Double) val);
+                            // 检查数值是否在合理的Excel日期范围内
+                            Double doubleVal = (Double) val;
+                            if (doubleVal > 0 && doubleVal < 2958466) { // Excel日期范围：1900-01-01 到 9999-12-31
+                                try {
+                                    val = DateUtil.getJavaDate(doubleVal);
+                                } catch (Exception e) {
+                                    log.warn("Excel数值日期转换失败: {}, 错误: {}", doubleVal, e.getMessage());
+                                    val = null;
+                                }
+                            } else {
+                                log.warn("Excel日期数值超出合理范围: {}", doubleVal);
+                                val = null; // 超出范围的数值设为null
+                            }
                         }
                     }
                     else if (Boolean.TYPE == fieldType || Boolean.class == fieldType)

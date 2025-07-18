@@ -20,51 +20,51 @@
               <el-input v-model="queryParams.maintenanceCycle" placeholder="保养周期" clearable @keyup.enter="handleQuery"
                 style="width: 80px;" />
             </el-form-item>
-            <el-form-item label="当月1W" prop="monthOne">
+            <el-form-item label="上上上周" prop="monthOne">
               <el-select v-model="queryParams.monthOne" placeholder="请选择" clearable @keyup.enter="handleQuery"
                 style="width: 160px;">
                 <el-option label="◎(检查保养项目)" value="◎"></el-option>
-                <el-option label="☆(精度调整计划)" value="☆"></el-option>
-                <el-option label="◆(检修计划)" value="◆"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
                 <el-option label="◎(待审核)" value="◎(待审核)"></el-option>
+                <el-option label="◆(待审核)" value="☆(待审核)"></el-option>
                 <el-option label="☆(待审核)" value="☆(待审核)"></el-option>
-                <el-option label="◆(待审核)" value="◆(待审核)"></el-option>
                 <el-option label="所有(待审核)" value="(待审核)"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="当月2W" prop="monthTwo">
+            <el-form-item label="上上周" prop="monthTwo">
               <el-select v-model="queryParams.monthTwo" placeholder="请选择" clearable @keyup.enter="handleQuery"
                 style="width: 160px;">
                 <el-option label="◎(检查保养项目)" value="◎"></el-option>
-                <el-option label="☆(精度调整计划)" value="☆"></el-option>
-                <el-option label="◆(检修计划)" value="◆"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
                 <el-option label="◎(待审核)" value="◎(待审核)"></el-option>
+                <el-option label="◆(待审核)" value="☆(待审核)"></el-option>
                 <el-option label="☆(待审核)" value="☆(待审核)"></el-option>
-                <el-option label="◆(待审核)" value="◆(待审核)"></el-option>
                 <el-option label="所有(待审核)" value="(待审核)"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="当月3W" prop="monthThree">
+            <el-form-item label="上周" prop="monthThree">
               <el-select v-model="queryParams.monthThree" placeholder="请选择" clearable @keyup.enter="handleQuery"
                 style="width: 160px;">
                 <el-option label="◎(检查保养项目)" value="◎"></el-option>
-                <el-option label="☆(精度调整计划)" value="☆"></el-option>
-                <el-option label="◆(检修计划)" value="◆"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
                 <el-option label="◎(待审核)" value="◎(待审核)"></el-option>
+                <el-option label="◆(待审核)" value="☆(待审核)"></el-option>
                 <el-option label="☆(待审核)" value="☆(待审核)"></el-option>
-                <el-option label="◆(待审核)" value="◆(待审核)"></el-option>
                 <el-option label="所有(待审核)" value="(待审核)"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="当月4W" prop="monthFour">
+            <el-form-item label="当前周" prop="monthFour">
               <el-select v-model="queryParams.monthFour" placeholder="请选择" clearable @keyup.enter="handleQuery"
                 style="width: 160px;">
                 <el-option label="◎(检查保养项目)" value="◎"></el-option>
-                <el-option label="☆(精度调整计划)" value="☆"></el-option>
-                <el-option label="◆(检修计划)" value="◆"></el-option>
+                <el-option label="◆(精度调整计划)" value="◆"></el-option>
+                <el-option label="☆(检修计划)" value="☆"></el-option>
                 <el-option label="◎(待审核)" value="◎(待审核)"></el-option>
+                <el-option label="◆(待审核)" value="☆(待审核)"></el-option>
                 <el-option label="☆(待审核)" value="☆(待审核)"></el-option>
-                <el-option label="◆(待审核)" value="◆(待审核)"></el-option>
                 <el-option label="所有(待审核)" value="(待审核)"></el-option>
               </el-select>
             </el-form-item>
@@ -113,9 +113,10 @@
             <el-col :span="1.5">
               <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
             </el-col>
-            <el-col :span="1.5">
-              <el-button type="success" plain icon="Edit" @click="messageSetDialog = true">提醒设置</el-button>
-            </el-col>
+            <!-- <el-col :span="1.5">
+            <el-button type="warning" plain icon="Download" @click="handleExport"
+              v-hasPermi="['maintenanceTable:plan:export']">导出</el-button>
+          </el-col> -->
             <el-badge :value="listForTip.length" class="item" color="green">
               <el-button @click="openMessage = true">消息详情</el-button>
             </el-badge>
@@ -254,25 +255,6 @@
             </template>
           </el-dialog>
         </div>
-        <el-dialog title="提醒设置" v-model="messageSetDialog" width="800px" append-to-body>
-          <el-form ref="messageRef" label-width="100px">
-            <el-form-item label="提醒周" prop="orderNum">
-              <el-select v-model="messageSetContent" placeholder="请选择" clearable style="width: 160px;">
-                <el-option label="1W" value="1W"></el-option>
-                <el-option label="2W" value="2W"></el-option>
-                <el-option label="3W" value="3W"></el-option>
-                <el-option label="4W" value="4W"></el-option>
-                <el-option label="不提醒" value=""></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-          <template #footer>
-            <div class="dialog-footer">
-              <el-button type="primary" @click="handleMessageSet()">确 定</el-button>
-              <el-button @click="messageSetDialog = false">取 消</el-button>
-            </div>
-          </template>
-        </el-dialog>
         <el-dialog title="消息提醒" v-model="openMessage" width="1600px" append-to-body>
           <el-button type="primary" @click="watchCurrentWeek" v-show="!showCurrent">仅查看本周</el-button>
           <el-button type="primary" @click="watchAllWeek" v-show="showCurrent">查看所有</el-button>
@@ -348,7 +330,7 @@
 </template>
 
 <script setup name="Plan">
-import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList, resetPlan, updateMessage } from "@/api/device/maintenanceTable/groupPlan";
+import { listPlan, getPlan, delPlan, addPlan, updatePlan, uploadFile, tipList, resetPlan } from "@/api/device/maintenanceTable/groupPlan";
 import { listTemplate } from "@/api/device/fileTable/template";
 import majorPlan from "./majorPlan.vue"
 import record from "./record.vue"
@@ -367,7 +349,6 @@ const open = ref(false);
 const loading = ref(true);
 const buttonLoading = ref(false);
 const openMessage = ref(false);
-const messageSetDialog = ref(false);
 const showSearch = ref(true);
 const showRecord = ref(false);
 const showDialogNull = ref(false);
@@ -380,19 +361,10 @@ const ifTip = ref(true);
 const showDialog = ref(false);
 const showCurrent = ref(false);
 const title = ref("");
-const messageSetContent = ref("");
-// 获取年份（后两位）
-const shortYear = new Date().getFullYear().toString().slice(-2);
-
-// 获取月份（补零，如 7 → 07）
-const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
-
-// 生成四个周数标签
-const firstWeek = ref(`${shortYear}-${month}-1W`);
-const secondWeek = ref(`${shortYear}-${month}-2W`);
-const thirdWeek = ref(`${shortYear}-${month}-3W`);
-const fourthWeek = ref(`${shortYear}-${month}-4W`);
-
+const firstWeek = ref(format(subDays(getMonday(new Date()), 21), 'yy-MM-dd'));;
+const secondWeek = ref(format(subDays(getMonday(new Date()), 14), 'yy-MM-dd'));;
+const thirdWeek = ref(format(subDays(getMonday(new Date()), 7), 'yy-MM-dd'));;
+const fourthWeek = ref(format(getMonday(new Date()), 'yy-MM-dd'));;
 const timeOfClick = ref("");
 const currentUserName = ref("");
 const currentUserId = ref(0);
@@ -450,17 +422,6 @@ function showNotification(keyword, keyword2) {
   notifyOffset.value = newOffset;
 }
 
-function handleMessageSet() {
-  messageSetDialog.value = false
-  updateMessage(messageSetContent.value).then(r => {
-    if (r == '更新消息设置完成') {
-      proxy.$modal.msgSuccess("修改成功");
-    } else {
-      proxy.$modal.msgError("修改失败");
-    }
-  })
-}
-
 console.log(format(subDays(new Date(), 7), 'yyyy-MM-dd HH:mm:ss'));
 //获取当前登录用户信息
 getInfo().then(result => {
@@ -469,7 +430,7 @@ getInfo().then(result => {
 })
 resetPlan().then(result => {
   console.log(result)
-  if (result != '当前时间为当前月，无需处理。') {
+  if (result != '当前时间为当前周，无需处理。') {
     window.location.reload();
   }
 });
@@ -590,17 +551,17 @@ function getList() {
             // const maintenanceCycle = i.maintenanceCycle;
             // const lastCompleteTime = i.lastCompleteTime;
             if (i.maintenanceCycle == '1') {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
             } else if (i.maintenanceCycle == '2' && !i.monthThree) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
             } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
             } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
+              i.monthFour = '待提交'
+              showNotification('自主保全计划', '待提交')
             }
             // try {
             //   let date = new Date(lastCompleteTime);
@@ -626,17 +587,17 @@ function getList() {
       planList.value.forEach(i => {
         if (i.monthFour == null || i.monthFour === '') {
           if (i.maintenanceCycle == '1') {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
           } else if (i.maintenanceCycle == '2' && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
           } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
           } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
+            i.monthFour = '待提交'
+            showNotification('自主保全计划', '待提交')
           }
           // const maintenanceCycle = i.maintenanceCycle;
           // const lastCompleteTime = i.lastCompleteTime;

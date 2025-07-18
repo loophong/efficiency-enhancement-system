@@ -42,7 +42,10 @@ public class SecurityOccupationalHealthProtectiveEquipmentLedger extends BaseEnt
     @Excel(name = "备注")
     private String remarks;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -101,9 +104,19 @@ public class SecurityOccupationalHealthProtectiveEquipmentLedger extends BaseEnt
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -116,6 +129,7 @@ public class SecurityOccupationalHealthProtectiveEquipmentLedger extends BaseEnt
             .append("brand", getBrand())
             .append("unit", getUnit())
             .append("remarks", getRemarks())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

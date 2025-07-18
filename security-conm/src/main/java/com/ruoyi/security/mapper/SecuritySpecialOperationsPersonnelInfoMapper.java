@@ -53,9 +53,25 @@ public interface SecuritySpecialOperationsPersonnelInfoMapper
 
     /**
      * 批量删除特种作业人员信息
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecuritySpecialOperationsPersonnelInfoByIds(Long[] ids);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
+
+    /**
+     * 根据姓名查询特种作业人员信息
+     *
+     * @param name 姓名
+     * @return 特种作业人员信息
+     */
+    public SecuritySpecialOperationsPersonnelInfo selectSecuritySpecialOperationsPersonnelInfoByName(String name);
 }

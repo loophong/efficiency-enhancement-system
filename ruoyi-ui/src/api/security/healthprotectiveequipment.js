@@ -42,3 +42,28 @@ export function delHealthprotectiveequipment(id) {
     method: 'delete'
   })
 }
+
+// 导入职业健康防护用品台帐
+export function importHealthprotectiveequipment(data) {
+  return request({
+    url: '/security/healthprotectiveequipment/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载职业健康防护用品台帐导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/healthprotectiveequipment/importTemplate',
+    method: 'post'
+  })
+}
+
+// 根据关联ID查询职业健康防护用品台帐列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/healthprotectiveequipment/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}

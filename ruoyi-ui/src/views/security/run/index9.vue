@@ -175,7 +175,7 @@ import { listRelatedpartyevaluationrecords, getRelatedpartyevaluationrecords, de
 
 const { proxy } = getCurrentInstance();
 const { security_relation_suggestion, security_status } = proxy.useDict('security_relation_suggestion', 'security_status');
-
+const route = useRoute();
 const relatedpartyevaluationrecordsList = ref([]);
 const open = ref(false);
 const loading = ref(true);

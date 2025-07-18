@@ -42,3 +42,20 @@ export function delSpecialoperationspersonnelInfo(id) {
     method: 'delete'
   })
 }
+
+// 导入特种作业人员信息
+export function importSpecialoperationspersonnelInfo(data) {
+  return request({
+    url: '/security/specialoperationspersonnelInfo/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载特种作业人员信息导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/specialoperationspersonnelInfo/importTemplate',
+    method: 'post'
+  })
+}

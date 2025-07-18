@@ -98,6 +98,14 @@ public class FileUploadAspect {
     private ISecurityOccupationalHazardPositionPersonnelListService securityOccupationalHazardPositionPersonnelListService;
     @Autowired
     private ISecurityHazardPointLedgerService securityHazardPointLedgerService;
+    @Autowired
+    private ISecuritySpecialOperationsPersonnelInfoService securitySpecialOperationsPersonnelInfoService;
+    @Autowired
+    private ISecurityRelatedPartyLedgerService securityRelatedPartyLedgerService;
+    @Autowired
+    private ISecuritySpecialOperationsCertificateLedgerService securitySpecialOperationsCertificateLedgerService;
+    @Autowired
+    private ISecurityOccupationalHealthProtectiveEquipmentLedgerService securityOccupationalHealthProtectiveEquipmentLedgerService;
 
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
@@ -317,6 +325,21 @@ public class FileUploadAspect {
                 // 有害台账
                 updatedRows = securityHazardPointLedgerService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新有害台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecuritySpecialOperationsPersonnelInfo") || controllerName.contains("SpecialOperationsPersonnelInfo") || controllerName.contains("specialoperationspersonnelInfo")){
+                // 特种作业人员信息
+                updatedRows = securitySpecialOperationsPersonnelInfoService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新特种作业人员信息的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecuritySpecialOperationsCertificateLedger") || controllerName.contains("SpecialOperationsCertificate") || controllerName.contains("specialoperationscertificate")) {
+                // 特种设备台账
+                updatedRows = securitySpecialOperationsCertificateLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新特种设备台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityOccupationalHealthProtectiveEquipmentLedger") || controllerName.contains("OccupationalHealthProtectiveEquipment") || controllerName.contains("healthprotectiveequipment")) {
+                // 职业健康防护用品台帐
+                updatedRows = securityOccupationalHealthProtectiveEquipmentLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新职业健康防护用品台帐的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            }  else if (controllerName.contains("SecurityRelatedPartyLedger") || controllerName.contains("RelatedPartyLedger") || controllerName.contains("relatedpartyledger")) {
+                   updatedRows = securityRelatedPartyLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新相关方台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             }
                 // 事故措施跟踪
                 else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {

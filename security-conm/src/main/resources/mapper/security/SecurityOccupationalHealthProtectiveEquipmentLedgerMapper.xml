@@ -12,15 +12,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="brand"    column="brand"    />
         <result property="unit"    column="unit"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo">
-        select id, panjin_heli_sap_material_number, material_name, specifications, brand, unit, remarks from security_occupational_health_protective_equipment_ledger
+        select id, panjin_heli_sap_material_number, material_name, specifications, brand, unit, remarks, related_id from security_occupational_health_protective_equipment_ledger
     </sql>
 
     <select id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerList" parameterType="SecurityOccupationalHealthProtectiveEquipmentLedger" resultMap="SecurityOccupationalHealthProtectiveEquipmentLedgerResult">
         <include refid="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo"/>
-        <where>  
+        <where>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
             <if test="panjinHeliSapMaterialNumber != null  and panjinHeliSapMaterialNumber != ''"> and panjin_heli_sap_material_number = #{panjinHeliSapMaterialNumber}</if>
             <if test="materialName != null  and materialName != ''"> and material_name like concat('%', #{materialName}, '%')</if>
             <if test="specifications != null  and specifications != ''"> and specifications = #{specifications}</if>
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brand != null">brand,</if>
             <if test="unit != null">unit,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="panjinHeliSapMaterialNumber != null and panjinHeliSapMaterialNumber != ''">#{panjinHeliSapMaterialNumber},</if>
@@ -52,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brand != null">#{brand},</if>
             <if test="unit != null">#{unit},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -64,6 +68,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="brand != null">brand = #{brand},</if>
             <if test="unit != null">unit = #{unit},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -73,9 +78,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityOccupationalHealthProtectiveEquipmentLedgerByIds" parameterType="String">
-        delete from security_occupational_health_protective_equipment_ledger where id in 
+        delete from security_occupational_health_protective_equipment_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSecurityOccupationalHealthProtectiveEquipmentLedgerByRelatedId" parameterType="Long" resultMap="SecurityOccupationalHealthProtectiveEquipmentLedgerResult">
+        <include refid="selectSecurityOccupationalHealthProtectiveEquipmentLedgerVo"/>
+        where related_id = #{relatedId}
+    </select>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_occupational_health_protective_equipment_ledger
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+    </update>
 </mapper>

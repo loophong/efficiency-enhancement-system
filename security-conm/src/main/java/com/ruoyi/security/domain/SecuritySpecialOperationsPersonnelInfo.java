@@ -18,6 +18,7 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号", type = Excel.Type.EXPORT)
     private Long id;
 
     /** 部门 */
@@ -59,7 +60,7 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
 
     /** 第一次到期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "第一次到期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "第一次到期时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date firstExpirationDate;
 
     /** 第一次复审时间 */
@@ -69,7 +70,7 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
 
     /** 第二次到期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "第二次到期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "第二次到期时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date secondExpirationDate;
 
     /** 第二次复审时间 */
@@ -79,7 +80,7 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
 
     /** 第三次到期 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "第三次到期", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "第三次到期时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date thirdExpirationDate;
 
     /** 第三次复审时间 */
@@ -90,6 +91,9 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
     /** 备注 */
     @Excel(name = "备注")
     private String remarks;
+
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -240,9 +244,19 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
         this.remarks = remarks;
     }
 
-    public String getRemarks() 
+    public String getRemarks()
     {
         return remarks;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -265,6 +279,7 @@ public class SecuritySpecialOperationsPersonnelInfo extends BaseEntity
             .append("thirdExpirationDate", getThirdExpirationDate())
             .append("thirdRenewalDate", getThirdRenewalDate())
             .append("remarks", getRemarks())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

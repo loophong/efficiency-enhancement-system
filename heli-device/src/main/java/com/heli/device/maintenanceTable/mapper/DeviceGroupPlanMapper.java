@@ -7,8 +7,7 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
-import org.apache.ibatis.annotations.Param;
-//import org.springframework.data.repository.query.Param;
+import org.springframework.data.repository.query.Param;
 
 
 /**
@@ -46,7 +45,11 @@ public interface DeviceGroupPlanMapper extends BaseMapper<DeviceGroupPlan>
     public int insertDeviceGroupPlan(DeviceGroupPlan deviceGroupPlan);
     LocalDateTime getRollTime();
 
-    void updateMessageSet(@Param("messageSet")String messageSet);
+    void updateFieldsForOneWeekAgo(@Param("currentTime") LocalDateTime currentTime);
+
+    void updateFieldsForTwoWeeksAgo(@Param("currentTime") LocalDateTime currentTime);
+
+    void updateFieldsForThreeWeeksAgo(@Param("currentTime") LocalDateTime currentTime);
 
     void updateAllFieldsToZeroAndSetLastCompleteTime(@Param("currentTime") LocalDateTime currentTime);
     /**

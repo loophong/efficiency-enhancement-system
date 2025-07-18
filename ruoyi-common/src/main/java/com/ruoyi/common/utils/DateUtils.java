@@ -104,8 +104,37 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             return null;
         }
         try {
-            return parseDate(str.toString(), parsePatterns);
+            String dateStr = str.toString().trim();
+
+            // 处理日期范围格式（如：2024.4.19-2024.12.30）
+            if (dateStr.contains("-") && !dateStr.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")) {
+                // 可能是日期范围，提取起始日期
+                String[] parts = dateStr.split("-");
+                if (parts.length >= 2) {
+                    // 取第一个日期作为起始日期
+                    dateStr = parts[0].trim();
+                }
+            }
+
+            // 检查是否是无效的年份（年份超过9999或小于1900）
+            if (dateStr.matches("^\\d{5,}[./-].*") || dateStr.matches("^\\d{1,3}[./-].*")) {
+                // 如果年份异常，返回null而不是抛出异常
+                return null;
+            }
+
+            // 检查年份是否在合理范围内（1900-2100）
+            if (dateStr.matches("^\\d{4}[./-].*")) {
+                String yearStr = dateStr.substring(0, 4);
+                int year = Integer.parseInt(yearStr);
+                if (year < 1900 || year > 2100) {
+                    return null;
+                }
+            }
+
+            return parseDate(dateStr, parsePatterns);
         } catch (ParseException e) {
+            return null;
+        } catch (NumberFormatException e) {
             return null;
         }
     }

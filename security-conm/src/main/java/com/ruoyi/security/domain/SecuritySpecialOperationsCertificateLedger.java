@@ -20,6 +20,10 @@ public class SecuritySpecialOperationsCertificateLedger extends BaseEntity
     /** 序号 */
     private Long id;
 
+    /** 区域 */
+    @Excel(name = "区域")
+    private String area;
+
     /** 单位名称 */
     @Excel(name = "单位名称")
     private String unitName;
@@ -64,23 +68,37 @@ public class SecuritySpecialOperationsCertificateLedger extends BaseEntity
     private Date nextInspectionDate;
 
     /** 是否停用 */
-    @Excel(name = "是否停用")
+    @Excel(name = "是否停用 1.未停用 2.已停用")
     private String isDisabled;
 
     /** 特征设备类别 */
     @Excel(name = "特征设备类别")
     private String specialEquipememtCategory;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
 
-    public Long getId() 
+    public Long getId()
     {
         return id;
     }
-    public void setUnitName(String unitName) 
+
+    public void setArea(String area)
+    {
+        this.area = area;
+    }
+
+    public String getArea()
+    {
+        return area;
+    }
+
+    public void setUnitName(String unitName)
     {
         this.unitName = unitName;
     }
@@ -184,15 +202,26 @@ public class SecuritySpecialOperationsCertificateLedger extends BaseEntity
         this.specialEquipememtCategory = specialEquipememtCategory;
     }
 
-    public String getSpecialEquipememtCategory() 
+    public String getSpecialEquipememtCategory()
     {
         return specialEquipememtCategory;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
+            .append("area", getArea())
             .append("unitName", getUnitName())
             .append("equipmentName", getEquipmentName())
             .append("equipmentCategory", getEquipmentCategory())
@@ -205,6 +234,7 @@ public class SecuritySpecialOperationsCertificateLedger extends BaseEntity
             .append("nextInspectionDate", getNextInspectionDate())
             .append("isDisabled", getIsDisabled())
             .append("specialEquipememtCategory", getSpecialEquipememtCategory())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

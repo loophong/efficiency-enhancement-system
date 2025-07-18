@@ -34,12 +34,14 @@
         />
       </el-form-item>
       <el-form-item label="是否签订安全管理协议" prop="isSafetyManagementAgreementSigned">
-        <el-input
+        <el-select
           v-model="queryParams.isSafetyManagementAgreementSigned"
-          placeholder="请输入是否签订安全管理协议"
+          placeholder="请选择是否签订安全管理协议"
           clearable
-          @keyup.enter="handleQuery"
-        />
+        >
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="签订时间" prop="agreementSigningDate">
         <el-date-picker clearable
@@ -57,13 +59,15 @@
           placeholder="请选择进厂时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="外来参观" prop="factoryEntryEndDate">
-        <el-date-picker clearable
-          v-model="queryParams.factoryEntryEndDate"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择外来参观">
-        </el-date-picker>
+      <el-form-item label="外来参观" prop="waiLai">
+        <el-select
+          v-model="queryParams.waiLai"
+          placeholder="请选择外来参观"
+          clearable
+        >
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -120,7 +124,11 @@
       <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
       <el-table-column label="主要联系人" align="center" prop="mainContactPerson" />
       <el-table-column label="我公司对接人员" align="center" prop="ourCompanyContactPerson" />
-      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned" />
+      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned">
+        <template #default="scope">
+          <span>{{ scope.row.isSafetyManagementAgreementSigned == '1' ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="签订时间" align="center" prop="agreementSigningDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.agreementSigningDate, '{y}-{m}-{d}') }}</span>
@@ -131,9 +139,9 @@
           <span>{{ parseTime(scope.row.factoryEntryStartDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="外来参观" align="center" prop="factoryEntryEndDate" width="180">
+      <el-table-column label="外来参观" align="center" prop="waiLai">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.factoryEntryEndDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ scope.row.waiLai == '1' ? '是' : '否' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="实习生" align="center" prop="externalVisitors" />
@@ -176,7 +184,10 @@
           <el-input v-model="form.ourCompanyContactPerson" placeholder="请输入我公司对接人员" />
         </el-form-item>
         <el-form-item label="是否签订安全管理协议" prop="isSafetyManagementAgreementSigned">
-          <el-input v-model="form.isSafetyManagementAgreementSigned" placeholder="请输入是否签订安全管理协议" />
+          <el-select v-model="form.isSafetyManagementAgreementSigned" placeholder="请选择是否签订安全管理协议">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="签订时间" prop="agreementSigningDate">
           <el-date-picker clearable
@@ -194,13 +205,11 @@
             placeholder="请选择进厂时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="外来参观" prop="factoryEntryEndDate">
-          <el-date-picker clearable
-            v-model="form.factoryEntryEndDate"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择外来参观">
-          </el-date-picker>
+        <el-form-item label="外来参观" prop="waiLai">
+          <el-select v-model="form.waiLai" placeholder="请选择外来参观">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="${comment}" prop="others">
           <el-input v-model="form.others" type="textarea" placeholder="请输入内容" />
@@ -243,7 +252,7 @@ const data = reactive({
     isSafetyManagementAgreementSigned: null,
     agreementSigningDate: null,
     factoryEntryStartDate: null,
-    factoryEntryEndDate: null,
+    waiLai: null,
     externalVisitors: null,
     interns: null,
     laborDispatchOutsourcing: null,
@@ -275,7 +284,7 @@ const data = reactive({
     factoryEntryStartDate: [
       { required: true, message: "进厂时间不能为空", trigger: "blur" }
     ],
-    factoryEntryEndDate: [
+    waiLai: [
       { required: true, message: "外来参观不能为空", trigger: "blur" }
     ],
   }
@@ -307,10 +316,10 @@ function reset() {
     relatedPartyName: null,
     mainContactPerson: null,
     ourCompanyContactPerson: null,
-    isSafetyManagementAgreementSigned: null,
+    isSafetyManagementAgreementSigned: "0",
     agreementSigningDate: null,
     factoryEntryStartDate: null,
-    factoryEntryEndDate: null,
+    waiLai: "0",
     externalVisitors: [],
     interns: null,
     laborDispatchOutsourcing: null,

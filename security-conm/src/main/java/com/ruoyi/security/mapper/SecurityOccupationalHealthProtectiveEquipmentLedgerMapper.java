@@ -53,9 +53,25 @@ public interface SecurityOccupationalHealthProtectiveEquipmentLedgerMapper
 
     /**
      * 批量删除职业健康防护用品台帐
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityOccupationalHealthProtectiveEquipmentLedgerByIds(Long[] ids);
+
+    /**
+     * 根据关联ID查询职业健康防护用品台帐列表
+     *
+     * @param relatedId 关联ID
+     * @return 职业健康防护用品台帐集合
+     */
+    public List<SecurityOccupationalHealthProtectiveEquipmentLedger> selectSecurityOccupationalHealthProtectiveEquipmentLedgerByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

@@ -34,12 +34,14 @@
         />
       </el-form-item>
       <el-form-item label="是否签订安全管理协议" prop="isSafetyManagementAgreementSigned">
-        <el-input
+        <el-select
           v-model="queryParams.isSafetyManagementAgreementSigned"
-          placeholder="请输入是否签订安全管理协议"
+          placeholder="请选择是否签订安全管理协议"
           clearable
-          @keyup.enter="handleQuery"
-        />
+        >
+          <el-option label="是" value="1"></el-option>
+          <el-option label="否" value="0"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="签订时间" prop="agreementSigningDate">
         <el-date-picker clearable
@@ -57,22 +59,17 @@
           placeholder="请选择进厂时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="外来参观" prop="factoryEntryEndDate">
-        <el-date-picker clearable
-          v-model="queryParams.factoryEntryEndDate"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择外来参观">
-        </el-date-picker>
+
+      <el-form-item label="外来参观" prop="waiLai">
+        <el-select v-model="queryParams.waiLai" placeholder="请选择" clearable>
+          <el-option label="是" value="1" />
+          <el-option label="否" value="0" />
+        </el-select>
       </el-form-item>
-      <el-form-item label="服务性质" prop="serve">
-        <el-select v-model="queryParams.serve" placeholder="请选择服务性质" clearable>
-          <el-option
-            v-for="dict in security_service"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          />
+      <el-form-item label="实习生" prop="shiXi">
+        <el-select v-model="queryParams.shiXi" placeholder="请选择" clearable>
+          <el-option label="是" value="1" />
+          <el-option label="否" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -120,17 +117,38 @@
           v-hasPermi="['security:relatedpartyledger:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:relatedpartyledger:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+        >模板下载</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="relatedpartyledgerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="100" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="主管科室" align="center" prop="responsibleDepartment" />
       <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
       <el-table-column label="主要联系人" align="center" prop="mainContactPerson" />
       <el-table-column label="我公司对接人员" align="center" prop="ourCompanyContactPerson" />
-      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned" />
+      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned">
+        <template #default="scope">
+          <span>{{ scope.row.isSafetyManagementAgreementSigned == '1' ? '是' : '否' }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="签订时间" align="center" prop="agreementSigningDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.agreementSigningDate, '{y}-{m}-{d}') }}</span>
@@ -141,14 +159,53 @@
           <span>{{ parseTime(scope.row.factoryEntryStartDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="外来参观" align="center" prop="factoryEntryEndDate" width="180">
+
+      <el-table-column label="外来参观" align="center" prop="waiLai" width="100">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.factoryEntryEndDate, '{y}-{m}-{d}') }}</span>
+          <el-tag v-if="scope.row.waiLai === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="服务性质" align="center" prop="serve" width="200" >
+      <el-table-column label="实习生" align="center" prop="shiXi" width="100">
         <template #default="scope">
-          <dict-tag :options="security_service" :value="scope.row.serve"/>
+          <el-tag v-if="scope.row.shiXi === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="劳务派遣、外包等" align="center" prop="laoWu" width="150">
+        <template #default="scope">
+          <el-tag v-if="scope.row.laoWu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="施工作业类" align="center" prop="shiGong" width="120">
+        <template #default="scope">
+          <el-tag v-if="scope.row.shiGong === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="清洁检测服务" align="center" prop="qinjieJianceFuwu" width="140">
+        <template #default="scope">
+          <el-tag v-if="scope.row.qinjieJianceFuwu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="物流配送" align="center" prop="wuLiu" width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.wuLiu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="驻厂相关方" align="center" prop="zhuCangXiangguanfang" width="120">
+        <template #default="scope">
+          <el-tag v-if="scope.row.zhuCangXiangguanfang === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="其他" align="center" prop="other" width="80">
+        <template #default="scope">
+          <el-tag v-if="scope.row.other === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="相关方活动区域" align="center" prop="otherActivity" />
@@ -185,7 +242,10 @@
           <el-input v-model="form.ourCompanyContactPerson" placeholder="请输入我公司对接人员" />
         </el-form-item>
         <el-form-item label="是否签订安全管理协议" prop="isSafetyManagementAgreementSigned">
-          <el-input v-model="form.isSafetyManagementAgreementSigned" placeholder="请输入是否签订安全管理协议" />
+          <el-select v-model="form.isSafetyManagementAgreementSigned" placeholder="请选择是否签订安全管理协议">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="签订时间" prop="agreementSigningDate">
           <el-date-picker clearable
@@ -203,23 +263,38 @@
             placeholder="请选择进厂时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="外来参观" prop="factoryEntryEndDate">
-          <el-date-picker clearable
-            v-model="form.factoryEntryEndDate"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择外来参观">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="服务性质" prop="serve">
-          <el-select v-model="form.serve" placeholder="请选择服务性质">
-            <el-option
-              v-for="dict in security_service"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
+
+        <el-form-item label="服务类型">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-checkbox v-model="form.waiLai" true-label="1" false-label="0">外来参观</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.shiXi" true-label="1" false-label="0">实习生</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.laoWu" true-label="1" false-label="0">劳务派遣、外包等</el-checkbox>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin-top: 10px;">
+            <el-col :span="8">
+              <el-checkbox v-model="form.shiGong" true-label="1" false-label="0">施工作业类</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.qinjieJianceFuwu" true-label="1" false-label="0">清洁检测服务</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.wuLiu" true-label="1" false-label="0">物流配送</el-checkbox>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin-top: 10px;">
+            <el-col :span="8">
+              <el-checkbox v-model="form.zhuCangXiangguanfang" true-label="1" false-label="0">驻厂相关方</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.other" true-label="1" false-label="0">其他</el-checkbox>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="相关方活动区域" prop="otherActivity">
           <el-input v-model="form.otherActivity" placeholder="请输入相关方活动区域" />
@@ -235,15 +310,51 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :on-error="handleFileError"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据（不勾选则允许重复数据导入）
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。支持空值、重复名称和完全重复数据导入。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleImportTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Relatedpartyledger">
-import { listRelatedpartyledger, getRelatedpartyledger, delRelatedpartyledger, addRelatedpartyledger, updateRelatedpartyledger } from "@/api/security/relatedpartyledger";
+import { listRelatedpartyledger, getRelatedpartyledger, delRelatedpartyledger, addRelatedpartyledger, updateRelatedpartyledger, importRelatedpartyledger, downloadTemplate, listByRelatedId } from "@/api/security/relatedpartyledger";
+import { getToken } from "@/utils/auth";
 
 const { proxy } = getCurrentInstance();
-const { security_service } = proxy.useDict('security_service');
-
+// 移除字典引用，因为不再使用服务性质字典
+const route = useRoute();
 const relatedpartyledgerList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -253,6 +364,22 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 上传参数
+const upload = reactive({
+  // 是否显示弹出层（用户导入）
+  open: false,
+  // 弹出层标题（用户导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的用户数据
+  updateSupport: 0,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/relatedpartyledger/importData"
+});
 
 const data = reactive({
   form: {},
@@ -266,8 +393,14 @@ const data = reactive({
     isSafetyManagementAgreementSigned: null,
     agreementSigningDate: null,
     factoryEntryStartDate: null,
-    factoryEntryEndDate: null,
-    serve: null,
+    waiLai: null,
+    shiXi: null,
+    laoWu: null,
+    shiGong: null,
+    qinjieJianceFuwu: null,
+    wuLiu: null,
+    zhuCangXiangguanfang: null,
+    other: null,
   },
   rules: {
     responsibleDepartment: [
@@ -290,9 +423,6 @@ const data = reactive({
     ],
     factoryEntryStartDate: [
       { required: true, message: "进厂时间不能为空", trigger: "blur" }
-    ],
-    factoryEntryEndDate: [
-      { required: true, message: "外来参观不能为空", trigger: "blur" }
     ],
   }
 });
@@ -323,12 +453,19 @@ function reset() {
     relatedPartyName: null,
     mainContactPerson: null,
     ourCompanyContactPerson: null,
-    isSafetyManagementAgreementSigned: null,
+    isSafetyManagementAgreementSigned: "0",
     agreementSigningDate: null,
     factoryEntryStartDate: null,
-    factoryEntryEndDate: null,
-    serve: null,
+    waiLai: "0",
+    shiXi: "0",
+    laoWu: "0",
+    shiGong: "0",
+    qinjieJianceFuwu: "0",
+    wuLiu: "0",
+    zhuCangXiangguanfang: "0",
+    other: "0",
     otherActivity: null,
+    relatedId: null,
     remark: null
   };
   proxy.resetForm("relatedpartyledgerRef");
@@ -410,5 +547,68 @@ function handleExport() {
   }, `relatedpartyledger_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "相关方管理台账导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function handleImportTemplate() {
+  downloadTemplate().then(response => {
+    proxy.download('security/relatedpartyledger/importTemplate', {}, `相关方管理台账导入模板_${new Date().getTime()}.xlsx`, 'post');
+  }); 
+}
+
+// 文件上传中处理
+function handleFileUploadProgress() {
+  upload.isUploading = true;
+}
+
+// 文件上传成功处理
+function handleFileSuccess(response) {
+  upload.isUploading = false;
+  upload.open = false;
+  proxy.$refs.uploadRef.clearFiles();
+  proxy.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+}
+
+// 文件上传失败处理
+function handleFileError() {
+  upload.isUploading = false;
+  proxy.$modal.msgError("导入失败，请检查数据格式是否正确");
+}
+
+// 提交上传文件
+function submitFileForm() {
+  proxy.$refs.uploadRef.submit();
+}
+
+// 检查关联ID参数
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 调用getList()执行实际的数据查询
+    getList();
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联的相关方管理台账数据");
+  } else {
+    // 没有关联ID时，加载所有数据
+    getList();
+  }
+}
+
+// 初始化时检查关联ID
+onMounted(() => {
+  // 检查关联ID参数并加载相应数据
+  checkRelatedId();
+});
+
+
 </script>

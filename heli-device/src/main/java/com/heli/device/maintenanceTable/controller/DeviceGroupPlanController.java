@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.heli.device.maintenanceTable.domain.DeviceMajorPlan;
 import com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper;
@@ -75,7 +74,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 查询班组计划保养列表
      */
-//    @PreAuthorize("@ss.hasPermi('device:group:list')")
+    @PreAuthorize("@ss.hasPermi('device:group:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceGroupPlan deviceGroupPlan)
     {
@@ -84,18 +83,6 @@ public class DeviceGroupPlanController extends BaseController
         return getDataTable(list);
     }
 
-    @PostMapping("/updateMessage")
-    public ResponseEntity<?> updateMessage(@RequestBody Map<String, String> payload) {
-        try {
-            String messageSet = payload.get("messageSet");
-            log.info("messageSet--->" + messageSet);
-            deviceGroupPlanMapper.updateMessageSet(messageSet);
-            return ResponseEntity.ok("更新消息设置完成");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("操作失败：" + e.getMessage());
-        }
-    }
     @PostMapping("/reset")
     public ResponseEntity<?> updatePlan() {
         try {

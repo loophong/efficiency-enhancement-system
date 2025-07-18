@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,6 +21,9 @@ import com.ruoyi.security.domain.SecuritySpecialOperationsCertificateLedger;
 import com.ruoyi.security.service.ISecuritySpecialOperationsCertificateLedgerService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 特种设备台账Controller
@@ -31,6 +35,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
 @RequestMapping("/security/specialoperationscertificate")
 public class SecuritySpecialOperationsCertificateLedgerController extends BaseController
 {
+    private static final Logger log = LoggerFactory.getLogger(SecuritySpecialOperationsCertificateLedgerController.class);
+
     @Autowired
     private ISecuritySpecialOperationsCertificateLedgerService securitySpecialOperationsCertificateLedgerService;
 
@@ -100,5 +106,55 @@ public class SecuritySpecialOperationsCertificateLedgerController extends BaseCo
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securitySpecialOperationsCertificateLedgerService.deleteSecuritySpecialOperationsCertificateLedgerByIds(ids));
+    }
+
+    /**
+     * 获取特种设备台账导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecuritySpecialOperationsCertificateLedger> util = new ExcelUtil<SecuritySpecialOperationsCertificateLedger>(SecuritySpecialOperationsCertificateLedger.class);
+        util.importTemplateExcel(response, "特种设备台账数据");
+    }
+
+    /**
+     * 导入特种设备台账数据
+     */
+    @Log(title = "特种设备台账", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:specialoperationscertificate:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecuritySpecialOperationsCertificateLedger> util = new ExcelUtil<SecuritySpecialOperationsCertificateLedger>(SecuritySpecialOperationsCertificateLedger.class);
+        List<SecuritySpecialOperationsCertificateLedger> specialOperationsCertificateLedgerList = util.importExcel(file.getInputStream());
+        String operName = SecurityUtils.getUsername();
+        String message = securitySpecialOperationsCertificateLedgerService.importSpecialOperationsCertificateLedger(specialOperationsCertificateLedgerList, updateSupport, operName);
+        return success(message);
+    }
+
+    /**
+     * 根据关联ID查询特种设备台账列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:specialoperationscertificate:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        List<SecuritySpecialOperationsCertificateLedger> list = securitySpecialOperationsCertificateLedgerService.selectSecuritySpecialOperationsCertificateLedgerByRelatedId(relatedId);
+        return getDataTable(list);
+    }
+
+    /**
+     * 根据关联ID查询特种设备台账列表（支持分页和条件查询）
+     * 对应URL: /specialdevice?relatedId=427
+     */
+    @PreAuthorize("@ss.hasPermi('security:specialoperationscertificate:list')")
+    @GetMapping("/specialdevice")
+    public TableDataInfo getSpecialDeviceByRelatedId(
+            SecuritySpecialOperationsCertificateLedger securitySpecialOperationsCertificateLedger)
+    {
+        startPage();
+        List<SecuritySpecialOperationsCertificateLedger> list = securitySpecialOperationsCertificateLedgerService.selectSecuritySpecialOperationsCertificateLedgerList(securitySpecialOperationsCertificateLedger);
+        return getDataTable(list);
     }
 }

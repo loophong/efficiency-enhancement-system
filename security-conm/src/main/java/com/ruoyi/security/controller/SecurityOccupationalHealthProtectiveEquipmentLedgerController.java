@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -100,5 +103,41 @@ public class SecurityOccupationalHealthProtectiveEquipmentLedgerController exten
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityOccupationalHealthProtectiveEquipmentLedgerService.deleteSecurityOccupationalHealthProtectiveEquipmentLedgerByIds(ids));
+    }
+
+    /**
+     * 获取职业健康防护用品台帐导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityOccupationalHealthProtectiveEquipmentLedger> util = new ExcelUtil<SecurityOccupationalHealthProtectiveEquipmentLedger>(SecurityOccupationalHealthProtectiveEquipmentLedger.class);
+        util.importTemplateExcel(response, "职业健康防护用品台帐数据");
+    }
+
+    /**
+     * 导入职业健康防护用品台帐数据
+     */
+    @Log(title = "职业健康防护用品台帐", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:healthprotectiveequipment:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecurityOccupationalHealthProtectiveEquipmentLedger> util = new ExcelUtil<SecurityOccupationalHealthProtectiveEquipmentLedger>(SecurityOccupationalHealthProtectiveEquipmentLedger.class);
+        List<SecurityOccupationalHealthProtectiveEquipmentLedger> ledgerList = util.importExcel(file.getInputStream());
+        String operName = SecurityUtils.getUsername();
+        String message = securityOccupationalHealthProtectiveEquipmentLedgerService.importSecurityOccupationalHealthProtectiveEquipmentLedger(ledgerList, updateSupport, operName);
+        return success(message);
+    }
+
+    /**
+     * 根据关联ID查询职业健康防护用品台帐列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:healthprotectiveequipment:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        List<SecurityOccupationalHealthProtectiveEquipmentLedger> list = securityOccupationalHealthProtectiveEquipmentLedgerService.selectSecurityOccupationalHealthProtectiveEquipmentLedgerByRelatedId(relatedId);
+        return getDataTable(list);
     }
 }

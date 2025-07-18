@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecuritySpecialOperationsCertificateLedger" id="SecuritySpecialOperationsCertificateLedgerResult">
         <result property="id"    column="id"    />
+        <result property="area"    column="area"    />
         <result property="unitName"    column="unit_name"    />
         <result property="equipmentName"    column="equipment_name"    />
         <result property="equipmentCategory"    column="equipment_category"    />
@@ -18,15 +19,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="nextInspectionDate"    column="next_inspection_date"    />
         <result property="isDisabled"    column="is_disabled"    />
         <result property="specialEquipememtCategory"    column="special_equipememt_category"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecuritySpecialOperationsCertificateLedgerVo">
-        select id, unit_name, equipment_name, equipment_category, equipment_model, internal_number, usage_certificate_number, issuance_date, manufacturing_unit, inspection_date, next_inspection_date, is_disabled, special_equipememt_category from security_special_operations_certificate_ledger
+        select id, area, unit_name, equipment_name, equipment_category, equipment_model, internal_number, usage_certificate_number, issuance_date, manufacturing_unit, inspection_date, next_inspection_date, is_disabled, special_equipememt_category, related_id from security_special_operations_certificate_ledger
     </sql>
 
     <select id="selectSecuritySpecialOperationsCertificateLedgerList" parameterType="SecuritySpecialOperationsCertificateLedger" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
         <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
-        <where>  
+        <where>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
+            <if test="area != null  and area != ''"> and area like concat('%', #{area}, '%')</if>
             <if test="unitName != null  and unitName != ''"> and unit_name like concat('%', #{unitName}, '%')</if>
             <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat('%', #{equipmentName}, '%')</if>
             <if test="equipmentCategory != null  and equipmentCategory != ''"> and equipment_category = #{equipmentCategory}</if>
@@ -45,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecuritySpecialOperationsCertificateLedger" parameterType="SecuritySpecialOperationsCertificateLedger" useGeneratedKeys="true" keyProperty="id">
         insert into security_special_operations_certificate_ledger
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="area != null and area != ''">area,</if>
             <if test="unitName != null and unitName != ''">unit_name,</if>
             <if test="equipmentName != null and equipmentName != ''">equipment_name,</if>
             <if test="equipmentCategory != null">equipment_category,</if>
@@ -56,9 +61,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionDate != null">inspection_date,</if>
             <if test="nextInspectionDate != null">next_inspection_date,</if>
             <if test="isDisabled != null">is_disabled,</if>
-            <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">special_equipememt_category,</if>
+            special_equipememt_category,
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="area != null and area != ''">#{area},</if>
             <if test="unitName != null and unitName != ''">#{unitName},</if>
             <if test="equipmentName != null and equipmentName != ''">#{equipmentName},</if>
             <if test="equipmentCategory != null">#{equipmentCategory},</if>
@@ -70,13 +77,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="inspectionDate != null">#{inspectionDate},</if>
             <if test="nextInspectionDate != null">#{nextInspectionDate},</if>
             <if test="isDisabled != null">#{isDisabled},</if>
-            <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">#{specialEquipememtCategory},</if>
+            #{specialEquipememtCategory},
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecuritySpecialOperationsCertificateLedger" parameterType="SecuritySpecialOperationsCertificateLedger">
         update security_special_operations_certificate_ledger
         <trim prefix="SET" suffixOverrides=",">
+            <if test="area != null and area != ''">area = #{area},</if>
             <if test="unitName != null and unitName != ''">unit_name = #{unitName},</if>
             <if test="equipmentName != null and equipmentName != ''">equipment_name = #{equipmentName},</if>
             <if test="equipmentCategory != null">equipment_category = #{equipmentCategory},</if>
@@ -89,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="nextInspectionDate != null">next_inspection_date = #{nextInspectionDate},</if>
             <if test="isDisabled != null">is_disabled = #{isDisabled},</if>
             <if test="specialEquipememtCategory != null and specialEquipememtCategory != ''">special_equipememt_category = #{specialEquipememtCategory},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -98,9 +108,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecuritySpecialOperationsCertificateLedgerByIds" parameterType="String">
-        delete from security_special_operations_certificate_ledger where id in 
+        delete from security_special_operations_certificate_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSecuritySpecialOperationsCertificateLedgerByName" parameterType="String" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
+        <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
+        where equipment_name = #{equipmentName} limit 1
+    </select>
+
+    <select id="selectSecuritySpecialOperationsCertificateLedgerByInternalNumber" parameterType="String" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
+        <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
+        where internal_number = #{internalNumber} limit 1
+    </select>
+
+    <select id="selectSecuritySpecialOperationsCertificateLedgerByRelatedId" parameterType="Long" resultMap="SecuritySpecialOperationsCertificateLedgerResult">
+        <include refid="selectSecuritySpecialOperationsCertificateLedgerVo"/>
+        where related_id = #{relatedId}
+    </select>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_special_operations_certificate_ledger
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+    </update>
 </mapper>

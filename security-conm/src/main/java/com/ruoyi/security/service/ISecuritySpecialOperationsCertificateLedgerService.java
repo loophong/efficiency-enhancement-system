@@ -53,9 +53,35 @@ public interface ISecuritySpecialOperationsCertificateLedgerService
 
     /**
      * 删除特种设备台账信息
-     * 
+     *
      * @param id 特种设备台账主键
      * @return 结果
      */
     public int deleteSecuritySpecialOperationsCertificateLedgerById(Long id);
+
+    /**
+     * 导入特种设备台账数据
+     *
+     * @param specialOperationsCertificateLedgerList 特种设备台账数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importSpecialOperationsCertificateLedger(List<SecuritySpecialOperationsCertificateLedger> specialOperationsCertificateLedgerList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 根据关联ID查询特种设备台账列表
+     *
+     * @param relatedId 关联ID
+     * @return 特种设备台账集合
+     */
+    public List<SecuritySpecialOperationsCertificateLedger> selectSecuritySpecialOperationsCertificateLedgerByRelatedId(Long relatedId);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

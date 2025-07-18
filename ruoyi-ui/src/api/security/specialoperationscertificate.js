@@ -42,3 +42,21 @@ export function delSpecialoperationscertificate(id) {
     method: 'delete'
   })
 }
+
+// 导入特种设备台账
+export function importSpecialoperationscertificate(data) {
+  return request({
+    url: '/security/specialoperationscertificate/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载特种设备台账模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/specialoperationscertificate/importTemplate',
+    method: 'post',
+    responseType: 'blob'
+  })
+}

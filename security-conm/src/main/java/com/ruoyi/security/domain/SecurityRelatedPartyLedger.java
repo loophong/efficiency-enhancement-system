@@ -18,6 +18,7 @@ public class SecurityRelatedPartyLedger extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
+    @Excel(name = "序号", type = Excel.Type.EXPORT)
     private Long id;
 
     /** 主管科室 */
@@ -38,7 +39,7 @@ public class SecurityRelatedPartyLedger extends BaseEntity
 
     /** 是否签订安全管理协议 */
     @Excel(name = "是否签订安全管理协议")
-    private Integer isSafetyManagementAgreementSigned;
+    private String isSafetyManagementAgreementSigned;
 
     /** 签订时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -47,21 +48,47 @@ public class SecurityRelatedPartyLedger extends BaseEntity
 
     /** 进厂时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "进厂时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "进厂时间（起止时间）", width = 30, dateFormat = "yyyy-MM-dd")
     private Date factoryEntryStartDate;
 
     /** 外来参观 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "外来参观", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date factoryEntryEndDate;
+    @Excel(name = "外来参观")
+    private String waiLai;
 
-    /** 服务性质 */
-    @Excel(name = "服务性质")
-    private String serve;
+    /** 实习生 */
+    @Excel(name = "实习生")
+    private String shiXi;
+
+    /** 劳务派遣、外包等 */
+    @Excel(name = "劳务派遣、外包等")
+    private String laoWu;
+
+    /** 施工作业类 */
+    @Excel(name = "施工作业类")
+    private String shiGong;
+
+    /** 清洁检测服务 */
+    @Excel(name = "清运、检测、服务等")
+    private String qinjieJianceFuwu;
+
+    /** 物流配送 */
+    @Excel(name = "物流配送")
+    private String wuLiu;
+
+    /** 驻厂相关方 */
+    @Excel(name = "驻厂相关方")
+    private String zhuCangXiangguanfang;
+
+    /** 其他 */
+    @Excel(name = "其他")
+    private String other;
 
     /** 相关方活动区域 */
     @Excel(name = "相关方活动区域")
     private String otherActivity;
+
+    /** 关联ID */
+    private Long relatedId;
 
     public void setId(Long id) 
     {
@@ -108,12 +135,12 @@ public class SecurityRelatedPartyLedger extends BaseEntity
     {
         return ourCompanyContactPerson;
     }
-    public void setIsSafetyManagementAgreementSigned(Integer isSafetyManagementAgreementSigned) 
+    public void setIsSafetyManagementAgreementSigned(String isSafetyManagementAgreementSigned)
     {
         this.isSafetyManagementAgreementSigned = isSafetyManagementAgreementSigned;
     }
 
-    public Integer getIsSafetyManagementAgreementSigned() 
+    public String getIsSafetyManagementAgreementSigned()
     {
         return isSafetyManagementAgreementSigned;
     }
@@ -131,36 +158,107 @@ public class SecurityRelatedPartyLedger extends BaseEntity
         this.factoryEntryStartDate = factoryEntryStartDate;
     }
 
-    public Date getFactoryEntryStartDate() 
+    public Date getFactoryEntryStartDate()
     {
         return factoryEntryStartDate;
     }
-    public void setFactoryEntryEndDate(Date factoryEntryEndDate) 
+    public void setWaiLai(String waiLai)
     {
-        this.factoryEntryEndDate = factoryEntryEndDate;
+        this.waiLai = waiLai;
     }
 
-    public Date getFactoryEntryEndDate() 
+    public String getWaiLai()
     {
-        return factoryEntryEndDate;
-    }
-    public void setServe(String serve) 
-    {
-        this.serve = serve;
+        return waiLai;
     }
 
-    public String getServe() 
+    public void setShiXi(String shiXi)
     {
-        return serve;
+        this.shiXi = shiXi;
+    }
+
+    public String getShiXi()
+    {
+        return shiXi;
+    }
+
+    public void setLaoWu(String laoWu)
+    {
+        this.laoWu = laoWu;
+    }
+
+    public String getLaoWu()
+    {
+        return laoWu;
+    }
+
+    public void setShiGong(String shiGong)
+    {
+        this.shiGong = shiGong;
+    }
+
+    public String getShiGong()
+    {
+        return shiGong;
+    }
+
+    public void setQinjieJianceFuwu(String qinjieJianceFuwu)
+    {
+        this.qinjieJianceFuwu = qinjieJianceFuwu;
+    }
+
+    public String getQinjieJianceFuwu()
+    {
+        return qinjieJianceFuwu;
+    }
+
+    public void setWuLiu(String wuLiu)
+    {
+        this.wuLiu = wuLiu;
+    }
+
+    public String getWuLiu()
+    {
+        return wuLiu;
+    }
+
+    public void setZhuCangXiangguanfang(String zhuCangXiangguanfang)
+    {
+        this.zhuCangXiangguanfang = zhuCangXiangguanfang;
+    }
+
+    public String getZhuCangXiangguanfang()
+    {
+        return zhuCangXiangguanfang;
+    }
+
+    public void setOther(String other)
+    {
+        this.other = other;
+    }
+
+    public String getOther()
+    {
+        return other;
     }
     public void setOtherActivity(String otherActivity) 
     {
         this.otherActivity = otherActivity;
     }
 
-    public String getOtherActivity() 
+    public String getOtherActivity()
     {
         return otherActivity;
+    }
+
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -174,9 +272,16 @@ public class SecurityRelatedPartyLedger extends BaseEntity
             .append("isSafetyManagementAgreementSigned", getIsSafetyManagementAgreementSigned())
             .append("agreementSigningDate", getAgreementSigningDate())
             .append("factoryEntryStartDate", getFactoryEntryStartDate())
-            .append("factoryEntryEndDate", getFactoryEntryEndDate())
-            .append("serve", getServe())
+            .append("waiLai", getWaiLai())
+            .append("shiXi", getShiXi())
+            .append("laoWu", getLaoWu())
+            .append("shiGong", getShiGong())
+            .append("qinjieJianceFuwu", getQinjieJianceFuwu())
+            .append("wuLiu", getWuLiu())
+            .append("zhuCangXiangguanfang", getZhuCangXiangguanfang())
+            .append("other", getOther())
             .append("otherActivity", getOtherActivity())
+            .append("relatedId", getRelatedId())
             .append("remark", getRemark())
             .toString();
     }

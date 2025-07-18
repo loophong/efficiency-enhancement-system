@@ -22,15 +22,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="thirdExpirationDate"    column="third_expiration_date"    />
         <result property="thirdRenewalDate"    column="third_renewal_date"    />
         <result property="remarks"    column="remarks"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecuritySpecialOperationsPersonnelInfoVo">
-        select id, department, name, gender, issuing_authority, certificate_type, operation_category, id_number, certificate_number, issuance_date, first_expiration_date, first_renewal_date, second_expiration_date, second_renewal_date, third_expiration_date, third_renewal_date, remarks from security_special_operations_personnel_info
+        select id, department, name, gender, issuing_authority, certificate_type, operation_category, id_number, certificate_number, issuance_date, first_expiration_date, first_renewal_date, second_expiration_date, second_renewal_date, third_expiration_date, third_renewal_date, remarks, related_id from security_special_operations_personnel_info
     </sql>
 
     <select id="selectSecuritySpecialOperationsPersonnelInfoList" parameterType="SecuritySpecialOperationsPersonnelInfo" resultMap="SecuritySpecialOperationsPersonnelInfoResult">
         <include refid="selectSecuritySpecialOperationsPersonnelInfoVo"/>
-        <where>  
+        <where>
             <if test="department != null  and department != ''"> and department = #{department}</if>
             <if test="name != null  and name != ''"> and name = #{name}</if>
             <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
@@ -40,6 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="idNumber != null  and idNumber != ''"> and id_number = #{idNumber}</if>
             <if test="certificateNumber != null  and certificateNumber != ''"> and certificate_number = #{certificateNumber}</if>
             <if test="issuanceDate != null "> and issuance_date = #{issuanceDate}</if>
+            <if test="relatedId != null "> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -51,9 +53,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecuritySpecialOperationsPersonnelInfo" parameterType="SecuritySpecialOperationsPersonnelInfo" useGeneratedKeys="true" keyProperty="id">
         insert into security_special_operations_personnel_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="department != null and department != ''">department,</if>
-            <if test="name != null and name != ''">name,</if>
-            <if test="gender != null and gender != ''">gender,</if>
+            <if test="department != null">department,</if>
+            <if test="name != null">name,</if>
+            <if test="gender != null">gender,</if>
             <if test="issuingAuthority != null">issuing_authority,</if>
             <if test="certificateType != null">certificate_type,</if>
             <if test="operationCategory != null">operation_category,</if>
@@ -67,11 +69,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="thirdExpirationDate != null">third_expiration_date,</if>
             <if test="thirdRenewalDate != null">third_renewal_date,</if>
             <if test="remarks != null">remarks,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="department != null and department != ''">#{department},</if>
-            <if test="name != null and name != ''">#{name},</if>
-            <if test="gender != null and gender != ''">#{gender},</if>
+            <if test="department != null">#{department},</if>
+            <if test="name != null">#{name},</if>
+            <if test="gender != null">#{gender},</if>
             <if test="issuingAuthority != null">#{issuingAuthority},</if>
             <if test="certificateType != null">#{certificateType},</if>
             <if test="operationCategory != null">#{operationCategory},</if>
@@ -85,15 +88,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="thirdExpirationDate != null">#{thirdExpirationDate},</if>
             <if test="thirdRenewalDate != null">#{thirdRenewalDate},</if>
             <if test="remarks != null">#{remarks},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecuritySpecialOperationsPersonnelInfo" parameterType="SecuritySpecialOperationsPersonnelInfo">
         update security_special_operations_personnel_info
         <trim prefix="SET" suffixOverrides=",">
-            <if test="department != null and department != ''">department = #{department},</if>
-            <if test="name != null and name != ''">name = #{name},</if>
-            <if test="gender != null and gender != ''">gender = #{gender},</if>
+            <if test="department != null">department = #{department},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="gender != null">gender = #{gender},</if>
             <if test="issuingAuthority != null">issuing_authority = #{issuingAuthority},</if>
             <if test="certificateType != null">certificate_type = #{certificateType},</if>
             <if test="operationCategory != null">operation_category = #{operationCategory},</if>
@@ -107,6 +111,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="thirdExpirationDate != null">third_expiration_date = #{thirdExpirationDate},</if>
             <if test="thirdRenewalDate != null">third_renewal_date = #{thirdRenewalDate},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -116,9 +121,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecuritySpecialOperationsPersonnelInfoByIds" parameterType="String">
-        delete from security_special_operations_personnel_info where id in 
+        delete from security_special_operations_personnel_info where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_special_operations_personnel_info
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND id IN (
+            SELECT id FROM (
+                SELECT id FROM security_special_operations_personnel_info
+                WHERE related_id IS NULL
+                ORDER BY id DESC
+                LIMIT 1000
+            ) AS temp
+        )
+    </update>
+
+    <!-- 根据姓名查询特种作业人员信息 -->
+    <select id="selectSecuritySpecialOperationsPersonnelInfoByName" parameterType="String" resultMap="SecuritySpecialOperationsPersonnelInfoResult">
+        <include refid="selectSecuritySpecialOperationsPersonnelInfoVo"/>
+        where name = #{name} limit 1
+    </select>
 </mapper>

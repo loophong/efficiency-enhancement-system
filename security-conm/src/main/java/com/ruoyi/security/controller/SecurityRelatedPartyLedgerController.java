@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -100,5 +101,41 @@ public class SecurityRelatedPartyLedgerController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityRelatedPartyLedgerService.deleteSecurityRelatedPartyLedgerByIds(ids));
+    }
+
+    /**
+     * 获取相关方管理台账导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityRelatedPartyLedger> util = new ExcelUtil<SecurityRelatedPartyLedger>(SecurityRelatedPartyLedger.class);
+        util.importTemplateExcel(response, "相关方管理台账数据");
+    }
+
+    /**
+     * 导入相关方管理台账数据
+     */
+    @Log(title = "相关方管理台账", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:relatedpartyledger:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecurityRelatedPartyLedger> util = new ExcelUtil<SecurityRelatedPartyLedger>(SecurityRelatedPartyLedger.class);
+        List<SecurityRelatedPartyLedger> relatedPartyLedgerList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = securityRelatedPartyLedgerService.importRelatedPartyLedger(relatedPartyLedgerList, updateSupport, operName);
+        return success(message);
+    }
+
+    /**
+     * 根据关联ID查询相关方管理台账列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:relatedpartyledger:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        List<SecurityRelatedPartyLedger> list = securityRelatedPartyLedgerService.selectSecurityRelatedPartyLedgerByRelatedId(relatedId);
+        return getDataTable(list);
     }
 }
