@@ -44,39 +44,40 @@ public class SupplierPriceCompete
     @ExcelProperty(value = "供应商名称")
     private String supplierName;
 
-    /** 记录时间 */
-    @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "记录时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "记录时间")
-    private Date time;
-
     /** 价格类型 */
     @Excel(name = "价格类型")
     @ExcelProperty(value = "价格类型")
     private String priceType;
 
     /** 上传时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传时间")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
     /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
     private Long score;
 
     /** 模型得分 */
-    @Excel(name = "模型得分")
-    @ExcelProperty(value = "模型得分")
+    @ExcelIgnore
+//    @Excel(name = "模型得分")
+//    @ExcelProperty(value = "模型得分")
     private Long modelScore;
 
     /** 填报人 */
     @ExcelIgnore
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
+//    @Excel(name = "填报人")
+//    @ExcelProperty(value = "填报人")
     private String uploadName;
 
-
+    /** 记录时间 */
+    @ExcelIgnore
+    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "记录时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "记录时间")
+    private Date time;
 }

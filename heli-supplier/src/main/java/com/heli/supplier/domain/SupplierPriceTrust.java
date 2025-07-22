@@ -45,40 +45,39 @@ public class SupplierPriceTrust implements Serializable
     @ExcelProperty(value = "供应商名称")
     private String supplierName;
 
-    /** 发票号 */
-    @Excel(name = "发票号")
-    @ExcelProperty(value = "发票号")
-    private String invoiceNumber;
-
-    /** 日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "日期")
-    private Date time;
-
-    /** 具体内容 */
-    @Excel(name = "具体内容")
-    @ExcelProperty(value = "具体内容")
-    private String specificContent;
-
-    /** 发生次数 */
+    /** 价格诚信 */
     @Excel(name = "价格诚信")
     @ExcelProperty(value = "价格诚信")
     private Long happenNumber;
 
+    /** 日期 */
+    @ExcelIgnore
+    @JsonFormat(pattern = "yyyy-MM-dd")
+//    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "日期")
+    private Date time;
+
     /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelIgnore
     private Double score;
 
+    /** 具体内容 */
+    @ExcelIgnore
+//    @Excel(name = "具体内容")
+//    @ExcelProperty(value = "具体内容")
+    private String specificContent;
+
     /** 填报人 */
-    @Excel(name = "填报人")
-    @ExcelProperty(value = "填报人")
+    @ExcelIgnore
     private String uploadName;
+
+
+    /** 发票号 */
+    @ExcelIgnore
+    private String invoiceNumber;
 
     /** 备选 */
     @ExcelIgnore
-    @Excel(name = "备选")
-    @ExcelProperty(value = "备选")
+
     private String one;
 }

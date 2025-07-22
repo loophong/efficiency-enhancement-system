@@ -42,7 +42,7 @@ public class SupplierPaymentController extends BaseController
     private ISupplierPaymentService supplierPaymentService;
 
 
-    @Log(title = "[经营风险表]上传", businessType = BusinessType.IMPORT)
+    @Log(title = "[付款限制条件表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional
     public void importTable(MultipartFile excelFile, Date uploadMonth) {
@@ -79,7 +79,7 @@ public class SupplierPaymentController extends BaseController
     {
         List<SupplierPayment> list = supplierPaymentService.selectSupplierPaymentList(supplierPayment);
         ExcelUtil<SupplierPayment> util = new ExcelUtil<SupplierPayment>(SupplierPayment.class);
-        util.exportExcel(response, list, "付款限制条件数据");
+        util.exportExcel(response, list, "付款限制条件");
     }
 
     /**

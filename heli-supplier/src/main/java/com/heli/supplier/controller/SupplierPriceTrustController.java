@@ -77,7 +77,7 @@ public class SupplierPriceTrustController extends BaseController
     {
         List<SupplierPriceTrust> list = supplierPriceTrustService.selectSupplierPriceTrustList(supplierPriceTrust);
         ExcelUtil<SupplierPriceTrust> util = new ExcelUtil<SupplierPriceTrust>(SupplierPriceTrust.class);
-        util.exportExcel(response, list, "价格诚信数据");
+        util.exportExcel(response, list, "价格诚信");
     }
 
     /**

@@ -17,7 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+          v-model="queryParams.uploadTime"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -76,11 +83,12 @@
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
+   
+      <el-table-column label="期间风险数量" align="center" prop="riskNumber" />
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -108,17 +116,18 @@
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
-        <el-form-item label="得分" prop="score">
+        <el-form-item label="期间风险数量" prop="riskNumber">
+          <el-input v-model="form.riskNumber" placeholder="请输入期间风险数量" />
+        </el-form-item>
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
-        </el-form-item>
-        <el-form-item label="模型得分" prop="modelScore">
-          <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
-        </el-form-item>
+        </el-form-item> -->
+     
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
             v-model="form.uploadTime"
-            type="date"
-            value-format="YYYY-MM-DD"
+            type="month"
+            value-format="YYYY-MM"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
@@ -196,7 +205,7 @@ const data = reactive({
     supplierCode: null,
     supplierName: null,
     score: null,
-    modelScore: null,
+    riskNumber: null,
     uploadTime: null
   },
   rules: {
@@ -204,6 +213,7 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
 
 /** 查询经营风险列表 */
 function getList() {
@@ -228,7 +238,7 @@ function reset() {
     supplierCode: null,
     supplierName: null,
     score: null,
-    modelScore: null,
+    riskNumber: null,
     uploadTime: null
   };
   proxy.resetForm("riskRef");

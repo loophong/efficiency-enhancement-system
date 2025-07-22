@@ -61,6 +61,7 @@ public class SupplierRiskServiceImpl  extends ServiceImpl<SupplierRiskMapper, Su
     @Override
     public int insertSupplierRisk(SupplierRisk supplierRisk)
     {
+        calculateRiskScore(supplierRisk);
         return supplierRiskMapper.insertSupplierRisk(supplierRisk);
     }
 
@@ -73,6 +74,7 @@ public class SupplierRiskServiceImpl  extends ServiceImpl<SupplierRiskMapper, Su
     @Override
     public int updateSupplierRisk(SupplierRisk supplierRisk)
     {
+        calculateRiskScore(supplierRisk);
         return supplierRiskMapper.updateSupplierRisk(supplierRisk);
     }
 
@@ -105,7 +107,7 @@ public class SupplierRiskServiceImpl  extends ServiceImpl<SupplierRiskMapper, Su
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-            this.remove(new QueryWrapper<>());
+//            this.remove(new QueryWrapper<>());
             log.info("开始读取文件: {}", fileName);
             try {
                 EasyExcel.read(excelFile.getInputStream(),
@@ -120,11 +122,27 @@ public class SupplierRiskServiceImpl  extends ServiceImpl<SupplierRiskMapper, Su
         } catch (Exception e) {
             e.printStackTrace();
             log.error("读取 " + fileName + " 文件失败, 原因: {}", e.getMessage());
-
         }
     }
 
+    /**
+     * 计算经营风险得分
+     *
+     * @param supplierRisk 供应商风险对象，包含 riskNumber 字段
+     * @return 计算后的得分
+     */
+    private void calculateRiskScore(SupplierRisk supplierRisk) {
+        // 基础分
+        long baseScore = 100;
+        // 获取风险数量，如果为 null 则默认为 0
+        long riskNumber = (supplierRisk.getRiskNumber() != null) ? supplierRisk.getRiskNumber() : 0;
+        // 计算总扣分
+        double deduction = riskNumber * 10;
+        // 最终得分，不能小于 0
+        double finalScore = Math.max(baseScore - deduction, 0);
+        supplierRisk.setScore(Math.max(finalScore, 0));
 
+    }
 
 
 }

@@ -49,7 +49,7 @@ public class SupplierImportance
     /** 供货金额 */
     @Excel(name = "供货金额")
     @ExcelProperty(value = "供货金额")
-    private Long amount;
+    private Double amount;
 
 //    /** 采购金额占比 */
 //    @Excel(name = "采购金额占比")
@@ -57,14 +57,16 @@ public class SupplierImportance
 //    private String percentage;
 
     /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
     private Long score;
 
     /** 上传时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传时间")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
 //    /** 备选1 */
