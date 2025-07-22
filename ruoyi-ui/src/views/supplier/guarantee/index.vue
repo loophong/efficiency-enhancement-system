@@ -125,6 +125,12 @@
                          v-hasPermi="['production:guarantee:import']">导入
               </el-button>
             </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload" size="mini" 
+         plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -245,6 +251,8 @@
 <script setup name="Guarantee">
 import { listGuarantee, getGuarantee, delGuarantee, addGuarantee, updateGuarantee,importFile } from "@/api/supplier/guarantee";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 
 const guaranteeList = ref([]);
@@ -285,6 +293,11 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
+
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/供货保障.xlsx";
+  handleTrueDownload(url);
+}
 /** 查询供货保障列表 */
 function getList() {
   loading.value = true;

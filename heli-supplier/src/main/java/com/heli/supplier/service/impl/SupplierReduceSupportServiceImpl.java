@@ -168,7 +168,7 @@ public class SupplierReduceSupportServiceImpl extends ServiceImpl<SupplierReduce
 //        } catch (NumberFormatException e) {
 //            throw new IllegalArgumentException("无法解析降本占比数值: " + percentageStr);
 //        }
-            int score = 10;
+            int score = 0;
             if (percentageValue > 0.1 && percentageValue <= 0.5) {
                 score = 20;
             } else if (percentageValue > 0.5 && percentageValue <= 1.5) {

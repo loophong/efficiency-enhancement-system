@@ -110,7 +110,7 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-            this.remove(new QueryWrapper<>());
+//            this.remove(new QueryWrapper<>());
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
 
@@ -120,7 +120,7 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
                                 new ComplexHeaderReturnRateListener(supplierReturnRateMapper, uploadMonth))
 //                                SupplierReturnRate.class, new ReturnRateListener(supplierReturnRateMapper,uploadMonth))
 
-                        .sheet("Sheet2").headRowNumber(2)
+                        .sheet("售后返修率").headRowNumber(1)
                         .doRead();
 //                                .sheet(1).doRead();
 
@@ -155,8 +155,10 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
             baseScore = 30;
         } else if (rate < 100) {
             baseScore = 60;
-        } else {
+        } else if(rate >= 100) {
             baseScore = 100;
+        }else{
+            baseScore = 0;
         }
         // 计算最终得分
         return baseScore * 0.08;

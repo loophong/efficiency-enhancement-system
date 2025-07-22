@@ -1,10 +1,12 @@
 package com.heli.supplier.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierTwoReviewScore;
 import com.heli.supplier.domain.SuppliersQualified;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 二方审核得分Service接口
@@ -61,4 +63,6 @@ public interface ISupplierTwoReviewScoreService extends IService<SupplierTwoRevi
      * @return 结果
      */
     public int deleteSupplierTwoReviewScoreById(String id);
+
+    void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
 }

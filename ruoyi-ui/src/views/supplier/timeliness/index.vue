@@ -27,14 +27,14 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="上传时间" prop="month">
+      <el-form-item label="上传时间" prop="month">
         <el-date-picker clearable
           v-model="queryParams.month"
           type="date"
           value-format="YYYY-MM-DD"
           placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item> -->
+      </el-form-item>
       <!-- <el-form-item label="得分" prop="score" style="top: 2%;">
         <el-input
           v-model="queryParams.score"

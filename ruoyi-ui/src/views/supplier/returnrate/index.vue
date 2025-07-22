@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="月份" prop="month">
+        <el-date-picker clearable
+          v-model="queryParams.month"
+          type="month"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择月份">
+        </el-date-picker>
+      </el-form-item>
       <!-- <el-form-item label="售后返修率" prop="returnRate">
         <el-input
           v-model="queryParams.returnRate"
@@ -25,14 +33,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item> -->
-      <!-- <el-form-item label="月份" prop="month">
-        <el-date-picker clearable
-          v-model="queryParams.month"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择月份">
-        </el-date-picker>
-      </el-form-item> -->
+   
       <!-- <el-form-item label="备选1" prop="one">
         <el-input
           v-model="queryParams.one"
@@ -102,12 +103,18 @@
           v-hasPermi="['supplier:returnrate:export']"
         >导出</el-button>
       </el-col>
-
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
                          v-hasPermi="['production:returnrate:import']">导入
               </el-button>
-            </el-col>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload" size="mini" 
+         plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
 
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -115,15 +122,16 @@
     <el-table v-loading="loading" :data="returnrateList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键" align="center" prop="id" /> -->
-      <el-table-column label="供应商编码" align="center" prop="supplierCode" />
+      <!-- <el-table-column label="供应商编码" align="center" prop="supplierCode" /> -->
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="售后返修率" align="center" prop="returnRate" />
+      <el-table-column label="分数" align="center" prop="score" />
       <el-table-column label="月份" align="center" prop="month" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.month, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="分数" align="center" prop="score" />
+
       <!-- <el-table-column label="2" align="center" prop="two" /> -->
       <!-- <el-table-column label="3" align="center" prop="three" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -145,9 +153,9 @@
     <!-- 添加或修改售后返修率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="returnrateRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商编码" prop="supplierCode">
+        <!-- <el-form-item label="供应商编码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商编码" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
@@ -162,8 +170,8 @@
           placeholder="Pick a month"
         /> -->
         <el-date-picker clearable
-            v-model="form.uploadMonth"
-            type="date"
+            v-model="form.month"
+            type="month"
             value-format="YYYY-MM-DD"
             placeholder="请选择上传月份">
           </el-date-picker>
@@ -227,6 +235,8 @@
 <script setup name="Returnrate">
 import { listReturnrate, getReturnrate, delReturnrate, addReturnrate, updateReturnrate, importFile} from "@/api/supplier/returnrate";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 
 const returnrateList = ref([]);
@@ -262,8 +272,10 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
-/** 查询售后返修率列表 */
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/售后返修率.xlsx";
+  handleTrueDownload(url);
+}/** 查询售后返修率列表 */
 function getList() {
   loading.value = true;
   listReturnrate(queryParams.value).then(response => {

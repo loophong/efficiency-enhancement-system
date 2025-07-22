@@ -9,6 +9,15 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传月份" prop="uploadMonth">
+        <el-date-picker clearable
+          v-model="queryParams.uploadMonth"
+          type="month"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择上传月份">
+        </el-date-picker>
+      </el-form-item>
+      
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -64,6 +73,20 @@
                          v-hasPermi="['production:zeroFailureRate:import']">产品过程故障率导入
               </el-button>
             </el-col>
+      
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload1" size="mini" 
+         plain v-if="true">下载PPM模版文件
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload2" size="mini" 
+         plain v-if="true">下载产品过程故障率模版文件
+        </el-button>
+      </el-col>
+
 
 
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -78,12 +101,17 @@
       <!-- <el-table-column label="故障描述" align="center" prop="failureDescription" /> -->
       <!-- <el-table-column label="故障数" align="center" prop="failureCount" />
       <el-table-column label="装车数" align="center" prop="installedVehicles" /> -->
-      <el-table-column label="PPM值" align="center" prop="ppmValue" />
-      <el-table-column label="季度累计PPM值" align="center" prop="cumulativePpm" />
-      <el-table-column label="零公里故障率" align="center" prop="zeroFailureRate" />
+      <el-table-column label="零公里故障指标完成率" align="center" prop="ppmValue" />
+      <!-- <el-table-column label="季度累计PPM值" align="center" prop="cumulativePpm" /> -->
+      <el-table-column label="产品过程故障率" align="center" prop="zeroFailureRate" />
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="上传月份" align="center" prop="uploadMonth" />
-      <el-table-column label="月份" align="center" prop="time" />
+      <!-- <el-table-column label="月份" align="center" prop="uploadMonth" /> -->
+      <el-table-column label="上传月份" align="center" prop="uploadMonth" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.uploadMonth, '{y}-{m}') }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="月份" align="center" prop="time" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:zeroFailureRate:edit']">修改</el-button>
@@ -121,19 +149,34 @@
         <el-form-item label="PPM值" prop="ppmValue">
           <el-input v-model="form.ppmValue" placeholder="请输入PPM值" />
         </el-form-item>
-        <el-form-item label="季度累计PPM值" prop="cumulativePpm">
+        <!-- <el-form-item label="季度累计PPM值" prop="cumulativePpm">
           <el-input v-model="form.cumulativePpm" placeholder="请输入季度累计PPM值" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="零公里故障率" prop="zeroFailureRate">
           <el-input v-model="form.zeroFailureRate" placeholder="请输入零公里故障率" />
         </el-form-item>
-        <el-form-item label="得分" prop="score">
-          <el-input v-model="form.score" placeholder="请输入得分" />
+        <el-form-item label="上传月份" prop="uploadMonth">
+          <el-date-picker clearable
+            v-model="form.uploadMonth"
+            type="month"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择上传月份">
+          </el-date-picker>
+          <!-- <el-date-picker
+          v-model="form.updateMonth"
+          type="month"
+        
+          placeholder="Pick a month"
+        /> -->
         </el-form-item>
+        <!-- <el-form-item label="得分" prop="score">
+          <el-input v-model="form.score" placeholder="请输入得分" />
+        </el-form-item> -->
+        
         <!-- <el-form-item label="上传月份" prop="uploadmonth">
           <el-input v-model="form.uploadmonth" placeholder="请输入上传月份" />
-        </el-form-item>
-        <el-form-item label="月份" prop="time">
+        </el-form-item> -->
+         <!-- <el-form-item label="月份" prop="time">
           <el-input v-model="form.time" placeholder="请输入月份" />
         </el-form-item> -->
       </el-form>
@@ -186,6 +229,8 @@
 <script setup name="ZeroFailureRate">
 import { listZeroFailureRate, getZeroFailureRate, delZeroFailureRate, addZeroFailureRate, updateZeroFailureRate,importFile,importFile1 } from "@/api/supplier/zeroFailureRate";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 
 const zeroFailureRateList = ref([]);
@@ -226,6 +271,15 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+function handleDownload1() {
+  const url = "/profile/excel_templates/supply/零公里故障指标完成率(PPM).xlsx";
+  handleTrueDownload(url);
+}
+
+function handleDownload2() {
+  const url = "/profile/excel_templates/supply/产品过程故障率.xlsx";
+  handleTrueDownload(url);
+}
 
 /** 查询零公里故障指标完成率列表 */
 function getList() {

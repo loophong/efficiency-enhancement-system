@@ -51,10 +51,17 @@ public class SupplierPaymentController extends BaseController
         log.info("传入的参数为 " +uploadMonth);
         try {
             supplierPaymentService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile,uploadMonth);
-
+//            String result = supplierPaymentService.readSalaryExcelToDB(excelFile.getOriginalFilename(), excelFile, uploadMonth);
+//            return AjaxResult.success(result); // 统一返回成功，详情在消息中
+//            if (result.contains("存在问题")) {
+//                return AjaxResult.warn(result);
+//            } else {
+//                return AjaxResult.success(result);
+//            }
         } catch (Exception e) {
             log.error("读取 " + excelFile.getName() + " 文件失败, 原因: {}", e.getMessage());
             throw new ServiceException("读取 " + excelFile.getName() + " 文件失败");
+//            return AjaxResult.error("读取 " + excelFile.getName() + " 文件失败: " + e.getMessage());
         }
     }
     /**

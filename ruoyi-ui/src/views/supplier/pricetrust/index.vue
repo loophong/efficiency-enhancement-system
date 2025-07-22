@@ -92,6 +92,13 @@
                          v-hasPermi="['production:pricetrust:import']">导入
               </el-button>
             </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download" 
+        @click="handleDownload" size="mini" plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -215,6 +222,8 @@
 <script setup name="Pricetrust">
 import { listPricetrust, getPricetrust, delPricetrust, addPricetrust, updatePricetrust,importFile } from "@/api/supplier/pricetrust";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 
 const pricetrustList = ref([]);
@@ -251,6 +260,12 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/价格诚信.xlsx";
+  handleTrueDownload(url);
+}
+
 
 /** 查询价格诚信列表 */
 function getList() {

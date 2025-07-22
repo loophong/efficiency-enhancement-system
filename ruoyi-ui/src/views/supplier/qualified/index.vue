@@ -1,14 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
-      <!-- <el-form-item label="系统" prop="controlSystem">
+      <el-form-item label="系统" prop="controlSystem">
         <el-input
           v-model="queryParams.controlSystem"
           placeholder="请输入系统"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="供应商编码" prop="supplierCode">
         <el-input
           v-model="queryParams.supplierCode"
@@ -80,11 +80,18 @@
         >导出</el-button>
       </el-col>
 
-            <el-col :span="1.5">
-              <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:qualified:import']">导入
-              </el-button>
-            </el-col>
+      <el-col :span="1.5">
+          <el-button @click="handleImport" type="success" plain icon="Upload"
+                v-hasPermi="['production:qualified:import']">导入
+          </el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload" size="mini" 
+         plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
 
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -165,7 +172,7 @@
 
 <script setup name="Qualified">
 import { listQualified, getQualified, delQualified, addQualified, updateQualified,importFile } from "@/api/supplier/qualified";
-
+import {handleTrueDownload} from "@/api/tool/gen"
 const { proxy } = getCurrentInstance();
 
 const qualifiedList = ref([]);
@@ -200,7 +207,10 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/合格供应商名录.xlsx";
+  handleTrueDownload(url);
+}
 /** 查询供应商列表 */
 function getList() {
   loading.value = true;

@@ -130,6 +130,13 @@
               </el-button>
             </el-col>
 
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download" 
+        @click="handleDownload" size="mini" plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>     
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -287,6 +294,8 @@
 <script setup name="Collaboration">
 import { listCollaboration, getCollaboration, delCollaboration, addCollaboration, updateCollaboration,importFile } from "@/api/supplier/collaboration";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 const { supplier_performance_services_collaboration_two, supplier_performance_services_collaboration_three, supplier_performance_services_collaboration_one } = proxy.useDict('supplier_performance_services_collaboration_two', 'supplier_performance_services_collaboration_three', 'supplier_performance_services_collaboration_one');
 
@@ -325,6 +334,11 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/服务与协作.xlsx";
+  handleTrueDownload(url);
+}
 
 /** 查询服务与协作列表 */
 function getList() {

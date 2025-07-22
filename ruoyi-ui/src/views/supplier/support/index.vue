@@ -94,6 +94,13 @@
               </el-button>
             </el-col>
 
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download" 
+        @click="handleDownload" size="mini" plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -238,6 +245,8 @@
 <script setup name="Support">
 import { listSupport, getSupport, delSupport, addSupport, updateSupport,importFile } from "@/api/supplier/support";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
+
 const { proxy } = getCurrentInstance();
 
 const supportList = ref([]);
@@ -285,6 +294,11 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/降本支持.xlsx";
+  handleTrueDownload(url);
+}
 
 /** 查询降本支持列表 */
 function getList() {

@@ -85,7 +85,7 @@ public class SupplierOnetimeSimpleController extends BaseController
     {
         List<SupplierOnetimeSimple> list = supplierOnetimeSimpleService.selectSupplierOnetimeSimpleList(supplierOnetimeSimple);
         ExcelUtil<SupplierOnetimeSimple> util = new ExcelUtil<SupplierOnetimeSimple>(SupplierOnetimeSimple.class);
-        util.exportExcel(response, list, "一次交检合格率-简化版数据");
+        util.exportExcel(response, list, "一次交检合格率");
     }
 
     /**

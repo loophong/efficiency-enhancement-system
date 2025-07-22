@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
+          <el-date-picker clearable
+            v-model="queryParams.responsibilityJudgmentTime"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择判定责任时间点">
+          </el-date-picker>
+        </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -76,7 +84,7 @@
         </template>
       </el-table-column>
       <el-table-column label="具体内容" align="center" prop="specificContent" />
-      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="分数" align="center" prop="score" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:checkreports:edit']">修改</el-button>

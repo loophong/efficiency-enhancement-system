@@ -57,7 +57,7 @@
         </template>
       </el-table-column>
       <el-table-column label="事故描述" align="center" prop="incidentDescription" />
-      <el-table-column label="分数" align="center" prop="score" />
+      <!-- <el-table-column label="分数" align="center" prop="score" /> -->
       <!-- <el-table-column label="填报人" align="center" prop="uploadName" />
       <el-table-column label="备选1" align="center" prop="one" />
       <el-table-column label="备选2" align="center" prop="two" /> -->
@@ -83,8 +83,8 @@
         </el-form-item>
 
         <el-form-item label="供应商名称" prop="supplierName">
-          <el-select v-model="form.supplierName" clearable placeholder="Select" style="width: 240px">
-            <el-option v-for="item in qualifiedList" :key="item.lable" :label="item.label" :value="item.label" />
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.label" :label="item.label" :value="item.label" />
           </el-select>
         </el-form-item>
 

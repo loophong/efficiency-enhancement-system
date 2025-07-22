@@ -27,7 +27,7 @@
           />
         </el-select>
       </el-form-item>
-      <!-- <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
+      <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
         <el-date-picker clearable
           v-model="queryParams.responsibilityJudgmentTime"
           type="date"
@@ -35,7 +35,7 @@
           placeholder="请选择判定责任时间点">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="具体内容" prop="specificContent">
+      <!-- <el-form-item label="具体内容" prop="specificContent">
         <el-input
           v-model="queryParams.specificContent"
           placeholder="请输入具体内容"

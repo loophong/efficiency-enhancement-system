@@ -36,9 +36,9 @@ public class SupplierReturnRate implements Serializable
     private String id;
 
     /** 供应商编码 */
+    @ExcelIgnore
     @Excel(name = "供应商代码")
     @ExcelProperty(value = "供应商代码")
-    @ExcelIgnore
     private String supplierCode;
 
     /** 供应商名称 */
@@ -52,63 +52,13 @@ public class SupplierReturnRate implements Serializable
     private String returnRate;
 
     /** 月份 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传月份")
     private Date month;
 
     /** 备选1 */
-    @Excel(name = "分数")
-    @ExcelProperty(value = "分数")
     @ExcelIgnore
     private Double score;
-
-//    /** 2 */
-//    @Excel(name = "2")
-//    @ExcelProperty(value = "2")
-//    @ExcelIgnore
-//    private String two;
-//
-//    /** 3 */
-//    @Excel(name = "3")
-//    @ExcelProperty(value = "3")
-//    @ExcelIgnore
-//    private String three;
-//@ExcelProperty(index = 12)
-//private String one;
-//
-//    @ExcelProperty(index = 22)
-//    private String two;
-//
-//    @ExcelProperty(index = 32)
-//    private String three;
-//
-//    @ExcelProperty(index = 42)
-//    private String four;
-//
-//    @ExcelProperty(index = 52)
-//    private String five;
-//
-//    @ExcelProperty(index = 62)
-//    private String six;
-//
-//    @ExcelProperty(index = 72)
-//    private String seven;
-//
-//    @ExcelProperty(index = 82)
-//    private String eight;
-//
-//    @ExcelProperty(index = 92)
-//    private String nine;
-//
-//    @ExcelProperty(index = 102)
-//    private String ten;
-//
-//    @ExcelProperty(index = 112)
-//    private String eleven;
-//
-//    @ExcelProperty(index = 122)
-//    private String twelve;
 
 
 }

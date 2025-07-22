@@ -63,7 +63,7 @@ public class SupplierReduceSupport
     private Double score;
 
     /** 上传时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM")
     @ExcelIgnore
 //    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
 //    @ExcelProperty(value = "上传时间")

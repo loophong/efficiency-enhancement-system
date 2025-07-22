@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传月份" prop="updateMonth" style="width: 320px;">
+        <el-date-picker clearable
+          v-model="queryParams.updateMonth"
+          type="month"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择上传月份">
+        </el-date-picker>
+      </el-form-item> 
       <!-- <el-form-item label="数据合格率" prop="quantityPassRate"  style="width: 320px;">
         <el-input
           v-model="queryParams.quantityPassRate"
@@ -24,15 +32,8 @@
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="上传月份" prop="updateMonth" style="width: 320px;">
-        <el-date-picker clearable
-          v-model="queryParams.updateMonth"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上次月份">
-        </el-date-picker>
-      </el-form-item> -->
+      </el-form-item>-->
+      
       <!-- <el-form-item label="填报人" prop="addName">
         <el-input
           v-model="queryParams.addName"
@@ -88,10 +89,18 @@
       </el-col>
 
       <el-col :span="1.5">
-              <el-button @click="handleImport" type="success" plain icon="Upload"
+         <el-button @click="handleImport" type="success" plain icon="Upload"
                          v-hasPermi="['production:onetimesimple:import']">导入
-              </el-button>
-            </el-col>
+          </el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download"
+         @click="handleDownload" size="mini" 
+         plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -101,12 +110,13 @@
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="数据合格率" align="center" prop="quantityPassRate" />
+      <el-table-column label="得分" align="center" prop="score" />
       <el-table-column label="上传月份" align="center" prop="updateMonth" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.updateMonth, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="分数" align="center" prop="score" />
+
       <!-- <el-table-column label="备选1" align="center" prop="one" />
       <el-table-column label="备选2" align="center" prop="two" /> -->
       <!-- <el-table-column label="填报人" align="center" prop="addName" /> -->
@@ -139,18 +149,18 @@
           <el-input v-model="form.quantityPassRate" placeholder="请输入数据合格率" />
         </el-form-item>
         <el-form-item label="上传月份" prop="updateMonth">
-          <!-- <el-date-picker clearable
+          <el-date-picker clearable
             v-model="form.updateMonth"
-                      type="month"
-            value-format="yyyy-MM"
-            placeholder="请选择上次月份">
-          </el-date-picker> -->
-          <el-date-picker
+            type="month"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择上传月份">
+          </el-date-picker>
+          <!-- <el-date-picker
           v-model="form.updateMonth"
           type="month"
         
           placeholder="Pick a month"
-        />
+        /> -->
         </el-form-item>
         
         <!-- <el-form-item label="填报人" prop="addName">
@@ -202,6 +212,7 @@
 
 <script setup name="Onetimesimple">
 import { listOnetimesimple, getOnetimesimple, delOnetimesimple, addOnetimesimple, updateOnetimesimple,importFile } from "@/api/supplier/onetimesimple";
+import {handleTrueDownload} from "@/api/tool/gen"
 
 const { proxy } = getCurrentInstance();
 import dayjs from 'dayjs';
@@ -247,7 +258,10 @@ const { queryParams, form, rules } = toRefs(data);
 //   }
 //   return dayjs(time).format(format);
 // }
-
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/一次交检合格率.xlsx";
+  handleTrueDownload(url);
+}
 /** 查询一次交检合格率-简化版列表 */
 function getList() {
   loading.value = true;
