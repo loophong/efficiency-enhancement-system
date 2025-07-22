@@ -163,45 +163,81 @@
         </template>
       </el-table-column>
       <el-table-column label="反馈单文件名" align="center" prop="feedbackFileName" />
-      <el-table-column label="反馈单附件" align="center" prop="feedbackFileUrl" width="190">
+      <!-- <el-table-column label="反馈单附件" align="center" prop="feedbackFileUrl" width="190">
+      <template #default="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handlePreview(scope.row.feedbackFileUrl)"
+              :disabled="!scope.row.feedbackFileUrl"
+            >预览</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              @click="handleDownload(scope.row.feedbackFileUrl)"
+              :disabled="!scope.row.feedbackFileUrl"
+            >下载</el-button>
+          </template>
+      </el-table-column> -->
+    <el-table-column label="反馈单附件" align="center" prop="feedbackFileUrl" width="190">
         <template #default="scope">
           <div v-if="scope.row.feedbackFileUrl">
             <div v-for="(fileUrl, index) in getFileList(scope.row.feedbackFileUrl)" :key="index" style="margin-bottom: 5px;">
+              <span style="font-size: 12px; color: #666;">{{ getFileName(fileUrl) }}</span>
+              <br>
               <el-button
                 size="mini"
                 type="primary"
                 @click="handlePreview(fileUrl)"
-              >预览{{ index + 1 }}</el-button>
+              >预览</el-button>
               <el-button
                 size="mini"
                 type="success"
                 @click="handleDownload(fileUrl)"
-              >下载{{ index + 1 }}</el-button>
+              >下载</el-button>
             </div>
           </div>
-          <span v-else>暂无文件</span>
         </template>
-      </el-table-column>
+    </el-table-column>
+
       <el-table-column label="回函文件名" align="center" prop="replyFileName" />
-      <el-table-column label="回函附件" align="center" prop="replyFileUrl" width="190">
+      <!-- <el-table-column label="回函附件" align="center" prop="replyFileUrl" width="190">
         <template #default="scope">
-          <div v-if="scope.row.replyFileUrl">
-            <div v-for="(fileUrl, index) in getFileList(scope.row.replyFileUrl)" :key="index" style="margin-bottom: 5px;">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="handlePreview(fileUrl)"
-              >预览{{ index + 1 }}</el-button>
-              <el-button
-                size="mini"
-                type="success"
-                @click="handleDownload(fileUrl)"
-              >下载{{ index + 1 }}</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="handlePreview(scope.row.replyFileUrl)"
+              :disabled="!scope.row.replyFileUrl"
+            >预览</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              @click="handleDownload(scope.row.replyFileUrl)"
+              :disabled="!scope.row.replyFileUrl"
+            >下载</el-button>
+          </template>
+      </el-table-column> -->
+      <el-table-column label="反馈单附件" align="center" prop="feedbackFileUrl" width="190">
+          <template #default="scope">
+            <div v-if="scope.row.feedbackFileUrl">
+              <div v-for="(fileUrl, index) in getFileList(scope.row.feedbackFileUrl)" :key="index" style="margin-bottom: 5px;">
+                <span style="font-size: 12px; color: #666;">{{ getFileName(fileUrl) }}</span>
+                <br>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="handlePreview(fileUrl)"
+                >预览</el-button>
+                <el-button
+                  size="mini"
+                  type="success"
+                  @click="handleDownload(fileUrl)"
+                >下载</el-button>
+              </div>
             </div>
-          </div>
-          <span v-else>暂无文件</span>
-        </template>
+          </template>
       </el-table-column>
+
 
       <el-table-column label="回函上传时间" align="center" prop="replyTime" width="120">
         <template #default="scope">
@@ -239,15 +275,7 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
-    <!-- 文件预览对话框 -->
-    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
-      <vue-office-docx
-        :src="previewSrc"
-        :style="comStyle"
-        @rendered="renderedHandler"
-        @error="errorHandler"
-      />
-    </el-dialog>
+
     <!-- 添加或修改质量通知单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="happenRef" :model="form" :rules="rules" label-width="120px">
@@ -310,14 +338,136 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 回函弹窗 -->
+    <el-dialog :title="'回函操作'" v-model="replyOpen" width="500px" append-to-body>
+  <el-form :model="replyForm" label-width="120px">
+    <el-form-item label="供应商代码">
+      <el-input v-model="replyForm.supplierCode" disabled />
+    </el-form-item>
+    <el-form-item label="供应商名称">
+      <el-input v-model="replyForm.supplierName" disabled />
+    </el-form-item>
+    <el-form-item label="回函上传时间">
+      <el-date-picker
+        v-model="replyForm.replyTime"
+        type="date"
+        value-format="YYYY-MM-DD"
+        placeholder="请选择回函上传时间"
+        style="width: 100%;"
+      />
+    </el-form-item>
+    <el-form-item label="回函附件名称">
+      <el-input v-model="replyForm.replyFileName" placeholder="请输入回函附件名称" />
+    </el-form-item>
+    <el-form-item label="回函附件">
+      <file-upload v-model="replyForm.replyFileUrl" />
+    </el-form-item>
+  </el-form>
+  <template #footer>
+    <div class="dialog-footer">
+      <el-button type="primary" @click="submitReply">确 定</el-button>
+      <el-button @click="replyOpen = false">取 消</el-button>
+    </div>
+  </template>
+</el-dialog>
+
+    <!-- 文件预览对话框 -->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <!-- Word文档预览 -->
+      <vue-office-docx
+        v-if="fileType === 'docx'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+      <!-- Excel预览 -->
+      <vue-office-excel
+        v-else-if="fileType === 'excel'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+      <!-- 图片预览 -->
+      <div v-else-if="fileType === 'image'" style="text-align: center; padding: 20px;">
+        <img :src="previewSrc" style="max-width: 100%; max-height: 80vh;" alt="图片预览" />
+      </div>
+      <!-- 不支持的文件类型 -->
+      <div v-else style="text-align: center; padding: 50px;">
+        <p>不支持预览此文件类型</p>
+        <el-button type="primary" @click="handleDownload(previewSrc)">下载文件</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Happen">
 import { listHappen, getHappen, delHappen, addHappen, updateHappen } from "@/api/supplier/happen";
 import VueOfficeDocx from '@vue-office/docx'
+import VueOfficeExcel from '@vue-office/excel'
+import VueOfficePdf from '@vue-office/pdf'
 import '@vue-office/docx/lib/index.css'
+import '@vue-office/excel/lib/index.css'
+const previewDialogVisible = ref(false);
+const previewSrc = ref('');
+const fileType = ref('');
+const comStyle = ref({
+  height: '100vh'
+});
 
+function handlePreview(fileUrl) {
+  if (!fileUrl) return;
+  const baseUrl = import.meta.env.VITE_APP_BASE_API || "";
+  const fullUrl = baseUrl + fileUrl;
+  const fileExt = fileUrl.split('.').pop().toLowerCase();
+  
+  if (fileExt === 'docx' || fileExt === 'doc') {
+    fileType.value = 'docx';
+  } else if (fileExt === 'xlsx' || fileExt === 'xls') {
+    fileType.value = 'excel';
+  } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExt)) {
+    fileType.value = 'image';
+  } else {
+    // 不支持的文件类型，直接在新窗口打开
+    window.open(fullUrl, '_blank');
+    return;
+  }
+  previewSrc.value = fullUrl;
+  previewDialogVisible.value = true;
+}
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+function errorHandler(error) {
+  console.error('文档预览失败:', error);
+  proxy.$modal.msgError('文档预览失败');
+}
+// 获取文件列表
+function getFileList(fileUrls) {
+  if (!fileUrls) return [];
+  return fileUrls.split(',').map(url => url.trim()).filter(url => url);
+}
+
+// 获取文件名
+function getFileName(fileUrl) {
+  if (!fileUrl) return '';
+  const fileName = fileUrl.split('/').pop();
+  // return fileName.length > 20 ? fileName.substring(0, 20) + '...' : fileName;
+
+  // 去掉时间戳部分，支持多种格式
+  let cleanFileName = fileName;
+  // 格式1: 文件名_时间戳.扩展名
+  cleanFileName = cleanFileName.replace(/_\d{14,}[A-Z0-9]*(\.\w+)$/, '$1');
+  // 格式2: 文件名_时间戳A001.扩展名  
+  cleanFileName = cleanFileName.replace(/_\d{8,}[A-Z]\d+(\.\w+)$/, '$1');
+ 
+  return cleanFileName.length > 20 ? cleanFileName.substring(0, 20) + '...' : cleanFileName;
+}
+
+
+import.meta.env.VITE_APP_BASE_API
 const { proxy } = getCurrentInstance();
 
 const happenList = ref([]);
@@ -329,21 +479,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-
-const previewDialogVisible = ref(false);
-const previewSrc = ref('');
-const comStyle = ref({
-  height: '100vh'
-});
-
-function renderedHandler() {
-  console.log('文档渲染完成');
-}
-
-function errorHandler(error) {
-  console.error('文档预览失败:', error);
-  proxy.$modal.msgError('文档预览失败');
-}
 
 const data = reactive({
   form: {},
@@ -407,22 +542,13 @@ function submitReply() {
     getList();
   });
 }
-function handlePreview(fileUrl) {
-  const baseUrl = import.meta.env.VITE_APP_BASE_API || "";
-  const fullUrl = baseUrl + fileUrl;
-  const fileExt = fileUrl.split('.').pop().toLowerCase();
-  
-  if (fileExt === 'docx' || fileExt === 'doc') {
-    previewSrc.value = fullUrl;
-    previewDialogVisible.value = true;
-    console.log('预览文件路径:', previewSrc.value);
-  } else {
-    // 其他文件类型用原来的方式预览
-    window.open(fullUrl, '_blank');
-  }
-}
+// function handlePreview(feedbackFileUrl) {
+//   const baseUrl = import.meta.env.VITE_APP_BASE_API || ""; // vite项目
+//   window.open(baseUrl + feedbackFileUrl, '_blank');
+// }
 
 function handleDownload(feedbackFileUrl) {
+  if (!fileUrl) return;
   const baseUrl = import.meta.env.VITE_APP_BASE_API || "";
   const link = document.createElement('a');
   link.href = baseUrl + feedbackFileUrl;
@@ -439,19 +565,6 @@ function getReplyStatus(row) {
     return "回函不及时";
   }
   return "已回函";
-}
-
-// 解析文件URL字符串为数组
-function getFileList(fileUrls) {
-  if (!fileUrls) return [];
-  return fileUrls.split(',').filter(url => url.trim());
-}
-
-// 获取文件名
-function getFileName(fileUrl) {
-  if (!fileUrl) return '';
-  const fileName = fileUrl.split('/').pop();
-  return fileName.split('.')[0]; // 去掉扩展名
 }
 
 
