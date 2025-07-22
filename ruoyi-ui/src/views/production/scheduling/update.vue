@@ -8,7 +8,7 @@
       <el-step title="第三步" description="系统排产"/>
       <el-step title="第四步" description="未排产订单列表"/>
       <!--      <el-step title="第五步" description="预测订单生成"/>-->
-      <el-step title="第六步" description="生成日生产计划"/>
+<!--      <el-step title="第六步" description="生成日生产计划"/>-->
     </el-steps>
 
 
@@ -21,19 +21,12 @@
           <el-date-picker v-model="productionDate" type="date" date-format="yyyy-MM-dd" placeholder="选择日期"/>
         </el-form-item>
 
-        <!--        <div style="display: flex; align-items: center;">-->
-        <!--          <el-row>-->
-        <!--            <el-col>添加</el-col>-->
-        <!--            <el-col>添加</el-col>-->
-        <!--            <el-col>添加</el-col>-->
-        <!--          </el-row>-->
-        <!--        </div>-->
-
-        <div style="display: flex; align-items: center;">
+        <div  style="margin-bottom: 10px"  >
           <el-row :gutter="20">
-            <el-col :span="8">修改排产计划</el-col>
-            <el-col :span="8">添加</el-col>
-            <el-col :span="8">添加</el-col>
+            <el-col :span="1"></el-col>
+            <el-col :span="2" style="text-align: center; font-weight: bold;">产能车型</el-col>
+            <el-col :span="2" style="text-align: center; font-weight: bold;">产能设置</el-col>
+            <el-col :span="2" style="text-align: center; font-weight: bold;">产能需求</el-col>
           </el-row>
         </div>
 
@@ -336,8 +329,8 @@
     <!--    第五步:设置上一步和下一步的按钮-->
     <div style="  display: flex;  justify-content: center;">
       <el-button v-if="active > 1" type="primary" size="large" @click="pre">上一步</el-button>
-      <el-button v-if="active < 6" type="primary" size="large" @click="next">下一步</el-button>
-      <el-button v-if="active === 6" type="success" size="large" @click="submitForm">完成</el-button>
+      <el-button v-if="active < 4" type="primary" size="large" @click="next">下一步</el-button>
+      <el-button v-if="active === 4" type="success" size="large" @click="submitForm">完成</el-button>
     </div>
 
 
