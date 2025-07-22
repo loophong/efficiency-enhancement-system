@@ -126,9 +126,9 @@ public class FileUploadAspect {
     private ISecurityDangerWangListService securityDangerWangListService;
 
     /**
-     * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
+     * 定义切点 - 只拦截security模块下包含upload、import、file等关键词的Controller方法
      */
-    @Pointcut("execution(* com.ruoyi..controller..*.*(..)) && (" +
+    @Pointcut("execution(* com.ruoyi.security.controller..*.*(..)) && (" +
               "execution(* *..*upload*(..)) || " +
               "execution(* *..*import*(..)) || " +
               "execution(* *..*Upload*(..)) || " +
@@ -138,9 +138,9 @@ public class FileUploadAspect {
     public void uploadPointcut() {}
     
     /**
-     * 定义切点 - 拦截所有表单管理相关的Controller方法
+     * 定义切点 - 只拦截security模块下的表单管理相关的Controller方法
      */
-    @Pointcut("execution(* com.ruoyi..controller..*.*(..))")
+    @Pointcut("execution(* com.ruoyi.security.controller..*.*(..))")
     public void formManagementPointcut() {}
 
     /**
@@ -148,20 +148,34 @@ public class FileUploadAspect {
      */
     @Before("uploadPointcut()")
     public void beforeUpload(JoinPoint joinPoint) {
-        log.info("准备处理上传/导入方法: {}.{}", 
-                joinPoint.getTarget().getClass().getName(),
-                joinPoint.getSignature().getName());
+        String className = joinPoint.getTarget().getClass().getName();
+
+        // 额外安全检查：确保只处理security模块的Controller
+        if (!className.contains("com.ruoyi.security.controller")) {
+            log.debug("跳过非security模块的Controller: {}", className);
+            return;
+        }
+
+        log.info("准备处理security模块上传/导入方法: {}.{}",
+                className, joinPoint.getSignature().getName());
     }
 
     /**
-            * 环绕通知，处理所有导入方法
+            * 环绕通知，只处理security模块下的导入方法
  */
-    @Around("execution(* com.ruoyi..controller..*.*import*(..))")
+    @Around("execution(* com.ruoyi.security.controller..*.*import*(..))")
     public Object aroundImportMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
-        log.info("环绕通知：处理所有导入方法 {}.{}",
-                joinPoint.getTarget().getClass().getName(),
-                joinPoint.getSignature().getName());
+
+        // 额外安全检查：确保只处理security模块的Controller
+        String className = joinPoint.getTarget().getClass().getName();
+        if (!className.contains("com.ruoyi.security.controller")) {
+            log.debug("跳过非security模块的Controller: {}", className);
+            return joinPoint.proceed();
+        }
+
+        log.info("环绕通知：处理security模块导入方法 {}.{}",
+                className, joinPoint.getSignature().getName());
 
                     // 获取当前请求
                     ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -544,10 +558,17 @@ public void afterFormManagement() {
      */
     @AfterReturning(pointcut = "uploadPointcut()", returning = "result")
     public void afterUpload(JoinPoint joinPoint, Object result) {
-        log.info("拦截到上传/导入方法: {}.{}", 
-                joinPoint.getTarget().getClass().getName(),
-                joinPoint.getSignature().getName());
-        
+        String className = joinPoint.getTarget().getClass().getName();
+
+        // 额外安全检查：确保只处理security模块的Controller
+        if (!className.contains("com.ruoyi.security.controller")) {
+            log.debug("跳过非security模块的Controller: {}", className);
+            return;
+        }
+
+        log.info("拦截到security模块上传/导入方法: {}.{}",
+                className, joinPoint.getSignature().getName());
+
         try {
             // 获取当前请求
             ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
