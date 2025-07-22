@@ -10,6 +10,7 @@ import com.heli.supplier.mapper.SupplierZeroKilometerFailureRateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -112,10 +113,10 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
                 result = item.getTwelve();
             }
 
-            result = result.replace("\\%", "");
-            if(result.startsWith("=")){
-                result = "";
-            }
+//            result = result.replace("\\%", "");
+//            if(result.startsWith("=")){
+//                result = "";
+//            }
 
             SupplierZeroKilometerFailureRate selectOne = supplierZeroKilometerFailureRateMapper.selectOne(
                     new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()

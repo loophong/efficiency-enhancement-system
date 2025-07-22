@@ -51,60 +51,65 @@ public class SupplierTwoReviewScore {
     private String supplierName;
 
     /**
-     * 不符合项1
+     * 不符合项
      */
-    @Excel(name = "不符合项1")
-    @ExcelProperty(value = "不符合项1")
-    private String notTrue1;
-
-    /**
-     * 不符合项2
-     */
-    @Excel(name = "不符合项2")
-    @ExcelProperty(value = "不符合项2")
-    private String notTrue2;
-
-    /**
-     * 不符合项3
-     */
-    @Excel(name = "不符合项3")
-    @ExcelProperty(value = "不符合项3")
-    private String notTrue3;
-
-    /**
-     * 不符合项4
-     */
-    @Excel(name = "不符合项4")
-    @ExcelProperty(value = "不符合项4")
-    private String notTrue4;
-
-    /**
-     * 不符合项5
-     */
-    @Excel(name = "不符合项5")
-    @ExcelProperty(value = "不符合项5")
-    private String notTrue5;
+    @Excel(name = "不符合项")
+    @ExcelProperty(value = "不符合项")
+    private String notTrue;
 
     /**
      * 得分
      */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
     private Long score;
 
     /**
      * 上传时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传时间")
+    @ExcelIgnore
+    @JsonFormat(pattern = "yyyy-MM")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
     private Date time;
 
-//    /**
-//     * 填报人
-//     */
-//    @Excel(name = "填报人")
-//    @ExcelProperty(value = "填报人")
-//    private String uploadName;
+
+
+
+
+
+    /**
+     * 不符合项2
+     */
+    @ExcelIgnore
+//    @Excel(name = "不符合项2")
+//    @ExcelProperty(value = "不符合项2")
+    private String notTrue2;
+
+    /**
+     * 不符合项3
+     */
+    @ExcelIgnore
+//    @Excel(name = "不符合项3")
+//    @ExcelProperty(value = "不符合项3")
+    private String notTrue3;
+
+    /**
+     * 不符合项4
+     */
+    @ExcelIgnore
+//    @Excel(name = "不符合项4")
+//    @ExcelProperty(value = "不符合项4")
+    private String notTrue4;
+
+    /**
+     * 不符合项5
+     */
+    @ExcelIgnore
+//    @Excel(name = "不符合项5")
+//    @ExcelProperty(value = "不符合项5")
+    private String notTrue5;
+
 
 }

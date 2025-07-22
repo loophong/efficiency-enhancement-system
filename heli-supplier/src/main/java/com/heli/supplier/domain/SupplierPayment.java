@@ -58,6 +58,12 @@ public class SupplierPayment{
     private String paymentTerms;
 
     /**
+     * 付款说明
+     */
+    @Excel(name = "付款说明")
+    @ExcelProperty(value = "付款说明")
+    private String one;
+    /**
      *  备注
      */
     @Excel(name = "备注")
@@ -85,17 +91,7 @@ public class SupplierPayment{
      */
     @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-//    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
-
-    /**
-     * 备注1
-     */
-    @ExcelIgnore
-//    @Excel(name = "备注1")
-//    @ExcelProperty(value = "备注1")
-    private String one;
 
     /**
      * 备注2

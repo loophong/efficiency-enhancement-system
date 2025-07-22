@@ -105,15 +105,20 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
         if (quantityPassRate == null || quantityPassRate.isEmpty()) {
             return 0; // 为空时默认 0 分
         }
-
         try {
             // 去掉可能存在的 "%" 符号，并转换为 double
             double qualifiedRate = Double.parseDouble(quantityPassRate.replace("%", "").trim());
-
             double baseScore = 100; // 基础分 100 分
-            double deduction = 20 * (100 - qualifiedRate); // 每下降 1% 扣 20 分
+
+            // 计算不合格率
+            double unqualifiedRate = 100 - qualifiedRate;
+
+            // 按1%区间计算扣分
+            int deductionIntervals = (int) Math.ceil(unqualifiedRate); // 向上取整到区间数
+            double deduction = deductionIntervals * 20; // 每个区间扣20分
+
             double finalScore = Math.max(0, baseScore - deduction); // 最低为 0 分
-            return finalScore * 0.02; // 乘以 2% 作为模块得分
+            return finalScore;
         } catch (NumberFormatException e) {
             log.error("合格率格式错误: {}", quantityPassRate);
             return 0; // 格式错误时默认 0 分

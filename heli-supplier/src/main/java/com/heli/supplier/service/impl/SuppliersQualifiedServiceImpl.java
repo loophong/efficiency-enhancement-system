@@ -97,7 +97,7 @@ public class SuppliersQualifiedServiceImpl extends ServiceImpl<SuppliersQualifie
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile) {
         try {
             // 清空表单
-            this.remove(new QueryWrapper<>());
+//            this.remove(new QueryWrapper<>());
 
 //            this.remove(new LambdaQueryWrapper<SuppliersQualified>()
 //                    .eq(SuppliersQualified::getDate,date));

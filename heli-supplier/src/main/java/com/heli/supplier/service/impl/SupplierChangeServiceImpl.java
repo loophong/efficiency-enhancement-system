@@ -61,7 +61,7 @@ public class SupplierChangeServiceImpl extends ServiceImpl<SupplierChangeMapper,
         SupplierChange existingChange = supplierChangeMapper.selectOne(queryWrapper);
         if (existingChange != null) {
             if (!existingChange.getFormLeibie().equals(supplierChange.getFormLeibie())) {
-                throw new IllegalArgumentException("供应商类别不一致");
+                throw new IllegalArgumentException("与已存入的供应商类别不一致");
             }
         }
         return supplierChangeMapper.insertSupplierChange(supplierChange);

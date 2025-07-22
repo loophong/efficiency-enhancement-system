@@ -52,7 +52,7 @@ public class SupplierPriceTrust implements Serializable
 
     /** 日期 */
     @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM")
 //    @Excel(name = "日期", width = 30, dateFormat = "yyyy-MM-dd")
 //    @ExcelProperty(value = "日期")
     private Date time;

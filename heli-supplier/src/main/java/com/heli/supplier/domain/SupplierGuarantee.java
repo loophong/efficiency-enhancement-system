@@ -82,7 +82,7 @@ public class SupplierGuarantee
 
     /** 上传月份 */
     @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM")
 //    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
 //    @ExcelProperty(value = "上传月份")
     private Date uploadMonth;

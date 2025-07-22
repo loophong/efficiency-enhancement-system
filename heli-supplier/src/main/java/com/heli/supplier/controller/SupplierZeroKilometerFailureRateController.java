@@ -91,7 +91,7 @@ public class SupplierZeroKilometerFailureRateController extends BaseController
     {
         List<SupplierZeroKilometerFailureRate> list = supplierZeroKilometerFailureRateService.selectSupplierZeroKilometerFailureRateList(supplierZeroKilometerFailureRate);
         ExcelUtil<SupplierZeroKilometerFailureRate> util = new ExcelUtil<SupplierZeroKilometerFailureRate>(SupplierZeroKilometerFailureRate.class);
-        util.exportExcel(response, list, "零公里故障指标完成率数据");
+        util.exportExcel(response, list, "零公里故障指标完成率");
     }
 
     /**

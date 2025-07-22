@@ -77,7 +77,7 @@ public class SupplierReturnRateController extends BaseController
     {
         List<SupplierReturnRate> list = supplierReturnRateService.selectSupplierReturnRateList(supplierReturnRate);
         ExcelUtil<SupplierReturnRate> util = new ExcelUtil<SupplierReturnRate>(SupplierReturnRate.class);
-        util.exportExcel(response, list, "售后返修率数据");
+        util.exportExcel(response, list, "售后返修率");
     }
 
     /**

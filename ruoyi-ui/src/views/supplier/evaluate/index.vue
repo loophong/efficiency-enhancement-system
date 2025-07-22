@@ -17,6 +17,22 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="开始时间" prop="happenTime">
+        <el-date-picker clearable
+          v-model="queryParams.happenTime"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择开始时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束时间" prop="endTime">
+        <el-date-picker clearable
+          v-model="queryParams.endTime"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择结束时间">
+        </el-date-picker>
+      </el-form-item>
       <!-- <el-form-item label="重要度" prop="weight">
         <el-input
           v-model="queryParams.weight"
@@ -109,7 +125,7 @@
       <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree" width="50"/>
       <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness" width="50"/>
       <el-table-column label="总分" align="center" prop="totalScore" width="70"/>
-      <!-- <el-table-column label="开始时间" align="center" prop="happenTime" width="180">
+      <el-table-column label="开始时间" align="center" prop="happenTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -118,7 +134,7 @@
         <template #default="scope">
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <!-- <el-table-column label="备2" align="center" prop="2" />
       <el-table-column label="备3" align="center" prop="3" width="180">
         <template #default="scope">
@@ -149,7 +165,7 @@
 
     <!-- 添加或修改评分表对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="evaluateRef" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="evaluateRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码"/>
         </el-form-item>
@@ -219,7 +235,7 @@
         <el-form-item label="总分" prop="totalScore">
           <el-input v-model="form.totalScore" placeholder="请输入总分"/>
         </el-form-item>
-        <!-- <el-form-item label="开始时间" prop="happenTime">
+        <el-form-item label="开始时间" prop="happenTime">
           <el-date-picker clearable
                           v-model="form.happenTime"
                           type="date"
@@ -234,7 +250,7 @@
                           value-format="YYYY-MM-DD"
                           placeholder="请选择结束时间">
           </el-date-picker>
-        </el-form-item> -->
+        </el-form-item>
         <!-- <el-form-item label="备2" prop="2">
           <el-input v-model="form.2" placeholder="请输入备2" />
         </el-form-item>

@@ -83,3 +83,8 @@ export function synchDb(tableName) {
     method: 'get'
   })
 }
+
+
+export function handleTrueDownload(url) {
+  return window.location.href = "http://124.222.36.192:8080" + url;
+}

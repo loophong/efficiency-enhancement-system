@@ -17,6 +17,15 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+        v-model="queryParams.uploadTime"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+    
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -68,6 +77,13 @@
                          v-hasPermi="['production:payment:import']">导入
               </el-button>
             </el-col>
+
+      
+            <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download" 
+        @click="handleDownload" size="mini" plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -77,15 +93,17 @@
       <el-table-column label="供应商代码" align="center" prop="supplierCode" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" />
       <el-table-column label="付款条件" align="center" prop="paymentTerms" />
+      <el-table-column label="付款说明" align="center" prop="one" />
       <el-table-column label="备注" align="center" prop="remark" />
+     
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
+      <!-- <el-table-column label="模型得分" align="center" prop="modelScore" /> -->
       <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="备注1" align="center" prop="one" /> -->
+      
       <!-- <el-table-column label="备注2" align="center" prop="two" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -115,9 +133,26 @@
         <el-form-item label="付款条件" prop="paymentTerms">
           <el-input v-model="form.paymentTerms" placeholder="请输入付款条件" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+        <el-form-item label="付款说明" prop="one">
+          <el-input v-model="form.one" placeholder="请输入付款说明" />
         </el-form-item>
+        <!-- <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item> -->
+        <el-form-item label="备注" prop="remark">
+  <!-- <el-select v-model="form.remark" placeholder="请选择备注" clearable> -->
+    <el-select 
+    v-model="form.remark" 
+    placeholder="请选择备注" 
+    clearable
+    filterable
+    allow-create
+    default-first-option
+  >
+    <el-option label="平衡重" value="平衡重" />
+    <el-option label="第三方" value="第三方" />
+  </el-select>
+</el-form-item>
         <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
@@ -127,15 +162,13 @@
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
             v-model="form.uploadTime"
-            type="date"
+            type="month"
             value-format="YYYY-MM-DD"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <!-- <el-form-item label="备注1" prop="one">
-          <el-input v-model="form.one" placeholder="请输入备注1" />
-        </el-form-item>
-        <el-form-item label="备注2" prop="two">
+       
+         <!--<el-form-item label="备注2" prop="two">
           <el-input v-model="form.two" placeholder="请输入备注2" />
         </el-form-item> -->
       </el-form>
@@ -187,6 +220,7 @@
 <script setup name="Payment">
 import { listPayment, getPayment, delPayment, addPayment, updatePayment,importFile } from "@/api/supplier/payment";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
 const { proxy } = getCurrentInstance();
 
 const paymentList = ref([]);
@@ -225,6 +259,10 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/付款限制条件.xlsx";
+  handleTrueDownload(url);
+}
 /** 查询付款限制条件列表 */
 function getList() {
   loading.value = true;
@@ -383,7 +421,8 @@ function uploadFile() {
       getList();
       uploadDialogVisible.value = false;
       isLoading.value = false;
-    }).catch(() => {
+    })
+    .catch(() => {
       proxy.$modal.msgError("导入失败");
       isLoading.value = false;
     }).finally(() => {

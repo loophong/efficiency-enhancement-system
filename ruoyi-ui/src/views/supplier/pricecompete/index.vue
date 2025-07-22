@@ -118,6 +118,12 @@
                          v-hasPermi="['production:pricecompete:import']">导入
               </el-button>
             </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="el-icon-download" @click="handleDownload" size="mini" plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -278,6 +284,7 @@
 <script setup name="Pricecompete">
 import { listPricecompete, getPricecompete, delPricecompete, addPricecompete, updatePricecompete,importFile } from "@/api/supplier/pricecompete";
 import dayjs from 'dayjs';
+import {handleTrueDownload} from "@/api/tool/gen"
 const { proxy } = getCurrentInstance();
 const { supplier_price_compete_price_type } = proxy.useDict('supplier_price_compete_price_type');
 
@@ -433,6 +440,12 @@ getList();
 function handleImport() {
   resetUpload();
   uploadDialogVisible.value = true;
+}
+
+
+function handleDownload() {
+  const url = "/profile/excel_templates/supply/价格竞争力xlsx.xlsx";
+  handleTrueDownload(url);
 }
 
 /** 表单重置 */

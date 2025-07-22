@@ -239,7 +239,7 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
                         else if (rate < 90) baseScore = 30;
                         else if (rate < 100) baseScore = 60;
                         else baseScore = 100;
-                        entity.setScore(baseScore * 0.08);
+                        entity.setScore(baseScore);
                     }
                 } catch (Exception e) {
                     log.error("计算分数出错: {}", e.getMessage());

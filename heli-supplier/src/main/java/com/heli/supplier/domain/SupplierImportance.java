@@ -64,7 +64,7 @@ public class SupplierImportance
 
     /** 上传时间 */
     @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM")
 //    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
 //    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
