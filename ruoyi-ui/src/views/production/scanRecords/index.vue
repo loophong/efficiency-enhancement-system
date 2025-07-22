@@ -92,6 +92,10 @@
                    v-hasPermi="['production:scanRecords:import']">导入
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Download" @click="handleDownload"  plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -249,6 +253,7 @@ import {
   updateScanRecords,
   importFile
 } from "@/api/production/scanRecords";
+import {handleTrueDownload} from "@/utils/fileMonitor.js";
 
 const {proxy} = getCurrentInstance();
 
@@ -474,5 +479,9 @@ function checkFile() {
   }
 }
 
+function handleDownload() {
+  const url = "/profile/excel_templates/production/整机扫码记录导入模板.xlsx";
+  handleTrueDownload(url);
+}
 
 </script>

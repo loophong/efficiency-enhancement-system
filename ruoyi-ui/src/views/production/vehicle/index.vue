@@ -34,6 +34,7 @@
           删除
         </el-button>
       </el-col>
+
       <!--      <el-col :span="1.5">-->
       <!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:vehicle:export']">-->
       <!--          导出-->
@@ -43,6 +44,11 @@
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['production:vehicle:import']">
           导入
+        </el-button>
+      </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Download" @click="handleDownload"  plain v-if="true">下载模版文件
         </el-button>
       </el-col>
 
@@ -137,6 +143,7 @@
 <script setup name="Vehicle">
 import {listVehicle, getVehicle, delVehicle, addVehicle, updateVehicle, importFile} from "@/api/production/vehicle";
 import {reactive} from "vue";
+import {handleTrueDownload} from "@/utils/fileMonitor.js";
 
 const {proxy} = getCurrentInstance();
 
@@ -370,4 +377,10 @@ function checkFile() {
     resetUpload();
   }
 }
+
+function handleDownload() {
+  const url = "/profile/excel_templates/production/在产车型信息导入模板.xlsx";
+  handleTrueDownload(url);
+}
+
 </script>
