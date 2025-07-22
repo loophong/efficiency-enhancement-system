@@ -244,7 +244,7 @@ public class FileUploadAspect {
 
         // 如果有文件管理记录ID，更新关联ID
         if (fileManagementId != null) {
-            String className = joinPoint.getTarget().getClass().getSimpleName();
+            String controllerClassName = joinPoint.getTarget().getClass().getSimpleName();
 
             // 处理不同的返回类型
             boolean shouldUpdateRelatedId = false;
@@ -261,8 +261,8 @@ public class FileUploadAspect {
             }
 
             if (shouldUpdateRelatedId) {
-                log.info("导入成功，准备更新关联ID: {}，控制器类名: {}", fileManagementId, className);
-                updateRelatedIdForSecurityController(className, fileManagementId);
+                log.info("导入成功，准备更新关联ID: {}，控制器类名: {}", fileManagementId, controllerClassName);
+                updateRelatedIdForSecurityController(controllerClassName, fileManagementId);
             }
         }
 
@@ -606,7 +606,7 @@ public void afterFormManagement() {
                 moduleName = getModuleNameFromUri(uri);
             }
             
-            String className = joinPoint.getTarget().getClass().getSimpleName();
+            String controllerClassName = joinPoint.getTarget().getClass().getSimpleName();
             String methodName = joinPoint.getSignature().getName();
             
             // 处理文件上传
@@ -618,7 +618,7 @@ public void afterFormManagement() {
                 if (arg instanceof MultipartFile) {
                     MultipartFile file = (MultipartFile) arg;
                     if (!file.isEmpty()) {
-                        processMultipartFile(file, moduleName, getShortClassName(className),
+                        processMultipartFile(file, moduleName, getShortClassName(controllerClassName),
                                 methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
                         fileHandled = true;
                     }
@@ -626,7 +626,7 @@ public void afterFormManagement() {
                     MultipartFile[] files = (MultipartFile[]) arg;
                     for (MultipartFile file : files) {
                         if (!file.isEmpty()) {
-                            processMultipartFile(file, moduleName, getShortClassName(className),
+                            processMultipartFile(file, moduleName, getShortClassName(controllerClassName),
                                     methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
                             fileHandled = true;
                                     }
@@ -641,7 +641,7 @@ public void afterFormManagement() {
                 
                 for (MultipartFile file : fileMap.values()) {
                     if (!file.isEmpty()) {
-                        processMultipartFile(file, moduleName, getShortClassName(className),
+                        processMultipartFile(file, moduleName, getShortClassName(controllerClassName),
                                 methodName, username, "UPLOAD", relatedUrl, threadLocalRelatedId);
                         fileHandled = true;
                     }
