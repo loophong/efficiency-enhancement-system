@@ -69,19 +69,22 @@ public class SupplierGuarantee
     private String timelyDeliveryRate;
 
     /** 及时率得分 */
-    @Excel(name = "及时率得分")
-    @ExcelProperty(value = "及时率得分")
+    @ExcelIgnore
+//    @Excel(name = "及时率得分")
+//    @ExcelProperty(value = "及时率得分")
     private Double timelyRateScore;
 
     /** 模型得分 */
-    @Excel(name = "模型得分")
-    @ExcelProperty(value = "模型得分")
+    @ExcelIgnore
+//    @Excel(name = "模型得分")
+//    @ExcelProperty(value = "模型得分")
     private Double modelScore;
 
     /** 上传月份 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传月份")
+//    @Excel(name = "上传月份", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传月份")
     private Date uploadMonth;
 
 

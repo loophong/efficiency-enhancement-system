@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="140px">
-      <el-form-item label="供应商代码" prop="supplierCodePast">
+      <el-form-item label="供应商代码" prop="supplierCode">
         <el-input
-          v-model="queryParams.supplierCodePast"
+          v-model="queryParams.supplierCode"
           placeholder="请输入供应商代码"
           clearable
           @keyup.enter="handleQuery"
@@ -17,6 +17,15 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+          v-model="queryParams.uploadTime"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
+      
       <!-- <el-form-item label="新引进供应商代码" prop="supplierCodeNow">
         <el-input
           v-model="queryParams.supplierCodeNow"
@@ -90,25 +99,26 @@
 
     <el-table v-loading="loading" :data="supportList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="原供应商代码" align="center" prop="supplierCodePast" />
+      <!-- <el-table-column label="主键" align="center" prop="id" /> -->
+      <el-table-column label="供应商代码" align="center" prop="supplierCode" />
+      <el-table-column label="供应商名称" align="center" prop="supplierName" />
+      <el-table-column label="降本金额" align="center" prop="reduceMoney" />
+      <el-table-column label="降本占比" align="center" prop="percentage" />
+      <el-table-column label="得分" align="center" prop="score" />
+      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}') }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="原供应商代码" align="center" prop="supplierCodePast" />
       <el-table-column label="原供应商名称" align="center" prop="supplierNamePast" />
       <el-table-column label="新引进供应商代码" align="center" prop="supplierCodeNow" />
       <el-table-column label="新引进供应商名称" align="center" prop="supplierNameNow" />
       <el-table-column label="降幅" align="center" prop="decrease" />
       <el-table-column label="总采购量" align="center" prop="totalPurchases" />
-      <el-table-column label="降本金额" align="center" prop="reduceMoney" />
       <el-table-column label="单价" align="center" prop="price" />
-      <el-table-column label="供货金额" align="center" prop="supplyAmount" />
-      <!-- <el-table-column label="降本占比" align="center" prop="percentage" /> -->
-      <el-table-column label="价格统计日期" align="center" prop="priceStatisticDate" />
-      <!-- <el-table-column label="得分" align="center" prop="score" /> -->
-      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="填报人" align="center" prop="uploadName" />
-      <el-table-column label="备选" align="center" prop="one" /> -->
+      <el-table-column label="供货金额=单价*总采购量" align="center" prop="supplyAmount" />
+      <el-table-column label="价格统计日期" align="center" prop="priceStatisticDate" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['supplier:support:edit']">修改</el-button>
@@ -127,8 +137,31 @@
 
     <!-- 添加或修改降本支持对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="supportRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="原供应商代码" prop="supplierCodePast">
+      <el-form ref="supportRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
+        </el-form-item>
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item>
+        <el-form-item label="降本金额" prop="reduceMoney">
+          <el-input v-model="form.reduceMoney" placeholder="请输入降本金额" />
+        </el-form-item>
+        <el-form-item label="降本占比" prop="percentage">
+          <el-input v-model="form.percentage" placeholder="请输入降本占比" />
+        </el-form-item>
+        <!-- <el-form-item label="得分" prop="score">
+          <el-input v-model="form.score" placeholder="请输入得分" />
+        </el-form-item> -->
+        <el-form-item label="上传时间" prop="uploadTime">
+          <el-date-picker clearable
+            v-model="form.uploadTime"
+            type="month"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择上传时间">
+          </el-date-picker>
+        </el-form-item>
+        <!-- <el-form-item label="原供应商代码" prop="supplierCodePast">
           <el-input v-model="form.supplierCodePast" placeholder="请输入原供应商代码" />
         </el-form-item>
         <el-form-item label="原供应商名称" prop="supplierNamePast">
@@ -146,39 +179,16 @@
         <el-form-item label="总采购量" prop="totalPurchases">
           <el-input v-model="form.totalPurchases" placeholder="请输入总采购量" />
         </el-form-item>
-        <el-form-item label="降本金额" prop="reduceMoney">
-          <el-input v-model="form.reduceMoney" placeholder="请输入降本金额" />
-        </el-form-item>
         <el-form-item label="单价" prop="price">
           <el-input v-model="form.price" placeholder="请输入单价" />
         </el-form-item>
-        <!-- <el-form-item label="供货金额=单价*总采购量" prop="supplyAmount">
+        <el-form-item label="供货金额=单价*总采购量" prop="supplyAmount">
           <el-input v-model="form.supplyAmount" placeholder="请输入供货金额=单价*总采购量" />
         </el-form-item>
-        <el-form-item label="降本占比" prop="percentage">
-          <el-input v-model="form.percentage" placeholder="请输入降本占比" />
-        </el-form-item> -->
         <el-form-item label="价格统计日期" prop="priceStatisticDate">
           <el-input v-model="form.priceStatisticDate" placeholder="请输入价格统计日期" />
-        </el-form-item>
-        <!-- <el-form-item label="得分" prop="score">
-          <el-input v-model="form.score" placeholder="请输入得分" />
-        </el-form-item> -->
-        <el-form-item label="上传时间" prop="uploadTime">
-          <el-date-picker clearable
-            v-model="form.uploadTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择上传时间">
-          </el-date-picker>
-        </el-form-item>
-        <!-- <el-form-item label="填报人" prop="uploadName">
-          <el-input v-model="form.uploadName" placeholder="请输入填报人" />
-        </el-form-item>
-        <el-form-item label="备选" prop="one">
-          <el-input v-model="form.one" placeholder="请输入备选" />
-        </el-form-item> -->
-      </el-form>
+        </el-form-item>-->
+      </el-form> 
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -254,21 +264,21 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    supplierCode: null,
+    supplierName: null,
+    reduceMoney: null,
+    percentage: null,
+    score: null,
+    uploadTime: null,
     supplierCodePast: null,
     supplierNamePast: null,
     supplierCodeNow: null,
     supplierNameNow: null,
     decrease: null,
     totalPurchases: null,
-    reduceMoney: null,
     price: null,
     supplyAmount: null,
-    percentage: null,
-    priceStatisticDate: null,
-    score: null,
-    uploadTime: null,
-    uploadName: null,
-    one: null
+    priceStatisticDate: null
   },
   rules: {
   }
@@ -296,21 +306,21 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
+    supplierCode: null,
+    supplierName: null,
+    reduceMoney: null,
+    percentage: null,
+    score: null,
+    uploadTime: null,
     supplierCodePast: null,
     supplierNamePast: null,
     supplierCodeNow: null,
     supplierNameNow: null,
     decrease: null,
     totalPurchases: null,
-    reduceMoney: null,
     price: null,
     supplyAmount: null,
-    percentage: null,
-    priceStatisticDate: null,
-    score: null,
-    uploadTime: null,
-    uploadName: null,
-    one: null
+    priceStatisticDate: null
   };
   proxy.resetForm("supportRef");
 }

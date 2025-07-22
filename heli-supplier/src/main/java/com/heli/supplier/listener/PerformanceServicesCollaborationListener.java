@@ -47,6 +47,12 @@ public class PerformanceServicesCollaborationListener implements ReadListener<Su
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setTime(uploadMonth);
             currentRow++;
+
+            // 计算分数并设置到当前数据对象中
+            Long score = calculateScore(registerInfoExcel);
+            registerInfoExcel.setScore(score); // 假设 SupplierPerformanceServicesCollaboration 类中有 setScore 方法
+
+
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
         }
@@ -76,5 +82,20 @@ public class PerformanceServicesCollaborationListener implements ReadListener<Su
         log.info("开始写入数据库");
         supplierPerformanceServicesCollaborationMapper.insert(cacheDataList);
     }
+    private Long calculateScore(SupplierPerformanceServicesCollaboration data) {
+        long baseScore = 100;
+        // 如果字段为空，则赋默认值 0
+        long letter = (data.getLetter() != null) ? data.getLetter() : 0;
+        long punish = (data.getPunish() != null) ? data.getPunish() : 0;
+        long feedbackNotTimely = (data.getFeedbackNotTimely() != null) ? data.getFeedbackNotTimely() : 0;
 
+        long deduction = (letter * 20) + (punish* 40) + (feedbackNotTimely * 10);
+        long finalScore = baseScore - deduction;
+
+        // 确保得分不能小于 0
+        finalScore = Math.max(finalScore, 0);
+
+        // 计算得分，确保最终分数也不能小于 0
+        return finalScore;
+    }
 }

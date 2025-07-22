@@ -79,7 +79,7 @@ public class SupplierRiskController extends BaseController
     {
         List<SupplierRisk> list = supplierRiskService.selectSupplierRiskList(supplierRisk);
         ExcelUtil<SupplierRisk> util = new ExcelUtil<SupplierRisk>(SupplierRisk.class);
-        util.exportExcel(response, list, "经营风险数据");
+        util.exportExcel(response, list, "经营风险");
     }
 
     /**

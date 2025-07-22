@@ -17,6 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+          v-model="queryParams.uploadTime"
+          type="month"
+          value-format="YYYY-MM"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
       <!-- <el-form-item label="记录时间" prop="time">
         <el-date-picker clearable
           v-model="queryParams.time"
@@ -24,8 +32,8 @@
           value-format="YYYY-MM-DD"
           placeholder="请选择记录时间">
         </el-date-picker>
-      </el-form-item>
-      <el-form-item label="价格类型" prop="priceType">
+      </el-form-item> -->
+      <!-- <el-form-item label="价格类型" prop="priceType" label-width="180px">
         <el-select v-model="queryParams.priceType" placeholder="请选择价格类型" clearable>
           <el-option
             v-for="dict in supplier_price_compete_price_type"
@@ -34,16 +42,9 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
-        <el-date-picker clearable
-          v-model="queryParams.uploadTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择上传时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="得分" prop="score">
+      </el-form-item> -->
+
+      <!--<el-form-item label="得分" prop="score">
         <el-input
           v-model="queryParams.score"
           placeholder="请输入得分"
@@ -130,18 +131,20 @@
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column> -->
-      <!-- <el-table-column label="价格类型" align="center" prop="priceType">
+      <el-table-column label="价格类型" align="center" prop="priceType">
         <template #default="scope">
-          <dict-tag :options="supplier_price_compete_price_type" :value="scope.row.priceType"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
+          <!-- <dict-tag :options="supplier_price_compete_price_type" :value="scope.row.priceType"/> -->
+          <span>{{ scope.row.priceType }}</span>
         </template>
       </el-table-column>
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="模型得分" align="center" prop="modelScore" />
+      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}') }}</span>
+        </template>
+      </el-table-column>
+
+      <!-- <el-table-column label="模型得分" align="center" prop="modelScore" /> -->
       <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -168,6 +171,30 @@
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
         </el-form-item>
+          <el-form-item label="价格类型" prop="priceType">
+              <el-select v-model="form.priceType" placeholder="请选择价格类型">
+                <el-option label="专项返利政策" value="专项返利政策">
+                  <span>专项返利政策</span>
+                  <span style="float:right;color:#67C23A;font-size:13px">+20分</span>
+                </el-option>
+                <el-option label="需自主提货" value="需自主提货">
+                  <span>需自主提货</span>
+                  <span style="float:right;color:#F56C6C;font-size:13px">-20分</span>
+                </el-option>
+                <el-option label="常规物料有价格优势" value="常规物料有价格优势">
+                  <span>常规物料有价格优势</span>
+                  <span style="float:right;color:#67C23A;font-size:13px">+20分</span>
+                </el-option>
+                <el-option label="单一物料无价格优势" value="单一物料无价格优势">
+                  <span>单一物料无价格优势</span>
+                  <span style="float:right;color:#E6A23C;font-size:13px">-5分</span>
+                </el-option>
+                <el-option label="常规物料无价格优势" value="常规物料无价格优势">
+                  <span>常规物料无价格优势</span>
+                  <span style="float:right;color:#F56C6C;font-size:13px">-20分</span>
+                </el-option>
+              </el-select>
+      </el-form-item>
         <!-- <el-form-item label="记录时间" prop="time">
           <el-date-picker clearable
             v-model="form.time"
@@ -189,17 +216,17 @@
         <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
             v-model="form.uploadTime"
-            type="date"
+            type="month"
             value-format="YYYY-MM-DD"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="得分" prop="score">
+        <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item>
         <el-form-item label="模型得分" prop="modelScore">
           <el-input v-model="form.modelScore" placeholder="请输入模型得分" />
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="填报人" prop="uploadName">
           <el-input v-model="form.uploadName" placeholder="请输入填报人" />
         </el-form-item> -->

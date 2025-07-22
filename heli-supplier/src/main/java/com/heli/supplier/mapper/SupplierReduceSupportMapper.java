@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.domain.SupplierReduceSupport;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 降本支持Mapper接口
@@ -61,4 +62,5 @@ public interface SupplierReduceSupportMapper extends BaseMapper<SupplierReduceSu
      * @return 结果
      */
     public int deleteSupplierReduceSupportByIds(String[] ids);
-}
+
+   }

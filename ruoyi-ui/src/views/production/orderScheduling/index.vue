@@ -145,6 +145,12 @@
                    v-hasPermi="['production:mainPlanTable:import']">导入
         </el-button>
       </el-col>
+
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Download" @click="handleDownload"  plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -500,7 +506,7 @@
 
       <el-form :model="form" ref="form" label-width="90px">
         <el-form-item label="上传表类：">
-          <span style="color: rgb(68, 140, 39);">主计划表</span>
+          <span style="color: rgb(68, 140, 39);">主计划需求表</span>
           <br>
         </el-form-item>
         <el-form-item label="上传日期：">
@@ -542,8 +548,10 @@ import {addCases} from "@/api/production/special";
 import dayjs from "dayjs";
 import useTagsViewStore from "@/store/modules/tagsView.js";
 import {importFile} from "@/api/production/mainPlanTable.js";
+import {handleTrueDownload} from "@/utils/fileMonitor.js";
 // import {getCapacity} from "@/api/production/capacity";
 // import {handleStandardSelectionChange} from "../scheduling/index.vue";
+
 const {proxy} = getCurrentInstance();
 const { production_is_scheduling, production_yes_no } = proxy.useDict('production_is_scheduling', 'production_yes_no');
 
@@ -1108,6 +1116,11 @@ function checkFile() {
     proxy.$modal.msgError("只能上传 Excel 文件！");
     resetUpload();
   }
+}
+
+function handleDownload() {
+  const url = "/profile/excel_templates/production/主计划需求表模板.xlsx";
+  handleTrueDownload(url);
 }
 
 

@@ -58,6 +58,11 @@
         </el-button>
       </el-col>
 
+      <el-col :span="1.5">
+        <el-button type="primary" icon="Download" @click="handleDownload"  plain v-if="true">下载模版文件
+        </el-button>
+      </el-col>
+
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -152,6 +157,7 @@
 <script setup name="Cycle">
 import {listCycle, getCycle, delCycle, addCycle, updateCycle, importFile} from "@/api/production/cycle";
 import {all} from "@/api/production/capacity"
+import {handleTrueDownload} from "@/utils/fileMonitor.js";
 
 const {proxy} = getCurrentInstance();
 
@@ -393,5 +399,9 @@ onMounted(() => {
   });
 });
 
+function handleDownload() {
+  const url = "/profile/excel_templates/production/生产周期导入模板.xlsx";
+  handleTrueDownload(url);
+}
 
 </script>

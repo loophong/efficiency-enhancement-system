@@ -46,19 +46,21 @@ public class SupplierRisk implements Serializable
     private String supplierName;
 
     /** 得分 */
-    @Excel(name = "得分")
-    @ExcelProperty(value = "得分")
-    private Long score;
+    @ExcelIgnore
+//    @Excel(name = "得分")
+//    @ExcelProperty(value = "得分")
+    private Double score;
 
-//    /** 模型得分 */
-//    @Excel(name = "模型得分")
-//    @ExcelProperty(value = "模型得分")
-//    private Long modelScore;
+    /** 风险数量 */
+    @Excel(name = "期间风险数量")
+    @ExcelProperty(value = "期间风险数量")
+    private Long riskNumber;
 
     /** 上传时间 */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    @ExcelProperty(value = "上传时间")
+//    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @ExcelProperty(value = "上传时间")
     private Date uploadTime;
 
 }

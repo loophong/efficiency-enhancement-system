@@ -79,7 +79,7 @@ public class SupplierGuaranteeController extends BaseController
     {
         List<SupplierGuarantee> list = supplierGuaranteeService.selectSupplierGuaranteeList(supplierGuarantee);
         ExcelUtil<SupplierGuarantee> util = new ExcelUtil<SupplierGuarantee>(SupplierGuarantee.class);
-        util.exportExcel(response, list, "供货保障数据");
+        util.exportExcel(response, list, "供货保障");
     }
 
     /**

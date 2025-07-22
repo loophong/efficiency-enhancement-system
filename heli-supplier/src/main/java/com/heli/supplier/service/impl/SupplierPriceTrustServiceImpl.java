@@ -148,7 +148,7 @@ public class SupplierPriceTrustServiceImpl  extends ServiceImpl<SupplierPriceTru
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-            this.remove(new QueryWrapper<>());
+//            this.remove(new QueryWrapper<>());
             log.info("开始读取文件: {}", fileName);
             try {
                 EasyExcel.read(excelFile.getInputStream(),
@@ -175,10 +175,12 @@ public class SupplierPriceTrustServiceImpl  extends ServiceImpl<SupplierPriceTru
      */
     private void calculateAndSetScore(SupplierPriceTrust supplierPriceTrust) {
         // 确保 happenNumber 不能为空
-        Long happenNumber = supplierPriceTrust.getHappenNumber();
-        if (supplierPriceTrust.getHappenNumber() == null) {
-            happenNumber = 0L;
-        }
+//        Long happenNumber = supplierPriceTrust.getHappenNumber();
+//        if (supplierPriceTrust.getHappenNumber() == null) {
+//            happenNumber = 0L;
+//        }
+
+        long happenNumber = (supplierPriceTrust.getHappenNumber() != null) ? supplierPriceTrust.getHappenNumber() : 0;
         // 计算基础得分
         double baseScore = 100.0;
         double finalScore = (baseScore - happenNumber * 20);

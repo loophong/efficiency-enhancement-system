@@ -17,14 +17,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <!-- <el-form-item label="记录时间" prop="time" style="width: 300px;">
+      <el-form-item label="上传时间" prop="time" style="width: 300px;">
         <el-date-picker clearable
           v-model="queryParams.time"
-          type="date"
+          type="month"
           value-format="YYYY-MM-DD"
-          placeholder="请选择记录时间">
+          placeholder="请选择上传时间">
         </el-date-picker>
-      </el-form-item> -->
+      </el-form-item>
       <!-- <el-form-item label="供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" prop="letter">
         <el-select v-model="queryParams.letter" placeholder="请选择供应商如对收到的函告、购销协议，未在要求时效节点内采取反馈动作" clearable>
           <el-option
@@ -151,7 +151,7 @@
         </template>
       </el-table-column> -->
       <el-table-column label="得分" align="center" prop="score" />
-      <el-table-column label="记录时间" align="center" prop="time" width="180">
+      <el-table-column label="上传时间" align="center" prop="time" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.time, '{y}-{m}') }}</span>
         </template>
@@ -216,19 +216,19 @@
         <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item> -->
-        <el-form-item label="记录时间" prop="time">
-          <!-- <el-date-picker clearable
+        <el-form-item label="上传时间" prop="time">
+          <el-date-picker clearable
             v-model="form.time"
-            type="date"
+            type="month"
             value-format="YYYY-MM-DD"
-            placeholder="请选择记录时间"> 
-              </el-date-picker>-->
-            <el-date-picker
+            placeholder="请选择上传时间"> 
+              </el-date-picker>
+            <!-- <el-date-picker
           v-model="form.updateMonth"
           type="month"
         
           placeholder="Pick a month"
-        />
+        /> -->
         </el-form-item>
         <!-- <el-form-item label="具体内容" prop="specificContent">
           <el-input v-model="form.specificContent" placeholder="请输入具体内容" />

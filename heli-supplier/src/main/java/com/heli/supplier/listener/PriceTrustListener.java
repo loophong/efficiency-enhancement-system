@@ -44,6 +44,9 @@ public class PriceTrustListener implements ReadListener<SupplierPriceTrust> {
         // 数据处理
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setTime(uploadMonth);
+
+            calculateAndSetScore(registerInfoExcel);
+
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
@@ -74,5 +77,19 @@ public class PriceTrustListener implements ReadListener<SupplierPriceTrust> {
         log.info("开始写入数据库");
         supplierPriceTrustMapper.insert(cacheDataList);
     }
+    private void calculateAndSetScore(SupplierPriceTrust supplierPriceTrust) {
+        // 确保 happenNumber 不能为空
+//        Long happenNumber = supplierPriceTrust.getHappenNumber();
+//        if (supplierPriceTrust.getHappenNumber() == null) {
+//            happenNumber = 0L;
+//        }
 
+        long happenNumber = (supplierPriceTrust.getHappenNumber() != null) ? supplierPriceTrust.getHappenNumber() : 0;
+        // 计算基础得分
+        double baseScore = 100.0;
+        double finalScore = (baseScore - happenNumber * 20);
+
+        // 确保得分不会低于 0
+        supplierPriceTrust.setScore(Math.max(finalScore, 0));
+    }
 }
