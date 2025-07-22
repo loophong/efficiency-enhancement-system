@@ -10,36 +10,71 @@ import com.ruoyi.common.core.domain.BaseEntity;
 /**
  * 班组人员清单对象 security_people_list
  * 
- * @author ruoyi
- * @date 2025-03-28
+ * @author wang
+ * @date 2025-07-21
  */
 public class SecurityPeopleList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** id */
+    /** 序号 */
     private String id;
 
-    /** 上传时间 */
+    /** 班组 */
+    @Excel(name = "班组")
+    private String banZu;
+
+    /** 姓名 */
+    @Excel(name = "姓名")
+    private String xingMing;
+
+    /** 性别 */
+    @Excel(name = "性别")
+    private String xingBie;
+
+    /** 出生年月 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date uploadDate;
+    @Excel(name = "出生年月", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date chuShen;
 
-    /** 上传人 */
-    @Excel(name = "上传人")
-    private String uploadBy;
+    /** 何时进厂 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "何时进厂", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date jingCTime;
 
-    /** 上传部门 */
-    @Excel(name = "上传部门")
-    private String uploadDept;
+    /** 何时进班组 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "何时进班组", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date jingBanTime;
 
-    /** 文件 */
-    @Excel(name = "文件")
-    private String files;
+    /** 文化程度 */
+    @Excel(name = "文化程度")
+    private String wenhuaChengdu;
 
-    /** 描述 */
-    @Excel(name = "描述")
-    private String comment;
+    /** 原工种 */
+    @Excel(name = "原工种")
+    private String yuanGongZhong;
+
+    /** 现工种 */
+    @Excel(name = "现工种")
+    private String xianGongZhong;
+
+    /** 技术等级 */
+    @Excel(name = "技术等级")
+    private String level;
+
+    /** 家庭住址及联系电话 */
+    @Excel(name = "家庭住址及联系电话")
+    private String homePhone;
+
+    /** 何时调出本班组 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "何时调出本班组", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date diaoChuBanzu;
+
+    /** 关联id */
+//    @Excel(name = "关联id")
+    private String relatedId;
 
     public void setId(String id) 
     {
@@ -50,61 +85,141 @@ public class SecurityPeopleList extends BaseEntity
     {
         return id;
     }
-    public void setUploadDate(Date uploadDate) 
+    public void setBanZu(String banZu) 
     {
-        this.uploadDate = uploadDate;
+        this.banZu = banZu;
     }
 
-    public Date getUploadDate() 
+    public String getBanZu() 
     {
-        return uploadDate;
+        return banZu;
     }
-    public void setUploadBy(String uploadBy) 
+    public void setXingMing(String xingMing) 
     {
-        this.uploadBy = uploadBy;
-    }
-
-    public String getUploadBy() 
-    {
-        return uploadBy;
-    }
-    public void setUploadDept(String uploadDept) 
-    {
-        this.uploadDept = uploadDept;
+        this.xingMing = xingMing;
     }
 
-    public String getUploadDept() 
+    public String getXingMing() 
     {
-        return uploadDept;
+        return xingMing;
     }
-    public void setFiles(String files) 
+    public void setXingBie(String xingBie) 
     {
-        this.files = files;
-    }
-
-    public String getFiles() 
-    {
-        return files;
-    }
-    public void setComment(String comment) 
-    {
-        this.comment = comment;
+        this.xingBie = xingBie;
     }
 
-    public String getComment() 
+    public String getXingBie() 
     {
-        return comment;
+        return xingBie;
+    }
+    public void setChuShen(Date chuShen) 
+    {
+        this.chuShen = chuShen;
+    }
+
+    public Date getChuShen() 
+    {
+        return chuShen;
+    }
+    public void setJingCTime(Date jingCTime) 
+    {
+        this.jingCTime = jingCTime;
+    }
+
+    public Date getJingCTime() 
+    {
+        return jingCTime;
+    }
+    public void setJingBanTime(Date jingBanTime) 
+    {
+        this.jingBanTime = jingBanTime;
+    }
+
+    public Date getJingBanTime() 
+    {
+        return jingBanTime;
+    }
+    public void setWenhuaChengdu(String wenhuaChengdu) 
+    {
+        this.wenhuaChengdu = wenhuaChengdu;
+    }
+
+    public String getWenhuaChengdu() 
+    {
+        return wenhuaChengdu;
+    }
+    public void setYuanGongZhong(String yuanGongZhong) 
+    {
+        this.yuanGongZhong = yuanGongZhong;
+    }
+
+    public String getYuanGongZhong() 
+    {
+        return yuanGongZhong;
+    }
+    public void setXianGongZhong(String xianGongZhong) 
+    {
+        this.xianGongZhong = xianGongZhong;
+    }
+
+    public String getXianGongZhong() 
+    {
+        return xianGongZhong;
+    }
+    public void setLevel(String level) 
+    {
+        this.level = level;
+    }
+
+    public String getLevel() 
+    {
+        return level;
+    }
+    public void setHomePhone(String homePhone) 
+    {
+        this.homePhone = homePhone;
+    }
+
+    public String getHomePhone() 
+    {
+        return homePhone;
+    }
+    public void setDiaoChuBanzu(Date diaoChuBanzu) 
+    {
+        this.diaoChuBanzu = diaoChuBanzu;
+    }
+
+    public Date getDiaoChuBanzu() 
+    {
+        return diaoChuBanzu;
+    }
+    public void setRelatedId(String relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public String getRelatedId() 
+    {
+        return relatedId;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("uploadDate", getUploadDate())
-            .append("uploadBy", getUploadBy())
-            .append("uploadDept", getUploadDept())
-            .append("files", getFiles())
-            .append("comment", getComment())
+            .append("banZu", getBanZu())
+            .append("xingMing", getXingMing())
+            .append("xingBie", getXingBie())
+            .append("chuShen", getChuShen())
+            .append("jingCTime", getJingCTime())
+            .append("jingBanTime", getJingBanTime())
+            .append("wenhuaChengdu", getWenhuaChengdu())
+            .append("yuanGongZhong", getYuanGongZhong())
+            .append("xianGongZhong", getXianGongZhong())
+            .append("level", getLevel())
+            .append("homePhone", getHomePhone())
+            .append("diaoChuBanzu", getDiaoChuBanzu())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

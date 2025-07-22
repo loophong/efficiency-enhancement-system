@@ -33,12 +33,12 @@ public class SecurityEquipmentSafetyFacilityLedger extends BaseEntity
     private Long quantity;
 
     /** 校验周期 */
-    @Excel(name = "校验周期")
+    @Excel(name = "检验周期")
     private String inspectionCycle;
 
     /** 下次校验时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "下次校验时间", width = 30, dateFormat = "yyyy-MM-dd")
+    @Excel(name = "下次检验时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date nextInspectionDate;
 
     /** 责任单位 */
@@ -57,7 +57,10 @@ public class SecurityEquipmentSafetyFacilityLedger extends BaseEntity
     @Excel(name = "现状")
     private String currentStatus;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -143,9 +146,18 @@ public class SecurityEquipmentSafetyFacilityLedger extends BaseEntity
         this.currentStatus = currentStatus;
     }
 
-    public String getCurrentStatus() 
+    public String getCurrentStatus()
     {
         return currentStatus;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -161,6 +173,7 @@ public class SecurityEquipmentSafetyFacilityLedger extends BaseEntity
             .append("location", getLocation())
             .append("personInCharge", getPersonInCharge())
             .append("currentStatus", getCurrentStatus())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

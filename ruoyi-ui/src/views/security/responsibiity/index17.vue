@@ -109,7 +109,7 @@
 
     <el-table v-loading="loading" :data="specialoperationscertificateList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+        <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="单位名称" align="center" prop="unitName" />
       <el-table-column label="设备名称" align="center" prop="equipmentName" />
       <el-table-column label="设备类别" align="center" prop="equipmentCategory" />

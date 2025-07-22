@@ -98,7 +98,7 @@
 
     <el-table v-loading="loading" :data="hazardousinspectionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center"type="index" />
       <el-table-column label="检查项目" align="center" prop="inspectionItem" />
       <el-table-column label="检查标准" align="center" prop="inspectionStandard" />
       <el-table-column label="检查记录" align="center" prop="inspectionRecord" />

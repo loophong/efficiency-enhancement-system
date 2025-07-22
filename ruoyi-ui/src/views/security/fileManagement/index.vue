@@ -82,14 +82,14 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="更新者" prop="updateBy">
+      <!-- <el-form-item label="更新者" prop="updateBy">
         <el-input
           v-model="queryParams.updateBy"
           placeholder="请输入更新者"
           clearable
           @keyup.enter="handleQuery"
         />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -97,7 +97,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -105,7 +105,7 @@
           @click="handleAdd"
           v-hasPermi="['filemanagement:filemanagement:add']"
         >新增</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -160,7 +160,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="主键ID" align="center" prop="id" /> -->
       <el-table-column label="文件名称" align="center" prop="fileName" />
-      <el-table-column label="文件路径" align="center" prop="filePath" />
+      <!-- <el-table-column label="文件路径" align="center" prop="filePath" /> -->
       <!-- <el-table-column label="文件大小(字节)" align="center" prop="fileSize" />
       <el-table-column label="文件类型(MIME类型)" align="center" prop="fileType" /> -->
       <!-- 注释掉文件分类列
@@ -362,9 +362,9 @@ const data = reactive({
     moduleName: [
       { required: true, message: "所属模块名称不能为空", trigger: "blur" }
     ],
-    moduleCode: [
-      { required: true, message: "所属模块代码不能为空", trigger: "blur" }
-    ],
+    // moduleCode: [
+    //   { required: true, message: "所属模块代码不能为空", trigger: "blur" }
+    // ],
     uploadTime: [
       { required: true, message: "上传时间不能为空", trigger: "blur" }
     ],

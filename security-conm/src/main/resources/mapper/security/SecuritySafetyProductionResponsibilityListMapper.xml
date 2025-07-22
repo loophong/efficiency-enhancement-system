@@ -6,25 +6,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecuritySafetyProductionResponsibilityList" id="SecuritySafetyProductionResponsibilityListResult">
         <result property="id"    column="id"    />
-        <result property="uploadDate"    column="upload_date"    />
-        <result property="uploadBy"    column="upload_by"    />
-        <result property="uploadDept"    column="upload_dept"    />
-        <result property="files"    column="files"    />
-        <result property="comment"    column="comment"    />
+        <result property="zhiDu"    column="zhi_du"    />
+        <result property="banFa"    column="ban_fa"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecuritySafetyProductionResponsibilityListVo">
-        select id, upload_date, upload_by, upload_dept, files, comment from security_safety_production_responsibility_list
+        select id, zhi_du, ban_fa, related_id from security_safety_production_responsibility_list
     </sql>
 
     <select id="selectSecuritySafetyProductionResponsibilityListList" parameterType="SecuritySafetyProductionResponsibilityList" resultMap="SecuritySafetyProductionResponsibilityListResult">
         <include refid="selectSecuritySafetyProductionResponsibilityListVo"/>
         <where>  
-            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
-            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
-            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
-            <if test="files != null  and files != ''"> and files = #{files}</if>
-            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            <if test="zhiDu != null  and zhiDu != ''"> and zhi_du = #{zhiDu}</if>
+            <if test="banFa != null  and banFa != ''"> and ban_fa = #{banFa}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -36,29 +32,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecuritySafetyProductionResponsibilityList" parameterType="SecuritySafetyProductionResponsibilityList" useGeneratedKeys="true" keyProperty="id">
         insert into security_safety_production_responsibility_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date,</if>
-            <if test="uploadBy != null">upload_by,</if>
-            <if test="uploadDept != null">upload_dept,</if>
-            <if test="files != null">files,</if>
-            <if test="comment != null">comment,</if>
+            <if test="zhiDu != null">zhi_du,</if>
+            <if test="banFa != null">ban_fa,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">#{uploadDate},</if>
-            <if test="uploadBy != null">#{uploadBy},</if>
-            <if test="uploadDept != null">#{uploadDept},</if>
-            <if test="files != null">#{files},</if>
-            <if test="comment != null">#{comment},</if>
+            <if test="zhiDu != null">#{zhiDu},</if>
+            <if test="banFa != null">#{banFa},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecuritySafetyProductionResponsibilityList" parameterType="SecuritySafetyProductionResponsibilityList">
         update security_safety_production_responsibility_list
         <trim prefix="SET" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
-            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
-            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
-            <if test="files != null">files = #{files},</if>
-            <if test="comment != null">comment = #{comment},</if>
+            <if test="zhiDu != null">zhi_du = #{zhiDu},</if>
+            <if test="banFa != null">ban_fa = #{banFa},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -68,9 +58,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecuritySafetyProductionResponsibilityListByIds" parameterType="String">
-        delete from security_safety_production_responsibility_list where id in 
+        delete from security_safety_production_responsibility_list where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 根据关联ID查询安全生产责任制清单列表 -->
+    <select id="selectSecuritySafetyProductionResponsibilityListByRelatedId" parameterType="Long" resultMap="SecuritySafetyProductionResponsibilityListResult">
+        <include refid="selectSecuritySafetyProductionResponsibilityListVo"/>
+        where related_id = #{relatedId}
+        order by id desc
+    </select>
+
+    <!-- 批量更新最新导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_safety_production_responsibility_list
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND id IN (
+            SELECT temp.id FROM (
+                SELECT id FROM security_safety_production_responsibility_list
+                WHERE related_id IS NULL
+                ORDER BY id DESC
+                LIMIT 1000
+            ) temp
+        )
+    </update>
 </mapper>

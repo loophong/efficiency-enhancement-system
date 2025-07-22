@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -25,7 +26,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 新职工三级安全教育台账Controller
  * 
  * @author wang
- * @date 2025-03-28
+ * @date 2025-07-18
  */
 @RestController
 @RequestMapping("/security/ThreeEducatiom")
@@ -43,6 +44,18 @@ public class SecurityThreeEducatiomController extends BaseController
     {
         startPage();
         List<SecurityThreeEducatiom> list = securityThreeEducatiomService.selectSecurityThreeEducatiomList(securityThreeEducatiom);
+        return getDataTable(list);
+    }
+
+    /**
+     * 根据关联ID查询新职工三级安全教育台账列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:ThreeEducatiom:list')")
+    @GetMapping("/listByRelatedId")
+    public TableDataInfo listByRelatedId(String relatedId, String sourceModule)
+    {
+        startPage();
+        List<SecurityThreeEducatiom> list = securityThreeEducatiomService.selectSecurityThreeEducatiomByRelatedId(relatedId);
         return getDataTable(list);
     }
 
@@ -100,5 +113,28 @@ public class SecurityThreeEducatiomController extends BaseController
     public AjaxResult remove(@PathVariable String[] ids)
     {
         return toAjax(securityThreeEducatiomService.deleteSecurityThreeEducatiomByIds(ids));
+    }
+
+    /**
+     * 导入新职工三级安全教育台账数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:ThreeEducatiom:import')")
+    @Log(title = "新职工三级安全教育台账", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        String message = securityThreeEducatiomService.importData(file.getInputStream(), updateSupport);
+        return success(message);
+    }
+
+    /**
+     * 下载导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:ThreeEducatiom:export')")
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityThreeEducatiom> util = new ExcelUtil<SecurityThreeEducatiom>(SecurityThreeEducatiom.class);
+        util.importTemplateExcel(response, "新职工三级安全教育台账数据");
     }
 }

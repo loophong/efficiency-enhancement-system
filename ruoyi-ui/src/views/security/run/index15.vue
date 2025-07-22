@@ -94,6 +94,15 @@
           v-hasPermi="['security:emergencysuppliesledger:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:emergencysuppliesledger:import']"
+        >导入</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -152,14 +161,49 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 应急物资管理台帐导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已存在数据（基于物资名称、应急物资类型匹配）
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Emergencysuppliesledger">
 import { listEmergencysuppliesledger, getEmergencysuppliesledger, delEmergencysuppliesledger, addEmergencysuppliesledger, updateEmergencysuppliesledger } from "@/api/security/emergencysuppliesledger";
+import { getToken } from "@/utils/auth";
 
 const { proxy } = getCurrentInstance();
-
+const route = useRoute();
 const emergencysuppliesledgerList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -169,6 +213,22 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+/*** 用户导入参数 */
+const upload = reactive({
+  // 是否显示弹出层（用户导入）
+  open: false,
+  // 弹出层标题（用户导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的用户数据
+  updateSupport: 0,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/emergencysuppliesledger/importData"
+});
 
 const data = reactive({
   form: {},
@@ -299,5 +359,57 @@ function handleExport() {
   }, `emergencysuppliesledger_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "应急物资管理台帐导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function importTemplate() {
+  // 使用带认证的请求下载模板
+  proxy.download('security/emergencysuppliesledger/importTemplate', {}, `应急物资管理台帐导入模板_${new Date().getTime()}.xlsx`);
+}
+
+/** 文件上传中处理 */
+const handleFileUploadProgress = (event, file, fileList) => {
+  upload.isUploading = true;
+};
+
+/** 文件上传成功处理 */
+const handleFileSuccess = (response, file, fileList) => {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+};
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
+}
+
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 调用getList()执行实际的数据查询
+    getList();
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联的应急物资管理台帐信息数据");
+  } else {
+    // 没有关联ID时，加载所有数据
+    getList();
+  }
+}
+
+onMounted(() => {
+  // 检查关联ID参数并加载相应数据
+  checkRelatedId();
+});
 </script>

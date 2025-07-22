@@ -11,7 +11,7 @@ import com.ruoyi.security.service.ISecurityAccidentCauseAnalysisService;
  * 事故原因分析记录Service业务层处理
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 @Service
 public class SecurityAccidentCauseAnalysisServiceImpl implements ISecurityAccidentCauseAnalysisService 

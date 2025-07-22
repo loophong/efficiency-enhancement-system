@@ -121,17 +121,18 @@
         </div>
       </template>
     </el-dialog>
+    <!-- 文件预览对话框 -->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-docx
+          :src="previewSrc"
+          :style="comStyle"
+          @rendered="renderedHandler"
+          @error="errorHandler"
+      />
+    </el-dialog>
   </div>
 
-  <!-- 文件预览对话框 -->
-  <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
-    <vue-office-docx
-      :src="previewSrc"
-      :style="comStyle"
-      @rendered="renderedHandler"
-      @error="errorHandler"
-    />
-  </el-dialog>
+
 </template>
 
 

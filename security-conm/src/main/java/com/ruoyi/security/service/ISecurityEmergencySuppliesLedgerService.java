@@ -53,9 +53,35 @@ public interface ISecurityEmergencySuppliesLedgerService
 
     /**
      * 删除应急物资管理台帐信息
-     * 
+     *
      * @param id 应急物资管理台帐主键
      * @return 结果
      */
     public int deleteSecurityEmergencySuppliesLedgerById(Long id);
+
+    /**
+     * 导入应急物资管理台帐数据
+     *
+     * @param suppliesLedgerList 应急物资管理台帐数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importSecurityEmergencySuppliesLedger(List<SecurityEmergencySuppliesLedger> suppliesLedgerList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 根据关联ID查询应急物资管理台帐列表
+     *
+     * @param relatedId 关联ID
+     * @return 应急物资管理台帐集合
+     */
+    public List<SecurityEmergencySuppliesLedger> selectSecurityEmergencySuppliesLedgerByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

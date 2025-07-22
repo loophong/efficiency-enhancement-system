@@ -25,7 +25,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * 事故处理报告Controller
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 @RestController
 @RequestMapping("/security/AccidentReport")

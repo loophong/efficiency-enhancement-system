@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityChangeListMapper">
+    
+    <resultMap type="SecurityChangeList" id="SecurityChangeListResult">
+        <result property="id"    column="id"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="uploadPeople"    column="upload_people"    />
+        <result property="uploadBumen"    column="upload_bumen"    />
+        <result property="file"    column="file"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSecurityChangeListVo">
+        select id, upload_time, upload_people, upload_bumen, file, remark from security_change_list
+    </sql>
+
+    <select id="selectSecurityChangeListList" parameterType="SecurityChangeList" resultMap="SecurityChangeListResult">
+        <include refid="selectSecurityChangeListVo"/>
+        <where>  
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+            <if test="uploadPeople != null  and uploadPeople != ''"> and upload_people = #{uploadPeople}</if>
+            <if test="uploadBumen != null  and uploadBumen != ''"> and upload_bumen = #{uploadBumen}</if>
+            <if test="file != null  and file != ''"> and file = #{file}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityChangeListById" parameterType="Long" resultMap="SecurityChangeListResult">
+        <include refid="selectSecurityChangeListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityChangeList" parameterType="SecurityChangeList" useGeneratedKeys="true" keyProperty="id">
+        insert into security_change_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="uploadPeople != null">upload_people,</if>
+            <if test="uploadBumen != null">upload_bumen,</if>
+            <if test="file != null">file,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="uploadPeople != null">#{uploadPeople},</if>
+            <if test="uploadBumen != null">#{uploadBumen},</if>
+            <if test="file != null">#{file},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityChangeList" parameterType="SecurityChangeList">
+        update security_change_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="uploadPeople != null">upload_people = #{uploadPeople},</if>
+            <if test="uploadBumen != null">upload_bumen = #{uploadBumen},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityChangeListById" parameterType="Long">
+        delete from security_change_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityChangeListByIds" parameterType="String">
+        delete from security_change_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

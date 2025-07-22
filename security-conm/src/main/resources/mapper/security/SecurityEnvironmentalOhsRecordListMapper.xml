@@ -10,10 +10,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="recordName"    column="record_name"    />
         <result property="responsibleDepartment"    column="responsible_department"    />
         <result property="retentionPeriod"    column="retention_period"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEnvironmentalOhsRecordListVo">
-        select id, record_number, record_name, responsible_department, retention_period from security_environmental_ohs_record_list
+        select id, record_number, record_name, responsible_department, retention_period, related_id from security_environmental_ohs_record_list
     </sql>
 
     <select id="selectSecurityEnvironmentalOhsRecordListList" parameterType="SecurityEnvironmentalOhsRecordList" resultMap="SecurityEnvironmentalOhsRecordListResult">
@@ -23,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recordName != null  and recordName != ''"> and record_name like concat('%', #{recordName}, '%')</if>
             <if test="responsibleDepartment != null  and responsibleDepartment != ''"> and responsible_department = #{responsibleDepartment}</if>
             <if test="retentionPeriod != null  and retentionPeriod != ''"> and retention_period = #{retentionPeriod}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -38,12 +40,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recordName != null and recordName != ''">record_name,</if>
             <if test="responsibleDepartment != null">responsible_department,</if>
             <if test="retentionPeriod != null">retention_period,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="recordNumber != null and recordNumber != ''">#{recordNumber},</if>
             <if test="recordName != null and recordName != ''">#{recordName},</if>
             <if test="responsibleDepartment != null">#{responsibleDepartment},</if>
             <if test="retentionPeriod != null">#{retentionPeriod},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -54,6 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="recordName != null and recordName != ''">record_name = #{recordName},</if>
             <if test="responsibleDepartment != null">responsible_department = #{responsibleDepartment},</if>
             <if test="retentionPeriod != null">retention_period = #{retentionPeriod},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -63,9 +68,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityEnvironmentalOhsRecordListByIds" parameterType="String">
-        delete from security_environmental_ohs_record_list where id in 
+        delete from security_environmental_ohs_record_list where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 根据关联ID查询环境职业健康安全记录清单列表 -->
+    <select id="selectSecurityEnvironmentalOhsRecordListByRelatedId" parameterType="Long" resultMap="SecurityEnvironmentalOhsRecordListResult">
+        <include refid="selectSecurityEnvironmentalOhsRecordListVo"/>
+        where related_id = #{relatedId}
+        order by id desc
+    </select>
+
+    <!-- 批量更新最新导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_environmental_ohs_record_list
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND id IN (
+            SELECT temp.id FROM (
+                SELECT id FROM security_environmental_ohs_record_list
+                WHERE related_id IS NULL
+                ORDER BY id DESC
+                LIMIT 1000
+            ) temp
+        )
+    </update>
 </mapper>

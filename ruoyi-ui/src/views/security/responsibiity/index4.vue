@@ -1,18 +1,42 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="制度名称" prop="regulationName">
+      <el-form-item label="企业名称" prop="qiYe">
         <el-input
-          v-model="queryParams.regulationName"
-          placeholder="请输入制度名称"
+          v-model="queryParams.qiYe"
+          placeholder="请输入企业名称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="办法名称" prop="methodName">
+      <el-form-item label="科室" prop="keShi">
         <el-input
-          v-model="queryParams.methodName"
-          placeholder="请输入办法名称"
+          v-model="queryParams.keShi"
+          placeholder="请输入科室"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="岗位" prop="gangWei">
+        <el-input
+          v-model="queryParams.gangWei"
+          placeholder="请输入岗位"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="岗位负责人" prop="gangweiFuze">
+        <el-input
+          v-model="queryParams.gangweiFuze"
+          placeholder="请输入岗位负责人"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="安全生产职责" prop="gangweiFuzeZizhe">
+        <el-input
+          v-model="queryParams.gangweiFuzeZizhe"
+          placeholder="安全生产职责"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -30,7 +54,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['security:regulationList:add']"
+          v-hasPermi="['security:zerenlist:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -40,7 +64,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['security:regulationList:edit']"
+          v-hasPermi="['security:zerenlist:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -50,7 +74,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['security:regulationList:remove']"
+          v-hasPermi="['security:zerenlist:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -59,21 +83,25 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['security:regulationList:export']"
+          v-hasPermi="['security:zerenlist:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="regulationListList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="zerenlistList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="制度名称" align="center" prop="regulationName" />
-      <el-table-column label="办法名称" align="center" prop="methodName" />
+      <el-table-column label="企业名称" align="center" prop="qiYe" />
+      <el-table-column label="科室" align="center" prop="keShi" />
+      <el-table-column label="岗位" align="center" prop="gangWei" />
+      <el-table-column label="岗位负责人" align="center" prop="gangweiFuze" />
+      <el-table-column label="安全生产职责" align="center" prop="gangweiFuzeZizhe" />
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:regulationList:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:regulationList:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:zerenlist:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:zerenlist:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -86,14 +114,26 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改安全制度清单对话框 -->
+    <!-- 添加或修改安全责任清单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="regulationListRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="制度名称" prop="regulationName">
-          <el-input v-model="form.regulationName" placeholder="请输入制度名称" />
+      <el-form ref="zerenlistRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="企业名称" prop="qiYe">
+          <el-input v-model="form.qiYe" placeholder="请输入企业名称" />
         </el-form-item>
-        <el-form-item label="办法名称" prop="methodName">
-          <el-input v-model="form.methodName" placeholder="请输入办法名称" />
+        <el-form-item label="科室" prop="keShi">
+          <el-input v-model="form.keShi" placeholder="请输入科室" />
+        </el-form-item>
+        <el-form-item label="岗位" prop="gangWei">
+          <el-input v-model="form.gangWei" placeholder="请输入岗位" />
+        </el-form-item>
+        <el-form-item label="岗位负责人" prop="gangweiFuze">
+          <el-input v-model="form.gangweiFuze" placeholder="请输入岗位负责人" />
+        </el-form-item>
+        <el-form-item label="安全生产职责" prop="gangweiFuzeZizhe">
+          <el-input v-model="form.gangweiFuzeZizhe" placeholder="安全生产职责" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -106,12 +146,12 @@
   </div>
 </template>
 
-<script setup name="RegulationList">
-import { listRegulationList, getRegulationList, delRegulationList, addRegulationList, updateRegulationList } from "@/api/security/regulationList";
+<script setup name="Zerenlist">
+import { listZerenlist, getZerenlist, delZerenlist, addZerenlist, updateZerenlist } from "@/api/security/zerenlist";
 
 const { proxy } = getCurrentInstance();
 
-const regulationListList = ref([]);
+const zerenlistList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -126,26 +166,26 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    regulationName: null,
-    methodName: null
+    qiYe: null,
+    keShi: null,
+    gangWei: null,
+    gangweiFuze: null,
+    gangweiFuzeZizhe: null,
   },
   rules: {
-    regulationName: [
-      { required: true, message: "制度名称不能为空", trigger: "blur" }
+    qiYe: [
+      { required: true, message: "企业名称不能为空", trigger: "blur" }
     ],
-    methodName: [
-      { required: true, message: "办法名称不能为空", trigger: "blur" }
-    ]
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询安全制度清单列表 */
+/** 查询安全责任清单列表 */
 function getList() {
   loading.value = true;
-  listRegulationList(queryParams.value).then(response => {
-    regulationListList.value = response.rows;
+  listZerenlist(queryParams.value).then(response => {
+    zerenlistList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -161,10 +201,14 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    regulationName: null,
-    methodName: null
+    qiYe: null,
+    keShi: null,
+    gangWei: null,
+    gangweiFuze: null,
+    gangweiFuzeZizhe: null,
+    remark: null
   };
-  proxy.resetForm("regulationListRef");
+  proxy.resetForm("zerenlistRef");
 }
 
 /** 搜索按钮操作 */
@@ -190,32 +234,32 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加安全制度清单";
+  title.value = "添加安全责任清单";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getRegulationList(_id).then(response => {
+  getZerenlist(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改安全制度清单";
+    title.value = "修改安全责任清单";
   });
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["regulationListRef"].validate(valid => {
+  proxy.$refs["zerenlistRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateRegulationList(form.value).then(response => {
+        updateZerenlist(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addRegulationList(form.value).then(response => {
+        addZerenlist(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -228,8 +272,8 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除安全制度清单编号为"' + _ids + '"的数据项？').then(function() {
-    return delRegulationList(_ids);
+  proxy.$modal.confirm('是否确认删除安全责任清单编号为"' + _ids + '"的数据项？').then(function() {
+    return delZerenlist(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -238,9 +282,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('security/regulationList/export', {
+  proxy.download('security/zerenlist/export', {
     ...queryParams.value
-  }, `regulationList_${new Date().getTime()}.xlsx`)
+  }, `zerenlist_${new Date().getTime()}.xlsx`)
 }
 
 getList();

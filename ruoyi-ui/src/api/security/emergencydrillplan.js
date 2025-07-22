@@ -42,3 +42,28 @@ export function delEmergencydrillplan(id) {
     method: 'delete'
   })
 }
+
+// 导入应急演练计划
+export function importEmergencydrillplan(data) {
+  return request({
+    url: '/security/emergencydrillplan/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载应急演练计划导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/emergencydrillplan/importTemplate',
+    method: 'get'
+  })
+}
+
+// 根据关联ID查询应急演练计划列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/emergencydrillplan/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}

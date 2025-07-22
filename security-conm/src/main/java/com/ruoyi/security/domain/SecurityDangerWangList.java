@@ -1,7 +1,5 @@
 package com.ruoyi.security.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -11,7 +9,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 风险网格化清单对象 security_danger_wang_list
  * 
  * @author ruoyi
- * @date 2025-03-28
+ * @date 2025-07-21
  */
 public class SecurityDangerWangList extends BaseEntity
 {
@@ -20,26 +18,45 @@ public class SecurityDangerWangList extends BaseEntity
     /** id */
     private String id;
 
-    /** 上传时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date uploadDate;
+    /** 责任科室 */
+    @Excel(name = "责任科室")
+    private String zerenKeshi;
 
-    /** 上传人 */
-    @Excel(name = "上传人")
-    private String uploadBy;
+    /** 场所/班组 */
+    @Excel(name = "场所/班组")
+    private String changsuoBanzu;
 
-    /** 上传部门 */
-    @Excel(name = "上传部门")
-    private String uploadDept;
+    /** 工序/设备/区域 */
+    @Excel(name = "工序/设备/区域")
+    private String gongxuShebei;
 
-    /** 文件 */
-    @Excel(name = "文件")
-    private String files;
+    /** 具体部位 */
+    @Excel(name = "具体部位")
+    private String jituBuwei;
 
-    /** 描述 */
-    @Excel(name = "描述")
-    private String comment;
+    /** 作业工种 */
+    @Excel(name = "作业工种")
+    private String zuoyeGongzong;
+
+    /** 主要危险源/危险物质 */
+    @Excel(name = "主要危险源/危险物质")
+    private String zhuyaoWeixian;
+
+    /** 可能发生的主要事故类型（安全风险类型） */
+    @Excel(name = "可能发生的主要事故类型（安全风险类型）")
+    private String keNengFaSheng;
+
+    /** 网格负责人及联系电话 */
+    @Excel(name = "网格负责人及联系电话")
+    private String wangLuoFuZeRen;
+
+    /** 主要工作内容 */
+    @Excel(name = "主要工作内容")
+    private String zhuyaoGongzuo;
+
+    /** 关联id */
+    @Excel(name = "关联id", type = Excel.Type.EXPORT)
+    private String relatedId;
 
     public void setId(String id) 
     {
@@ -50,61 +67,111 @@ public class SecurityDangerWangList extends BaseEntity
     {
         return id;
     }
-    public void setUploadDate(Date uploadDate) 
+    public void setZerenKeshi(String zerenKeshi) 
     {
-        this.uploadDate = uploadDate;
+        this.zerenKeshi = zerenKeshi;
     }
 
-    public Date getUploadDate() 
+    public String getZerenKeshi() 
     {
-        return uploadDate;
+        return zerenKeshi;
     }
-    public void setUploadBy(String uploadBy) 
+    public void setChangsuoBanzu(String changsuoBanzu) 
     {
-        this.uploadBy = uploadBy;
-    }
-
-    public String getUploadBy() 
-    {
-        return uploadBy;
-    }
-    public void setUploadDept(String uploadDept) 
-    {
-        this.uploadDept = uploadDept;
+        this.changsuoBanzu = changsuoBanzu;
     }
 
-    public String getUploadDept() 
+    public String getChangsuoBanzu() 
     {
-        return uploadDept;
+        return changsuoBanzu;
     }
-    public void setFiles(String files) 
+    public void setGongxuShebei(String gongxuShebei) 
     {
-        this.files = files;
-    }
-
-    public String getFiles() 
-    {
-        return files;
-    }
-    public void setComment(String comment) 
-    {
-        this.comment = comment;
+        this.gongxuShebei = gongxuShebei;
     }
 
-    public String getComment() 
+    public String getGongxuShebei() 
     {
-        return comment;
+        return gongxuShebei;
+    }
+    public void setJituBuwei(String jituBuwei) 
+    {
+        this.jituBuwei = jituBuwei;
+    }
+
+    public String getJituBuwei() 
+    {
+        return jituBuwei;
+    }
+    public void setZuoyeGongzong(String zuoyeGongzong) 
+    {
+        this.zuoyeGongzong = zuoyeGongzong;
+    }
+
+    public String getZuoyeGongzong() 
+    {
+        return zuoyeGongzong;
+    }
+    public void setZhuyaoWeixian(String zhuyaoWeixian) 
+    {
+        this.zhuyaoWeixian = zhuyaoWeixian;
+    }
+
+    public String getZhuyaoWeixian() 
+    {
+        return zhuyaoWeixian;
+    }
+    public void setKeNengFaSheng(String keNengFaSheng) 
+    {
+        this.keNengFaSheng = keNengFaSheng;
+    }
+
+    public String getKeNengFaSheng() 
+    {
+        return keNengFaSheng;
+    }
+    public void setWangLuoFuZeRen(String wangLuoFuZeRen) 
+    {
+        this.wangLuoFuZeRen = wangLuoFuZeRen;
+    }
+
+    public String getWangLuoFuZeRen() 
+    {
+        return wangLuoFuZeRen;
+    }
+    public void setZhuyaoGongzuo(String zhuyaoGongzuo) 
+    {
+        this.zhuyaoGongzuo = zhuyaoGongzuo;
+    }
+
+    public String getZhuyaoGongzuo() 
+    {
+        return zhuyaoGongzuo;
+    }
+    public void setRelatedId(String relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public String getRelatedId() 
+    {
+        return relatedId;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("uploadDate", getUploadDate())
-            .append("uploadBy", getUploadBy())
-            .append("uploadDept", getUploadDept())
-            .append("files", getFiles())
-            .append("comment", getComment())
+            .append("zerenKeshi", getZerenKeshi())
+            .append("changsuoBanzu", getChangsuoBanzu())
+            .append("gongxuShebei", getGongxuShebei())
+            .append("jituBuwei", getJituBuwei())
+            .append("zuoyeGongzong", getZuoyeGongzong())
+            .append("zhuyaoWeixian", getZhuyaoWeixian())
+            .append("keNengFaSheng", getKeNengFaSheng())
+            .append("wangLuoFuZeRen", getWangLuoFuZeRen())
+            .append("zhuyaoGongzuo", getZhuyaoGongzuo())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

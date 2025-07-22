@@ -49,7 +49,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="审批状态" prop="statu">
+      <!-- <el-form-item label="审批状态" prop="statu">
         <el-select v-model="queryParams.statu" placeholder="请选择审批状态" clearable>
           <el-option
             v-for="dict in security_status"
@@ -58,7 +58,7 @@
             :value="dict.value"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -117,32 +117,61 @@
         <el-button
           type="primary"
           plain
-          icon="DocumentCopy"
+          icon="Document"
           @click="handleTemplate"
           v-hasPermi="['security:importantfactors:export']"
-        >模板下载</el-button>
+        >下载模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="importantfactorsList" @selection-change="handleSelectionChange" :span-method="objectSpanMethod">
+    <el-table
+      v-loading="loading"
+      :data="importantfactorsList"
+      @selection-change="handleSelectionChange"
+      :span-method="objectSpanMethod"
+      class="important-factors-table"
+      border
+      stripe
+      :header-cell-style="{
+        background: '#f5f7fa',
+        color: '#303133',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '14px'
+      }"
+      :cell-style="{
+        textAlign: 'center',
+        padding: '12px 8px',
+        fontSize: '13px'
+      }"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="id" /> -->
-      <el-table-column label="环境因素" align="center" prop="environmentalFactor" />
-      <el-table-column label="环境影响" align="center" prop="environmentalImpact" />
-      <el-table-column label="活动/生产/服务" align="center" prop="activityProductService" />
-      <el-table-column label="部门/工序/岗位" align="center" prop="departmentProcessPosition" />
-      <el-table-column label="时态/状态" align="center" prop="temporalState" />
-      <el-table-column label="管控措施" align="center" prop="controlMeasures" />
-      <!-- <el-table-column label="审批状态" align="center" prop="statu">
+      <el-table-column label="序号" align="center" type="index" width="80" />
+      <el-table-column label="环境因素" align="center" prop="environmentalFactor" min-width="120" show-overflow-tooltip />
+      <el-table-column label="环境影响" align="center" prop="environmentalImpact" min-width="120" show-overflow-tooltip />
+      <el-table-column label="活动/生产/服务" align="center" prop="activityProductService" min-width="150" show-overflow-tooltip />
+      <el-table-column label="部门/工序/岗位" align="center" prop="departmentProcessPosition" min-width="150" show-overflow-tooltip />
+      <el-table-column label="时态/状态" align="center" prop="temporalState" min-width="120" show-overflow-tooltip />
+      <el-table-column label="管控措施" align="center" prop="controlMeasures" min-width="150" show-overflow-tooltip />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.statu"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:importantfactors:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:importantfactors:remove']">删除</el-button>
+          <el-button
+            link
+            type="primary"
+            icon="Edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['security:importantfactors:edit']"
+            size="small"
+          >修改</el-button>
+          <el-button
+            link
+            type="danger"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['security:importantfactors:remove']"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>

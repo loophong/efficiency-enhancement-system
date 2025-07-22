@@ -117,7 +117,7 @@
 
     <el-table v-loading="loading" :data="complianceList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="法律法规名称" align="center" prop="regulationName" />
       <el-table-column label="文号" align="center" prop="documentNumber" />
       <el-table-column label="发布单位" align="center" prop="issuingUnit" />

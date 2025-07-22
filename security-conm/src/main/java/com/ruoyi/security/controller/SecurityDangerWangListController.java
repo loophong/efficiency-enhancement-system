@@ -20,12 +20,13 @@ import com.ruoyi.security.domain.SecurityDangerWangList;
 import com.ruoyi.security.service.ISecurityDangerWangListService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 风险网格化清单Controller
  * 
  * @author ruoyi
- * @date 2025-03-28
+ * @date 2025-07-21
  */
 @RestController
 @RequestMapping("/security/DangerWangList")
@@ -100,5 +101,46 @@ public class SecurityDangerWangListController extends BaseController
     public AjaxResult remove(@PathVariable String[] ids)
     {
         return toAjax(securityDangerWangListService.deleteSecurityDangerWangListByIds(ids));
+    }
+
+    /**
+     * 导入风险网格化清单数据
+     */
+    @Log(title = "风险网格化清单", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:DangerWangList:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        if (file == null || file.isEmpty())
+        {
+            return error("上传文件不能为空");
+        }
+
+        String operName = getUsername();
+        String message = securityDangerWangListService.importDangerWangListFromExcel(file, updateSupport, operName);
+        return success(message);
+    }
+
+    /**
+     * 下载风险网格化清单导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityDangerWangList> util = new ExcelUtil<SecurityDangerWangList>(SecurityDangerWangList.class);
+        util.importTemplateExcel(response, "风险网格化清单数据");
+    }
+
+    /**
+     * 根据关联ID查询风险网格化清单列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:DangerWangList:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable String relatedId)
+    {
+        SecurityDangerWangList securityDangerWangList = new SecurityDangerWangList();
+        securityDangerWangList.setRelatedId(relatedId);
+        List<SecurityDangerWangList> list = securityDangerWangListService.selectSecurityDangerWangListList(securityDangerWangList);
+        return getDataTable(list);
     }
 }

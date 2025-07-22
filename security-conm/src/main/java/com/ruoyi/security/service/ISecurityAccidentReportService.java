@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityAccidentReport;
  * 事故处理报告Service接口
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 public interface ISecurityAccidentReportService 
 {

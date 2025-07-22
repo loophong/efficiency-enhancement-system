@@ -53,9 +53,25 @@ public interface SecurityEmergencyDrillPlanMapper
 
     /**
      * 批量删除应急演练计划
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityEmergencyDrillPlanByIds(Long[] ids);
+
+    /**
+     * 根据关联ID查询应急演练计划列表
+     *
+     * @param relatedId 关联ID
+     * @return 应急演练计划集合
+     */
+    public List<SecurityEmergencyDrillPlan> selectSecurityEmergencyDrillPlanByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

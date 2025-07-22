@@ -6,29 +6,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityAccidentReport" id="SecurityAccidentReportResult">
         <result property="id"    column="id"    />
-        <result property="accidentName"    column="accident_name"    />
-        <result property="accidentTime"    column="accident_time"    />
-        <result property="casualties"    column="casualties"    />
-        <result property="accidentLoss"    column="accident_loss"    />
-        <result property="accidentDescription"    column="accident_description"    />
-        <result property="accidentSceneEnvironment"    column="accident_scene_environment"    />
-        <result property="accidentCause"    column="accident_cause"    />
-        <result property="accidentResponsibility"    column="accident_responsibility"    />
-        <result property="accidentHandling"    column="accident_handling"    />
-        <result property="accidentPreventiveMeasures"    column="accident_preventive_measures"    />
-        <result property="investigatorSignature"    column="investigator_signature"    />
+        <result property="uploadTime"    column="upload_time"    />
+        <result property="uploadPeople"    column="upload_people"    />
+        <result property="uploadBumen"    column="upload_bumen"    />
+        <result property="file"    column="file"    />
+        <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectSecurityAccidentReportVo">
-        select id, accident_name, accident_time, casualties, accident_loss, accident_description, accident_scene_environment, accident_cause, accident_responsibility, accident_handling, accident_preventive_measures, investigator_signature from security_accident_report
+        select id, upload_time, upload_people, upload_bumen, file, remark from security_accident_report
     </sql>
 
     <select id="selectSecurityAccidentReportList" parameterType="SecurityAccidentReport" resultMap="SecurityAccidentReportResult">
         <include refid="selectSecurityAccidentReportVo"/>
         <where>  
-            <if test="accidentName != null  and accidentName != ''"> and accident_name like concat('%', #{accidentName}, '%')</if>
-            <if test="accidentTime != null "> and accident_time = #{accidentTime}</if>
-            <if test="investigatorSignature != null  and investigatorSignature != ''"> and investigator_signature = #{investigatorSignature}</if>
+            <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
+            <if test="uploadPeople != null  and uploadPeople != ''"> and upload_people = #{uploadPeople}</if>
+            <if test="uploadBumen != null  and uploadBumen != ''"> and upload_bumen = #{uploadBumen}</if>
         </where>
     </select>
     
@@ -40,47 +34,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecurityAccidentReport" parameterType="SecurityAccidentReport" useGeneratedKeys="true" keyProperty="id">
         insert into security_accident_report
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="accidentName != null and accidentName != ''">accident_name,</if>
-            <if test="accidentTime != null">accident_time,</if>
-            <if test="casualties != null">casualties,</if>
-            <if test="accidentLoss != null">accident_loss,</if>
-            <if test="accidentDescription != null">accident_description,</if>
-            <if test="accidentSceneEnvironment != null">accident_scene_environment,</if>
-            <if test="accidentCause != null">accident_cause,</if>
-            <if test="accidentResponsibility != null">accident_responsibility,</if>
-            <if test="accidentHandling != null">accident_handling,</if>
-            <if test="accidentPreventiveMeasures != null">accident_preventive_measures,</if>
-            <if test="investigatorSignature != null">investigator_signature,</if>
+            <if test="uploadTime != null">upload_time,</if>
+            <if test="uploadPeople != null">upload_people,</if>
+            <if test="uploadBumen != null">upload_bumen,</if>
+            <if test="file != null">file,</if>
+            <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="accidentName != null and accidentName != ''">#{accidentName},</if>
-            <if test="accidentTime != null">#{accidentTime},</if>
-            <if test="casualties != null">#{casualties},</if>
-            <if test="accidentLoss != null">#{accidentLoss},</if>
-            <if test="accidentDescription != null">#{accidentDescription},</if>
-            <if test="accidentSceneEnvironment != null">#{accidentSceneEnvironment},</if>
-            <if test="accidentCause != null">#{accidentCause},</if>
-            <if test="accidentResponsibility != null">#{accidentResponsibility},</if>
-            <if test="accidentHandling != null">#{accidentHandling},</if>
-            <if test="accidentPreventiveMeasures != null">#{accidentPreventiveMeasures},</if>
-            <if test="investigatorSignature != null">#{investigatorSignature},</if>
+            <if test="uploadTime != null">#{uploadTime},</if>
+            <if test="uploadPeople != null">#{uploadPeople},</if>
+            <if test="uploadBumen != null">#{uploadBumen},</if>
+            <if test="file != null">#{file},</if>
+            <if test="remark != null">#{remark},</if>
          </trim>
     </insert>
 
     <update id="updateSecurityAccidentReport" parameterType="SecurityAccidentReport">
         update security_accident_report
         <trim prefix="SET" suffixOverrides=",">
-            <if test="accidentName != null and accidentName != ''">accident_name = #{accidentName},</if>
-            <if test="accidentTime != null">accident_time = #{accidentTime},</if>
-            <if test="casualties != null">casualties = #{casualties},</if>
-            <if test="accidentLoss != null">accident_loss = #{accidentLoss},</if>
-            <if test="accidentDescription != null">accident_description = #{accidentDescription},</if>
-            <if test="accidentSceneEnvironment != null">accident_scene_environment = #{accidentSceneEnvironment},</if>
-            <if test="accidentCause != null">accident_cause = #{accidentCause},</if>
-            <if test="accidentResponsibility != null">accident_responsibility = #{accidentResponsibility},</if>
-            <if test="accidentHandling != null">accident_handling = #{accidentHandling},</if>
-            <if test="accidentPreventiveMeasures != null">accident_preventive_measures = #{accidentPreventiveMeasures},</if>
-            <if test="investigatorSignature != null">investigator_signature = #{investigatorSignature},</if>
+            <if test="uploadTime != null">upload_time = #{uploadTime},</if>
+            <if test="uploadPeople != null">upload_people = #{uploadPeople},</if>
+            <if test="uploadBumen != null">upload_bumen = #{uploadBumen},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="remark != null">remark = #{remark},</if>
         </trim>
         where id = #{id}
     </update>

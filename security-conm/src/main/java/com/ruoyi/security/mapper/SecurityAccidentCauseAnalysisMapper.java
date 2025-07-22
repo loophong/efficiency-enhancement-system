@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityAccidentCauseAnalysis;
  * 事故原因分析记录Mapper接口
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 public interface SecurityAccidentCauseAnalysisMapper 
 {

@@ -1,18 +1,26 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="类别" prop="category">
+      <el-form-item label="上传时间" prop="time">
+        <el-date-picker clearable
+          v-model="queryParams.time"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="上传人" prop="people">
         <el-input
-          v-model="queryParams.category"
-          placeholder="请输入类别"
+          v-model="queryParams.people"
+          placeholder="请输入上传人"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="项目" prop="project">
+      <el-form-item label="上传部门" prop="uploadBumen">
         <el-input
-          v-model="queryParams.project"
-          placeholder="请输入项目"
+          v-model="queryParams.uploadBumen"
+          placeholder="请输入上传部门"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -68,10 +76,15 @@
     <el-table v-loading="loading" :data="AccidentCauseAnalysisList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="类别" align="center" prop="category" />
-      <el-table-column label="项目" align="center" prop="project" />
-      <el-table-column label="具体内容" align="center" prop="specificContent" />
-      <el-table-column label="分析结果" align="center" prop="analysisResult" />
+      <el-table-column label="上传时间" align="center" prop="time" width="180">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="上传人" align="center" prop="people" />
+      <el-table-column label="上传部门" align="center" prop="uploadBumen" />
+      <el-table-column label="文件" align="center" prop="file" />
+      <el-table-column label="描述" align="center" prop="result" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:AccidentCauseAnalysis:edit']">修改</el-button>
@@ -91,17 +104,25 @@
     <!-- 添加或修改事故原因分析记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="AccidentCauseAnalysisRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="类别" prop="category">
-          <el-input v-model="form.category" placeholder="请输入类别" />
+        <el-form-item label="上传时间" prop="time">
+          <el-date-picker clearable
+            v-model="form.time"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择上传时间">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="项目" prop="project">
-          <el-input v-model="form.project" placeholder="请输入项目" />
+        <el-form-item label="上传人" prop="people">
+          <el-input v-model="form.people" placeholder="请输入上传人" />
         </el-form-item>
-        <el-form-item label="具体内容">
-          <editor v-model="form.specificContent" :min-height="192"/>
+        <el-form-item label="上传部门" prop="uploadBumen">
+          <el-input v-model="form.uploadBumen" placeholder="请输入上传部门" />
         </el-form-item>
-        <el-form-item label="分析结果" prop="analysisResult">
-          <el-input v-model="form.analysisResult" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="文件" prop="file">
+          <file-upload v-model="form.file"/>
+        </el-form-item>
+        <el-form-item label="描述" prop="result">
+          <el-input v-model="form.result" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -134,16 +155,11 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    category: null,
-    project: null,
+    time: null,
+    people: null,
+    uploadBumen: null,
   },
   rules: {
-    category: [
-      { required: true, message: "类别不能为空", trigger: "blur" }
-    ],
-    project: [
-      { required: true, message: "项目不能为空", trigger: "blur" }
-    ],
   }
 });
 
@@ -169,10 +185,11 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    category: null,
-    project: null,
-    specificContent: null,
-    analysisResult: null
+    time: null,
+    people: null,
+    uploadBumen: null,
+    file: null,
+    result: null
   };
   proxy.resetForm("AccidentCauseAnalysisRef");
 }

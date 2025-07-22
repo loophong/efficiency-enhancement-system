@@ -1,5 +1,7 @@
 package com.ruoyi.security.domain;
 
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -9,7 +11,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 事故原因分析记录对象 security_accident_cause_analysis
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 public class SecurityAccidentCauseAnalysis extends BaseEntity
 {
@@ -18,21 +20,26 @@ public class SecurityAccidentCauseAnalysis extends BaseEntity
     /** 序号 */
     private Long id;
 
-    /** 类别 */
-    @Excel(name = "类别")
-    private String category;
+    /** 上传时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date time;
 
-    /** 项目 */
-    @Excel(name = "项目")
-    private String project;
+    /** 上传人 */
+    @Excel(name = "上传人")
+    private String people;
 
-    /** 具体内容 */
-    @Excel(name = "具体内容")
-    private String specificContent;
+    /** 上传部门 */
+    @Excel(name = "上传部门")
+    private String uploadBumen;
 
-    /** 分析结果 */
-    @Excel(name = "分析结果")
-    private String analysisResult;
+    /** 文件 */
+    @Excel(name = "文件")
+    private String file;
+
+    /** 描述 */
+    @Excel(name = "描述")
+    private String result;
 
     public void setId(Long id) 
     {
@@ -43,51 +50,61 @@ public class SecurityAccidentCauseAnalysis extends BaseEntity
     {
         return id;
     }
-    public void setCategory(String category) 
+    public void setTime(Date time) 
     {
-        this.category = category;
+        this.time = time;
     }
 
-    public String getCategory() 
+    public Date getTime() 
     {
-        return category;
+        return time;
     }
-    public void setProject(String project) 
+    public void setPeople(String people) 
     {
-        this.project = project;
-    }
-
-    public String getProject() 
-    {
-        return project;
-    }
-    public void setSpecificContent(String specificContent) 
-    {
-        this.specificContent = specificContent;
+        this.people = people;
     }
 
-    public String getSpecificContent() 
+    public String getPeople() 
     {
-        return specificContent;
+        return people;
     }
-    public void setAnalysisResult(String analysisResult) 
+    public void setUploadBumen(String uploadBumen) 
     {
-        this.analysisResult = analysisResult;
+        this.uploadBumen = uploadBumen;
     }
 
-    public String getAnalysisResult() 
+    public String getUploadBumen() 
     {
-        return analysisResult;
+        return uploadBumen;
+    }
+    public void setFile(String file) 
+    {
+        this.file = file;
+    }
+
+    public String getFile() 
+    {
+        return file;
+    }
+    public void setResult(String result) 
+    {
+        this.result = result;
+    }
+
+    public String getResult() 
+    {
+        return result;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("category", getCategory())
-            .append("project", getProject())
-            .append("specificContent", getSpecificContent())
-            .append("analysisResult", getAnalysisResult())
+            .append("time", getTime())
+            .append("people", getPeople())
+            .append("uploadBumen", getUploadBumen())
+            .append("file", getFile())
+            .append("result", getResult())
             .toString();
     }
 }

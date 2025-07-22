@@ -53,9 +53,25 @@ public interface SecurityEnvironmentalOhsRecordListMapper
 
     /**
      * 批量删除环境职业健康安全记录清单
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityEnvironmentalOhsRecordListByIds(Long[] ids);
+
+    /**
+     * 根据关联ID查询环境职业健康安全记录清单列表
+     *
+     * @param relatedId 关联ID
+     * @return 环境职业健康安全记录清单集合
+     */
+    public List<SecurityEnvironmentalOhsRecordList> selectSecurityEnvironmentalOhsRecordListByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

@@ -53,9 +53,35 @@ public interface ISecurityEmergencyDrillPlanService
 
     /**
      * 删除应急演练计划信息
-     * 
+     *
      * @param id 应急演练计划主键
      * @return 结果
      */
     public int deleteSecurityEmergencyDrillPlanById(Long id);
+
+    /**
+     * 导入应急演练计划数据
+     *
+     * @param drillPlanList 应急演练计划数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importSecurityEmergencyDrillPlan(List<SecurityEmergencyDrillPlan> drillPlanList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 根据关联ID查询应急演练计划列表
+     *
+     * @param relatedId 关联ID
+     * @return 应急演练计划集合
+     */
+    public List<SecurityEmergencyDrillPlan> selectSecurityEmergencyDrillPlanByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

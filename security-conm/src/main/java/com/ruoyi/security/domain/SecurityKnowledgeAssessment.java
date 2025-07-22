@@ -22,7 +22,7 @@ public class SecurityKnowledgeAssessment extends BaseEntity
     private Long id;
 
     /** 考试名称 */
-    @Excel(name = "考试名称")
+    @Excel(name = "考生姓名")
     private String examineeName;
 
     /** 笔试成绩 */
@@ -39,30 +39,33 @@ public class SecurityKnowledgeAssessment extends BaseEntity
 
     /** 是否合格 */
     @Excel(name = "是否合格")
-    private Integer isQualified;
+    private String isQualified;
 
     /** 备注 */
     @Excel(name = "备注")
     private String remarks;
 
-    /** 考核内容 */
-    @Excel(name = "考核内容")
+//    /** 考核内容 */
+//    @Excel(name = "考核内容")
     private String assessmentContent;
 
     /** 考试时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "考试时间", width = 30, dateFormat = "yyyy-MM-dd")
+//    @Excel(name = "考试时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date examinationDate;
 
-    /** 考察形式 */
-    @Excel(name = "考察形式")
+//    /** 考察形式 */
+//    @Excel(name = "考察形式")
     private String assessmentForm;
 
     /** 考核评价人 */
-    @Excel(name = "考核评价人")
+//    @Excel(name = "考核评价人")
     private String assessor;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -107,12 +110,12 @@ public class SecurityKnowledgeAssessment extends BaseEntity
     {
         return other;
     }
-    public void setIsQualified(Integer isQualified) 
+    public void setIsQualified(String isQualified)
     {
         this.isQualified = isQualified;
     }
 
-    public Integer getIsQualified() 
+    public String getIsQualified()
     {
         return isQualified;
     }
@@ -157,9 +160,18 @@ public class SecurityKnowledgeAssessment extends BaseEntity
         this.assessor = assessor;
     }
 
-    public String getAssessor() 
+    public String getAssessor()
     {
         return assessor;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -176,6 +188,7 @@ public class SecurityKnowledgeAssessment extends BaseEntity
             .append("examinationDate", getExaminationDate())
             .append("assessmentForm", getAssessmentForm())
             .append("assessor", getAssessor())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

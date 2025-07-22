@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -100,5 +101,40 @@ public class SecurityKnowledgeAssessmentController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityKnowledgeAssessmentService.deleteSecurityKnowledgeAssessmentByIds(ids));
+    }
+
+    /**
+     * 导入安全知识考核数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:knowledgeassessment:import')")
+    @Log(title = "安全知识考核", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        String message = securityKnowledgeAssessmentService.importData(file.getInputStream(), updateSupport);
+        return success(message);
+    }
+
+    /**
+     * 下载导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:knowledgeassessment:export')")
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityKnowledgeAssessment> util = new ExcelUtil<SecurityKnowledgeAssessment>(SecurityKnowledgeAssessment.class);
+        util.importTemplateExcel(response, "安全知识考核数据");
+    }
+
+    /**
+     * 根据关联ID查询安全知识考核列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:knowledgeassessment:list')")
+    @GetMapping("/listByRelatedId")
+    public TableDataInfo listByRelatedId(Long relatedId, String sourceModule)
+    {
+        startPage();
+        List<SecurityKnowledgeAssessment> list = securityKnowledgeAssessmentService.selectSecurityKnowledgeAssessmentByRelatedId(relatedId);
+        return getDataTable(list);
     }
 }

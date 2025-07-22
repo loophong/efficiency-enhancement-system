@@ -1,7 +1,6 @@
 package com.ruoyi.security.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -29,13 +28,12 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
     private String departmentTeam;
 
     /** 类型 */
-    @Excel(name = "类型")
+    @Excel(name = "科室")
     private String drillType;
 
     /** 预计演练时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "预计演练时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date plannedDrillTime;
+    @Excel(name = "预计演练时间")
+    private String plannedDrillTime;
 
     /** 演练主题 */
     @Excel(name = "演练主题")
@@ -54,10 +52,13 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
     private String drillCategory;
 
     /** 审批状态 */
-    @Excel(name = "审批状态")
+    //@Excel(name = "审批状态")
     private String statu;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -93,12 +94,12 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
     {
         return drillType;
     }
-    public void setPlannedDrillTime(Date plannedDrillTime) 
+    public void setPlannedDrillTime(String plannedDrillTime)
     {
         this.plannedDrillTime = plannedDrillTime;
     }
 
-    public Date getPlannedDrillTime() 
+    public String getPlannedDrillTime()
     {
         return plannedDrillTime;
     }
@@ -143,9 +144,18 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
         this.statu = statu;
     }
 
-    public String getStatu() 
+    public String getStatu()
     {
         return statu;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -161,6 +171,7 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
             .append("participantsObservers", getParticipantsObservers())
             .append("drillCategory", getDrillCategory())
             .append("statu", getStatu())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

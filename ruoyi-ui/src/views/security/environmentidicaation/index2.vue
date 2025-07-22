@@ -108,6 +108,7 @@
           plain
           icon="Download"
           @click="handleImportTemplate"
+          v-hasPermi="['security:assessment:list']"
         >模板下载</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
@@ -141,9 +142,11 @@
         </template>
       </el-table-column>
       <el-table-column label="实施部门" align="center" prop="department" />
-      <el-table-column label="严重程度" align="center" prop="severity" />
-      <el-table-column label="发生频次" align="center" prop="frequency" />
-      <el-table-column label="风险系数" align="center" prop="risk" />
+      <el-table-column label="评价" align="center">
+        <el-table-column label="严重程度" align="center" prop="severity" />
+        <el-table-column label="发生频次" align="center" prop="frequency" />
+        <el-table-column label="风险系数" align="center" prop="risk" />
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:assessment:edit']">修改</el-button>
@@ -414,9 +417,23 @@ function handleImport() {
 }
 
 /** 下载模板操作 */
-function handleImportTemplate() {
-  // 使用GET请求下载模板
-  window.location.href = import.meta.env.VITE_APP_BASE_API + "/security/assessment/importTemplate";
+async function handleImportTemplate() {
+  try {
+    const response = await getImportTemplate();
+    const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `风险和机遇评估模板_${new Date().getTime()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    proxy.$modal.msgSuccess("模板下载成功");
+  } catch (error) {
+    console.error('模板下载失败:', error);
+    proxy.$modal.msgError("模板下载失败，请稍后重试");
+  }
 }
 
 // 文件上传中处理

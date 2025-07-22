@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="location"    column="location"    />
         <result property="personInCharge"    column="person_in_charge"    />
         <result property="currentStatus"    column="current_status"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEquipmentSafetyFacilityLedgerVo">
-        select id, facility_category, safety_facility_name, quantity, inspection_cycle, next_inspection_date, responsible_unit, location, person_in_charge, current_status from security_equipment_safety_facility_ledger
+        select id, facility_category, safety_facility_name, quantity, inspection_cycle, next_inspection_date, responsible_unit, location, person_in_charge, current_status, related_id from security_equipment_safety_facility_ledger
     </sql>
 
     <select id="selectSecurityEquipmentSafetyFacilityLedgerList" parameterType="SecurityEquipmentSafetyFacilityLedger" resultMap="SecurityEquipmentSafetyFacilityLedgerResult">
@@ -33,6 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null  and location != ''"> and location = #{location}</if>
             <if test="personInCharge != null  and personInCharge != ''"> and person_in_charge = #{personInCharge}</if>
             <if test="currentStatus != null  and currentStatus != ''"> and current_status = #{currentStatus}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -53,6 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null">location,</if>
             <if test="personInCharge != null">person_in_charge,</if>
             <if test="currentStatus != null">current_status,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="facilityCategory != null and facilityCategory != ''">#{facilityCategory},</if>
@@ -64,6 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null">#{location},</if>
             <if test="personInCharge != null">#{personInCharge},</if>
             <if test="currentStatus != null">#{currentStatus},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -79,6 +83,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="location != null">location = #{location},</if>
             <if test="personInCharge != null">person_in_charge = #{personInCharge},</if>
             <if test="currentStatus != null">current_status = #{currentStatus},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -88,9 +93,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityEquipmentSafetyFacilityLedgerByIds" parameterType="String">
-        delete from security_equipment_safety_facility_ledger where id in 
+        delete from security_equipment_safety_facility_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_equipment_safety_facility_ledger
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 1000
+    </update>
+
+    <!-- 根据关联ID查询安全防护设备设施列表 -->
+    <select id="selectSecurityEquipmentSafetyFacilityLedgerByRelatedId" parameterType="Long" resultMap="SecurityEquipmentSafetyFacilityLedgerResult">
+        <include refid="selectSecurityEquipmentSafetyFacilityLedgerVo"/>
+        where related_id = #{relatedId}
+        order by facility_category, id desc
+    </select>
 </mapper>

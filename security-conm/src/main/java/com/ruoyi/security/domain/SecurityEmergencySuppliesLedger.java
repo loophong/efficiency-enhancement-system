@@ -47,7 +47,10 @@ public class SecurityEmergencySuppliesLedger extends BaseEntity
     @Excel(name = "电话")
     private String phoneNumber;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -115,9 +118,18 @@ public class SecurityEmergencySuppliesLedger extends BaseEntity
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhoneNumber() 
+    public String getPhoneNumber()
     {
         return phoneNumber;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -131,6 +143,7 @@ public class SecurityEmergencySuppliesLedger extends BaseEntity
             .append("storageLocation", getStorageLocation())
             .append("contactPerson", getContactPerson())
             .append("phoneNumber", getPhoneNumber())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

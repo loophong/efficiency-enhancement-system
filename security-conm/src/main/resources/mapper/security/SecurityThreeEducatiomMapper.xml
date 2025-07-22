@@ -6,23 +6,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityThreeEducatiom" id="SecurityThreeEducatiomResult">
         <result property="id"    column="id"    />
-        <result property="uploadDate"    column="upload_date"    />
-        <result property="uploadBy"    column="upload_by"    />
-        <result property="uploadDept"    column="upload_dept"    />
-        <result property="files"    column="files"    />
-        <result property="comment"    column="comment"    />
+        <result property="xingMing"    column="xing_ming"    />
+        <result property="banZu"    column="ban_zu"    />
+        <result property="gongZhong"    column="gong_zhong"    />
+        <result property="jingCTime"    column="jing_c_time"    />
+        <result property="educationOne"    column="education_one"    />
+        <result property="educationTwo"    column="education_two"    />
+        <result property="educationThree"    column="education_three"    />
+        <result property="heGui"    column="he_gui"    />
+        <result property="source"    column="source"    />
+        <result property="remark"    column="remark"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityThreeEducatiomVo">
-        select id, upload_date, upload_by, upload_dept, files, comment from security_three_educatiom
+        select id, xing_ming, ban_zu, gong_zhong, jing_c_time, education_one, education_two, education_three, he_gui, source, remark, related_id from security_three_educatiom
     </sql>
 
     <select id="selectSecurityThreeEducatiomList" parameterType="SecurityThreeEducatiom" resultMap="SecurityThreeEducatiomResult">
         <include refid="selectSecurityThreeEducatiomVo"/>
         <where>  
-            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
-            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
-            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="xingMing != null  and xingMing != ''"> and xing_ming = #{xingMing}</if>
+            <if test="banZu != null  and banZu != ''"> and ban_zu = #{banZu}</if>
+            <if test="gongZhong != null  and gongZhong != ''"> and gong_zhong = #{gongZhong}</if>
+            <if test="jingCTime != null "> and jing_c_time = #{jingCTime}</if>
+            <if test="educationOne != null"> and education_one = #{educationOne}</if>
+            <if test="educationTwo != null"> and education_two = #{educationTwo}</if>
+            <if test="educationThree != null"> and education_three = #{educationThree}</if>
+            <if test="heGui != null  and heGui != ''"> and he_gui = #{heGui}</if>
+            <if test="source != null  and source != ''"> and source = #{source}</if>
         </where>
     </select>
     
@@ -31,32 +43,56 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
+    <select id="selectSecurityThreeEducatiomByRelatedId" parameterType="String" resultMap="SecurityThreeEducatiomResult">
+        <include refid="selectSecurityThreeEducatiomVo"/>
+        where related_id = #{relatedId}
+        order by id desc
+    </select>
+
     <insert id="insertSecurityThreeEducatiom" parameterType="SecurityThreeEducatiom" useGeneratedKeys="true" keyProperty="id">
         insert into security_three_educatiom
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date,</if>
-            <if test="uploadBy != null">upload_by,</if>
-            <if test="uploadDept != null">upload_dept,</if>
-            <if test="files != null">files,</if>
-            <if test="comment != null">comment,</if>
+            <if test="xingMing != null">xing_ming,</if>
+            <if test="banZu != null">ban_zu,</if>
+            <if test="gongZhong != null">gong_zhong,</if>
+            <if test="jingCTime != null">jing_c_time,</if>
+            <if test="educationOne != null">education_one,</if>
+            <if test="educationTwo != null">education_two,</if>
+            <if test="educationThree != null">education_three,</if>
+            <if test="heGui != null">he_gui,</if>
+            <if test="source != null">source,</if>
+            <if test="remark != null">remark,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">#{uploadDate},</if>
-            <if test="uploadBy != null">#{uploadBy},</if>
-            <if test="uploadDept != null">#{uploadDept},</if>
-            <if test="files != null">#{files},</if>
-            <if test="comment != null">#{comment},</if>
+            <if test="xingMing != null">#{xingMing},</if>
+            <if test="banZu != null">#{banZu},</if>
+            <if test="gongZhong != null">#{gongZhong},</if>
+            <if test="jingCTime != null">#{jingCTime},</if>
+            <if test="educationOne != null">#{educationOne},</if>
+            <if test="educationTwo != null">#{educationTwo},</if>
+            <if test="educationThree != null">#{educationThree},</if>
+            <if test="heGui != null">#{heGui},</if>
+            <if test="source != null">#{source},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecurityThreeEducatiom" parameterType="SecurityThreeEducatiom">
         update security_three_educatiom
         <trim prefix="SET" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
-            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
-            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
-            <if test="files != null">files = #{files},</if>
-            <if test="comment != null">comment = #{comment},</if>
+            <if test="xingMing != null">xing_ming = #{xingMing},</if>
+            <if test="banZu != null">ban_zu = #{banZu},</if>
+            <if test="gongZhong != null">gong_zhong = #{gongZhong},</if>
+            <if test="jingCTime != null">jing_c_time = #{jingCTime},</if>
+            <if test="educationOne != null">education_one = #{educationOne},</if>
+            <if test="educationTwo != null">education_two = #{educationTwo},</if>
+            <if test="educationThree != null">education_three = #{educationThree},</if>
+            <if test="heGui != null">he_gui = #{heGui},</if>
+            <if test="source != null">source = #{source},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -66,9 +102,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityThreeEducatiomByIds" parameterType="String">
-        delete from security_three_educatiom where id in 
+        delete from security_three_educatiom where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 更新最近导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_three_educatiom
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 1000
+    </update>
 </mapper>

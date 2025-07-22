@@ -11,7 +11,7 @@ import com.ruoyi.security.service.ISecurityAccidentReportService;
  * 事故处理报告Service业务层处理
  * 
  * @author wang
- * @date 2025-03-13
+ * @date 2025-07-21
  */
 @Service
 public class SecurityAccidentReportServiceImpl implements ISecurityAccidentReportService 

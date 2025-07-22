@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityZerenListMapper">
+    
+    <resultMap type="SecurityZerenList" id="SecurityZerenListResult">
+        <result property="id"    column="id"    />
+        <result property="qiYe"    column="qi_ye"    />
+        <result property="keShi"    column="ke_shi"    />
+        <result property="gangWei"    column="gang_wei"    />
+        <result property="gangweiFuze"    column="gangwei_fuze"    />
+        <result property="gangweiFuzeZizhe"    column="gangwei_fuze_zizhe"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectSecurityZerenListVo">
+        select id, qi_ye, ke_shi, gang_wei, gangwei_fuze, gangwei_fuze_zizhe, remark from security_zeren_list
+    </sql>
+
+    <select id="selectSecurityZerenListList" parameterType="SecurityZerenList" resultMap="SecurityZerenListResult">
+        <include refid="selectSecurityZerenListVo"/>
+        <where>  
+            <if test="qiYe != null  and qiYe != ''"> and qi_ye = #{qiYe}</if>
+            <if test="keShi != null  and keShi != ''"> and ke_shi = #{keShi}</if>
+            <if test="gangWei != null  and gangWei != ''"> and gang_wei = #{gangWei}</if>
+            <if test="gangweiFuze != null  and gangweiFuze != ''"> and gangwei_fuze = #{gangweiFuze}</if>
+            <if test="gangweiFuzeZizhe != null  and gangweiFuzeZizhe != ''"> and gangwei_fuze_zizhe = #{gangweiFuzeZizhe}</if>
+        </where>
+    </select>
+    
+    <select id="selectSecurityZerenListById" parameterType="Long" resultMap="SecurityZerenListResult">
+        <include refid="selectSecurityZerenListVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSecurityZerenList" parameterType="SecurityZerenList">
+        insert into security_zeren_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="qiYe != null and qiYe != ''">qi_ye,</if>
+            <if test="keShi != null">ke_shi,</if>
+            <if test="gangWei != null">gang_wei,</if>
+            <if test="gangweiFuze != null">gangwei_fuze,</if>
+            <if test="gangweiFuzeZizhe != null">gangwei_fuze_zizhe,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="qiYe != null and qiYe != ''">#{qiYe},</if>
+            <if test="keShi != null">#{keShi},</if>
+            <if test="gangWei != null">#{gangWei},</if>
+            <if test="gangweiFuze != null">#{gangweiFuze},</if>
+            <if test="gangweiFuzeZizhe != null">#{gangweiFuzeZizhe},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityZerenList" parameterType="SecurityZerenList">
+        update security_zeren_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qiYe != null and qiYe != ''">qi_ye = #{qiYe},</if>
+            <if test="keShi != null">ke_shi = #{keShi},</if>
+            <if test="gangWei != null">gang_wei = #{gangWei},</if>
+            <if test="gangweiFuze != null">gangwei_fuze = #{gangweiFuze},</if>
+            <if test="gangweiFuzeZizhe != null">gangwei_fuze_zizhe = #{gangweiFuzeZizhe},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityZerenListById" parameterType="Long">
+        delete from security_zeren_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityZerenListByIds" parameterType="String">
+        delete from security_zeren_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

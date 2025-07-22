@@ -189,13 +189,12 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table 
-      v-loading="loading" 
-      :data="risklistList" 
-      @selection-change="handleSelectionChange"
-      :span-method="handleMergeCell">
+    <el-table
+      v-loading="loading"
+      :data="risklistList"
+      @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="id" /> -->
+      <el-table-column label="序号" align="center"  type="index" />
       <el-table-column label="作业活动" align="center" prop="activity" />
       <el-table-column label="危险源" align="center" prop="hazardSource" />
       <el-table-column label="危害方式" align="center" prop="hazardMode" />
@@ -567,49 +566,7 @@ function submitFileForm() {
   proxy.$refs["uploadRef"].submit();
 }
 
-// 添加合并单元格的处理方法
-function handleMergeCell({ row, column, rowIndex, columnIndex }) {
-  // 只处理"作业活动"列的合并
-  if (columnIndex === 1) { // 作业活动列的索引为1（第0列是选择框）
-    if (rowIndex === 0) {
-      // 第一行不需要判断，直接返回
-      return {
-        rowspan: 1,
-        colspan: 1
-      };
-    }
-    
-    // 获取当前行和上一行的作业活动值
-    const currentValue = risklistList.value[rowIndex].activity;
-    const prevValue = risklistList.value[rowIndex - 1].activity;
-    
-    // 如果当前行与上一行的值相同，则隐藏当前行的单元格
-    if (currentValue === prevValue) {
-      return {
-        rowspan: 0,
-        colspan: 0
-      };
-    } else {
-      // 计算当前值连续出现的次数
-      let count = 1;
-      for (let i = rowIndex + 1; i < risklistList.value.length; i++) {
-        if (risklistList.value[i].activity === currentValue) {
-          count++;
-        } else {
-          break;
-        }
-      }
-      
-      // 返回合并的行数
-      return {
-        rowspan: count,
-        colspan: 1
-      };
-    }
-  }
-  
-  // 移除控制措施列的合并逻辑
-}
+
 
 function checkRelatedId() {
   const relatedId = route.query.relatedId;

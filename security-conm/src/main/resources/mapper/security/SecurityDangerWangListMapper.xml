@@ -6,23 +6,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityDangerWangList" id="SecurityDangerWangListResult">
         <result property="id"    column="id"    />
-        <result property="uploadDate"    column="upload_date"    />
-        <result property="uploadBy"    column="upload_by"    />
-        <result property="uploadDept"    column="upload_dept"    />
-        <result property="files"    column="files"    />
-        <result property="comment"    column="comment"    />
+        <result property="zerenKeshi"    column="zeren_keshi"    />
+        <result property="changsuoBanzu"    column="changsuo_banzu"    />
+        <result property="gongxuShebei"    column="gongxu_shebei"    />
+        <result property="jituBuwei"    column="jitu_buwei"    />
+        <result property="zuoyeGongzong"    column="zuoye_gongzong"    />
+        <result property="zhuyaoWeixian"    column="zhuyao_weixian"    />
+        <result property="keNengFaSheng"    column="ke_neng_fa_sheng"    />
+        <result property="wangLuoFuZeRen"    column="wang_luo_fu_ze_ren"    />
+        <result property="zhuyaoGongzuo"    column="zhuyao_gongzuo"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityDangerWangListVo">
-        select id, upload_date, upload_by, upload_dept, files, comment from security_danger_wang_list
+        select id, zeren_keshi, changsuo_banzu, gongxu_shebei, jitu_buwei, zuoye_gongzong, zhuyao_weixian, ke_neng_fa_sheng, wang_luo_fu_ze_ren, zhuyao_gongzuo, related_id from security_danger_wang_list
     </sql>
 
     <select id="selectSecurityDangerWangListList" parameterType="SecurityDangerWangList" resultMap="SecurityDangerWangListResult">
         <include refid="selectSecurityDangerWangListVo"/>
         <where>  
-            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
-            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
-            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="zerenKeshi != null  and zerenKeshi != ''"> and zeren_keshi = #{zerenKeshi}</if>
+            <if test="changsuoBanzu != null  and changsuoBanzu != ''"> and changsuo_banzu = #{changsuoBanzu}</if>
+            <if test="gongxuShebei != null  and gongxuShebei != ''"> and gongxu_shebei = #{gongxuShebei}</if>
+            <if test="jituBuwei != null  and jituBuwei != ''"> and jitu_buwei = #{jituBuwei}</if>
+            <if test="zuoyeGongzong != null  and zuoyeGongzong != ''"> and zuoye_gongzong = #{zuoyeGongzong}</if>
+            <if test="zhuyaoWeixian != null  and zhuyaoWeixian != ''"> and zhuyao_weixian = #{zhuyaoWeixian}</if>
+            <if test="keNengFaSheng != null  and keNengFaSheng != ''"> and ke_neng_fa_sheng = #{keNengFaSheng}</if>
+            <if test="wangLuoFuZeRen != null  and wangLuoFuZeRen != ''"> and wang_luo_fu_ze_ren = #{wangLuoFuZeRen}</if>
+            <if test="zhuyaoGongzuo != null  and zhuyaoGongzuo != ''"> and zhuyao_gongzuo = #{zhuyaoGongzuo}</if>
+            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -34,29 +46,44 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecurityDangerWangList" parameterType="SecurityDangerWangList" useGeneratedKeys="true" keyProperty="id">
         insert into security_danger_wang_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date,</if>
-            <if test="uploadBy != null">upload_by,</if>
-            <if test="uploadDept != null">upload_dept,</if>
-            <if test="files != null">files,</if>
-            <if test="comment != null">comment,</if>
+            <if test="zerenKeshi != null">zeren_keshi,</if>
+            <if test="changsuoBanzu != null">changsuo_banzu,</if>
+            <if test="gongxuShebei != null">gongxu_shebei,</if>
+            <if test="jituBuwei != null">jitu_buwei,</if>
+            <if test="zuoyeGongzong != null">zuoye_gongzong,</if>
+            <if test="zhuyaoWeixian != null">zhuyao_weixian,</if>
+            <if test="keNengFaSheng != null">ke_neng_fa_sheng,</if>
+            <if test="wangLuoFuZeRen != null">wang_luo_fu_ze_ren,</if>
+            <if test="zhuyaoGongzuo != null">zhuyao_gongzuo,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">#{uploadDate},</if>
-            <if test="uploadBy != null">#{uploadBy},</if>
-            <if test="uploadDept != null">#{uploadDept},</if>
-            <if test="files != null">#{files},</if>
-            <if test="comment != null">#{comment},</if>
+            <if test="zerenKeshi != null">#{zerenKeshi},</if>
+            <if test="changsuoBanzu != null">#{changsuoBanzu},</if>
+            <if test="gongxuShebei != null">#{gongxuShebei},</if>
+            <if test="jituBuwei != null">#{jituBuwei},</if>
+            <if test="zuoyeGongzong != null">#{zuoyeGongzong},</if>
+            <if test="zhuyaoWeixian != null">#{zhuyaoWeixian},</if>
+            <if test="keNengFaSheng != null">#{keNengFaSheng},</if>
+            <if test="wangLuoFuZeRen != null">#{wangLuoFuZeRen},</if>
+            <if test="zhuyaoGongzuo != null">#{zhuyaoGongzuo},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecurityDangerWangList" parameterType="SecurityDangerWangList">
         update security_danger_wang_list
         <trim prefix="SET" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
-            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
-            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
-            <if test="files != null">files = #{files},</if>
-            <if test="comment != null">comment = #{comment},</if>
+            <if test="zerenKeshi != null">zeren_keshi = #{zerenKeshi},</if>
+            <if test="changsuoBanzu != null">changsuo_banzu = #{changsuoBanzu},</if>
+            <if test="gongxuShebei != null">gongxu_shebei = #{gongxuShebei},</if>
+            <if test="jituBuwei != null">jitu_buwei = #{jituBuwei},</if>
+            <if test="zuoyeGongzong != null">zuoye_gongzong = #{zuoyeGongzong},</if>
+            <if test="zhuyaoWeixian != null">zhuyao_weixian = #{zhuyaoWeixian},</if>
+            <if test="keNengFaSheng != null">ke_neng_fa_sheng = #{keNengFaSheng},</if>
+            <if test="wangLuoFuZeRen != null">wang_luo_fu_ze_ren = #{wangLuoFuZeRen},</if>
+            <if test="zhuyaoGongzuo != null">zhuyao_gongzuo = #{zhuyaoGongzuo},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -66,9 +93,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityDangerWangListByIds" parameterType="String">
-        delete from security_danger_wang_list where id in 
+        delete from security_danger_wang_list where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSecurityDangerWangListByName" parameterType="String" resultMap="SecurityDangerWangListResult">
+        <include refid="selectSecurityDangerWangListVo"/>
+        where zeren_keshi = #{fengXianDian} and changsuo_banzu = #{wangGeHua}
+    </select>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_danger_wang_list
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        ORDER BY id DESC
+        LIMIT 100
+    </update>
 </mapper>

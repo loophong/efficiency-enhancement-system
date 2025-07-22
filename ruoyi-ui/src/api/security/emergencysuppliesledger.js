@@ -42,3 +42,28 @@ export function delEmergencysuppliesledger(id) {
     method: 'delete'
   })
 }
+
+// 导入应急物资管理台帐
+export function importEmergencysuppliesledger(data) {
+  return request({
+    url: '/security/emergencysuppliesledger/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载应急物资管理台帐导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/emergencysuppliesledger/importTemplate',
+    method: 'get'
+  })
+}
+
+// 根据关联ID查询应急物资管理台帐列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/emergencysuppliesledger/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}

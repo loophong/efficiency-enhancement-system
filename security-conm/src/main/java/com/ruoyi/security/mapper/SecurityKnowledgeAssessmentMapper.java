@@ -53,9 +53,25 @@ public interface SecurityKnowledgeAssessmentMapper
 
     /**
      * 批量删除安全知识考核
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityKnowledgeAssessmentByIds(Long[] ids);
+
+    /**
+     * 更新最近导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的记录数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
+
+    /**
+     * 根据关联ID查询安全知识考核列表
+     *
+     * @param relatedId 关联ID
+     * @return 安全知识考核集合
+     */
+    public List<SecurityKnowledgeAssessment> selectSecurityKnowledgeAssessmentByRelatedId(Long relatedId);
 }

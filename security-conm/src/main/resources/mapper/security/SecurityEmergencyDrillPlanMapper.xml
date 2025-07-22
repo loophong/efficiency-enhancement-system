@@ -15,10 +15,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="participantsObservers"    column="participants_observers"    />
         <result property="drillCategory"    column="drill_category"    />
         <result property="statu"    column="statu"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEmergencyDrillPlanVo">
-        select id, level, department_team, drill_type, planned_drill_time, drill_theme, reference_scenario, participants_observers, drill_category, statu from security_emergency_drill_plan
+        select id, level, department_team, drill_type, planned_drill_time, drill_theme, reference_scenario, participants_observers, drill_category, statu, related_id from security_emergency_drill_plan
     </sql>
 
     <select id="selectSecurityEmergencyDrillPlanList" parameterType="SecurityEmergencyDrillPlan" resultMap="SecurityEmergencyDrillPlanResult">
@@ -27,12 +28,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="level != null  and level != ''"> and level = #{level}</if>
             <if test="departmentTeam != null  and departmentTeam != ''"> and department_team = #{departmentTeam}</if>
             <if test="drillType != null  and drillType != ''"> and drill_type = #{drillType}</if>
-            <if test="plannedDrillTime != null "> and planned_drill_time = #{plannedDrillTime}</if>
+            <if test="plannedDrillTime != null and plannedDrillTime != ''"> and planned_drill_time = #{plannedDrillTime}</if>
             <if test="drillTheme != null  and drillTheme != ''"> and drill_theme = #{drillTheme}</if>
             <if test="referenceScenario != null  and referenceScenario != ''"> and reference_scenario = #{referenceScenario}</if>
             <if test="participantsObservers != null  and participantsObservers != ''"> and participants_observers = #{participantsObservers}</if>
             <if test="drillCategory != null  and drillCategory != ''"> and drill_category = #{drillCategory}</if>
             <if test="statu != null  and statu != ''"> and statu = #{statu}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -47,23 +49,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="level != null and level != ''">level,</if>
             <if test="departmentTeam != null and departmentTeam != ''">department_team,</if>
             <if test="drillType != null">drill_type,</if>
-            <if test="plannedDrillTime != null">planned_drill_time,</if>
+            <if test="plannedDrillTime != null and plannedDrillTime != ''">planned_drill_time,</if>
             <if test="drillTheme != null">drill_theme,</if>
             <if test="referenceScenario != null">reference_scenario,</if>
             <if test="participantsObservers != null">participants_observers,</if>
             <if test="drillCategory != null">drill_category,</if>
             <if test="statu != null">statu,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="level != null and level != ''">#{level},</if>
             <if test="departmentTeam != null and departmentTeam != ''">#{departmentTeam},</if>
             <if test="drillType != null">#{drillType},</if>
-            <if test="plannedDrillTime != null">#{plannedDrillTime},</if>
+            <if test="plannedDrillTime != null and plannedDrillTime != ''">#{plannedDrillTime},</if>
             <if test="drillTheme != null">#{drillTheme},</if>
             <if test="referenceScenario != null">#{referenceScenario},</if>
             <if test="participantsObservers != null">#{participantsObservers},</if>
             <if test="drillCategory != null">#{drillCategory},</if>
             <if test="statu != null">#{statu},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -73,12 +77,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="level != null and level != ''">level = #{level},</if>
             <if test="departmentTeam != null and departmentTeam != ''">department_team = #{departmentTeam},</if>
             <if test="drillType != null">drill_type = #{drillType},</if>
-            <if test="plannedDrillTime != null">planned_drill_time = #{plannedDrillTime},</if>
+            <if test="plannedDrillTime != null and plannedDrillTime != ''">planned_drill_time = #{plannedDrillTime},</if>
             <if test="drillTheme != null">drill_theme = #{drillTheme},</if>
             <if test="referenceScenario != null">reference_scenario = #{referenceScenario},</if>
             <if test="participantsObservers != null">participants_observers = #{participantsObservers},</if>
             <if test="drillCategory != null">drill_category = #{drillCategory},</if>
             <if test="statu != null">statu = #{statu},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -88,9 +93,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityEmergencyDrillPlanByIds" parameterType="String">
-        delete from security_emergency_drill_plan where id in 
+        delete from security_emergency_drill_plan where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 根据关联ID查询应急演练计划列表 -->
+    <select id="selectSecurityEmergencyDrillPlanByRelatedId" parameterType="Long" resultMap="SecurityEmergencyDrillPlanResult">
+        <include refid="selectSecurityEmergencyDrillPlanVo"/>
+        where related_id = #{relatedId}
+        order by id desc
+    </select>
+
+    <!-- 批量更新最新导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_emergency_drill_plan
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND id IN (
+            SELECT temp.id FROM (
+                SELECT id FROM security_emergency_drill_plan
+                WHERE related_id IS NULL
+                ORDER BY id DESC
+                LIMIT 1000
+            ) temp
+        )
+    </update>
 </mapper>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.security.mapper.SecurityPositionListMapper">
+    
+    <resultMap type="SecurityPositionList" id="SecurityPositionListResult">
+        <result property="id"    column="id"    />
+        <result property="positionName"    column="position_name"    />
+        <result property="department"    column="department"    />
+        <result property="description"    column="description"    />
+        <result property="attachment"    column="attachment"    />
+        <result property="relatedId"    column="related_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSecurityPositionListVo">
+        select id, position_name, department, description, attachment, related_id, create_by, create_time, update_by, update_time from security_position_list
+    </sql>
+
+    <select id="selectSecurityPositionListList" parameterType="SecurityPositionList" resultMap="SecurityPositionListResult">
+        <include refid="selectSecurityPositionListVo"/>
+        <where>  
+            <if test="positionName != null and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+            <if test="department != null and department != ''"> and department like concat('%', #{department}, '%')</if>
+            <if test="description != null and description != ''"> and description like concat('%', #{description}, '%')</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectSecurityPositionListById" parameterType="String" resultMap="SecurityPositionListResult">
+        <include refid="selectSecurityPositionListVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectByPositionNameAndDepartment" resultMap="SecurityPositionListResult">
+        <include refid="selectSecurityPositionListVo"/>
+        where position_name = #{positionName} and department = #{department}
+        limit 1
+    </select>
+
+    <select id="selectSecurityPositionListByRelatedId" parameterType="Long" resultMap="SecurityPositionListResult">
+        <include refid="selectSecurityPositionListVo"/>
+        where related_id = #{relatedId}
+        order by create_time desc
+    </select>
+
+    <insert id="insertSecurityPositionList" parameterType="SecurityPositionList">
+        insert into security_position_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="positionName != null and positionName != ''">position_name,</if>
+            <if test="department != null and department != ''">department,</if>
+            <if test="description != null">description,</if>
+            <if test="attachment != null">attachment,</if>
+            <if test="relatedId != null">related_id,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="positionName != null and positionName != ''">#{positionName},</if>
+            <if test="department != null and department != ''">#{department},</if>
+            <if test="description != null">#{description},</if>
+            <if test="attachment != null">#{attachment},</if>
+            <if test="relatedId != null">#{relatedId},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSecurityPositionList" parameterType="SecurityPositionList">
+        update security_position_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">position_name = #{positionName},</if>
+            <if test="department != null and department != ''">department = #{department},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="attachment != null">attachment = #{attachment},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSecurityPositionListById" parameterType="String">
+        delete from security_position_list where id = #{id}
+    </delete>
+
+    <delete id="deleteSecurityPositionListByIds" parameterType="String">
+        delete from security_position_list where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        update security_position_list 
+        set related_id = #{relatedId}
+        where related_id is null 
+        and create_time >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+    </update>
+</mapper>

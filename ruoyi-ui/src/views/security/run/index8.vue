@@ -1,11 +1,19 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form
+      :model="queryParams"
+      ref="queryRef"
+      :inline="true"
+      v-show="showSearch"
+      label-width="120px"
+      class="search-form"
+    >
       <el-form-item label="主管科室" prop="responsibleDepartment">
         <el-input
           v-model="queryParams.responsibleDepartment"
           placeholder="请输入主管科室"
           clearable
+          style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -14,6 +22,7 @@
           v-model="queryParams.relatedPartyName"
           placeholder="请输入相关方名称"
           clearable
+          style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -22,6 +31,7 @@
           v-model="queryParams.mainContactPerson"
           placeholder="请输入主要联系人"
           clearable
+          style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
@@ -30,51 +40,75 @@
           v-model="queryParams.ourCompanyContactPerson"
           placeholder="请输入我公司对接人员"
           clearable
+          style="width: 200px"
           @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="是否签订安全管理协议" prop="isSafetyManagementAgreementSigned">
         <el-select
           v-model="queryParams.isSafetyManagementAgreementSigned"
-          placeholder="请选择是否签订安全管理协议"
+          placeholder="请选择"
           clearable
+          style="width: 200px"
         >
           <el-option label="是" value="1"></el-option>
           <el-option label="否" value="0"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="签订时间" prop="agreementSigningDate">
-        <el-date-picker clearable
+        <el-date-picker
           v-model="queryParams.agreementSigningDate"
           type="date"
           value-format="YYYY-MM-DD"
-          placeholder="请选择签订时间">
-        </el-date-picker>
+          placeholder="请选择签订时间"
+          style="width: 200px"
+          clearable
+        />
       </el-form-item>
       <el-form-item label="进厂时间" prop="factoryEntryStartDate">
-        <el-date-picker clearable
+        <el-date-picker
           v-model="queryParams.factoryEntryStartDate"
           type="date"
           value-format="YYYY-MM-DD"
-          placeholder="请选择进厂时间">
-        </el-date-picker>
+          placeholder="请选择进厂时间"
+          style="width: 200px"
+          clearable
+        />
       </el-form-item>
 
-      <el-form-item label="外来参观" prop="waiLai">
-        <el-select v-model="queryParams.waiLai" placeholder="请选择" clearable>
+      <!-- <el-form-item label="外来参观" prop="waiLai">
+        <el-select
+          v-model="queryParams.waiLai"
+          placeholder="请选择"
+          clearable
+          style="width: 200px"
+        >
           <el-option label="是" value="1" />
           <el-option label="否" value="0" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="实习生" prop="shiXi">
-        <el-select v-model="queryParams.shiXi" placeholder="请选择" clearable>
+      </el-form-item> -->
+      <!-- <el-form-item label="实习生" prop="shiXi">
+        <el-select
+          v-model="queryParams.shiXi"
+          placeholder="请选择"
+          clearable
+          style="width: 200px"
+        >
           <el-option label="是" value="1" />
           <el-option label="否" value="0" />
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="Search"
+          @click="handleQuery"
+          style="margin-right: 10px"
+        >搜索</el-button>
+        <el-button
+          icon="Refresh"
+          @click="resetQuery"
+        >重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -126,35 +160,57 @@
           v-hasPermi="['security:relatedpartyledger:import']"
         >导入</el-button>
       </el-col>
+      <!-- 下载模板按钮 -->
       <el-col :span="1.5">
         <el-button
-          type="success"
+          type="primary"
           plain
-          icon="Download"
+          icon="Document"
           @click="handleImportTemplate"
-        >模板下载</el-button>
+        >下载模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="relatedpartyledgerList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="100" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
-      <el-table-column label="主管科室" align="center" prop="responsibleDepartment" />
-      <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
-      <el-table-column label="主要联系人" align="center" prop="mainContactPerson" />
-      <el-table-column label="我公司对接人员" align="center" prop="ourCompanyContactPerson" />
-      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned">
+    <el-table
+      v-loading="loading"
+      :data="relatedpartyledgerList"
+      @selection-change="handleSelectionChange"
+      class="related-party-ledger-table"
+      border
+      stripe
+      :header-cell-style="{
+        background: '#f5f7fa',
+        color: '#303133',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '14px'
+      }"
+      :cell-style="{
+        textAlign: 'center',
+        padding: '12px 8px',
+        fontSize: '13px'
+      }"
+    >
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" align="center" type="index" width="80" />
+      <el-table-column label="主管科室" align="center" prop="responsibleDepartment" min-width="120" show-overflow-tooltip />
+      <el-table-column label="相关方名称" align="center" prop="relatedPartyName" min-width="150" show-overflow-tooltip />
+      <el-table-column label="主要联系人" align="center" prop="mainContactPerson" min-width="120" show-overflow-tooltip />
+      <el-table-column label="我公司对接人员" align="center" prop="ourCompanyContactPerson" min-width="130" show-overflow-tooltip />
+      <el-table-column label="是否签订安全管理协议" align="center" prop="isSafetyManagementAgreementSigned" min-width="160" show-overflow-tooltip>
         <template #default="scope">
-          <span>{{ scope.row.isSafetyManagementAgreementSigned == '1' ? '是' : '否' }}</span>
+          <el-tag :type="scope.row.isSafetyManagementAgreementSigned == '1' ? 'success' : 'info'">
+            {{ scope.row.isSafetyManagementAgreementSigned == '1' ? '是' : '否' }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="签订时间" align="center" prop="agreementSigningDate" width="180">
+      <el-table-column label="签订时间" align="center" prop="agreementSigningDate" width="120" show-overflow-tooltip>
         <template #default="scope">
           <span>{{ parseTime(scope.row.agreementSigningDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进厂时间" align="center" prop="factoryEntryStartDate" width="180">
+      <el-table-column label="进厂时间" align="center" prop="factoryEntryStartDate" width="120" show-overflow-tooltip>
         <template #default="scope">
           <span>{{ parseTime(scope.row.factoryEntryStartDate, '{y}-{m}-{d}') }}</span>
         </template>
@@ -208,12 +264,26 @@
           <el-tag v-else type="info">否</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="相关方活动区域" align="center" prop="otherActivity" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="相关方活动区域" align="center" prop="otherActivity" min-width="150" show-overflow-tooltip />
+      <el-table-column label="备注" align="center" prop="remark" min-width="120" show-overflow-tooltip />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:relatedpartyledger:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:relatedpartyledger:remove']">删除</el-button>
+          <el-button
+            link
+            type="primary"
+            icon="Edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['security:relatedpartyledger:edit']"
+            size="small"
+          >修改</el-button>
+          <el-button
+            link
+            type="danger"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['security:relatedpartyledger:remove']"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -612,3 +682,73 @@ onMounted(() => {
 
 
 </script>
+
+<style scoped>
+.search-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-form .el-form-item {
+  margin-bottom: 16px;
+  margin-right: 20px;
+}
+
+.search-form .el-form-item__label {
+  color: #606266;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.search-form .el-input__inner,
+.search-form .el-select .el-input__inner {
+  border-radius: 6px;
+  border: 1px solid #dcdfe6;
+  transition: all 0.3s;
+}
+
+.search-form .el-input__inner:focus,
+.search-form .el-select .el-input__inner:focus {
+  border-color: #409eff;
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+}
+
+.search-form .el-button {
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.search-form .el-button--primary {
+  background: linear-gradient(135deg, #409eff 0%, #66b3ff 100%);
+  border: none;
+}
+
+.search-form .el-button--primary:hover {
+  background: linear-gradient(135deg, #337ecc 0%, #5aa3e6 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(64, 158, 255, 0.3);
+}
+
+.search-form .el-button:not(.el-button--primary) {
+  background: #ffffff;
+  border: 1px solid #dcdfe6;
+  color: #606266;
+}
+
+.search-form .el-button:not(.el-button--primary):hover {
+  background: #f5f7fa;
+  border-color: #c0c4cc;
+  color: #409eff;
+}
+
+.related-party-ledger-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+</style>

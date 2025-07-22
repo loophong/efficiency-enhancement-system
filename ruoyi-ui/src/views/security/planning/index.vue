@@ -191,7 +191,7 @@
 
     <el-table v-loading="loading" :data="impactList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="id" /> -->
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="作业活动" align="center" prop="activity" />
       <el-table-column label="环境因数" align="center" prop="environmentalFactor" />
       <el-table-column label="环境影响" align="center" prop="impactOfEnvironmentalFactor" />

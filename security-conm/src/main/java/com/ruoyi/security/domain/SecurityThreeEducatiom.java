@@ -11,35 +11,57 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 新职工三级安全教育台账对象 security_three_educatiom
  * 
  * @author wang
- * @date 2025-03-28
+ * @date 2025-07-18
  */
 public class SecurityThreeEducatiom extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** id */
+    /** 序号 */
     private String id;
 
-    /** 上传时间 */
+    /** 姓名 */
+    @Excel(name = "姓名")
+    private String xingMing;
+
+    /** 班组 */
+    @Excel(name = "所在班组")
+    private String banZu;
+
+    /** 工作 */
+    @Excel(name = "工种")
+    private String gongZhong;
+
+    /** 进厂时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
-    private Date uploadDate;
+    @Excel(name = "进厂时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date jingCTime;
 
-    /** 上传人 */
-    @Excel(name = "上传人")
-    private String uploadBy;
+    /** 一级教育时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "一级教育时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date educationOne;
 
-    /** 上传部门 */
-    @Excel(name = "上传部门")
-    private String uploadDept;
+    /** 二级教育时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "二级教育时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date educationTwo;
 
-    /** 文件 */
-    @Excel(name = "文件")
-    private String files;
+    /** 三期教育时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "三级教育时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date educationThree;
 
-    /** 描述 */
-    @Excel(name = "描述")
-    private String comment;
+    /** 是否合规 */
+    @Excel(name = "是否合格")
+    private String heGui;
+
+    /** 来源 */
+    @Excel(name = "来源")
+    private String source;
+
+    /** 关联id */
+    private String relatedId;
 
     public void setId(String id) 
     {
@@ -50,61 +72,112 @@ public class SecurityThreeEducatiom extends BaseEntity
     {
         return id;
     }
-    public void setUploadDate(Date uploadDate) 
+    public void setXingMing(String xingMing) 
     {
-        this.uploadDate = uploadDate;
+        this.xingMing = xingMing;
     }
 
-    public Date getUploadDate() 
+    public String getXingMing() 
     {
-        return uploadDate;
+        return xingMing;
     }
-    public void setUploadBy(String uploadBy) 
+    public void setBanZu(String banZu) 
     {
-        this.uploadBy = uploadBy;
-    }
-
-    public String getUploadBy() 
-    {
-        return uploadBy;
-    }
-    public void setUploadDept(String uploadDept) 
-    {
-        this.uploadDept = uploadDept;
+        this.banZu = banZu;
     }
 
-    public String getUploadDept() 
+    public String getBanZu() 
     {
-        return uploadDept;
+        return banZu;
     }
-    public void setFiles(String files) 
+    public void setGongZhong(String gongZhong) 
     {
-        this.files = files;
-    }
-
-    public String getFiles() 
-    {
-        return files;
-    }
-    public void setComment(String comment) 
-    {
-        this.comment = comment;
+        this.gongZhong = gongZhong;
     }
 
-    public String getComment() 
+    public String getGongZhong() 
     {
-        return comment;
+        return gongZhong;
+    }
+    public void setJingCTime(Date jingCTime) 
+    {
+        this.jingCTime = jingCTime;
+    }
+
+    public Date getJingCTime() 
+    {
+        return jingCTime;
+    }
+    public void setEducationOne(Date educationOne)
+    {
+        this.educationOne = educationOne;
+    }
+
+    public Date getEducationOne()
+    {
+        return educationOne;
+    }
+    public void setEducationTwo(Date educationTwo)
+    {
+        this.educationTwo = educationTwo;
+    }
+
+    public Date getEducationTwo()
+    {
+        return educationTwo;
+    }
+    public void setEducationThree(Date educationThree)
+    {
+        this.educationThree = educationThree;
+    }
+
+    public Date getEducationThree()
+    {
+        return educationThree;
+    }
+    public void setHeGui(String heGui) 
+    {
+        this.heGui = heGui;
+    }
+
+    public String getHeGui() 
+    {
+        return heGui;
+    }
+    public void setSource(String source) 
+    {
+        this.source = source;
+    }
+
+    public String getSource() 
+    {
+        return source;
+    }
+    public void setRelatedId(String relatedId) 
+    {
+        this.relatedId = relatedId;
+    }
+
+    public String getRelatedId() 
+    {
+        return relatedId;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("uploadDate", getUploadDate())
-            .append("uploadBy", getUploadBy())
-            .append("uploadDept", getUploadDept())
-            .append("files", getFiles())
-            .append("comment", getComment())
+            .append("xingMing", getXingMing())
+            .append("banZu", getBanZu())
+            .append("gongZhong", getGongZhong())
+            .append("jingCTime", getJingCTime())
+            .append("educationOne", getEducationOne())
+            .append("educationTwo", getEducationTwo())
+            .append("educationThree", getEducationThree())
+            .append("heGui", getHeGui())
+            .append("source", getSource())
+            .append("remark", getRemark())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

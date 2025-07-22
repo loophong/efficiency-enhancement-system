@@ -106,6 +106,24 @@ public class FileUploadAspect {
     private ISecuritySpecialOperationsCertificateLedgerService securitySpecialOperationsCertificateLedgerService;
     @Autowired
     private ISecurityOccupationalHealthProtectiveEquipmentLedgerService securityOccupationalHealthProtectiveEquipmentLedgerService;
+    @Autowired
+    private ISecurityEmergencyDrillPlanService securityEmergencyDrillPlanService;
+    @Autowired
+    private ISecurityEmergencySuppliesLedgerService securityEmergencySuppliesLedgerService;
+    @Autowired
+    private ISecurityEnvironmentalOhsRecordListService securityEnvironmentalOhsRecordListService;
+    @Autowired
+    private ISecuritySafetyProductionResponsibilityListService securitySafetyProductionResponsibilityListService;
+    @Autowired
+    private ISecurityThreeEducatiomService securityThreeEducatiomService;
+    @Autowired
+    private ISecurityKnowledgeAssessmentService securityKnowledgeAssessmentService;
+    @Autowired
+    private ISecurityEquipmentSafetyFacilityLedgerService securityEquipmentSafetyFacilityLedgerService;
+    @Autowired
+    private ISecurityPeopleListService securityPeopleListService;
+    @Autowired
+    private ISecurityDangerWangListService securityDangerWangListService;
 
     /**
      * 定义切点 - 拦截所有包含upload、import、file等关键词的Controller方法
@@ -337,9 +355,40 @@ public class FileUploadAspect {
                 // 职业健康防护用品台帐
                 updatedRows = securityOccupationalHealthProtectiveEquipmentLedgerService.updateLatestImportedRelatedId(fileManagementId);
                 log.info("已更新职业健康防护用品台帐的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEmergencyDrillPlan") || controllerName.contains("EmergencyDrillPlan") || controllerName.contains("emergencydrillplan")) {
+                // 应急演练计划
+                updatedRows = securityEmergencyDrillPlanService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新应急演练计划的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEmergencySuppliesLedger") || controllerName.contains("EmergencySuppliesLedger") || controllerName.contains("emergencysuppliesledger")) {
+                // 应急物资管理台帐
+                updatedRows = securityEmergencySuppliesLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新应急物资管理台帐的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEnvironmentalOhsRecordList") || controllerName.contains("EnvironmentalOhsRecordList") || controllerName.contains("environmentalohsrecordlist")) {
+                // 环境职业健康安全记录清单
+                updatedRows = securityEnvironmentalOhsRecordListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新环境职业健康安全记录清单的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecuritySafetyProductionResponsibilityList") || controllerName.contains("ProductionResponsibilityList") || controllerName.contains("productionresponsibilitylist")) {
+                // 安全生产责任制清单
+                updatedRows = securitySafetyProductionResponsibilityListService.updateLatestImportedRelatedId(fileManagementId);
+                log.info("已更新安全生产责任制清单的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             }  else if (controllerName.contains("SecurityRelatedPartyLedger") || controllerName.contains("RelatedPartyLedger") || controllerName.contains("relatedpartyledger")) {
                    updatedRows = securityRelatedPartyLedgerService.updateLatestImportedRelatedId(fileManagementId);
                    log.info("已更新相关方台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityThreeEducatiom") || controllerName.contains("ThreeEducatiom")) {
+                   updatedRows = securityThreeEducatiomService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新新职工三级安全教育台账的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityKnowledgeAssessment") || controllerName.contains("knowledgeassessment")) {
+                   updatedRows = securityKnowledgeAssessmentService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新安全知识考核的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityEquipmentSafetyFacilityLedger") || controllerName.contains("SafetyFacilityLedger")) {
+                   updatedRows = securityEquipmentSafetyFacilityLedgerService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新安全防护设备设施的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityPeopleList") || controllerName.contains("PeopleList")) {
+                   updatedRows = securityPeopleListService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新班组人员清单的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
+            } else if (controllerName.contains("SecurityDangerWangList") || controllerName.contains("DangerWangList")) {
+                   updatedRows = securityDangerWangListService.updateLatestImportedRelatedId(fileManagementId);
+                   log.info("已更新风险网格化清单的关联 ID: {}, 更新行数: {}", fileManagementId, updatedRows);
             }
                 // 事故措施跟踪
                 else if (controllerName.contains("SecurityAccidentMeasuresTracking")) {

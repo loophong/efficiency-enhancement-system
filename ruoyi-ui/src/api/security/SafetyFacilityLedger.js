@@ -42,3 +42,32 @@ export function delSafetyFacilityLedger(id) {
     method: 'delete'
   })
 }
+
+// 导入安全防护设备设施数据
+export function importSafetyFacilityLedger(data) {
+  return request({
+    url: '/security/SafetyFacilityLedger/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载安全防护设备设施导入模板
+export function importTemplateSafetyFacilityLedger() {
+  return request({
+    url: '/security/SafetyFacilityLedger/importTemplate',
+    method: 'post'
+  })
+}
+
+// 根据关联ID查询安全防护设备设施列表
+export function listSafetyFacilityLedgerByRelatedId(relatedId, sourceModule) {
+  return request({
+    url: '/security/SafetyFacilityLedger/listByRelatedId',
+    method: 'get',
+    params: {
+      relatedId: relatedId,
+      sourceModule: sourceModule
+    }
+  })
+}

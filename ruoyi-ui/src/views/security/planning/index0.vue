@@ -141,31 +141,52 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="HealthAndSafetyGoalsList" @selection-change="handleSelectionChange" :span-method="objectSpanMethod">
+    <el-table
+      v-loading="loading"
+      :data="HealthAndSafetyGoalsList"
+      @selection-change="handleSelectionChange"
+      :span-method="objectSpanMethod"
+      class="health-safety-goals-table"
+      border
+      stripe
+      :header-cell-style="{
+        background: '#f5f7fa',
+        color: '#303133',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '14px'
+      }"
+      :cell-style="{
+        textAlign: 'center',
+        padding: '12px 8px',
+        fontSize: '13px'
+      }"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="serialNumber" /> -->
-      <el-table-column label="部门" align="center" prop="departmentName" />
-      <el-table-column label="目标项" align="center" prop="goalItem" />
-      <el-table-column label="目标值" align="center" prop="goalValue" />
-      <el-table-column label="考核结果" align="center" prop="evaluationResult" />
-      <el-table-column label="备注" align="center" prop="remarks" />
-      <!-- <el-table-column label="汇编人" align="center" prop="compiler" />
-      <el-table-column label="审核人" align="center" prop="auditor" />
-      <el-table-column label="批准人" align="center" prop="approver" /> -->
-      <!-- <el-table-column label="日期" align="center" prop="date" width="180">
+      <el-table-column label="序号" align="center" type="index" width="80" />
+      <el-table-column label="部门" align="center" prop="departmentName" min-width="120" show-overflow-tooltip />
+      <el-table-column label="目标项" align="center" prop="goalItem" min-width="150" show-overflow-tooltip />
+      <el-table-column label="目标值" align="center" prop="goalValue" min-width="120" show-overflow-tooltip />
+      <el-table-column label="考核结果" align="center" prop="evaluationResult" min-width="120" show-overflow-tooltip />
+      <el-table-column label="备注" align="center" prop="remarks" min-width="150" show-overflow-tooltip />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.date, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column> -->
-      <!-- <el-table-column label="审核状态" align="center" prop="status">
-        <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.status"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:HealthAndSafetyGoals:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:HealthAndSafetyGoals:remove']">删除</el-button>
+          <el-button
+            link
+            type="primary"
+            icon="Edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['security:HealthAndSafetyGoals:edit']"
+            size="small"
+          >修改</el-button>
+          <el-button
+            link
+            type="danger"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['security:HealthAndSafetyGoals:remove']"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -359,14 +380,14 @@ function getSpanArr(data) {
 
 // 合并单元格方法
 function objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-  if (columnIndex === 1) { // 部门列
+  if (columnIndex === 2) { // 部门列
     const _row = spanArr.value[rowIndex];
     const _col = _row > 0 ? 1 : 0;
     return {
       rowspan: _row,
       colspan: _col
     };
-  } else if (columnIndex === 4) { // 考核结果列
+  } else if (columnIndex === 5) { // 考核结果列
     const _row = spanArr.value[rowIndex];
     const _col = _row > 0 ? 1 : 0;
     return {

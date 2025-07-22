@@ -42,3 +42,32 @@ export function delKnowledgeassessment(id) {
     method: 'delete'
   })
 }
+
+// 导入安全知识考核数据
+export function importKnowledgeassessment(data) {
+  return request({
+    url: '/security/knowledgeassessment/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载安全知识考核导入模板
+export function importTemplateKnowledgeassessment() {
+  return request({
+    url: '/security/knowledgeassessment/importTemplate',
+    method: 'post'
+  })
+}
+
+// 根据关联ID查询安全知识考核列表
+export function listKnowledgeassessmentByRelatedId(relatedId, sourceModule) {
+  return request({
+    url: '/security/knowledgeassessment/listByRelatedId',
+    method: 'get',
+    params: {
+      relatedId: relatedId,
+      sourceModule: sourceModule
+    }
+  })
+}

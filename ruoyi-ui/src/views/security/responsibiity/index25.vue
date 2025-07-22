@@ -59,14 +59,17 @@
           placeholder="请选择进厂时间">
         </el-date-picker>
       </el-form-item>
+
       <el-form-item label="外来参观" prop="waiLai">
-        <el-select
-          v-model="queryParams.waiLai"
-          placeholder="请选择外来参观"
-          clearable
-        >
-          <el-option label="是" value="1"></el-option>
-          <el-option label="否" value="0"></el-option>
+        <el-select v-model="queryParams.waiLai" placeholder="请选择" clearable>
+          <el-option label="是" value="1" />
+          <el-option label="否" value="0" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="实习生" prop="shiXi">
+        <el-select v-model="queryParams.shiXi" placeholder="请选择" clearable>
+          <el-option label="是" value="1" />
+          <el-option label="否" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -114,12 +117,29 @@
           v-hasPermi="['security:relatedpartyledger:export']"
         >导出</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:relatedpartyledger:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+        >模板下载</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="relatedpartyledgerList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column type="selection" width="100" align="center" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="主管科室" align="center" prop="responsibleDepartment" />
       <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
       <el-table-column label="主要联系人" align="center" prop="mainContactPerson" />
@@ -139,19 +159,57 @@
           <span>{{ parseTime(scope.row.factoryEntryStartDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="外来参观" align="center" prop="waiLai">
+
+      <el-table-column label="外来参观" align="center" prop="waiLai" width="100">
         <template #default="scope">
-          <span>{{ scope.row.waiLai == '1' ? '是' : '否' }}</span>
+          <el-tag v-if="scope.row.waiLai === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="实习生" align="center" prop="externalVisitors" />
-      <el-table-column label="劳务派遣，外包" align="center" prop="interns" />
-      <el-table-column label="施工作业类" align="center" prop="laborDispatchOutsourcing" />
-      <el-table-column label="清运、监测、服务" align="center" prop="constructionWork" />
-      <el-table-column label="物流配送" align="center" prop="transportationInspectionServices" />
-      <el-table-column label="驻厂相关方" align="center" prop="logisticsDelivery" />
-      <el-table-column label="其他" align="center" prop="onSiteParties" />
-      <el-table-column label="${comment}" align="center" prop="others" />
+      <el-table-column label="实习生" align="center" prop="shiXi" width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.shiXi === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="劳务派遣、外包等" align="center" prop="laoWu" width="150">
+        <template #default="scope">
+          <el-tag v-if="scope.row.laoWu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="施工作业类" align="center" prop="shiGong" width="120">
+        <template #default="scope">
+          <el-tag v-if="scope.row.shiGong === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="清洁检测服务" align="center" prop="qinjieJianceFuwu" width="140">
+        <template #default="scope">
+          <el-tag v-if="scope.row.qinjieJianceFuwu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="物流配送" align="center" prop="wuLiu" width="100">
+        <template #default="scope">
+          <el-tag v-if="scope.row.wuLiu === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="驻厂相关方" align="center" prop="zhuCangXiangguanfang" width="120">
+        <template #default="scope">
+          <el-tag v-if="scope.row.zhuCangXiangguanfang === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="其他" align="center" prop="other" width="80">
+        <template #default="scope">
+          <el-tag v-if="scope.row.other === '1'" type="success">是</el-tag>
+          <el-tag v-else type="info">否</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="相关方活动区域" align="center" prop="otherActivity" />
+      <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:relatedpartyledger:edit']">修改</el-button>
@@ -205,14 +263,44 @@
             placeholder="请选择进厂时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="外来参观" prop="waiLai">
-          <el-select v-model="form.waiLai" placeholder="请选择外来参观">
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="0"></el-option>
-          </el-select>
+
+        <el-form-item label="服务类型">
+          <el-row :gutter="20">
+            <el-col :span="8">
+              <el-checkbox v-model="form.waiLai" true-label="1" false-label="0">外来参观</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.shiXi" true-label="1" false-label="0">实习生</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.laoWu" true-label="1" false-label="0">劳务派遣、外包等</el-checkbox>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin-top: 10px;">
+            <el-col :span="8">
+              <el-checkbox v-model="form.shiGong" true-label="1" false-label="0">施工作业类</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.qinjieJianceFuwu" true-label="1" false-label="0">清洁检测服务</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.wuLiu" true-label="1" false-label="0">物流配送</el-checkbox>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin-top: 10px;">
+            <el-col :span="8">
+              <el-checkbox v-model="form.zhuCangXiangguanfang" true-label="1" false-label="0">驻厂相关方</el-checkbox>
+            </el-col>
+            <el-col :span="8">
+              <el-checkbox v-model="form.other" true-label="1" false-label="0">其他</el-checkbox>
+            </el-col>
+          </el-row>
         </el-form-item>
-        <el-form-item label="${comment}" prop="others">
-          <el-input v-model="form.others" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="相关方活动区域" prop="otherActivity">
+          <el-input v-model="form.otherActivity" placeholder="请输入相关方活动区域" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -222,14 +310,51 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :on-error="handleFileError"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据（不勾选则允许重复数据导入）
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。支持空值、重复名称和完全重复数据导入。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleImportTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Relatedpartyledger">
-import { listRelatedpartyledger, getRelatedpartyledger, delRelatedpartyledger, addRelatedpartyledger, updateRelatedpartyledger } from "@/api/security/relatedpartyledger";
+import { listRelatedpartyledger, getRelatedpartyledger, delRelatedpartyledger, addRelatedpartyledger, updateRelatedpartyledger, importRelatedpartyledger, downloadTemplate, listByRelatedId } from "@/api/security/relatedpartyledger";
+import { getToken } from "@/utils/auth";
 
 const { proxy } = getCurrentInstance();
-
+// 移除字典引用，因为不再使用服务性质字典
+const route = useRoute();
 const relatedpartyledgerList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -239,6 +364,22 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 上传参数
+const upload = reactive({
+  // 是否显示弹出层（用户导入）
+  open: false,
+  // 弹出层标题（用户导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的用户数据
+  updateSupport: 0,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/relatedpartyledger/importData"
+});
 
 const data = reactive({
   form: {},
@@ -253,14 +394,13 @@ const data = reactive({
     agreementSigningDate: null,
     factoryEntryStartDate: null,
     waiLai: null,
-    externalVisitors: null,
-    interns: null,
-    laborDispatchOutsourcing: null,
-    constructionWork: null,
-    transportationInspectionServices: null,
-    logisticsDelivery: null,
-    onSiteParties: null,
-    others: null
+    shiXi: null,
+    laoWu: null,
+    shiGong: null,
+    qinjieJianceFuwu: null,
+    wuLiu: null,
+    zhuCangXiangguanfang: null,
+    other: null,
   },
   rules: {
     responsibleDepartment: [
@@ -283,9 +423,6 @@ const data = reactive({
     ],
     factoryEntryStartDate: [
       { required: true, message: "进厂时间不能为空", trigger: "blur" }
-    ],
-    waiLai: [
-      { required: true, message: "外来参观不能为空", trigger: "blur" }
     ],
   }
 });
@@ -320,14 +457,16 @@ function reset() {
     agreementSigningDate: null,
     factoryEntryStartDate: null,
     waiLai: "0",
-    externalVisitors: [],
-    interns: null,
-    laborDispatchOutsourcing: null,
-    constructionWork: null,
-    transportationInspectionServices: null,
-    logisticsDelivery: null,
-    onSiteParties: null,
-    others: null
+    shiXi: "0",
+    laoWu: "0",
+    shiGong: "0",
+    qinjieJianceFuwu: "0",
+    wuLiu: "0",
+    zhuCangXiangguanfang: "0",
+    other: "0",
+    otherActivity: null,
+    relatedId: null,
+    remark: null
   };
   proxy.resetForm("relatedpartyledgerRef");
 }
@@ -364,7 +503,6 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getRelatedpartyledger(_id).then(response => {
     form.value = response.data;
-    form.value.externalVisitors = form.value.externalVisitors.split(",");
     open.value = true;
     title.value = "修改相关方管理台账";
   });
@@ -374,7 +512,6 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["relatedpartyledgerRef"].validate(valid => {
     if (valid) {
-      form.value.externalVisitors = form.value.externalVisitors.join(",");
       if (form.value.id != null) {
         updateRelatedpartyledger(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
@@ -410,5 +547,68 @@ function handleExport() {
   }, `relatedpartyledger_${new Date().getTime()}.xlsx`)
 }
 
-getList();
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "相关方管理台账导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function handleImportTemplate() {
+  downloadTemplate().then(response => {
+    proxy.download('security/relatedpartyledger/importTemplate', {}, `相关方管理台账导入模板_${new Date().getTime()}.xlsx`, 'post');
+  }); 
+}
+
+// 文件上传中处理
+function handleFileUploadProgress() {
+  upload.isUploading = true;
+}
+
+// 文件上传成功处理
+function handleFileSuccess(response) {
+  upload.isUploading = false;
+  upload.open = false;
+  proxy.$refs.uploadRef.clearFiles();
+  proxy.$alert(response.msg, "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+}
+
+// 文件上传失败处理
+function handleFileError() {
+  upload.isUploading = false;
+  proxy.$modal.msgError("导入失败，请检查数据格式是否正确");
+}
+
+// 提交上传文件
+function submitFileForm() {
+  proxy.$refs.uploadRef.submit();
+}
+
+// 检查关联ID参数
+function checkRelatedId() {
+  // 从路由参数中获取关联ID
+  const relatedId = route.query.relatedId;
+
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    // 将关联ID设置到查询参数中
+    queryParams.value.relatedId = relatedId;
+    // 调用getList()执行实际的数据查询
+    getList();
+    // 显示提示信息
+    proxy.$modal.msgSuccess("已加载关联的相关方管理台账数据");
+  } else {
+    // 没有关联ID时，加载所有数据
+    getList();
+  }
+}
+
+// 初始化时检查关联ID
+onMounted(() => {
+  // 检查关联ID参数并加载相应数据
+  checkRelatedId();
+});
+
+
 </script>

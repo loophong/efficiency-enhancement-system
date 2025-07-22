@@ -147,7 +147,7 @@
       }"
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="80" />
+      <el-table-column label="序号" align="center" type="index" width="80" />
       <el-table-column label="培训项目1" align="center" prop="trainingProject1" min-width="120" />
       <el-table-column label="培训项目2" align="center" prop="trainingProject2" min-width="120" />
       <el-table-column label="培训对象" align="center" prop="trainees" min-width="120" />

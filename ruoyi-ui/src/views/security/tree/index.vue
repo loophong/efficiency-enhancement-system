@@ -3,39 +3,53 @@
       <el-tabs v-model="activeTab" type="card">
         <el-tab-pane label="操作视图" name="operation">
           <el-button type="primary" @click="handleAddRoot">添加根节点</el-button>
-          <div style="margin-top: 15px">
+          <div style="margin-top: 20px">
             <el-tree
               ref="menuTree"
               :data="menuTreeData"
               :props="defaultProps"
               node-key="menuId"
               highlight-current
+              :indent="30"
+              :expand-on-click-node="false"
               @node-click="handleNodeClick"
             >
               <template #default="{ node, data }">
-                <span class="custom-tree-node">
-                  <span>
-                    <i :class="data.icon" style="margin-right: 5px"></i>
-                    {{ node.label }}
-                  </span>
-                  <span>
+                <div class="custom-tree-node">
+                  <div class="node-content">
+                    <i :class="data.icon" class="node-icon"></i>
+                    <span class="node-label">{{ node.label }}</span>
+                  </div>
+                  <div class="node-actions">
                     <el-button
-                      type="text"
+                      type="primary"
+                      link
                       size="small"
                       @click.stop="() => handleAddChild(data)"
-                    >添加子节点</el-button>
+                    >
+                      <el-icon><Plus /></el-icon>
+                      添加子节点
+                    </el-button>
                     <el-button
-                      type="text"
+                      type="warning"
+                      link
                       size="small"
                       @click.stop="() => handleEdit(data)"
-                    >编辑</el-button>
+                    >
+                      <el-icon><Edit /></el-icon>
+                      编辑
+                    </el-button>
                     <el-button
-                      type="text"
+                      type="danger"
+                      link
                       size="small"
                       @click.stop="() => handleDelete(data)"
-                    >删除</el-button>
-                  </span>
-                </span>
+                    >
+                      <el-icon><Delete /></el-icon>
+                      删除
+                    </el-button>
+                  </div>
+                </div>
               </template>
             </el-tree>
           </div>
@@ -153,19 +167,24 @@
   
   <script>
   import * as echarts from 'echarts';
-  import { 
-    getSecuritySysMenuTree, 
-    addSecuritySysMenu, 
-    updateSecuritySysMenu, 
-    delSecuritySysMenu, 
-    getSecuritySysMenu 
+  import {
+    getSecuritySysMenuTree,
+    addSecuritySysMenu,
+    updateSecuritySysMenu,
+    delSecuritySysMenu,
+    getSecuritySysMenu
   } from '@/api/security/sysmenu';
   import IconSelect from '@/components/IconSelect';
-  import { getOffsetTop } from 'element-plus/es/utils/index.mjs';
+  import { Plus, Edit, Delete } from '@element-plus/icons-vue';
   
   export default {
     name: 'SecuritySysMenuTree',
-    components: { IconSelect },
+    components: {
+      IconSelect,
+      Plus,
+      Edit,
+      Delete
+    },
     data() {
       return {
         activeTab: 'operation', // 当前激活的标签页
@@ -484,14 +503,132 @@
   
   <style scoped>
   .app-container {
-    padding: 20px; 
+    padding: 20px;
   }
+
+  /* 树节点样式优化 */
   .custom-tree-node {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 14px;
-    padding-right: 8px; 
+    padding: 8px 12px;
+    margin: 2px 0;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    min-height: 40px;
+  }
+
+  .custom-tree-node:hover {
+    background-color: #f5f7fa;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .node-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .node-icon {
+    margin-right: 8px;
+    font-size: 16px;
+    color: #409eff;
+    min-width: 16px;
+  }
+
+  .node-label {
+    font-weight: 500;
+    color: #303133;
+    line-height: 1.5;
+  }
+
+  .node-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .custom-tree-node:hover .node-actions {
+    opacity: 1;
+  }
+
+  .node-actions .el-button {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+  }
+
+  .node-actions .el-button .el-icon {
+    margin-right: 4px;
+  }
+
+  /* 树组件整体样式 */
+  :deep(.el-tree) {
+    background: transparent;
+  }
+
+  :deep(.el-tree-node) {
+    margin-bottom: 4px;
+  }
+
+  :deep(.el-tree-node__content) {
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 44px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+
+  :deep(.el-tree-node__content:hover) {
+    background-color: transparent !important;
+  }
+
+  :deep(.el-tree-node__expand-icon) {
+    padding: 8px;
+    font-size: 14px;
+    color: #606266;
+  }
+
+  :deep(.el-tree-node__expand-icon.expanded) {
+    transform: rotate(90deg);
+  }
+
+  /* 选中状态样式 */
+  :deep(.el-tree-node.is-current > .el-tree-node__content) {
+    background-color: #e6f7ff !important;
+    border: 1px solid #91d5ff;
+  }
+
+  :deep(.el-tree-node.is-current > .el-tree-node__content) .node-label {
+    color: #1890ff;
+    font-weight: 600;
+  }
+
+  /* 根节点特殊样式 */
+  :deep(.el-tree > .el-tree-node > .el-tree-node__content) {
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+
+  :deep(.el-tree > .el-tree-node > .el-tree-node__content) .node-icon {
+    color: white;
+  }
+
+  :deep(.el-tree > .el-tree-node > .el-tree-node__content) .node-label {
+    color: white;
+  }
+
+  /* 子节点缩进优化 */
+  :deep(.el-tree-node__children) {
+    padding-left: 20px;
+    border-left: 2px solid #e4e7ed;
+    margin-left: 15px;
   }
   </style>

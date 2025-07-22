@@ -42,3 +42,28 @@ export function delPeopleList(id) {
     method: 'delete'
   })
 }
+
+// 导入班组人员清单
+export function importPeopleList(data) {
+  return request({
+    url: '/security/PeopleList/importData',
+    method: 'post',
+    data: data
+  })
+}
+
+// 下载班组人员清单导入模板
+export function downloadTemplate() {
+  return request({
+    url: '/security/PeopleList/importTemplate',
+    method: 'post'
+  })
+}
+
+// 根据关联ID查询班组人员清单列表
+export function listByRelatedId(relatedId) {
+  return request({
+    url: '/security/PeopleList/listByRelatedId/' + relatedId,
+    method: 'get'
+  })
+}

@@ -20,12 +20,13 @@ import com.ruoyi.security.domain.SecurityPeopleList;
 import com.ruoyi.security.service.ISecurityPeopleListService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 班组人员清单Controller
  * 
- * @author ruoyi
- * @date 2025-03-28
+ * @author wang
+ * @date 2025-07-21
  */
 @RestController
 @RequestMapping("/security/PeopleList")
@@ -100,5 +101,43 @@ public class SecurityPeopleListController extends BaseController
     public AjaxResult remove(@PathVariable String[] ids)
     {
         return toAjax(securityPeopleListService.deleteSecurityPeopleListByIds(ids));
+    }
+
+    /**
+     * 导入班组人员清单数据
+     */
+    @Log(title = "班组人员清单", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:PeopleList:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecurityPeopleList> util = new ExcelUtil<SecurityPeopleList>(SecurityPeopleList.class);
+        List<SecurityPeopleList> peopleListList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = securityPeopleListService.importPeopleList(peopleListList, updateSupport, operName);
+        return success(message);
+    }
+
+    /**
+     * 下载班组人员清单导入模板
+     */
+    @PostMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityPeopleList> util = new ExcelUtil<SecurityPeopleList>(SecurityPeopleList.class);
+        util.importTemplateExcel(response, "班组人员清单数据");
+    }
+
+    /**
+     * 根据关联ID查询班组人员清单列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:PeopleList:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable String relatedId)
+    {
+        SecurityPeopleList securityPeopleList = new SecurityPeopleList();
+        securityPeopleList.setRelatedId(relatedId);
+        List<SecurityPeopleList> list = securityPeopleListService.selectSecurityPeopleListList(securityPeopleList);
+        return getDataTable(list);
     }
 }

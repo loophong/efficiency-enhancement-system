@@ -74,6 +74,13 @@ public class SecurityRiskOpportunityAssessmentController extends BaseController
     public void export(HttpServletResponse response, SecurityRiskOpportunityAssessment securityRiskOpportunityAssessment)
     {
         List<SecurityRiskOpportunityAssessment> list = securityRiskOpportunityAssessmentService.selectSecurityRiskOpportunityAssessmentList(securityRiskOpportunityAssessment);
+
+        // 调试日志：检查数据中的风险等级和风险系数
+        for (SecurityRiskOpportunityAssessment item : list) {
+            logger.info("导出数据 - ID: {}, 风险等级: [{}], 风险系数: [{}]",
+                item.getId(), item.getRiskLevel(), item.getRisk());
+        }
+
         ExcelUtil<SecurityRiskOpportunityAssessment> util = new ExcelUtil<SecurityRiskOpportunityAssessment>(SecurityRiskOpportunityAssessment.class);
         util.exportExcel(response, list, "风险和机遇评估及控制措施数据");
     }

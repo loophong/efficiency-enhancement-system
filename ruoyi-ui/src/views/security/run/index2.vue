@@ -130,7 +130,7 @@
 
     <el-table v-loading="loading" :data="hazardousledgerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="处理时间" align="center" prop="handlingTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.handlingTime, '{y}-{m}-{d}') }}</span>

@@ -103,32 +103,67 @@
           v-hasPermi="['security:hazardpointledger:import']"
         >导入</el-button>
       </el-col>
+      <!-- 下载模板按钮 -->
       <el-col :span="1.5">
         <el-button
           type="primary"
           plain
-          icon="Download"
+          icon="Document"
           @click="handleDownloadTemplate"
           v-hasPermi="['security:hazardpointledger:list']"
-        >模板下载</el-button>
+        >下载模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="hazardpointledgerList" @selection-change="handleSelectionChange" :span-method="arraySpanMethod">
+    <el-table
+      v-loading="loading"
+      :data="hazardpointledgerList"
+      @selection-change="handleSelectionChange"
+      :span-method="arraySpanMethod"
+      class="hazard-point-ledger-table"
+      border
+      stripe
+      :header-cell-style="{
+        background: '#f5f7fa',
+        color: '#303133',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '14px'
+      }"
+      :cell-style="{
+        textAlign: 'center',
+        padding: '12px 8px',
+        fontSize: '13px'
+      }"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="评价单元" align="center" prop="evaluationUnit" />
-      <el-table-column label="岗位" align="center" prop="position" />
-      <el-table-column label="检测地点" align="center" prop="inspectionLocation" />
-      <el-table-column label="化学因素名称" align="center" prop="chemicalFactorName" />
-      <el-table-column label="物理因素名称" align="center" prop="physicalFactorName" />
-      <el-table-column label="生产性粉尘名称" align="center" prop="productionDustName" />
-      <el-table-column label="备注" align="center" prop="remarks" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="序号" align="center" type="index" width="80" />
+      <el-table-column label="评价单元" align="center" prop="evaluationUnit" min-width="120" show-overflow-tooltip />
+      <el-table-column label="岗位" align="center" prop="position" min-width="100" show-overflow-tooltip />
+      <el-table-column label="检测地点" align="center" prop="inspectionLocation" min-width="120" show-overflow-tooltip />
+      <el-table-column label="化学因素名称" align="center" prop="chemicalFactorName" min-width="130" show-overflow-tooltip />
+      <el-table-column label="物理因素名称" align="center" prop="physicalFactorName" min-width="130" show-overflow-tooltip />
+      <el-table-column label="生产性粉尘名称" align="center" prop="productionDustName" min-width="140" show-overflow-tooltip />
+      <el-table-column label="备注" align="center" prop="remarks" min-width="150" show-overflow-tooltip />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:hazardpointledger:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:hazardpointledger:remove']">删除</el-button>
+          <el-button
+            link
+            type="primary"
+            icon="Edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['security:hazardpointledger:edit']"
+            size="small"
+          >修改</el-button>
+          <el-button
+            link
+            type="danger"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['security:hazardpointledger:remove']"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>

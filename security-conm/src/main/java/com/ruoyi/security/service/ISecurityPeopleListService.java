@@ -6,8 +6,8 @@ import com.ruoyi.security.domain.SecurityPeopleList;
 /**
  * 班组人员清单Service接口
  * 
- * @author ruoyi
- * @date 2025-03-28
+ * @author wang
+ * @date 2025-07-21
  */
 public interface ISecurityPeopleListService 
 {
@@ -53,9 +53,27 @@ public interface ISecurityPeopleListService
 
     /**
      * 删除班组人员清单信息
-     * 
+     *
      * @param id 班组人员清单主键
      * @return 结果
      */
     public int deleteSecurityPeopleListById(String id);
+
+    /**
+     * 导入班组人员清单数据
+     *
+     * @param peopleListList 班组人员清单数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importPeopleList(List<SecurityPeopleList> peopleListList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 更新最近导入的数据关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 更新的行数
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

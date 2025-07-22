@@ -113,36 +113,66 @@
           v-hasPermi="['security:unacceptablerisklist:import']"
         >导入</el-button>
       </el-col>
+      <!-- 下载模板按钮 -->
       <el-col :span="1.5">
         <el-button
-          type="info"
+          type="primary"
           plain
-          icon="Download"
+          icon="Document"
           @click="handleDownloadTemplate"
-          v-hasPermi="['security:unacceptablerisklist:import']"
+          v-hasPermi="['security:unacceptablerisklist:export']"
         >下载模板</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="unacceptablerisklistList" @selection-change="handleSelectionChange" :span-method="handleMergeCell">
+    <el-table
+      v-loading="loading"
+      :data="unacceptablerisklistList"
+      @selection-change="handleSelectionChange"
+      :span-method="handleMergeCell"
+      class="unacceptable-risk-table"
+      border
+      stripe
+      :header-cell-style="{
+        background: '#f5f7fa',
+        color: '#303133',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '14px'
+      }"
+      :cell-style="{
+        textAlign: 'center',
+        padding: '12px 8px',
+        fontSize: '13px'
+      }"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="序号" align="center" prop="id" /> -->
-      <el-table-column label="危险源点" align="center" prop="hazardSource" />
-      <el-table-column label="重要危险源" align="center" prop="significantHazard" />
-      <el-table-column label="导致事故健康危害" align="center" prop="accidentHealthHazards" />
-      <el-table-column label="工序/ 设备/人员" align="center" prop="processEquipmentPersonnel" />
-      <el-table-column label="控制方法" align="center" prop="controlMethods" />
-      <el-table-column label="部门/工序" align="center" prop="departmentProcess" />
-      <!-- <el-table-column label="审批状态" align="center" prop="statu">
+      <el-table-column label="序号" align="center" type="index" width="80" />
+      <el-table-column label="危险源点" align="center" prop="hazardSource" min-width="120" show-overflow-tooltip />
+      <el-table-column label="重要危险源" align="center" prop="significantHazard" min-width="120" show-overflow-tooltip />
+      <el-table-column label="导致事故健康危害" align="center" prop="accidentHealthHazards" min-width="150" show-overflow-tooltip />
+      <el-table-column label="工序/设备/人员" align="center" prop="processEquipmentPersonnel" min-width="150" show-overflow-tooltip />
+      <el-table-column label="控制方法" align="center" prop="controlMethods" min-width="150" show-overflow-tooltip />
+      <el-table-column label="部门/工序" align="center" prop="departmentProcess" min-width="120" show-overflow-tooltip />
+      <el-table-column label="操作" align="center" width="180" fixed="right">
         <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.statu"/>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:unacceptablerisklist:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:unacceptablerisklist:remove']">删除</el-button>
+          <el-button
+            link
+            type="primary"
+            icon="Edit"
+            @click="handleUpdate(scope.row)"
+            v-hasPermi="['security:unacceptablerisklist:edit']"
+            size="small"
+          >修改</el-button>
+          <el-button
+            link
+            type="danger"
+            icon="Delete"
+            @click="handleDelete(scope.row)"
+            v-hasPermi="['security:unacceptablerisklist:remove']"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>

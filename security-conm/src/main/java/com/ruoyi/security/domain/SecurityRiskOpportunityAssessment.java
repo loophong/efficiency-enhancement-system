@@ -33,7 +33,7 @@ public class SecurityRiskOpportunityAssessment extends BaseEntity
     private String consequences;
 
     /** 风险等级 */
-    @Excel(name = "风险等级", sort = 4, readConverterExp = "高=高,中=一般,低=低")
+    @Excel(name = "风险等级", sort = 4, readConverterExp = "高=高,一般=一般,中=一般,低=低,-=-")
     private String riskLevel;
 
     /** 应对措施 */
@@ -58,23 +58,23 @@ public class SecurityRiskOpportunityAssessment extends BaseEntity
     private String frequency;
 
     /** 风险系数 */
-    @Excel(name = "风险系数", isExport = false)
+    @Excel(name = "风险系数", sort = 10)
     private String risk;
 
     /** 审批状态 */
-    @Excel(name = "审批状态", isExport = false)
+//    @Excel(name = "审批状态", isExport = false)
     private Long status;
 
     /** 审批部门 */
-    @Excel(name = "审批部门", isExport = false)
+//    @Excel(name = "审批部门", isExport = false)
     private String statusDepartment;
 
     /** 审批时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
+//    @Excel(name = "审批时间", width = 30, dateFormat = "yyyy-MM-dd", isExport = false)
     private Date statusTime;
     /**关联ID**/
-    @Excel(name = "关联ID", isExport = false)
+//    @Excel(name = "关联ID", isExport = false)
     private Long relatedId;
 
     public void setId(Long id) 

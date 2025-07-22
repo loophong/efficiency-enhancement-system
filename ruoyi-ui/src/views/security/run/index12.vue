@@ -100,7 +100,7 @@
 
     <el-table v-loading="loading" :data="healthprotectiveequipmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" />
       <el-table-column label="盘锦合力SAP物料号" align="center" prop="panjinHeliSapMaterialNumber" />
       <el-table-column label="物料名称" align="center" prop="materialName" />
       <el-table-column label="规格" align="center" prop="specifications" />

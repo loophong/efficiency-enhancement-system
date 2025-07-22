@@ -13,10 +13,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="storageLocation"    column="storage_location"    />
         <result property="contactPerson"    column="contact_person"    />
         <result property="phoneNumber"    column="phone_number"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityEmergencySuppliesLedgerVo">
-        select id, supply_name, emergency_supply_type, quantity, unit_of_measurement, storage_location, contact_person, phone_number from security_emergency_supplies_ledger
+        select id, supply_name, emergency_supply_type, quantity, unit_of_measurement, storage_location, contact_person, phone_number, related_id from security_emergency_supplies_ledger
     </sql>
 
     <select id="selectSecurityEmergencySuppliesLedgerList" parameterType="SecurityEmergencySuppliesLedger" resultMap="SecurityEmergencySuppliesLedgerResult">
@@ -29,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageLocation != null  and storageLocation != ''"> and storage_location = #{storageLocation}</if>
             <if test="contactPerson != null  and contactPerson != ''"> and contact_person = #{contactPerson}</if>
             <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -47,6 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageLocation != null">storage_location,</if>
             <if test="contactPerson != null">contact_person,</if>
             <if test="phoneNumber != null">phone_number,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplyName != null and supplyName != ''">#{supplyName},</if>
@@ -56,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageLocation != null">#{storageLocation},</if>
             <if test="contactPerson != null">#{contactPerson},</if>
             <if test="phoneNumber != null">#{phoneNumber},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
@@ -69,6 +73,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="storageLocation != null">storage_location = #{storageLocation},</if>
             <if test="contactPerson != null">contact_person = #{contactPerson},</if>
             <if test="phoneNumber != null">phone_number = #{phoneNumber},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -78,9 +83,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityEmergencySuppliesLedgerByIds" parameterType="String">
-        delete from security_emergency_supplies_ledger where id in 
+        delete from security_emergency_supplies_ledger where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 根据关联ID查询应急物资管理台帐列表 -->
+    <select id="selectSecurityEmergencySuppliesLedgerByRelatedId" parameterType="Long" resultMap="SecurityEmergencySuppliesLedgerResult">
+        <include refid="selectSecurityEmergencySuppliesLedgerVo"/>
+        where related_id = #{relatedId}
+        order by id desc
+    </select>
+
+    <!-- 批量更新最新导入数据的关联ID -->
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_emergency_supplies_ledger
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND id IN (
+            SELECT temp.id FROM (
+                SELECT id FROM security_emergency_supplies_ledger
+                WHERE related_id IS NULL
+                ORDER BY id DESC
+                LIMIT 1000
+            ) temp
+        )
+    </update>
 </mapper>

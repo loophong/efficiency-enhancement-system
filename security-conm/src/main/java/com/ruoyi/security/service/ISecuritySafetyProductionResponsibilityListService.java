@@ -6,8 +6,8 @@ import com.ruoyi.security.domain.SecuritySafetyProductionResponsibilityList;
 /**
  * 安全生产责任制清单Service接口
  * 
- * @author ruoyi
- * @date 2025-03-12
+ * @author wang
+ * @date 2025-07-18
  */
 public interface ISecuritySafetyProductionResponsibilityListService 
 {
@@ -53,9 +53,35 @@ public interface ISecuritySafetyProductionResponsibilityListService
 
     /**
      * 删除安全生产责任制清单信息
-     * 
+     *
      * @param id 安全生产责任制清单主键
      * @return 结果
      */
     public int deleteSecuritySafetyProductionResponsibilityListById(String id);
+
+    /**
+     * 导入安全生产责任制清单数据
+     *
+     * @param responsibilityList 安全生产责任制清单数据列表
+     * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importSecuritySafetyProductionResponsibilityList(List<SecuritySafetyProductionResponsibilityList> responsibilityList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 根据关联ID查询安全生产责任制清单列表
+     *
+     * @param relatedId 关联ID
+     * @return 安全生产责任制清单集合
+     */
+    public List<SecuritySafetyProductionResponsibilityList> selectSecuritySafetyProductionResponsibilityListByRelatedId(Long relatedId);
+
+    /**
+     * 更新最新导入数据的关联ID
+     *
+     * @param relatedId 关联ID
+     * @return 结果
+     */
+    public int updateLatestImportedRelatedId(Long relatedId);
 }

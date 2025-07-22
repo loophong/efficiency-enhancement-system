@@ -6,23 +6,41 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityPeopleList" id="SecurityPeopleListResult">
         <result property="id"    column="id"    />
-        <result property="uploadDate"    column="upload_date"    />
-        <result property="uploadBy"    column="upload_by"    />
-        <result property="uploadDept"    column="upload_dept"    />
-        <result property="files"    column="files"    />
-        <result property="comment"    column="comment"    />
+        <result property="banZu"    column="ban_zu"    />
+        <result property="xingMing"    column="xing_ming"    />
+        <result property="xingBie"    column="xing_bie"    />
+        <result property="chuShen"    column="chu_shen"    />
+        <result property="jingCTime"    column="jing_c_time"    />
+        <result property="jingBanTime"    column="jing_ban_time"    />
+        <result property="wenhuaChengdu"    column="wenhua_chengdu"    />
+        <result property="yuanGongZhong"    column="yuan_gong_zhong"    />
+        <result property="xianGongZhong"    column="xian_gong_zhong"    />
+        <result property="level"    column="level"    />
+        <result property="homePhone"    column="home_phone"    />
+        <result property="diaoChuBanzu"    column="diao_chu_banzu"    />
+        <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityPeopleListVo">
-        select id, upload_date, upload_by, upload_dept, files, comment from security_people_list
+        select id, ban_zu, xing_ming, xing_bie, chu_shen, jing_c_time, jing_ban_time, wenhua_chengdu, yuan_gong_zhong, xian_gong_zhong, level, home_phone, diao_chu_banzu, related_id from security_people_list
     </sql>
 
     <select id="selectSecurityPeopleListList" parameterType="SecurityPeopleList" resultMap="SecurityPeopleListResult">
         <include refid="selectSecurityPeopleListVo"/>
         <where>  
-            <if test="uploadDate != null "> and upload_date = #{uploadDate}</if>
-            <if test="uploadBy != null  and uploadBy != ''"> and upload_by = #{uploadBy}</if>
-            <if test="uploadDept != null  and uploadDept != ''"> and upload_dept = #{uploadDept}</if>
+            <if test="banZu != null  and banZu != ''"> and ban_zu = #{banZu}</if>
+            <if test="xingMing != null  and xingMing != ''"> and xing_ming = #{xingMing}</if>
+            <if test="xingBie != null  and xingBie != ''"> and xing_bie = #{xingBie}</if>
+            <if test="chuShen != null "> and chu_shen = #{chuShen}</if>
+            <if test="jingCTime != null "> and jing_c_time = #{jingCTime}</if>
+            <if test="jingBanTime != null "> and jing_ban_time = #{jingBanTime}</if>
+            <if test="wenhuaChengdu != null  and wenhuaChengdu != ''"> and wenhua_chengdu = #{wenhuaChengdu}</if>
+            <if test="yuanGongZhong != null  and yuanGongZhong != ''"> and yuan_gong_zhong = #{yuanGongZhong}</if>
+            <if test="xianGongZhong != null  and xianGongZhong != ''"> and xian_gong_zhong = #{xianGongZhong}</if>
+            <if test="level != null  and level != ''"> and level = #{level}</if>
+            <if test="homePhone != null  and homePhone != ''"> and home_phone = #{homePhone}</if>
+            <if test="diaoChuBanzu != null "> and diao_chu_banzu = #{diaoChuBanzu}</if>
+            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -34,29 +52,53 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecurityPeopleList" parameterType="SecurityPeopleList" useGeneratedKeys="true" keyProperty="id">
         insert into security_people_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date,</if>
-            <if test="uploadBy != null">upload_by,</if>
-            <if test="uploadDept != null">upload_dept,</if>
-            <if test="files != null">files,</if>
-            <if test="comment != null">comment,</if>
+            <if test="banZu != null">ban_zu,</if>
+            <if test="xingMing != null">xing_ming,</if>
+            <if test="xingBie != null">xing_bie,</if>
+            <if test="chuShen != null">chu_shen,</if>
+            <if test="jingCTime != null">jing_c_time,</if>
+            <if test="jingBanTime != null">jing_ban_time,</if>
+            <if test="wenhuaChengdu != null">wenhua_chengdu,</if>
+            <if test="yuanGongZhong != null">yuan_gong_zhong,</if>
+            <if test="xianGongZhong != null">xian_gong_zhong,</if>
+            <if test="level != null">level,</if>
+            <if test="homePhone != null">home_phone,</if>
+            <if test="diaoChuBanzu != null">diao_chu_banzu,</if>
+            <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="uploadDate != null">#{uploadDate},</if>
-            <if test="uploadBy != null">#{uploadBy},</if>
-            <if test="uploadDept != null">#{uploadDept},</if>
-            <if test="files != null">#{files},</if>
-            <if test="comment != null">#{comment},</if>
+            <if test="banZu != null">#{banZu},</if>
+            <if test="xingMing != null">#{xingMing},</if>
+            <if test="xingBie != null">#{xingBie},</if>
+            <if test="chuShen != null">#{chuShen},</if>
+            <if test="jingCTime != null">#{jingCTime},</if>
+            <if test="jingBanTime != null">#{jingBanTime},</if>
+            <if test="wenhuaChengdu != null">#{wenhuaChengdu},</if>
+            <if test="yuanGongZhong != null">#{yuanGongZhong},</if>
+            <if test="xianGongZhong != null">#{xianGongZhong},</if>
+            <if test="level != null">#{level},</if>
+            <if test="homePhone != null">#{homePhone},</if>
+            <if test="diaoChuBanzu != null">#{diaoChuBanzu},</if>
+            <if test="relatedId != null">#{relatedId},</if>
          </trim>
     </insert>
 
     <update id="updateSecurityPeopleList" parameterType="SecurityPeopleList">
         update security_people_list
         <trim prefix="SET" suffixOverrides=",">
-            <if test="uploadDate != null">upload_date = #{uploadDate},</if>
-            <if test="uploadBy != null">upload_by = #{uploadBy},</if>
-            <if test="uploadDept != null">upload_dept = #{uploadDept},</if>
-            <if test="files != null">files = #{files},</if>
-            <if test="comment != null">comment = #{comment},</if>
+            <if test="banZu != null">ban_zu = #{banZu},</if>
+            <if test="xingMing != null">xing_ming = #{xingMing},</if>
+            <if test="xingBie != null">xing_bie = #{xingBie},</if>
+            <if test="chuShen != null">chu_shen = #{chuShen},</if>
+            <if test="jingCTime != null">jing_c_time = #{jingCTime},</if>
+            <if test="jingBanTime != null">jing_ban_time = #{jingBanTime},</if>
+            <if test="wenhuaChengdu != null">wenhua_chengdu = #{wenhuaChengdu},</if>
+            <if test="yuanGongZhong != null">yuan_gong_zhong = #{yuanGongZhong},</if>
+            <if test="xianGongZhong != null">xian_gong_zhong = #{xianGongZhong},</if>
+            <if test="level != null">level = #{level},</if>
+            <if test="homePhone != null">home_phone = #{homePhone},</if>
+            <if test="diaoChuBanzu != null">diao_chu_banzu = #{diaoChuBanzu},</if>
+            <if test="relatedId != null">related_id = #{relatedId},</if>
         </trim>
         where id = #{id}
     </update>
@@ -66,9 +108,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityPeopleListByIds" parameterType="String">
-        delete from security_people_list where id in 
+        delete from security_people_list where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <select id="selectSecurityPeopleListByName" parameterType="String" resultMap="SecurityPeopleListResult">
+        <include refid="selectSecurityPeopleListVo"/>
+        where xing_ming = #{xingMing} and ban_zu = #{banZu}
+    </select>
+
+    <update id="updateLatestImportedRelatedId" parameterType="Long">
+        UPDATE security_people_list
+        SET related_id = #{relatedId}
+        WHERE related_id IS NULL
+        AND create_time >= DATE_SUB(NOW(), INTERVAL 10 MINUTE)
+        ORDER BY create_time DESC
+    </update>
 </mapper>

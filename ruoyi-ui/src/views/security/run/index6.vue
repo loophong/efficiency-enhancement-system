@@ -90,7 +90,7 @@
       border
     >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" width="80" />
+      <el-table-column label="序号" align="center" type="index" width="80" />
       <el-table-column label="班组" align="center" prop="teamName" width="200">
         <template #default="scope">
           <span>{{ scope.row.teamName || '' }}</span>

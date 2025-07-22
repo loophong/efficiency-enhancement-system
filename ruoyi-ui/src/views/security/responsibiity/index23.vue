@@ -1,26 +1,26 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="事故名称" prop="accidentName">
+      <el-form-item label="上传时间" prop="uploadTime">
+        <el-date-picker clearable
+          v-model="queryParams.uploadTime"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="上传人" prop="uploadPeople">
         <el-input
-          v-model="queryParams.accidentName"
-          placeholder="请输入事故名称"
+          v-model="queryParams.uploadPeople"
+          placeholder="请输入上传人"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="事故时间" prop="accidentTime">
-        <el-date-picker clearable
-          v-model="queryParams.accidentTime"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择事故时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="事故调查人" prop="investigatorSignature">
+      <el-form-item label="上传部门" prop="uploadBumen">
         <el-input
-          v-model="queryParams.investigatorSignature"
-          placeholder="请输入事故调查人"
+          v-model="queryParams.uploadBumen"
+          placeholder="请输入上传部门"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -76,21 +76,15 @@
     <el-table v-loading="loading" :data="AccidentReportList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="事故名称" align="center" prop="accidentName" />
-      <el-table-column label="事故时间" align="center" prop="accidentTime" width="180">
+      <el-table-column label="上传时间" align="center" prop="uploadTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.accidentTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="伤亡情况" align="center" prop="casualties" />
-      <el-table-column label="事故损失" align="center" prop="accidentLoss" />
-      <el-table-column label="事故经过" align="center" prop="accidentDescription" />
-      <el-table-column label="事故现场环境" align="center" prop="accidentSceneEnvironment" />
-      <el-table-column label="事故原因" align="center" prop="accidentCause" />
-      <el-table-column label="事故责任" align="center" prop="accidentResponsibility" />
-      <el-table-column label="事故处理" align="center" prop="accidentHandling" />
-      <el-table-column label="事故防范措施" align="center" prop="accidentPreventiveMeasures" />
-      <el-table-column label="事故调查人" align="center" prop="investigatorSignature" />
+      <el-table-column label="上传人" align="center" prop="uploadPeople" />
+      <el-table-column label="上传部门" align="center" prop="uploadBumen" />
+      <el-table-column label="文件" align="center" prop="file" />
+      <el-table-column label="描述" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:AccidentReport:edit']">修改</el-button>
@@ -110,43 +104,25 @@
     <!-- 添加或修改事故处理报告对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="AccidentReportRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="事故名称" prop="accidentName">
-          <el-input v-model="form.accidentName" placeholder="请输入事故名称" />
-        </el-form-item>
-        <el-form-item label="事故时间" prop="accidentTime">
+        <el-form-item label="上传时间" prop="uploadTime">
           <el-date-picker clearable
-            v-model="form.accidentTime"
+            v-model="form.uploadTime"
             type="date"
             value-format="YYYY-MM-DD"
-            placeholder="请选择事故时间">
+            placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="伤亡情况" prop="casualties">
-          <el-input v-model="form.casualties" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="上传人" prop="uploadPeople">
+          <el-input v-model="form.uploadPeople" placeholder="请输入上传人" />
         </el-form-item>
-        <el-form-item label="事故损失" prop="accidentLoss">
-          <el-input v-model="form.accidentLoss" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="上传部门" prop="uploadBumen">
+          <el-input v-model="form.uploadBumen" placeholder="请输入上传部门" />
         </el-form-item>
-        <el-form-item label="事故经过">
-          <editor v-model="form.accidentDescription" :min-height="192"/>
+        <el-form-item label="文件" prop="file">
+          <file-upload v-model="form.file"/>
         </el-form-item>
-        <el-form-item label="事故现场环境">
-          <editor v-model="form.accidentSceneEnvironment" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="事故原因" prop="accidentCause">
-          <el-input v-model="form.accidentCause" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="事故责任" prop="accidentResponsibility">
-          <el-input v-model="form.accidentResponsibility" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="事故处理" prop="accidentHandling">
-          <el-input v-model="form.accidentHandling" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="事故防范措施">
-          <editor v-model="form.accidentPreventiveMeasures" :min-height="192"/>
-        </el-form-item>
-        <el-form-item label="事故调查人" prop="investigatorSignature">
-          <el-input v-model="form.investigatorSignature" placeholder="请输入事故调查人" />
+        <el-form-item label="描述" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -179,17 +155,11 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    accidentName: null,
-    accidentTime: null,
-    investigatorSignature: null
+    uploadTime: null,
+    uploadPeople: null,
+    uploadBumen: null,
   },
   rules: {
-    accidentName: [
-      { required: true, message: "事故名称不能为空", trigger: "blur" }
-    ],
-    accidentTime: [
-      { required: true, message: "事故时间不能为空", trigger: "blur" }
-    ],
   }
 });
 
@@ -215,17 +185,11 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    accidentName: null,
-    accidentTime: null,
-    casualties: null,
-    accidentLoss: null,
-    accidentDescription: null,
-    accidentSceneEnvironment: null,
-    accidentCause: null,
-    accidentResponsibility: null,
-    accidentHandling: null,
-    accidentPreventiveMeasures: null,
-    investigatorSignature: null
+    uploadTime: null,
+    uploadPeople: null,
+    uploadBumen: null,
+    file: null,
+    remark: null
   };
   proxy.resetForm("AccidentReportRef");
 }

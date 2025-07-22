@@ -34,7 +34,10 @@ public class SecurityEnvironmentalOhsRecordList extends BaseEntity
     @Excel(name = "保存期限")
     private String retentionPeriod;
 
-    public void setId(Long id) 
+    /** 关联ID */
+    private Long relatedId;
+
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -75,9 +78,18 @@ public class SecurityEnvironmentalOhsRecordList extends BaseEntity
         this.retentionPeriod = retentionPeriod;
     }
 
-    public String getRetentionPeriod() 
+    public String getRetentionPeriod()
     {
         return retentionPeriod;
+    }
+    public void setRelatedId(Long relatedId)
+    {
+        this.relatedId = relatedId;
+    }
+
+    public Long getRelatedId()
+    {
+        return relatedId;
     }
 
     @Override
@@ -88,6 +100,7 @@ public class SecurityEnvironmentalOhsRecordList extends BaseEntity
             .append("recordName", getRecordName())
             .append("responsibleDepartment", getResponsibleDepartment())
             .append("retentionPeriod", getRetentionPeriod())
+            .append("relatedId", getRelatedId())
             .toString();
     }
 }

@@ -6,21 +6,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityAccidentCauseAnalysis" id="SecurityAccidentCauseAnalysisResult">
         <result property="id"    column="id"    />
-        <result property="category"    column="category"    />
-        <result property="project"    column="project"    />
-        <result property="specificContent"    column="specific_content"    />
-        <result property="analysisResult"    column="analysis_result"    />
+        <result property="time"    column="time"    />
+        <result property="people"    column="people"    />
+        <result property="uploadBumen"    column="upload_bumen"    />
+        <result property="file"    column="file"    />
+        <result property="result"    column="result"    />
     </resultMap>
 
     <sql id="selectSecurityAccidentCauseAnalysisVo">
-        select id, category, project, specific_content, analysis_result from security_accident_cause_analysis
+        select id, time, people, upload_bumen, file, result from security_accident_cause_analysis
     </sql>
 
     <select id="selectSecurityAccidentCauseAnalysisList" parameterType="SecurityAccidentCauseAnalysis" resultMap="SecurityAccidentCauseAnalysisResult">
         <include refid="selectSecurityAccidentCauseAnalysisVo"/>
         <where>  
-            <if test="category != null  and category != ''"> and category = #{category}</if>
-            <if test="project != null  and project != ''"> and project = #{project}</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="people != null  and people != ''"> and people = #{people}</if>
+            <if test="uploadBumen != null  and uploadBumen != ''"> and upload_bumen = #{uploadBumen}</if>
         </where>
     </select>
     
@@ -32,26 +34,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecurityAccidentCauseAnalysis" parameterType="SecurityAccidentCauseAnalysis" useGeneratedKeys="true" keyProperty="id">
         insert into security_accident_cause_analysis
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="category != null and category != ''">category,</if>
-            <if test="project != null and project != ''">project,</if>
-            <if test="specificContent != null">specific_content,</if>
-            <if test="analysisResult != null">analysis_result,</if>
+            <if test="time != null">time,</if>
+            <if test="people != null">people,</if>
+            <if test="uploadBumen != null">upload_bumen,</if>
+            <if test="file != null">file,</if>
+            <if test="result != null">result,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="category != null and category != ''">#{category},</if>
-            <if test="project != null and project != ''">#{project},</if>
-            <if test="specificContent != null">#{specificContent},</if>
-            <if test="analysisResult != null">#{analysisResult},</if>
+            <if test="time != null">#{time},</if>
+            <if test="people != null">#{people},</if>
+            <if test="uploadBumen != null">#{uploadBumen},</if>
+            <if test="file != null">#{file},</if>
+            <if test="result != null">#{result},</if>
          </trim>
     </insert>
 
     <update id="updateSecurityAccidentCauseAnalysis" parameterType="SecurityAccidentCauseAnalysis">
         update security_accident_cause_analysis
         <trim prefix="SET" suffixOverrides=",">
-            <if test="category != null and category != ''">category = #{category},</if>
-            <if test="project != null and project != ''">project = #{project},</if>
-            <if test="specificContent != null">specific_content = #{specificContent},</if>
-            <if test="analysisResult != null">analysis_result = #{analysisResult},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="people != null">people = #{people},</if>
+            <if test="uploadBumen != null">upload_bumen = #{uploadBumen},</if>
+            <if test="file != null">file = #{file},</if>
+            <if test="result != null">result = #{result},</if>
         </trim>
         where id = #{id}
     </update>

@@ -14,7 +14,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -116,5 +120,53 @@ public class SecurityEnvironmentalOhsRecordListController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(securityEnvironmentalOhsRecordListService.deleteSecurityEnvironmentalOhsRecordListByIds(ids));
+    }
+
+    /**
+     * 获取环境职业健康安全记录清单导入模板
+     */
+    @Anonymous
+    @RequestMapping(value = "/importTemplate", method = {RequestMethod.GET, RequestMethod.POST})
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecurityEnvironmentalOhsRecordList> util = new ExcelUtil<SecurityEnvironmentalOhsRecordList>(SecurityEnvironmentalOhsRecordList.class);
+        util.importTemplateExcel(response, "环境职业健康安全记录清单数据");
+    }
+
+    /**
+     * 导入环境职业健康安全记录清单数据
+     */
+    @Log(title = "环境职业健康安全记录清单", businessType = BusinessType.IMPORT)
+    @PreAuthorize("@ss.hasPermi('security:EnvironmentalOhsRecordList:import')")
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        try {
+            ExcelUtil<SecurityEnvironmentalOhsRecordList> util = new ExcelUtil<SecurityEnvironmentalOhsRecordList>(SecurityEnvironmentalOhsRecordList.class);
+            List<SecurityEnvironmentalOhsRecordList> recordList = util.importExcel(file.getInputStream());
+
+            if (recordList.isEmpty()) {
+                return error("导入数据为空，请检查Excel文件格式");
+            }
+
+            String operName = SecurityUtils.getUsername();
+            String message = securityEnvironmentalOhsRecordListService.importSecurityEnvironmentalOhsRecordList(recordList, updateSupport, operName);
+            return success(message);
+
+        } catch (Exception e) {
+            log.error("导入环境职业健康安全记录清单数据失败", e);
+            return error("导入失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 根据关联ID查询环境职业健康安全记录清单列表
+     */
+    @PreAuthorize("@ss.hasPermi('security:EnvironmentalOhsRecordList:list')")
+    @GetMapping("/listByRelatedId/{relatedId}")
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    {
+        List<SecurityEnvironmentalOhsRecordList> list = securityEnvironmentalOhsRecordListService.selectSecurityEnvironmentalOhsRecordListByRelatedId(relatedId);
+        return getDataTable(list);
     }
 }
