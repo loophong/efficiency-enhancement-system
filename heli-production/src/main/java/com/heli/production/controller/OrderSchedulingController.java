@@ -156,6 +156,7 @@ public class OrderSchedulingController extends BaseController {
                     dailyPlanEntity.setMast(orderSchedulingEntity.getMast());
                     dailyPlanEntity.setQuantity(1L);
                     dailyPlanEntity.setAttachments(orderSchedulingEntity.getAttachments());
+                    dailyPlanEntity.setProductionOrderNumber(orderSchedulingEntity.getOrderNumber());
                     // 阀片需要转换
                     // 取出第一个字符，并将其从中文转换为阿拉伯数字
                     char c = orderSchedulingEntity.getValvePlate().charAt(0);
