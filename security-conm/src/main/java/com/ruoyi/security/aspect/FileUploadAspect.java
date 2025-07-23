@@ -38,7 +38,14 @@ import com.ruoyi.security.service.ISecurityRiskOpportunityAssessmentService;
 
 
 /**
- * 文件上传切面，用于拦截所有上传方法
+ * 文件上传切面，专门用于拦截 security-conm 模块下的文件上传/导入方法
+ *
+ * 作用范围：
+ * 1. 只拦截 com.ruoyi.security.controller 包下的 Controller
+ * 2. 只处理包含 upload、import、file 等关键词的方法
+ * 3. 只处理 URI 包含 "/security/" 的请求
+ * 4. 自动记录文件上传信息到 security_file_management 表
+ * 5. 自动更新相关业务表的 related_id 字段
  */
 @Aspect
 @Component
@@ -128,13 +135,13 @@ public class FileUploadAspect {
     /**
      * 定义切点 - 只拦截security模块下包含upload、import、file等关键词的Controller方法
      */
-    @Pointcut("execution(* com.ruoyi.security.controller..*.*(..)) && (" +
-              "execution(* *..*upload*(..)) || " +
-              "execution(* *..*import*(..)) || " +
-              "execution(* *..*Upload*(..)) || " +
-              "execution(* *..*Import*(..)) || " +
-              "execution(* *..*file*(..)) || " +
-              "execution(* *..*File*(..)))")
+    @Pointcut("(" +
+              "execution(* com.ruoyi.security.controller..*.*upload*(..)) || " +
+              "execution(* com.ruoyi.security.controller..*.*import*(..)) || " +
+              "execution(* com.ruoyi.security.controller..*.*Upload*(..)) || " +
+              "execution(* com.ruoyi.security.controller..*.*Import*(..)) || " +
+              "execution(* com.ruoyi.security.controller..*.*file*(..)) || " +
+              "execution(* com.ruoyi.security.controller..*.*File*(..)))")
     public void uploadPointcut() {}
     
     /**
@@ -156,6 +163,22 @@ public class FileUploadAspect {
             return;
         }
 
+        // 进一步检查请求URI，确保是security模块的请求
+        try {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                HttpServletRequest request = attributes.getRequest();
+                String uri = request.getRequestURI();
+                if (!uri.contains("/security/")) {
+                    log.debug("跳过非security模块的URI请求: {}", uri);
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            log.debug("无法获取请求URI，跳过检查");
+            return;
+        }
+
         log.info("准备处理security模块上传/导入方法: {}.{}",
                 className, joinPoint.getSignature().getName());
     }
@@ -167,18 +190,29 @@ public class FileUploadAspect {
     public Object aroundImportMethod(ProceedingJoinPoint joinPoint) throws Throwable {
         Logger log = LoggerFactory.getLogger(FileUploadAspect.class);
 
-        // 额外安全检查：确保只处理security模块的Controller
+        // 额外安全检查：确保只处理security-conm模块的Controller
         String className = joinPoint.getTarget().getClass().getName();
         if (!className.contains("com.ruoyi.security.controller")) {
             log.debug("跳过非security模块的Controller: {}", className);
             return joinPoint.proceed();
         }
 
+        // 进一步检查请求URI，确保是security模块的请求
+        ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (requestAttributes != null) {
+            HttpServletRequest request = requestAttributes.getRequest();
+            String uri = request.getRequestURI();
+            if (!uri.contains("/security/")) {
+                log.debug("跳过非security模块的URI请求: {}", uri);
+                return joinPoint.proceed();
+            }
+        }
+
         log.info("环绕通知：处理security模块导入方法 {}.{}",
                 className, joinPoint.getSignature().getName());
 
                     // 获取当前请求
-                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
             return joinPoint.proceed();
         }
@@ -566,12 +600,31 @@ public void afterFormManagement() {
             return;
         }
 
+        // 进一步检查请求URI，确保是security模块的请求
+        ServletRequestAttributes attributes = null;
+        try {
+            attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes != null) {
+                HttpServletRequest request = attributes.getRequest();
+                String uri = request.getRequestURI();
+                if (!uri.contains("/security/")) {
+                    log.debug("跳过非security模块的URI请求: {}", uri);
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            log.debug("无法获取请求URI，跳过检查");
+            return;
+        }
+
         log.info("拦截到security模块上传/导入方法: {}.{}",
                 className, joinPoint.getSignature().getName());
 
         try {
             // 获取当前请求
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes == null) {
+                attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            }
             if (attributes == null) {
                 log.warn("无法获取请求上下文，可能不在Web请求中");
                 return;
