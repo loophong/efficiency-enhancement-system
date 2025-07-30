@@ -21,13 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 班组计划保养Service业务层处理
- * 
+ *
  * @author YYY
  * @date 2025-01-19
  */
 @Service
 @Slf4j
-public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService 
+public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 {
     @Autowired
     private DeviceGroupPlanMapper deviceGroupPlanMapper;
@@ -60,7 +60,6 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
     }
 
     @Override
-    @Transactional
     public String updateDeviceGroupPlan() {
         // 获取任意一条记录的 rollTime
         LocalDateTime rollTime = deviceGroupPlanMapper.getRollTime();
@@ -73,44 +72,24 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
         LocalDate nowDate = now.toLocalDate();
         LocalDate rollDate = rollTime.toLocalDate();
 
-        // 当前周的起始（周一）和结束（周日）
-        LocalDate startOfCurrentWeek = nowDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate endOfCurrentWeek = nowDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        int currentMonth = nowDate.getMonthValue();
+        int currentYear = nowDate.getYear();
 
-        // 判断 rollTime 是否在当前周内
-        if (rollDate.compareTo(startOfCurrentWeek) >= 0 && rollDate.compareTo(endOfCurrentWeek) <= 0) {
-            return "当前时间为当前周，无需处理。";
+        int rollMonth = rollDate.getMonthValue();
+        int rollYear = rollDate.getYear();
+
+        // 如果 rollTime 的月份是当月，不执行任何操作
+        if (rollMonth == currentMonth && rollYear == currentYear) {
+            return "当前时间为当前月，无需处理。";
         }
 
-        // 计算 rollTime 所在周的起始（周一）
-        LocalDate rollStartOfWeek = rollDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        // 当前周的起始
-        LocalDate nowStartOfWeek = nowDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-
-        // 计算两个周之间的周数差（完整周）
-        long weeksAgo = ChronoUnit.WEEKS.between(rollStartOfWeek, nowStartOfWeek);
-
-
-        // 根据周数差决定更新方式
-        if (weeksAgo >= 4) {
-            deviceGroupPlanMapper.updateAllFieldsToZeroAndSetLastCompleteTime(now);
-            return "已超过四周，所有月份字段已清空，lastCompleteTime 已更新。";
-        } else if (weeksAgo == 3) {
-            deviceGroupPlanMapper.updateFieldsForThreeWeeksAgo(now);
-            return "已上上上周，月份字段已迁移，lastCompleteTime 已更新。";
-        } else if (weeksAgo == 2) {
-            deviceGroupPlanMapper.updateFieldsForTwoWeeksAgo(now);
-            return "已上上周，月份字段已迁移，lastCompleteTime 已更新。";
-        } else if (weeksAgo == 1) {
-            deviceGroupPlanMapper.updateFieldsForOneWeekAgo(now);
-            return "已上周，月份字段已迁移，lastCompleteTime 已更新。";
-        }
-
-        return "操作完成。";
+        // 否则，执行处理逻辑（无论是否是上个月）
+        deviceGroupPlanMapper.updateAllFieldsToZeroAndSetLastCompleteTime(now);
+        return "已超过当前月，所有月份字段已清空，rollTime 已更新。";
     }
     /**
      * 查询班组计划保养
-     * 
+     *
      * @param groupId 班组计划保养主键
      * @return 班组计划保养
      */
@@ -122,7 +101,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 
     /**
      * 查询班组计划保养列表
-     * 
+     *
      * @param deviceGroupPlan 班组计划保养
      * @return 班组计划保养
      */
@@ -134,7 +113,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 
     /**
      * 新增班组计划保养
-     * 
+     *
      * @param deviceGroupPlan 班组计划保养
      * @return 结果
      */
@@ -146,7 +125,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 
     /**
      * 修改班组计划保养
-     * 
+     *
      * @param deviceGroupPlan 班组计划保养
      * @return 结果
      */
@@ -158,7 +137,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 
     /**
      * 批量删除班组计划保养
-     * 
+     *
      * @param groupIds 需要删除的班组计划保养主键
      * @return 结果
      */
@@ -170,7 +149,7 @@ public class DeviceGroupPlanServiceImpl implements IDeviceGroupPlanService
 
     /**
      * 删除班组计划保养信息
-     * 
+     *
      * @param groupId 班组计划保养主键
      * @return 结果
      */

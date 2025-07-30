@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <div ref="chartContainer" id="main" style="width: 100%; height: 150vh; overflow: auto;"></div>
+    <div ref="chartContainer" id="main" :style="{ width: '100%', height: chartHeight + 'vh' }"></div>
     <!-- Tooltip for displaying detailed information -->
     <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
       style="position:absolute;white-space:nowrap;background-color:#f9f9f9;border:1px solid #d3d3d3;padding:5px;display:none;z-index:1000;">
@@ -21,6 +21,8 @@ const props = defineProps({
     required: true,
   },
 });
+// 定义容器高度的响应式变量
+const chartHeight = ref(200);
 
 function renameField(node) {
   if (!node) return;
@@ -40,7 +42,31 @@ function renameField(node) {
     node.children.forEach(child => renameField(child));
   }
 }
+function countAllChildrenLength(node) {
+  console.log({ node })
+  let total = node.children ? node.children.length : 0;
+  if (node.children) {
+    for (const child of node.children) {
+      total += countAllChildrenLength(child);
+    }
+  }
+  return total;
+}
+// 计算容器高度
+function calculateHeight(data) {
+  const baseHeightPerNode = 3; // 每个节点基础高度
+  const totalChildrenLength = countAllChildrenLength(data[0]);
+  console.log({ totalChildrenLength })
+  return totalChildrenLength * baseHeightPerNode;
+}
 
+// 初始化容器高度
+function initHeight() {
+  if (!chartContainer.value || !props.chartData?.data[0]) return;
+  const data = props.chartData.data[0]; // 获取根节点
+  console.log({ data })
+  chartHeight.value = Math.max(100, calculateHeight(data));
+}
 function parseChartData(input) {
   const data = JSON.parse(JSON.stringify(input));
 
@@ -58,6 +84,7 @@ function parseChartData(input) {
   }
 }
 parseChartData(props.chartData.data[0]);
+
 console.log('chartData---->', props.chartData.data[0])
 
 console.log('treeData----->', treeData.value)
@@ -158,13 +185,11 @@ function initChart() {
   let data = {}
   myChart.value = echarts.init(chartContainer.value);
   if (Array.isArray(props.chartData.data[0]) && props.chartData.data[0].length > 1) {
-    console.log('多')
     data = {
       name: '故障树',
       children: treeData.value
     }
   } else if (Array.isArray(props.chartData.data[0]) && props.chartData.data[0].length == 1) {
-    console.log('少')
     data = treeData.value
   }
   console.log(data)
@@ -240,15 +265,18 @@ const getNodePath = (params) => {
   return path.join(' -> ');
 };
 
-watch(() => props.chartData, (newVal) => {
+watch(() => props.chartData, async (newVal) => {
   if (newVal) {
     console.log('chartData changed:', newVal);
     parseChartData(newVal.data[0]);
     if (myChart.value) {
       myChart.value.dispose();
     }
+    initHeight();
+    await nextTick();
     initChart();
     handleChart();
+
   }
 }, { deep: true }
 );
@@ -256,6 +284,8 @@ watch(() => props.chartData, (newVal) => {
 function handleToAnalysis(row, module, destination) {
   router.push({ path: `/deviceManagement/${module}Management/${destination}`, query: { faultType: row.faultType, yearAndMonth: row.reportedTime } });
 }
+
+
 </script>
 
 <style scoped>

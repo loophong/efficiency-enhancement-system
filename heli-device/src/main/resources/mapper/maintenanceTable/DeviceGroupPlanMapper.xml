@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.heli.device.maintenanceTable.mapper.DeviceGroupPlanMapper">
-    
+
     <resultMap type="DeviceGroupPlan" id="DeviceGroupPlanResult">
         <result property="groupId"    column="group_id"    />
         <result property="orderNum"    column="order_num"    />
@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="monthTwo"    column="month_two"    />
         <result property="monthThree"    column="month_three"    />
         <result property="monthFour"    column="month_four"    />
+        <result property="messageSet"    column="message_set"    />
         <result property="createTime"    column="create_time"    />
         <result property="createBy"    column="create_by"    />
         <result property="updateBy"    column="update_by"    />
@@ -24,12 +25,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectDeviceGroupPlanVo">
-        select group_id, order_num, device_type, execute_group, maintenance_content, maintenance_cycle, month_one, month_two, month_three, month_four,create_by,create_time,update_by,update_time,last_complete_time,roll_time from device_group_plan
+        select group_id, order_num, device_type, execute_group, maintenance_content, maintenance_cycle, month_one, month_two, month_three, month_four, message_set, create_by,create_time,update_by,update_time,last_complete_time,roll_time from device_group_plan
     </sql>
 
     <select id="selectDeviceGroupPlanList" parameterType="DeviceGroupPlan" resultMap="DeviceGroupPlanResult">
         <include refid="selectDeviceGroupPlanVo"/>
-        <where>  
+        <where>
             <if test="orderNum != null  and orderNum != ''"> and order_num = #{orderNum}</if>
             <if test="deviceType != null  and deviceType != ''"> and device_type like concat('%', #{deviceType}, '%')</if>
             <if test="executeGroup != null  and executeGroup != ''"> and execute_group like concat('%', #{executeGroup}, '%')</if>
@@ -39,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null  and monthTwo != ''"> and month_two like concat('%', #{monthTwo}, '%')</if>
             <if test="monthThree != null  and monthThree != ''"> and month_three like concat('%', #{monthThree}, '%')</if>
             <if test="monthFour != null  and monthFour != ''"> and month_four like concat('%', #{monthFour}, '%')</if>
+            <if test="messageSet != null  and messageSet != ''"> and message_set like concat('%', #{messageSet}, '%')</if>
             <if test="lastCompleteTime != null  and lastCompleteTime != ''"> and last_complete_time = #{lastCompleteTime}</if>
             <if test="rollTime != null  and rollTime != ''"> and roll_time = #{rollTime}</if>
         </where>
@@ -48,41 +50,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT *
         FROM device_group_plan
         <where>
-            (
-            (maintenance_cycle = '1'
-            AND (month_four IS NULL OR month_four = '')
-            )
-            )
-            OR (
-            (maintenance_cycle = '2'
-            AND (month_three IS NULL OR month_three = '')
-            AND (month_four IS NULL OR month_four = '')
-            )
-            )
-            OR (
-            (maintenance_cycle = '3'
-            AND (month_two IS NULL OR month_two = '')
-            AND (month_three IS NULL OR month_three = '')
-            AND (month_four IS NULL OR month_four = '')
-            )
-            )
-            OR (
-            (maintenance_cycle = '4'
-            AND (month_one IS NULL OR month_one = '')
-            AND (month_two IS NULL OR month_two = '')
-            AND (month_three IS NULL OR month_three = '')
-            AND (month_four IS NULL OR month_four = '')
-            )
-            )
-            OR
-            (
             <foreach collection="fields" item="field" separator=" OR ">
                 ${field} LIKE '%待审核%' AND create_by = #{userId}
             </foreach>
+
+            OR (
+            (message_set = '1W' AND month_one IS NULL)
+            )
+            OR (
+            message_set = '2W' AND (
+            (maintenance_cycle = 1 AND month_two IS NULL)
+            OR (maintenance_cycle = 2 AND month_one IS NULL AND month_two IS NULL)
+            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL)
+            )
+            )
+            OR (
+            message_set = '3W' AND (
+            (maintenance_cycle = 1 AND month_three IS NULL)
+            OR (maintenance_cycle = 2 AND month_one IS NOT NULL)
+            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL AND month_three IS NULL)
+            )
+            )
+            OR (
+            message_set = '4W' AND (
+            (maintenance_cycle = 1 AND month_four IS NULL)
+            OR (maintenance_cycle = 2 AND month_two IS NOT NULL)
+            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL AND month_three IS NULL AND month_four IS NULL)
+            )
             )
         </where>
     </select>
-    
+
     <select id="selectDeviceGroupPlanByGroupId" parameterType="String" resultMap="DeviceGroupPlanResult">
         <include refid="selectDeviceGroupPlanVo"/>
         where group_id = #{groupId}
@@ -100,13 +98,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">month_two,</if>
             <if test="monthThree != null">month_three,</if>
             <if test="monthFour != null">month_four,</if>
+            <if test="messageSet != null">message_set,</if>
             <if test="createTime != null">create_time,</if>
             <if test="createBy != null">create_by,</if>
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="lastCompleteTime != null">last_complete_time,</if>
             <if test="rollTime != null">rollTime,</if>
-         </trim>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNum != null">#{orderNum},</if>
             <if test="deviceType != null">#{deviceType},</if>
@@ -117,13 +116,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">#{monthTwo},</if>
             <if test="monthThree != null">#{monthThree},</if>
             <if test="monthFour != null">#{monthFour},</if>
+            <if test="messageSet != null">#{messageSet},</if>
             <if test="createTime != null">#{createTime},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="lastCompleteTime != null">#{lastCompleteTime},</if>
             <if test="rollTime != null">#{rollTime},</if>
-         </trim>
+        </trim>
     </insert>
 
     <update id="updateDeviceGroupPlan" parameterType="DeviceGroupPlan">
@@ -138,6 +138,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="monthTwo != null">month_two = #{monthTwo},</if>
             <if test="monthThree != null">month_three = #{monthThree},</if>
             <if test="monthFour != null">month_four = #{monthFour},</if>
+            <if test="messageSet != null">message_set = #{messageSet},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="updateBy != null">update_by = #{updateBy},</if>
@@ -153,38 +154,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT roll_time FROM device_group_plan LIMIT 1
     </select>
 
-    <!-- 上周（1周） -->
-    <update id="updateFieldsForOneWeekAgo">
-        UPDATE device_group_plan
-        SET
-            month_one = month_two,
-            month_two = month_three,
-            month_three = month_four,
-            month_four = NULL,
-            roll_time = #{currentTime}
-    </update>
+    <!--    &lt;!&ndash; 上周（1周） &ndash;&gt;-->
+    <!--    <update id="updateFieldsForOneWeekAgo">-->
+    <!--        UPDATE device_group_plan-->
+    <!--        SET-->
+    <!--            month_one = month_two,-->
+    <!--            month_two = month_three,-->
+    <!--            month_three = month_four,-->
+    <!--            month_four = NULL,-->
+    <!--            roll_time = #{currentTime}-->
+    <!--    </update>-->
 
-    <!-- 上上周（2周） -->
-    <update id="updateFieldsForTwoWeeksAgo">
-        UPDATE device_group_plan
-        SET
-            month_one = month_three,
-            month_two = month_four,
-            month_three = NULL,
-            month_four = NULL,
-            roll_time = #{currentTime}
-    </update>
+    <!--    &lt;!&ndash; 上上周（2周） &ndash;&gt;-->
+    <!--    <update id="updateFieldsForTwoWeeksAgo">-->
+    <!--        UPDATE device_group_plan-->
+    <!--        SET-->
+    <!--            month_one = month_three,-->
+    <!--            month_two = month_four,-->
+    <!--            month_three = NULL,-->
+    <!--            month_four = NULL,-->
+    <!--            roll_time = #{currentTime}-->
+    <!--    </update>-->
 
-    <!-- 上上上周（3周） -->
-    <update id="updateFieldsForThreeWeeksAgo">
-        UPDATE device_group_plan
-        SET
-            month_one = month_four,
-            month_two = NULL,
-            month_three = NULL,
-            month_four = NULL,
-            roll_time = #{currentTime}
-    </update>
+    <!--    &lt;!&ndash; 上上上周（3周） &ndash;&gt;-->
+    <!--    <update id="updateFieldsForThreeWeeksAgo">-->
+    <!--        UPDATE device_group_plan-->
+    <!--        SET-->
+    <!--            month_one = month_four,-->
+    <!--            month_two = NULL,-->
+    <!--            month_three = NULL,-->
+    <!--            month_four = NULL,-->
+    <!--            roll_time = #{currentTime}-->
+    <!--    </update>-->
 
     <!-- 超过4周 -->
     <update id="updateAllFieldsToZeroAndSetLastCompleteTime">
@@ -194,7 +195,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             month_two = NULL,
             month_three = NULL,
             month_four = NULL,
+            message_set = NULL,
             roll_time = #{currentTime}
+    </update>
+    <update id="updateMessageSet">
+        UPDATE  device_group_plan
+        SET
+            message_set= #{messageSet}
     </update>
 
     <delete id="deleteDeviceGroupPlanByGroupId" parameterType="String">
@@ -202,7 +209,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteDeviceGroupPlanByGroupIds" parameterType="String">
-        delete from device_group_plan where group_id in 
+        delete from device_group_plan where group_id in
         <foreach item="groupId" collection="array" open="(" separator="," close=")">
             #{groupId}
         </foreach>

@@ -1376,32 +1376,30 @@ const cascaderOptions = monthLabels.map((label, index) => ({
     {
       value: 'One', label: '1W', children: [
         { value: '◎', label: '◎(检查保养项目)' },
-        { value: '◆', label: '◆(精度调整计划)' },
-        { value: '☆', label: '☆(检修计划)' },
+        { value: '☆', label: '☆(精度调整计划)' },
+        { value: '◆', label: '◆(检修计划)' },
         { value: '◎(待审核)', label: '◎(待审核)' },
         { value: '◆(待审核)', label: '◆(待审核)' },
         { value: '☆(待审核)', label: '☆(待审核)' },
         { value: '待审核', label: '所有(待审核)' },
-
       ]
     },
     {
       value: 'Two', label: '2W', children: [
         { value: '◎', label: '◎(检查保养项目)' },
-        { value: '◆', label: '◆(精度调整计划)' },
-        { value: '☆', label: '☆(检修计划)' },
+        { value: '☆', label: '☆(精度调整计划)' },
+        { value: '◆', label: '◆(检修计划)' },
         { value: '◎(待审核)', label: '◎(待审核)' },
         { value: '◆(待审核)', label: '◆(待审核)' },
         { value: '☆(待审核)', label: '☆(待审核)' },
         { value: '待审核', label: '所有(待审核)' },
-
       ]
     },
     {
       value: 'Three', label: '3W', children: [
         { value: '◎', label: '◎(检查保养项目)' },
-        { value: '◆', label: '◆(精度调整计划)' },
-        { value: '☆', label: '☆(检修计划)' },
+        { value: '☆', label: '☆(精度调整计划)' },
+        { value: '◆', label: '◆(检修计划)' },
         { value: '◎(待审核)', label: '◎(待审核)' },
         { value: '◆(待审核)', label: '◆(待审核)' },
         { value: '☆(待审核)', label: '☆(待审核)' },
@@ -1412,8 +1410,8 @@ const cascaderOptions = monthLabels.map((label, index) => ({
     {
       value: 'Four', label: '4W', children: [
         { value: '◎', label: '◎(检查保养项目)' },
-        { value: '◆', label: '◆(精度调整计划)' },
-        { value: '☆', label: '☆(检修计划)' },
+        { value: '☆', label: '☆(精度调整计划)' },
+        { value: '◆', label: '◆(检修计划)' },
         { value: '◎(待审核)', label: '◎(待审核)' },
         { value: '◆(待审核)', label: '◆(待审核)' },
         { value: '☆(待审核)', label: '☆(待审核)' },
