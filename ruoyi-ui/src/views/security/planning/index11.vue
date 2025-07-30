@@ -33,6 +33,17 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="时间" prop="time">
+        <el-date-picker
+          v-model="queryParams.time"
+          type="datetime"
+          placeholder="选择时间"
+          format="YYYY-MM-DD HH:mm"
+          value-format="YYYY-MM-DD HH:mm"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <!-- <el-form-item label="确认人" prop="reviewer">
         <el-input
           v-model="queryParams.reviewer"
@@ -101,11 +112,12 @@
 
     <el-table v-loading="loading" :data="obsoleteregisterList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
+      <el-table-column label="序号" align="center" type="index"  width="80"/>
       <el-table-column label="文件名称" align="center" prop="fileName" />
       <el-table-column label="编号" align="center" prop="documentNumber" />
       <el-table-column label="回收部门" align="center" prop="recyclingDepartment" />
       <el-table-column label="是否销毁" align="center" prop="isDestroyed" />
+      <el-table-column label="时间" align="center" prop="time" width="150" />
       <el-table-column label="备注" align="center" prop="remarks" />
       <!-- <el-table-column label="年份" align="center" prop="year" />
       <el-table-column label="确认人" align="center" prop="reviewer" /> -->
@@ -140,10 +152,20 @@
         <el-form-item label="是否销毁" prop="isDestroyed">
           <el-input v-model="form.isDestroyed" placeholder="请输入是否销毁" />
         </el-form-item>
-        <!-- <el-form-item label="备注" prop="remarks">
+        <el-form-item label="时间" prop="time">
+          <el-date-picker
+            v-model="form.time"
+            type="datetime"
+            placeholder="选择时间"
+            format="YYYY-MM-DD HH:mm"
+            value-format="YYYY-MM-DD HH:mm"
+            style="width:100%"
+          />
+        </el-form-item>
+        <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容" />
         </el-form-item>
-        <el-form-item label="确认人" prop="reviewer">
+        <!-- <el-form-item label="确认人" prop="reviewer">
           <el-input v-model="form.reviewer" placeholder="请输入确认人" />
         </el-form-item> -->
       </el-form>
@@ -226,7 +248,8 @@ const data = reactive({
     isDestroyed: null,
     remarks: null,
     year: null,
-    reviewer: null
+    reviewer: null,
+    time: null
   },
   rules: {
     fileName: [
@@ -284,7 +307,8 @@ function reset() {
     isDestroyed: null,
     remarks: null,
     year: null,
-    reviewer: null
+    reviewer: null,
+    time: null
   };
   proxy.resetForm("obsoleteregisterRef");
 }
@@ -311,6 +335,16 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+        if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  form.value.time = `${year}-${month}-${day} ${hour}:${minute}`;
   open.value = true;
   title.value = "添加作废受控文件收回销毁登记";
 }

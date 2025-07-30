@@ -164,6 +164,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSecurityCompanyKeyWorksVo"/>
         where related_id is null
         order by id desc
-        limit 10
+        limit 1000
     </select>
 </mapper>

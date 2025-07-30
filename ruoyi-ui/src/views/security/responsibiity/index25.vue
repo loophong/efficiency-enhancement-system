@@ -139,7 +139,7 @@
 
     <el-table v-loading="loading" :data="relatedpartyledgerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="100" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="主管科室" align="center" prop="responsibleDepartment" />
       <el-table-column label="相关方名称" align="center" prop="relatedPartyName" />
       <el-table-column label="主要联系人" align="center" prop="mainContactPerson" />

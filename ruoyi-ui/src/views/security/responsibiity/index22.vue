@@ -75,7 +75,7 @@
 
     <el-table v-loading="loading" :data="AccidentCauseAnalysisList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="上传时间" align="center" prop="time" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>

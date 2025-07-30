@@ -42,11 +42,11 @@
         <include refid="selectSecurityRequireExpectPartyVo"/>
         where id = #{id}
     </select>
-    <select id="selectLatestImportedRecords" resultType="com.ruoyi.security.domain.SecurityRequireExpectParty">
+    <select id="selectLatestImportedRecords" resultMap="SecurityRequireExpectPartyResult">
         <include refid="selectSecurityRequireExpectPartyVo"/>
         where related_id is null
-        order by fill_time desc
-        limit 10
+        order by id desc
+        limit 1000
     </select>
 
     <insert id="insertSecurityRequireExpectParty" parameterType="SecurityRequireExpectParty" useGeneratedKeys="true" keyProperty="id">

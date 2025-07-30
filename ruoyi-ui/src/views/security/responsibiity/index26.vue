@@ -85,7 +85,7 @@
 
     <el-table v-loading="loading" :data="relatedpartyevaluationrecordsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="评价内容" align="center" prop="evaluationContent" />
       <el-table-column label="分值" align="center" prop="score" />
       <el-table-column label="评分" align="center" prop="rating" />

@@ -12,10 +12,11 @@
         <result property="isDestroyed"    column="is_destroyed"    />
         <result property="remarks"    column="remarks"    />
         <result property="relatedId"    column="related_id"    />
+        <result property="time"    column="time"    />
     </resultMap>
 
     <sql id="selectSecurityObsoleteControlledDocumentDisposalRegisterVo">
-        select id, file_name, document_number, recycling_department, is_destroyed, remarks, related_id from security_obsolete_controlled_document_disposal_register
+        select id, file_name, document_number, recycling_department, is_destroyed, remarks, related_id, time from security_obsolete_controlled_document_disposal_register
     </sql>
 
     <select id="selectSecurityObsoleteControlledDocumentDisposalRegisterList" parameterType="SecurityObsoleteControlledDocumentDisposalRegister" resultMap="SecurityObsoleteControlledDocumentDisposalRegisterResult">
@@ -27,6 +28,7 @@
             <if test="isDestroyed != null  and isDestroyed != ''"> and is_destroyed = #{isDestroyed}</if>
             <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
             <if test="relatedId != null"> and related_id = #{relatedId}</if>
+            <if test="time != null and time != ''"> and time = #{time}</if>
         </where>
     </select>
 
@@ -44,6 +46,7 @@
             <if test="isDestroyed != null">is_destroyed,</if>
             <if test="remarks != null">remarks,</if>
             <if test="relatedId != null">related_id,</if>
+            <if test="time != null">time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fileName != null and fileName != ''">#{fileName},</if>
@@ -52,14 +55,15 @@
             <if test="isDestroyed != null">#{isDestroyed},</if>
             <if test="remarks != null">#{remarks},</if>
             <if test="relatedId != null">#{relatedId},</if>
+            <if test="time != null">#{time},</if>
         </trim>
     </insert>
 
     <insert id="batchInsert" parameterType="list">
-        insert into security_obsolete_controlled_document_disposal_register(file_name, document_number, recycling_department, is_destroyed, remarks, related_id)
+        insert into security_obsolete_controlled_document_disposal_register(file_name, document_number, recycling_department, is_destroyed, remarks, related_id, time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.fileName}, #{item.documentNumber}, #{item.recyclingDepartment}, #{item.isDestroyed}, #{item.remarks}, #{item.relatedId})
+            (#{item.fileName}, #{item.documentNumber}, #{item.recyclingDepartment}, #{item.isDestroyed}, #{item.remarks}, #{item.relatedId}, #{item.time})
         </foreach>
     </insert>
 
@@ -73,6 +77,7 @@
             <if test="isDestroyed != null">is_destroyed = #{isDestroyed},</if>
             <if test="remarks != null">remarks = #{remarks},</if>
             <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="time != null">time = #{time},</if>
         </trim>
         where id = #{id}
     </update>

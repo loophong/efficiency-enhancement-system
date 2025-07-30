@@ -250,7 +250,7 @@ import { getToken } from "@/utils/auth";
 import { UploadFilled } from '@element-plus/icons-vue';
 
 const { proxy } = getCurrentInstance();
-
+const route = useRoute();
 const knowledgeassessmentList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -358,6 +358,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+        if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加安全知识考核";
 }
@@ -441,6 +444,24 @@ function handleFileSuccess(response, file, fileList) {
 function submitFileForm() {
   proxy.$refs["uploadRef"].submit();
 }
+function checkRelatedId() {
+  const relatedId = route.query.relatedId;
+  if (relatedId) {
+    console.log("检测到关联ID参数:", relatedId);
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
+  }
+}
 
+onMounted(() => {
+  // 如果没有关联ID参数，直接加载所有数据
+  if (!route.query.relatedId) {
 getList();
+  }
+  // 有关联ID参数时，checkRelatedId会处理数据加载
+  else {
+    checkRelatedId();
+  }
+});
 </script>

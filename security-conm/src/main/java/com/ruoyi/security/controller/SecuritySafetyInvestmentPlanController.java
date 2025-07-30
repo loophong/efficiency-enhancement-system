@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -20,6 +21,7 @@ import com.ruoyi.security.domain.SecuritySafetyInvestmentPlan;
 import com.ruoyi.security.service.ISecuritySafetyInvestmentPlanService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
+
 
 /**
  * 安全投入计划Controller
@@ -51,12 +53,38 @@ public class SecuritySafetyInvestmentPlanController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('security:InvestmentPlan:export')")
     @Log(title = "安全投入计划", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
+    @GetMapping("/export")
     public void export(HttpServletResponse response, SecuritySafetyInvestmentPlan securitySafetyInvestmentPlan)
     {
         List<SecuritySafetyInvestmentPlan> list = securitySafetyInvestmentPlanService.selectSecuritySafetyInvestmentPlanList(securitySafetyInvestmentPlan);
         ExcelUtil<SecuritySafetyInvestmentPlan> util = new ExcelUtil<SecuritySafetyInvestmentPlan>(SecuritySafetyInvestmentPlan.class);
         util.exportExcel(response, list, "安全投入计划数据");
+    }
+
+    /**
+     * 获取安全投入计划导入模板
+     */
+    @PreAuthorize("@ss.hasPermi('security:InvestmentPlan:import')")
+    @GetMapping("/importTemplate")
+    public void importTemplate(HttpServletResponse response)
+    {
+        ExcelUtil<SecuritySafetyInvestmentPlan> util = new ExcelUtil<SecuritySafetyInvestmentPlan>(SecuritySafetyInvestmentPlan.class);
+        util.importTemplateExcel(response, "安全投入计划数据");
+    }
+
+    /**
+     * 导入安全投入计划数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:InvestmentPlan:import')")
+    @Log(title = "安全投入计划", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        ExcelUtil<SecuritySafetyInvestmentPlan> util = new ExcelUtil<SecuritySafetyInvestmentPlan>(SecuritySafetyInvestmentPlan.class);
+        List<SecuritySafetyInvestmentPlan> investmentPlanList = util.importExcel(file.getInputStream());
+        String operName = getUsername();
+        String message = securitySafetyInvestmentPlanService.importInvestmentPlan(investmentPlanList, updateSupport, operName);
+        return success(message);
     }
 
     /**

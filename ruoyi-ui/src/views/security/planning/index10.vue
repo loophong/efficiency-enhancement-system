@@ -47,6 +47,17 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="时间" prop="time">
+        <el-date-picker
+          v-model="queryParams.time"
+          type="datetime"
+          placeholder="选择时间"
+          format="YYYY-MM-DD HH:mm"
+          value-format="YYYY-MM-DD HH:mm"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -111,10 +122,11 @@
 
     <el-table v-loading="loading" :data="controlleddirectoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
+      <el-table-column label="序号" align="center" type="index"  width="80"/>
       <el-table-column label="文件名称" align="center" prop="fileName" />
       <el-table-column label="编号" align="center" prop="documentNumber" />
       <el-table-column label="接收单位" align="center" prop="receivingUnit" />
+      <el-table-column label="时间" align="center" prop="time" width="150" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:controlleddirectory:edit']">修改</el-button>
@@ -142,6 +154,16 @@
         </el-form-item>
         <el-form-item label="接收单位" prop="receivingUnit">
           <el-input v-model="form.receivingUnit" placeholder="请输入接收单位" />
+        </el-form-item>
+        <el-form-item label="时间" prop="time">
+          <el-date-picker
+            v-model="form.time"
+            type="datetime"
+            placeholder="选择时间"
+            format="YYYY-MM-DD HH:mm"
+            value-format="YYYY-MM-DD HH:mm"
+            style="width:100%"
+          />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -234,7 +256,8 @@ const data = reactive({
     pageSize: 10,
     fileName: null,
     documentNumber: null,
-    receivingUnit: null
+    receivingUnit: null,
+    time: null
   },
   rules: {
     fileName: [
@@ -288,7 +311,8 @@ function reset() {
     id: null,
     fileName: null,
     documentNumber: null,
-    receivingUnit: null
+    receivingUnit: null,
+    time: null
   };
   proxy.resetForm("controlleddirectoryRef");
 }
@@ -315,6 +339,16 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+        if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  form.value.time = `${year}-${month}-${day} ${hour}:${minute}`;
   open.value = true;
   title.value = "添加受控文件发放目录";
 }

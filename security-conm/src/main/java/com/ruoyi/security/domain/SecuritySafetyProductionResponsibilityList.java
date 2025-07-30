@@ -29,6 +29,9 @@ public class SecuritySafetyProductionResponsibilityList extends BaseEntity
 
     /** 关联ID */
     private Long relatedId;
+    
+    /** 文件列表 */
+    private String fileList;
 
     public void setId(String id)
     {
@@ -67,6 +70,16 @@ public class SecuritySafetyProductionResponsibilityList extends BaseEntity
         return relatedId;
     }
 
+    public String getFileList() 
+    {
+        return fileList;
+    }
+
+    public void setFileList(String fileList) 
+    {
+        this.fileList = fileList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -74,6 +87,7 @@ public class SecuritySafetyProductionResponsibilityList extends BaseEntity
             .append("zhiDu", getZhiDu())
             .append("banFa", getBanFa())
             .append("relatedId", getRelatedId())
+            .append("fileList", getFileList())
             .toString();
     }
 }

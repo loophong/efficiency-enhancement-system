@@ -90,9 +90,14 @@
 
     <el-table v-loading="loading" :data="OhsDocumentsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" type="index" />
+      <el-table-column label="序号" align="center" type="index"  width="100" />
       <el-table-column label="制度名称" align="center" prop="systemName" />
       <el-table-column label="编号" align="center" prop="documentNumber" />
+      <el-table-column label="文件列表" align="center" width="200">
+        <template #default="scope">
+          <file-upload v-model="scope.row.fileList" :limit="5" @change="handleFileChange($event, scope.row)" :show-button="false" />
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remarks" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -119,6 +124,9 @@
         <el-form-item label="编号" prop="documentNumber">
           <el-input v-model="form.documentNumber" placeholder="请输入编号" />
         </el-form-item>
+        <el-form-item label="文件列表" prop="fileList">
+          <file-upload v-model="form.fileList" :limit="5" />
+        </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="form.remarks" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -136,6 +144,7 @@
 <script setup name="OhsDocuments">
 import { listOhsDocuments, getOhsDocuments, delOhsDocuments, addOhsDocuments, updateOhsDocuments } from "@/api/security/OhsDocuments";
 import ExcelImport from "@/components/ExcelImport/index.vue";
+import FileUpload from "@/components/FileUpload/index.vue";
 const route = useRoute();
 const { proxy } = getCurrentInstance();
 const OhsDocumentsList = ref([]);
@@ -188,6 +197,7 @@ function reset() {
     id: null,
     systemName: null,
     documentNumber: null,
+    fileList: null,
     remarks: null
   };
   proxy.resetForm("OhsDocumentsRef");
@@ -215,6 +225,9 @@ function handleSelectionChange(selection) {
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
+        if (queryParams.value.relatedId) {
+    form.value.relatedId = queryParams.value.relatedId;
+  }
   open.value = true;
   title.value = "添加环境职业健康安全管理体系文件清单";
 }
@@ -272,6 +285,26 @@ function handleExport() {
 /** 下载模板操作 */
 function handleDownloadTemplate() {
   proxy.download('security/OhsDocuments/importTemplate', {}, `OhsDocuments_template_${new Date().getTime()}.xlsx`);
+}
+
+// 文件上传变更处理
+function handleFileChange(file, row) {
+  if (file) {
+    console.log('文件上传成功:', file);
+    // 确保row.fileList是字符串格式
+    const updatedData = {
+      id: row.id,
+      fileList: typeof row.fileList === 'string' ? row.fileList : JSON.stringify(row.fileList)
+    };
+    console.log('准备更新的数据:', updatedData);
+    updateOhsDocuments(updatedData).then(() => {
+      proxy.$modal.msgSuccess("文件更新成功");
+      getList(); // 更新列表数据
+    }).catch(err => {
+      console.error('文件更新失败:', err);
+      proxy.$modal.msgError("文件更新失败，请重试");
+    });
+  }
 }
 
 function checkRelatedId() {

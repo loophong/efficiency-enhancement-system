@@ -75,7 +75,7 @@
   
       <el-table v-loading="loading" :data="RelationList1List" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="id" align="center" prop="id" />
+        <el-table-column label="序号" align="center" type="index" width="100"/>
         <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
@@ -148,6 +148,7 @@
   <script setup name="RelationList1">
   import { listRelationList1, getRelationList1, delRelationList1, addRelationList1, updateRelationList1 } from "@/api/security/RelationList1";
   import VueOfficeExcel from '@vue-office/excel'
+    import '@vue-office/excel/lib/index.css'
 const previewSrc = ref(''); // 确保 previewSrc 被正确声明
 const comStyle = ref({ width: '100%', height: '600px' });
 const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明

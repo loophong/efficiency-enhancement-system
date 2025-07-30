@@ -116,6 +116,7 @@
 
     <el-table v-loading="loading" :data="assessmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="序号" align="center" type="index" width="100" />
       <el-table-column label="活动/过程" align="center" prop="activity" />
       <el-table-column label="风险和机遇" align="center" prop="riskOpportunity" />
       <el-table-column label="造成后果" align="center" prop="consequences" />

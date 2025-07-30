@@ -10,10 +10,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="documentNumber"    column="document_number"    />
         <result property="receivingUnit"    column="receiving_unit"    />
         <result property="relatedId"    column="related_id"    />
+        <result property="time"    column="time"    />
     </resultMap>
 
     <sql id="selectSecurityControlledDocumentDistributionDirectoryVo">
-        select id, file_name, document_number, receiving_unit, related_id from security_controlled_document_distribution_directory
+        select id, file_name, document_number, receiving_unit, related_id, time from security_controlled_document_distribution_directory
     </sql>
 
     <select id="selectSecurityControlledDocumentDistributionDirectoryList" parameterType="SecurityControlledDocumentDistributionDirectory" resultMap="SecurityControlledDocumentDistributionDirectoryResult">
@@ -23,6 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="documentNumber != null  and documentNumber != ''"> and document_number = #{documentNumber}</if>
             <if test="receivingUnit != null  and receivingUnit != ''"> and receiving_unit = #{receivingUnit}</if>
             <if test="relatedId != null"> and related_id = #{relatedId}</if>
+            <if test="time != null and time != ''"> and time = #{time}</if>
         </where>
     </select>
     
@@ -38,12 +40,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="documentNumber != null">document_number,</if>
             <if test="receivingUnit != null">receiving_unit,</if>
             <if test="relatedId != null">related_id,</if>
+            <if test="time != null">time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="fileName != null and fileName != ''">#{fileName},</if>
             <if test="documentNumber != null">#{documentNumber},</if>
             <if test="receivingUnit != null">#{receivingUnit},</if>
             <if test="relatedId != null">#{relatedId},</if>
+            <if test="time != null">#{time},</if>
          </trim>
     </insert>
 <!--    <insert id="batchInsert">-->
@@ -58,10 +62,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--    </insert>-->
 
     <insert id="batchInsert" parameterType="list">
-        insert into security_controlled_document_distribution_directory(file_name,document_number,receiving_unit,related_id)
+        insert into security_controlled_document_distribution_directory(file_name,document_number,receiving_unit,related_id,time)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.fileName}, #{item.documentNumber}, #{item.receivingUnit}, #{item.relatedId})
+            (#{item.fileName}, #{item.documentNumber}, #{item.receivingUnit}, #{item.relatedId}, #{item.time})
         </foreach>
     </insert>
 
@@ -72,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="documentNumber != null">document_number = #{documentNumber},</if>
             <if test="receivingUnit != null">receiving_unit = #{receivingUnit},</if>
             <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="time != null">time = #{time},</if>
         </trim>
         where id = #{id}
     </update>

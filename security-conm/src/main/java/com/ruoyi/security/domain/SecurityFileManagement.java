@@ -65,6 +65,14 @@ public class SecurityFileManagement extends BaseEntity
     @Excel(name = "状态(0正常 1禁用)")
     private String status;
 
+    /** 年份 */
+    @Excel(name = "年份")
+    private String year;
+
+    /** 其他信息 */
+    @Excel(name = "其他信息")
+    private String text;
+
     public void setId(Long id) 
     {
         this.id = id;
@@ -182,6 +190,26 @@ public class SecurityFileManagement extends BaseEntity
     {
         return status;
     }
+    
+    public void setYear(String year) 
+    {
+        this.year = year;
+    }
+
+    public String getYear() 
+    {
+        return year;
+    }
+    
+    public void setText(String text) 
+    {
+        this.text = text;
+    }
+
+    public String getText() 
+    {
+        return text;
+    }
 
     @Override
     public String toString() {
@@ -199,6 +227,8 @@ public class SecurityFileManagement extends BaseEntity
             .append("uploadTime", getUploadTime())
             .append("uploadUser", getUploadUser())
             .append("status", getStatus())
+            .append("year", getYear())
+            .append("text", getText())
             .append("remark", getRemark())
             .append("createBy", getCreateBy())
             .append("createTime", getCreateTime())

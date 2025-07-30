@@ -123,8 +123,8 @@ public class SecurityObsoleteControlledDocumentDisposalRegisterController extend
     /**
      * 下载作废受控文件收回销毁登记导入模板
      */
-    @PostMapping("/importTemplate")
-    public void importTemplate(HttpServletResponse response)
+    @GetMapping("/downloadTemplate")
+    public void downloadTemplate(HttpServletResponse response)
     {
         ExcelUtil<SecurityObsoleteControlledDocumentDisposalRegister> util = new ExcelUtil<SecurityObsoleteControlledDocumentDisposalRegister>(SecurityObsoleteControlledDocumentDisposalRegister.class);
         util.importTemplateExcel(response, "作废受控文件收回销毁登记数据");

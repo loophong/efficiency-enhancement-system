@@ -7,7 +7,7 @@ import com.ruoyi.security.domain.SecurityDangerWangList;
  * 风险网格化清单Mapper接口
  * 
  * @author ruoyi
- * @date 2025-07-21
+ * @date 2025-07-30
  */
 public interface SecurityDangerWangListMapper 
 {
@@ -53,26 +53,25 @@ public interface SecurityDangerWangListMapper
 
     /**
      * 批量删除风险网格化清单
-     *
+     * 
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteSecurityDangerWangListByIds(String[] ids);
-
+    
     /**
-     * 根据风险点和网格化查询风险网格化清单
-     *
-     * @param fengXianDian 风险点
-     * @param wangGeHua 网格化
-     * @return 风险网格化清单
+     * 查询最近导入且没有关联ID的风险网格化清单记录
+     * 
+     * @param limit 限制查询的记录数
+     * @return 风险网格化清单集合
      */
-    public SecurityDangerWangList selectSecurityDangerWangListByName(String fengXianDian, String wangGeHua);
-
+    public List<SecurityDangerWangList> selectLatestImportedWithoutRelatedId(int limit);
+    
     /**
-     * 批量更新最近导入数据的关联ID
-     *
+     * 根据关联ID查询风险网格化清单数据
+     * 
      * @param relatedId 关联ID
-     * @return 更新的记录数
+     * @return 风险网格化清单集合
      */
-    public int updateLatestImportedRelatedId(Long relatedId);
+    public List<SecurityDangerWangList> selectSecurityDangerWangListByRelatedId(String relatedId);
 }

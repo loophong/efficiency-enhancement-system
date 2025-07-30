@@ -19,7 +19,7 @@ public class SecurityHazardPointLedger extends BaseEntity
     private Long id;
 
     /** 评价单元 */
-    @Excel(name = "序号", width = 10, prompt = "序号，可以为空，会自动继承上一行的值")
+    @Excel(name = "评价单元", width = 10, prompt = "评价单元，可以为空，会自动继承上一行的值")
     private String evaluationUnit;
 
     /** 岗位 */

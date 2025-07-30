@@ -127,12 +127,14 @@ public class SecurityHazardSourceListServiceImpl implements ISecurityHazardSourc
             
             // 记录上一行的值，用于处理合并单元格
             String lastActivity = null;
+            String lastPart = null;
             String lastHazardSource = null;
             String lastControlMeasures = null;
             
             // 增强处理合并单元格的逻辑
             // 记录连续相同值的开始行
             int activityStartRow = 0;
+            int partStartRow = 0;
             int controlMeasuresStartRow = 0;
             
             int rowIndex = 1; // 从第1行开始计数
@@ -158,6 +160,18 @@ public class SecurityHazardSourceListServiceImpl implements ISecurityHazardSourc
                         // 更新开始行
                         activityStartRow = rowIndex - 1;
                         log.debug("更新作业活动开始行为: {}, 值: {}", activityStartRow, lastActivity);
+                    }
+                    
+                    // 处理部位合并单元格
+                    if (StringUtils.isEmpty(risk.getPart()) && lastPart != null) {
+                        log.info("第{}行部位为空，使用上一行值：{}", rowIndex, lastPart);
+                        risk.setPart(lastPart);
+                    } else if (StringUtils.isNotEmpty(risk.getPart())) {
+                        // 如果当前行有值，更新lastPart
+                        lastPart = risk.getPart();
+                        // 更新开始行
+                        partStartRow = rowIndex - 1;
+                        log.debug("更新部位开始行为: {}, 值: {}", partStartRow, lastPart);
                     }
                     
                     // 处理危险源合并单元格

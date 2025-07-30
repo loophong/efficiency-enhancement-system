@@ -6,35 +6,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <resultMap type="SecurityDangerWangList" id="SecurityDangerWangListResult">
         <result property="id"    column="id"    />
-        <result property="zerenKeshi"    column="zeren_keshi"    />
         <result property="changsuoBanzu"    column="changsuo_banzu"    />
         <result property="gongxuShebei"    column="gongxu_shebei"    />
         <result property="jituBuwei"    column="jitu_buwei"    />
-        <result property="zuoyeGongzong"    column="zuoye_gongzong"    />
         <result property="zhuyaoWeixian"    column="zhuyao_weixian"    />
         <result property="keNengFaSheng"    column="ke_neng_fa_sheng"    />
+        <result property="scoreL"    column="score_l"    />
+        <result property="scoreS"    column="score_s"    />
+        <result property="scoreLs"    column="score_ls"    />
+        <result property="fenXianDengJi"    column="fen_xian_deng_ji"    />
+        <result property="guankongYufang"    column="guankong_yufang"    />
+        <result property="fuZeRen"    column="fu_ze_ren"    />
         <result property="wangLuoFuZeRen"    column="wang_luo_fu_ze_ren"    />
         <result property="zhuyaoGongzuo"    column="zhuyao_gongzuo"    />
         <result property="relatedId"    column="related_id"    />
     </resultMap>
 
     <sql id="selectSecurityDangerWangListVo">
-        select id, zeren_keshi, changsuo_banzu, gongxu_shebei, jitu_buwei, zuoye_gongzong, zhuyao_weixian, ke_neng_fa_sheng, wang_luo_fu_ze_ren, zhuyao_gongzuo, related_id from security_danger_wang_list
+        select id, changsuo_banzu, gongxu_shebei, jitu_buwei, zhuyao_weixian, ke_neng_fa_sheng, score_l, score_s, score_ls, fen_xian_deng_ji, guankong_yufang, fu_ze_ren, wang_luo_fu_ze_ren, zhuyao_gongzuo, related_id from security_danger_wang_list
     </sql>
 
     <select id="selectSecurityDangerWangListList" parameterType="SecurityDangerWangList" resultMap="SecurityDangerWangListResult">
         <include refid="selectSecurityDangerWangListVo"/>
         <where>  
-            <if test="zerenKeshi != null  and zerenKeshi != ''"> and zeren_keshi = #{zerenKeshi}</if>
             <if test="changsuoBanzu != null  and changsuoBanzu != ''"> and changsuo_banzu = #{changsuoBanzu}</if>
             <if test="gongxuShebei != null  and gongxuShebei != ''"> and gongxu_shebei = #{gongxuShebei}</if>
             <if test="jituBuwei != null  and jituBuwei != ''"> and jitu_buwei = #{jituBuwei}</if>
-            <if test="zuoyeGongzong != null  and zuoyeGongzong != ''"> and zuoye_gongzong = #{zuoyeGongzong}</if>
-            <if test="zhuyaoWeixian != null  and zhuyaoWeixian != ''"> and zhuyao_weixian = #{zhuyaoWeixian}</if>
             <if test="keNengFaSheng != null  and keNengFaSheng != ''"> and ke_neng_fa_sheng = #{keNengFaSheng}</if>
+            <if test="fenXianDengJi != null  and fenXianDengJi != ''"> and fen_xian_deng_ji = #{fenXianDengJi}</if>
+            <if test="fuZeRen != null  and fuZeRen != ''"> and fu_ze_ren = #{fuZeRen}</if>
             <if test="wangLuoFuZeRen != null  and wangLuoFuZeRen != ''"> and wang_luo_fu_ze_ren = #{wangLuoFuZeRen}</if>
-            <if test="zhuyaoGongzuo != null  and zhuyaoGongzuo != ''"> and zhuyao_gongzuo = #{zhuyaoGongzuo}</if>
-            <if test="relatedId != null  and relatedId != ''"> and related_id = #{relatedId}</if>
         </where>
     </select>
     
@@ -46,25 +47,35 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecurityDangerWangList" parameterType="SecurityDangerWangList" useGeneratedKeys="true" keyProperty="id">
         insert into security_danger_wang_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="zerenKeshi != null">zeren_keshi,</if>
+            <!-- 移除id字段，让数据库自动生成 -->
             <if test="changsuoBanzu != null">changsuo_banzu,</if>
             <if test="gongxuShebei != null">gongxu_shebei,</if>
             <if test="jituBuwei != null">jitu_buwei,</if>
-            <if test="zuoyeGongzong != null">zuoye_gongzong,</if>
             <if test="zhuyaoWeixian != null">zhuyao_weixian,</if>
             <if test="keNengFaSheng != null">ke_neng_fa_sheng,</if>
+            <if test="scoreL != null">score_l,</if>
+            <if test="scoreS != null">score_s,</if>
+            <if test="scoreLs != null">score_ls,</if>
+            <if test="fenXianDengJi != null">fen_xian_deng_ji,</if>
+            <if test="guankongYufang != null">guankong_yufang,</if>
+            <if test="fuZeRen != null">fu_ze_ren,</if>
             <if test="wangLuoFuZeRen != null">wang_luo_fu_ze_ren,</if>
             <if test="zhuyaoGongzuo != null">zhuyao_gongzuo,</if>
             <if test="relatedId != null">related_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="zerenKeshi != null">#{zerenKeshi},</if>
+            <!-- 移除id字段，让数据库自动生成 -->
             <if test="changsuoBanzu != null">#{changsuoBanzu},</if>
             <if test="gongxuShebei != null">#{gongxuShebei},</if>
             <if test="jituBuwei != null">#{jituBuwei},</if>
-            <if test="zuoyeGongzong != null">#{zuoyeGongzong},</if>
             <if test="zhuyaoWeixian != null">#{zhuyaoWeixian},</if>
             <if test="keNengFaSheng != null">#{keNengFaSheng},</if>
+            <if test="scoreL != null">#{scoreL},</if>
+            <if test="scoreS != null">#{scoreS},</if>
+            <if test="scoreLs != null">#{scoreLs},</if>
+            <if test="fenXianDengJi != null">#{fenXianDengJi},</if>
+            <if test="guankongYufang != null">#{guankongYufang},</if>
+            <if test="fuZeRen != null">#{fuZeRen},</if>
             <if test="wangLuoFuZeRen != null">#{wangLuoFuZeRen},</if>
             <if test="zhuyaoGongzuo != null">#{zhuyaoGongzuo},</if>
             <if test="relatedId != null">#{relatedId},</if>
@@ -74,13 +85,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <update id="updateSecurityDangerWangList" parameterType="SecurityDangerWangList">
         update security_danger_wang_list
         <trim prefix="SET" suffixOverrides=",">
-            <if test="zerenKeshi != null">zeren_keshi = #{zerenKeshi},</if>
             <if test="changsuoBanzu != null">changsuo_banzu = #{changsuoBanzu},</if>
             <if test="gongxuShebei != null">gongxu_shebei = #{gongxuShebei},</if>
             <if test="jituBuwei != null">jitu_buwei = #{jituBuwei},</if>
-            <if test="zuoyeGongzong != null">zuoye_gongzong = #{zuoyeGongzong},</if>
             <if test="zhuyaoWeixian != null">zhuyao_weixian = #{zhuyaoWeixian},</if>
             <if test="keNengFaSheng != null">ke_neng_fa_sheng = #{keNengFaSheng},</if>
+            <if test="scoreL != null">score_l = #{scoreL},</if>
+            <if test="scoreS != null">score_s = #{scoreS},</if>
+            <if test="scoreLs != null">score_ls = #{scoreLs},</if>
+            <if test="fenXianDengJi != null">fen_xian_deng_ji = #{fenXianDengJi},</if>
+            <if test="guankongYufang != null">guankong_yufang = #{guankongYufang},</if>
+            <if test="fuZeRen != null">fu_ze_ren = #{fuZeRen},</if>
             <if test="wangLuoFuZeRen != null">wang_luo_fu_ze_ren = #{wangLuoFuZeRen},</if>
             <if test="zhuyaoGongzuo != null">zhuyao_gongzuo = #{zhuyaoGongzuo},</if>
             <if test="relatedId != null">related_id = #{relatedId},</if>
@@ -93,22 +108,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecurityDangerWangListByIds" parameterType="String">
-        delete from security_danger_wang_list where id in
+        delete from security_danger_wang_list where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
-
-    <select id="selectSecurityDangerWangListByName" parameterType="String" resultMap="SecurityDangerWangListResult">
+    
+    <select id="selectLatestImportedWithoutRelatedId" parameterType="int" resultMap="SecurityDangerWangListResult">
         <include refid="selectSecurityDangerWangListVo"/>
-        where zeren_keshi = #{fengXianDian} and changsuo_banzu = #{wangGeHua}
+        where (related_id is null or related_id = '')
+        order by id desc
     </select>
-
-    <update id="updateLatestImportedRelatedId" parameterType="Long">
-        UPDATE security_danger_wang_list
-        SET related_id = #{relatedId}
-        WHERE related_id IS NULL
-        ORDER BY id DESC
-        LIMIT 100
-    </update>
+    
+    <!-- 根据关联ID查询风险网格化清单数据 -->
+    <select id="selectSecurityDangerWangListByRelatedId" parameterType="String" resultMap="SecurityDangerWangListResult">
+        <include refid="selectSecurityDangerWangListVo"/>
+        where related_id = #{relatedId}
+        order by id asc
+    </select>
 </mapper>

@@ -4,7 +4,7 @@
       :on-error="handleUploadError" :on-exceed="handleExceed" :on-success="handleUploadSuccess" :show-file-list="false"
       :headers="headers" class="upload-file-uploader" ref="fileUpload">
       <!-- 上传按钮 -->
-      <el-button type="primary">选取文件</el-button>
+      <el-button type="primary" v-if="showButton">选取文件</el-button>
     </el-upload>
     <!-- 上传提示 -->
     <!-- <div class="el-upload__tip" v-if="showTip">
@@ -44,10 +44,15 @@ const props = defineProps({
   // 文件类型, 例如['png', 'jpg', 'jpeg']
   fileType: {
     type: Array,
-    default: () => ["doc", "xls", "ppt", "txt", "pdf", "xlsx", "docx"],
+    default: () => ["doc", "xls", "ppt", "txt", "pdf", "xlsx", "docx", 'png', 'jpg', 'jpeg']
   },
   // 是否显示提示
   isShowTip: {
+    type: Boolean,
+    default: true
+  },
+  // 是否显示上传按钮
+  showButton: {
     type: Boolean,
     default: true
   }

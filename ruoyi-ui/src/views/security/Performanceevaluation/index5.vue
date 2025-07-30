@@ -1,6 +1,38 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="上传时间" prop="uploadDate">
+        <el-date-picker clearable
+          v-model="queryParams.uploadDate"
+          type="date"
+          value-format="YYYY-MM-DD"
+          placeholder="请选择上传时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="上传人" prop="uploadBy">
+        <el-input
+          v-model="queryParams.uploadBy"
+          placeholder="请输入上传人"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="上传部门" prop="uploadDept">
+        <el-input
+          v-model="queryParams.uploadDept"
+          placeholder="请输入上传部门"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="描述" prop="comment">
+        <el-input
+          v-model="queryParams.comment"
+          placeholder="请输入描述"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -14,7 +46,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['security:CorrectiveMeasuresApproval:add']"
+          v-hasPermi="['security:shenpibiao:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -24,7 +56,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['security:CorrectiveMeasuresApproval:edit']"
+          v-hasPermi="['security:shenpibiao:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -34,7 +66,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['security:CorrectiveMeasuresApproval:remove']"
+          v-hasPermi="['security:shenpibiao:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -43,51 +75,42 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['security:CorrectiveMeasuresApproval:export']"
+          v-hasPermi="['security:shenpibiao:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="CorrectiveMeasuresApprovalList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="shenpibiaoList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="责任科室" align="center" prop="responsibleUnit" />
-      <el-table-column label="参加单位" align="center" prop="participatingUnits" />
-      <el-table-column label="问题描述" align="center" prop="nonConformanceDescription" />
-      <el-table-column label="原因分析" align="center" prop="causeAnalysis" />
-      <el-table-column label="负责人" align="center" prop="responsiblePerson" />
-      <el-table-column label="签字时间" align="center" prop="time" width="180">
+      <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.time, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="恢复计划" align="center" prop="correctivePreventivePlan" />
-      <el-table-column label="责任单位主管" align="center" prop="responsibleUnitSupervisor" />
-      <el-table-column label="管理者代表审批" align="center" prop="managerRepresentativeApproval">
-        <template #default="scope">
-          <dict-tag :options="security_status" :value="scope.row.managerRepresentativeApproval"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="审批时间" align="center" prop="planTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.planTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="完成情况" align="center" prop="implementationStatus" />
-      <el-table-column label="负责人签字" align="center" prop="responsibleDepartmentHead" />
-      <el-table-column label="签字时间" align="center" prop="completionTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.completionTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="上传人" align="center" prop="uploadBy" />
+      <el-table-column label="上传部门" align="center" prop="uploadDept" />
+      <el-table-column label="文件" align="center" prop="files" />
+      <el-table-column label="描述" align="center" prop="comment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:CorrectiveMeasuresApproval:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:CorrectiveMeasuresApproval:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:shenpibiao:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:shenpibiao:remove']">删除</el-button>
+          <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+            <!-- 文件预览对话框 -->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-docx
+          :src="previewSrc"
+          :style="comStyle"
+          @rendered="renderedHandler"
+          @error="errorHandler"
+      />
+    </el-dialog>
     
     <pagination
       v-show="total>0"
@@ -97,66 +120,28 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改纠正与预防措施审批实施对话框 -->
+    <!-- 添加或修改不符合、纠正措施和预防措施程序对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="CorrectiveMeasuresApprovalRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="责任科室" prop="responsibleUnit">
-          <el-input v-model="form.responsibleUnit" placeholder="请输入责任科室" />
-        </el-form-item>
-        <el-form-item label="参加单位" prop="participatingUnits">
-          <el-input v-model="form.participatingUnits" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="问题描述" prop="nonConformanceDescription">
-          <el-input v-model="form.nonConformanceDescription" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="原因分析" prop="causeAnalysis">
-          <el-input v-model="form.causeAnalysis" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="负责人" prop="responsiblePerson">
-          <el-input v-model="form.responsiblePerson" placeholder="请输入负责人" />
-        </el-form-item>
-        <el-form-item label="签字时间" prop="time">
+      <el-form ref="shenpibiaoRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="上传时间" prop="uploadDate">
           <el-date-picker clearable
-            v-model="form.time"
+            v-model="form.uploadDate"
             type="date"
             value-format="YYYY-MM-DD"
-            placeholder="请选择签字时间">
+            placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="恢复计划" prop="correctivePreventivePlan">
-          <el-input v-model="form.correctivePreventivePlan" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="上传人" prop="uploadBy">
+          <el-input v-model="form.uploadBy" placeholder="请输入上传人" />
         </el-form-item>
-        <el-form-item label="责任单位主管" prop="responsibleUnitSupervisor">
-          <el-input v-model="form.responsibleUnitSupervisor" placeholder="请输入责任单位主管" />
+        <el-form-item label="上传部门" prop="uploadDept">
+          <el-input v-model="form.uploadDept" placeholder="请输入上传部门" />
         </el-form-item>
-        <el-form-item label="管理者代表审批" prop="managerRepresentativeApproval">
-          <el-select v-model="form.managerRepresentativeApproval" placeholder="请选择管理者代表审批">
-            <el-option
-              v-for="dict in security_status"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
+        <el-form-item label="文件" prop="files">
+          <file-upload v-model="form.files"/>
         </el-form-item>
-        <el-form-item label="审批时间" prop="planTime">
-          <el-date-picker clearable
-            v-model="form.planTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择审批时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="负责人签字" prop="responsibleDepartmentHead">
-          <el-input v-model="form.responsibleDepartmentHead" placeholder="请输入负责人签字" />
-        </el-form-item>
-        <el-form-item label="签字时间" prop="completionTime">
-          <el-date-picker clearable
-            v-model="form.completionTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择签字时间">
-          </el-date-picker>
+        <el-form-item label="描述" prop="comment">
+          <el-input v-model="form.comment" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -169,13 +154,15 @@
   </div>
 </template>
 
-<script setup name="CorrectiveMeasuresApproval">
-import { listCorrectiveMeasuresApproval, getCorrectiveMeasuresApproval, delCorrectiveMeasuresApproval, addCorrectiveMeasuresApproval, updateCorrectiveMeasuresApproval } from "@/api/security/CorrectiveMeasuresApproval";
-
+<script setup name="Shenpibiao">
+import { listShenpibiao, getShenpibiao, delShenpibiao, addShenpibiao, updateShenpibiao } from "@/api/security/shenpibiao";
+import VueOfficeDocx from '@vue-office/docx'
+const previewSrc = ref(''); // 确保 previewSrc 被正确声明
+const comStyle = ref({ width: '100%', height: '600px' });
+const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
 const { proxy } = getCurrentInstance();
-const { security_status } = proxy.useDict('security_status');
 
-const CorrectiveMeasuresApprovalList = ref([]);
+const shenpibiaoList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -190,30 +177,23 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    uploadDate: null,
+    uploadBy: null,
+    uploadDept: null,
+    files: null,
+    comment: null
   },
   rules: {
-    responsibleUnit: [
-      { required: true, message: "责任科室不能为空", trigger: "blur" }
-    ],
-    participatingUnits: [
-      { required: true, message: "参加单位不能为空", trigger: "blur" }
-    ],
-    nonConformanceDescription: [
-      { required: true, message: "问题描述不能为空", trigger: "blur" }
-    ],
-    causeAnalysis: [
-      { required: true, message: "原因分析不能为空", trigger: "blur" }
-    ],
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询纠正与预防措施审批实施列表 */
+/** 查询不符合、纠正措施和预防措施程序列表 */
 function getList() {
   loading.value = true;
-  listCorrectiveMeasuresApproval(queryParams.value).then(response => {
-    CorrectiveMeasuresApprovalList.value = response.rows;
+  listShenpibiao(queryParams.value).then(response => {
+    shenpibiaoList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -229,21 +209,13 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    responsibleUnit: null,
-    participatingUnits: null,
-    nonConformanceDescription: null,
-    causeAnalysis: null,
-    responsiblePerson: null,
-    time: null,
-    correctivePreventivePlan: null,
-    responsibleUnitSupervisor: null,
-    managerRepresentativeApproval: null,
-    planTime: null,
-    implementationStatus: null,
-    responsibleDepartmentHead: null,
-    completionTime: null
+    uploadDate: null,
+    uploadBy: null,
+    uploadDept: null,
+    files: null,
+    comment: null
   };
-  proxy.resetForm("CorrectiveMeasuresApprovalRef");
+  proxy.resetForm("shenpibiaoRef");
 }
 
 /** 搜索按钮操作 */
@@ -269,32 +241,32 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加纠正与预防措施审批实施";
+  title.value = "添加不符合、纠正措施和预防措施程序";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getCorrectiveMeasuresApproval(_id).then(response => {
+  getShenpibiao(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改纠正与预防措施审批实施";
+    title.value = "修改不符合、纠正措施和预防措施程序";
   });
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["CorrectiveMeasuresApprovalRef"].validate(valid => {
+  proxy.$refs["shenpibiaoRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateCorrectiveMeasuresApproval(form.value).then(response => {
+        updateShenpibiao(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addCorrectiveMeasuresApproval(form.value).then(response => {
+        addShenpibiao(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -307,8 +279,8 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除纠正与预防措施审批实施编号为"' + _ids + '"的数据项？').then(function() {
-    return delCorrectiveMeasuresApproval(_ids);
+  proxy.$modal.confirm('是否确认删除不符合、纠正措施和预防措施程序编号为"' + _ids + '"的数据项？').then(function() {
+    return delShenpibiao(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -317,9 +289,37 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('security/CorrectiveMeasuresApproval/export', {
+  proxy.download('security/shenpibiao/export', {
     ...queryParams.value
-  }, `CorrectiveMeasuresApproval_${new Date().getTime()}.xlsx`)
+  }, `shenpibiao_${new Date().getTime()}.xlsx`)
+}
+
+/** 预览文件 */
+function handlePreview(row) {
+  const staticPath = 'http://localhost/dev-api'; // 静态地址
+  const dynamicPath = row.files; // 动态地址
+  const fileExt = dynamicPath.split('.').pop().toLowerCase();
+  
+  if (fileExt === 'docx') {
+    previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
+    console.log("文件地址: " + previewSrc.value);
+    previewDialogVisible.value = true;
+    console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
+    console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
+  } else {
+    console.error('不支持的文件类型,只能查看docx文件:', fileExt);
+    proxy.$modal.msgError('不支持的文件类型,只能查看docx文件');
+  }
+}
+
+/** 渲染完成处理 */
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+
+/** 错误处理 */
+function errorHandler(error) {
+  console.error('文档渲染错误', error);
 }
 
 getList();

@@ -20,7 +20,7 @@ public class SecuritySafetyInvestmentPlan extends BaseEntity
     private Long serialNumber;
 
     /** 项目ID */
-    @Excel(name = "项目ID")
+//    @Excel(name = "项目ID")
     private Long projectId;
 
     /** 项目名称 */
@@ -28,27 +28,27 @@ public class SecuritySafetyInvestmentPlan extends BaseEntity
     private String projectName;
 
     /** 2024年预算合计 */
-    @Excel(name = "2024年预算合计")
+    @Excel(name = "全年预算")
     private BigDecimal budgetTotal2024;
 
     /** 2024年第一季度 */
-    @Excel(name = "2024年第一季度")
+    @Excel(name = "一季度预算")
     private BigDecimal budgetQ12024;
 
     /** 2024年第二季度 */
-    @Excel(name = "2024年第二季度")
+    @Excel(name = "二季度预算")
     private BigDecimal budgetQ22024;
 
     /** 2024年第三季度 */
-    @Excel(name = "2024年第三季度")
+    @Excel(name = "三季度预算")
     private BigDecimal budgetQ32024;
 
     /** 2024年第四季度 */
-    @Excel(name = "2024年第四季度")
+    @Excel(name = "四季度预算")
     private BigDecimal budgetQ42024;
 
     /** 预算编制依据或简要说明 */
-    @Excel(name = "预算编制依据或简要说明")
+    @Excel(name = "预算依据或简要说明")
     private String budgetBasis;
 
     public void setSerialNumber(Long serialNumber) 
