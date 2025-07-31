@@ -328,7 +328,7 @@
   </div>
 </template>
 
-<script setup name="Filemanagement">
+<script setup name="Filemanagement3">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';

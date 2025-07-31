@@ -84,48 +84,48 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/security/menu-tree',
-    component: Layout,
-    hidden: false,
-    meta: { title: '安全系统菜单', icon: 'tree' },
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/security/tree/index'),
-        name: 'SecuritySysMenuTree',
-        meta: { title: '菜单树管理', icon: 'tree', affix: false }
-      }
-    ]
-  },
-  {
-    path: '/security/environmentidicaation',
-    component: Layout,
-    hidden: true,
-    permissions: ['security:environmentidicaation:list'],
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/security/environmentidicaation/index'),
-        name: 'Environmentidicaation',
-        meta: { title: '环境识别', activeMenu: '/security/environmentidicaation' }
-      }
-    ]
-  },
-  {
-    path: '/security/fileManagement',
-    component: Layout,
-    hidden: false,
-    permissions: ['security:fileManagement:list'],
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/security/fileManagement/index'),
-        name: 'FileManagement',
-        meta: { title: '文件管理', icon: 'file', activeMenu: '/security/fileManagement' }
-      }
-    ]
-  }
+  // {
+  //   path: '/security/menu-tree',
+  //   component: Layout,
+  //   hidden: false,
+  //   meta: { title: '安全系统菜单', icon: 'tree' },
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/security/tree/index'),
+  //       name: 'SecuritySysMenuTree',
+  //       meta: { title: '菜单树管理', icon: 'tree', affix: false }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/security/environmentidicaation',
+  //   component: Layout,
+  //   hidden: true,
+  //   permissions: ['security:environmentidicaation:list'],
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/security/environmentidicaation/index'),
+  //       name: 'Environmentidicaation',
+  //       meta: { title: '环境识别', activeMenu: '/security/environmentidicaation' }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/security/fileManagement',
+  //   component: Layout,
+  //   hidden: false,
+  //   permissions: ['security:fileManagement:list'],
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/security/fileManagement/index'),
+  //       name: 'FileManagement',
+  //       meta: { title: '文件管理', icon: 'file', activeMenu: '/security/fileManagement' }
+  //     }
+  //   ]
+  // }
 ]
 
 // 动态路由，基于用户权限动态去加载
