@@ -34,6 +34,15 @@ export function resetPlan() {
   })
 }
 
+// 更新提醒设置
+export function updateMessage(data) {
+  return request({
+    url: '/fault/groupPlan/updateMessage',
+    method: 'post',
+    data: { messageSet: data }
+  })
+}
+
 // 修改班组计划保养
 export function updatePlan(data) {
   return request({
@@ -67,5 +76,5 @@ export function uploadFile(data, aimUrl) {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
-    });
+  });
 }

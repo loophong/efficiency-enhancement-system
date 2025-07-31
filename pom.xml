@@ -227,7 +227,7 @@
         <module>ruoyi-common</module>
         <module>heli-device</module>
         <module>heli-production</module>
-        <module>security-conm</module>
+        <module>heli-security</module>
         <module>heli-supplier</module>
     </modules>
     <packaging>pom</packaging>

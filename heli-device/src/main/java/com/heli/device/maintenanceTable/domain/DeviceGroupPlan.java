@@ -14,7 +14,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 班组计划保养对象 device_group_plan
- * 
+ *
  * @author YYY
  * @date 2025-01-19
  */
@@ -65,101 +65,115 @@ public class DeviceGroupPlan extends BaseEntity
     @ExcelProperty(index = 8)
     private String monthFour;
 
+    /** 消息设置 */
+    @ExcelIgnore
+    private String messageSet;
+
     @ExcelIgnore
     private String lastCompleteTime;
 
     @ExcelIgnore
     private String rollTime;
 
-    public void setGroupId(String groupId) 
+    public void setGroupId(String groupId)
     {
         this.groupId = groupId;
     }
 
-    public String getGroupId() 
+    public String getGroupId()
     {
         return groupId;
     }
-    public void setOrderNum(String orderNum) 
+    public void setOrderNum(String orderNum)
     {
         this.orderNum = orderNum;
     }
 
-    public String getOrderNum() 
+    public String getOrderNum()
     {
         return orderNum;
     }
-    public void setDeviceType(String deviceType) 
+    public void setDeviceType(String deviceType)
     {
         this.deviceType = deviceType;
     }
 
-    public String getDeviceType() 
+    public String getDeviceType()
     {
         return deviceType;
     }
-    public void setExecuteGroup(String executeGroup) 
+    public void setExecuteGroup(String executeGroup)
     {
         this.executeGroup = executeGroup;
     }
 
-    public String getExecuteGroup() 
+    public String getExecuteGroup()
     {
         return executeGroup;
     }
-    public void setMaintenanceContent(String maintenanceContent) 
+    public void setMaintenanceContent(String maintenanceContent)
     {
         this.maintenanceContent = maintenanceContent;
     }
 
-    public String getMaintenanceContent() 
+    public String getMaintenanceContent()
     {
         return maintenanceContent;
     }
-    public void setMaintenanceCycle(String maintenanceCycle) 
+    public void setMaintenanceCycle(String maintenanceCycle)
     {
         this.maintenanceCycle = maintenanceCycle;
     }
 
-    public String getMaintenanceCycle() 
+    public String getMaintenanceCycle()
     {
         return maintenanceCycle;
     }
-    public void setMonthOne(String monthOne) 
+    public void setMonthOne(String monthOne)
     {
         this.monthOne = monthOne;
     }
 
-    public String getMonthOne() 
+    public String getMonthOne()
     {
         return monthOne;
     }
-    public void setMonthTwo(String monthTwo) 
+    public void setMonthTwo(String monthTwo)
     {
         this.monthTwo = monthTwo;
     }
 
-    public String getMonthTwo() 
+    public String getMonthTwo()
     {
         return monthTwo;
     }
-    public void setMonthThree(String monthThree) 
+    public void setMonthThree(String monthThree)
     {
         this.monthThree = monthThree;
     }
 
-    public String getMonthThree() 
+    public String getMonthThree()
     {
         return monthThree;
     }
-    public void setMonthFour(String monthFour) 
+    public void setMonthFour(String monthFour)
     {
         this.monthFour = monthFour;
     }
 
-    public String getMonthFour() 
+    public String getMonthFour()
     {
         return monthFour;
+    }
+
+    public void setMessageSet(String messageSet)
+    {
+        this.messageSet = messageSet;
+    }
+
+    public String getMessageSet()
+    {
+        return messageSet;
     }
 
     public void setLastCompleteTime(String lastCompleteTime)
@@ -185,21 +199,22 @@ public class DeviceGroupPlan extends BaseEntity
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("groupId", getGroupId())
-            .append("orderNum", getOrderNum())
-            .append("deviceType", getDeviceType())
-            .append("executeGroup", getExecuteGroup())
-            .append("maintenanceContent", getMaintenanceContent())
-            .append("maintenanceCycle", getMaintenanceCycle())
-            .append("monthOne", getMonthOne())
-            .append("monthTwo", getMonthTwo())
-            .append("monthThree", getMonthThree())
-            .append("monthFour", getMonthFour())
-            .append("createBy", getCreateBy())
-            .append("createTime", getCreateTime())
-            .append("updateBy", getUpdateBy())
-            .append("updateTime", getUpdateTime())
-            .append("lastCompleteTime", getLastCompleteTime())
-            .toString();
+                .append("groupId", getGroupId())
+                .append("orderNum", getOrderNum())
+                .append("deviceType", getDeviceType())
+                .append("executeGroup", getExecuteGroup())
+                .append("maintenanceContent", getMaintenanceContent())
+                .append("maintenanceCycle", getMaintenanceCycle())
+                .append("monthOne", getMonthOne())
+                .append("monthTwo", getMonthTwo())
+                .append("monthThree", getMonthThree())
+                .append("monthFour", getMonthFour())
+                .append("messageSet", getMessageSet())
+                .append("createBy", getCreateBy())
+                .append("createTime", getCreateTime())
+                .append("updateBy", getUpdateBy())
+                .append("updateTime", getUpdateTime())
+                .append("lastCompleteTime", getLastCompleteTime())
+                .toString();
     }
 }
