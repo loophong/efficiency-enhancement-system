@@ -91,7 +91,7 @@ console.log('treeData----->', treeData.value)
 
 const chartContainer = ref(null);
 
-onMounted(() => {
+onMounted(async () => {
 
   // 确认DOM元素存在
   const container = chartContainer.value;
@@ -100,6 +100,8 @@ onMounted(() => {
       console.log('DOM点击事件触发');
     });
   }
+  initHeight();
+  await nextTick();
   initChart();
   handleChart();
 
