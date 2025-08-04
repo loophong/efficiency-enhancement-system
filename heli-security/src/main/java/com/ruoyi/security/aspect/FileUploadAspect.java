@@ -764,6 +764,43 @@ public void afterFormManagement() {
         
         String normalizedUrl = url;
         
+        // 处理URL中的查询参数，保留最后出现的参数值（最新的参数）
+        if (normalizedUrl.contains("?")) {
+            String baseUrl = normalizedUrl.substring(0, normalizedUrl.indexOf("?"));
+            String queryString = normalizedUrl.substring(normalizedUrl.indexOf("?") + 1);
+            
+            // 解析查询参数，保留最后一次出现的参数（最新的参数）
+            Map<String, String> uniqueParams = new java.util.LinkedHashMap<>();
+            String[] params = queryString.split("&");
+            for (String param : params) {
+                if (param.contains("=")) {
+                    String[] keyValue = param.split("=", 2);
+                    String key = keyValue[0];
+                    String value = keyValue.length > 1 ? keyValue[1] : "";
+                    
+                    // 始终使用最后一次出现的参数值（覆盖旧值）
+                    uniqueParams.put(key, value);
+                }
+            }
+            
+            // 重建查询字符串
+            StringBuilder newQueryString = new StringBuilder();
+            for (Map.Entry<String, String> entry : uniqueParams.entrySet()) {
+                if (newQueryString.length() > 0) {
+                    newQueryString.append("&");
+                }
+                newQueryString.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+            
+            // 重建URL
+            normalizedUrl = baseUrl;
+            if (newQueryString.length() > 0) {
+                normalizedUrl += "?" + newQueryString.toString();
+            }
+            
+            log.debug("处理重复参数后的URL（保留最新参数）: {}", normalizedUrl);
+        }
+        
         // 处理重复的URL前缀问题
         String httpPattern = "http://";
         String httpsPattern = "https://";
@@ -826,6 +863,16 @@ public void afterFormManagement() {
         
         try {
             log.debug("开始从URI解析模块名称: {}", uri);
+            
+            // 先使用normalizeUrl处理URL，确保处理了重复参数
+            uri = normalizeUrl(uri);
+            log.debug("标准化后的URI: {}", uri);
+            
+            // 处理URL中包含问号的情况，截取问号前的部分
+            if (uri.contains("?")) {
+                uri = uri.substring(0, uri.indexOf("?"));
+                log.debug("URL包含问号，截取后的URI: {}", uri);
+            }
             
             // 解析URI获取模块标识
             String moduleKey = "";
@@ -1006,17 +1053,17 @@ public void afterFormManagement() {
     }
     
     /**
-     * 确保URL只有一个securityConm前缀
+     * 确保URL只有一个securityConm前缀，并处理重复参数
      * 
      * @param url 原始URL
-     * @return 处理后的URL，确保只有一个securityConm前缀
+     * @return 处理后的URL，确保只有一个securityConm前缀，且没有重复参数
      */
     private String ensureSecurityConmPrefix(String url) {
         if (StringUtils.isEmpty(url)) {
             return url;
         }
         
-        // 先进行标准化处理
+        // 先进行标准化处理（包括处理重复参数）
         String normalizedUrl = normalizeUrl(url);
         
         // 移除所有securityConm前缀，但只处理以securityConm/开头的情况

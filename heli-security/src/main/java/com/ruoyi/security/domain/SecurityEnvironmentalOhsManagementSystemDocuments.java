@@ -33,6 +33,9 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
     /** 关联ID */
     private Long relatedId;
 
+    /** 文件列表 */
+    private String fileList;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -79,6 +82,16 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
         return relatedId;
     }
 
+    public String getFileList() 
+    {
+        return fileList;
+    }
+
+    public void setFileList(String fileList) 
+    {
+        this.fileList = fileList;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -87,6 +100,7 @@ public class SecurityEnvironmentalOhsManagementSystemDocuments extends BaseEntit
             .append("documentNumber", getDocumentNumber())
             .append("remarks", getRemarks())
             .append("relatedId", getRelatedId())
+            .append("fileList", getFileList())
             .toString();
     }
 }

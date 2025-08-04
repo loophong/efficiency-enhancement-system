@@ -235,7 +235,7 @@
 
     <el-table v-loading="loading" :data="AccidentProcessRecordsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+     <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="事故名称" align="center" prop="accidentName" />
       <el-table-column label="发生地点" align="center" prop="location" />
       <el-table-column label="事故类别" align="center" prop="accidentCategory" />

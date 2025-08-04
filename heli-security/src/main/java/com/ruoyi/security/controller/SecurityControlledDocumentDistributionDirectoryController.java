@@ -126,8 +126,8 @@ public class SecurityControlledDocumentDistributionDirectoryController extends B
     /**
      * 下载受控文件发放目录导入模板
      */
-    @PostMapping("/importTemplate")
-    public void importTemplate(HttpServletResponse response)
+    @GetMapping("/downloadTemplate")
+    public void downloadTemplate(HttpServletResponse response)
     {
         ExcelUtil<SecurityControlledDocumentDistributionDirectory> util = new ExcelUtil<SecurityControlledDocumentDistributionDirectory>(SecurityControlledDocumentDistributionDirectory.class);
         util.importTemplateExcel(response, "受控文件发放目录数据");

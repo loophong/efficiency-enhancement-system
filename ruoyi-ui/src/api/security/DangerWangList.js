@@ -43,8 +43,25 @@ export function delDangerWangList(id) {
   })
 }
 
-// 导入风险网格化清单
-export function importDangerWangList(data) {
+// 导出风险网格化清单
+export function exportDangerWangList(query) {
+  return request({
+    url: '/security/DangerWangList/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 获取风险网格化清单导入模板
+export function importTemplate() {
+  return request({
+    url: '/security/DangerWangList/importTemplate',
+    method: 'get'
+  })
+}
+
+// 导入风险网格化清单数据
+export function importData(data) {
   return request({
     url: '/security/DangerWangList/importData',
     method: 'post',
@@ -52,16 +69,8 @@ export function importDangerWangList(data) {
   })
 }
 
-// 下载风险网格化清单导入模板
-export function downloadTemplate() {
-  return request({
-    url: '/security/DangerWangList/importTemplate',
-    method: 'post'
-  })
-}
-
-// 根据关联ID查询风险网格化清单列表
-export function listByRelatedId(relatedId) {
+// 根据关联ID查询风险网格化清单数据
+export function listDangerWangListByRelatedId(relatedId) {
   return request({
     url: '/security/DangerWangList/listByRelatedId/' + relatedId,
     method: 'get'

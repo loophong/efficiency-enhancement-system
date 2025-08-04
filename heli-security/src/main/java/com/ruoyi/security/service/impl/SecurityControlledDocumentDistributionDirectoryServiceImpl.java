@@ -106,7 +106,7 @@ public class SecurityControlledDocumentDistributionDirectoryServiceImpl implemen
 
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecurityControlledDocumentDistributionDirectory.class,
-                        new SecurityControlledDocumentDistributionDirectoryListener(securityControlledDocumentDistributionDirectoryMapper)).headRowNumber(3).sheet().doRead();
+                        new SecurityControlledDocumentDistributionDirectoryListener(securityControlledDocumentDistributionDirectoryMapper)).headRowNumber(1).sheet().doRead();
 
                 log.info("读取文件成功: {}", fileName);
 

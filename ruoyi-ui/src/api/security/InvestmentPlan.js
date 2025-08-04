@@ -42,3 +42,29 @@ export function delInvestmentPlan(serialNumber) {
     method: 'delete'
   })
 }
+
+// 导出安全投入计划
+export function exportInvestmentPlan(query) {
+  return request({
+    url: '/security/InvestmentPlan/export',
+    method: 'get',
+    params: query
+  })
+}
+
+// 获取安全投入计划导入模板
+export function importTemplate() {
+  return request({
+    url: '/security/InvestmentPlan/importTemplate',
+    method: 'get'
+  })
+}
+
+// 导入安全投入计划数据
+export function importData(data) {
+  return request({
+    url: '/security/InvestmentPlan/importData',
+    method: 'post',
+    data: data
+  })
+}

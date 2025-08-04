@@ -18,6 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="uploadTime"    column="upload_time"    />
         <result property="uploadUser"    column="upload_user"    />
         <result property="status"    column="status"    />
+        <result property="year"    column="year"    />
+        <result property="text"    column="text"    />
         <result property="remark"    column="remark"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
@@ -26,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSecurityFileManagementVo">
-        select id, file_name, file_path, file_size, file_type, file_category, module_name, module_code, related_id, related_url, upload_time, upload_user, status, remark, create_by, create_time, update_by, update_time from security_file_management
+        select id, file_name, file_path, file_size, file_type, file_category, module_name, module_code, related_id, related_url, upload_time, upload_user, status, year, text, remark, create_by, create_time, update_by, update_time from security_file_management
     </sql>
 
     <select id="selectSecurityFileManagementList" parameterType="SecurityFileManagement" resultMap="SecurityFileManagementResult">
@@ -38,6 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="uploadTime != null "> and upload_time = #{uploadTime}</if>
             <if test="createBy != null  and createBy != ''"> and create_by = #{createBy}</if>
             <if test="updateBy != null  and updateBy != ''"> and update_by = #{updateBy}</if>
+            <if test="year != null  and year != ''"> and year = #{year}</if>
+            <if test="text != null  and text != ''"> and text like concat('%', #{text}, '%')</if>
         </where>
     </select>
     
@@ -61,6 +65,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="uploadTime != null">upload_time,</if>
             <if test="uploadUser != null">upload_user,</if>
             <if test="status != null">status,</if>
+            <if test="year != null">year,</if>
+            <if test="text != null">text,</if>
             <if test="remark != null">remark,</if>
             <if test="createBy != null">create_by,</if>
             <if test="createTime != null">create_time,</if>
@@ -80,6 +86,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="uploadTime != null">#{uploadTime},</if>
             <if test="uploadUser != null">#{uploadUser},</if>
             <if test="status != null">#{status},</if>
+            <if test="year != null">#{year},</if>
+            <if test="text != null">#{text},</if>
             <if test="remark != null">#{remark},</if>
             <if test="createBy != null">#{createBy},</if>
             <if test="createTime != null">#{createTime},</if>
@@ -103,6 +111,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="uploadTime != null">upload_time = #{uploadTime},</if>
             <if test="uploadUser != null">upload_user = #{uploadUser},</if>
             <if test="status != null">status = #{status},</if>
+            <if test="year != null">year = #{year},</if>
+            <if test="text != null">text = #{text},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
             <if test="createTime != null">create_time = #{createTime},</if>

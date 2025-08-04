@@ -71,11 +71,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSecueityCompanyKpiVo"/>
         where related_id = #{relatedId}
     </select>
-    <select id="selectLatestImportedRecords" resultType="com.ruoyi.security.domain.SecueityCompanyKpi">
+    <select id="selectLatestImportedRecords" resultMap="SecueityCompanyKpiResult">
         <include refid="selectSecueityCompanyKpiVo"/>
         where related_id is null
         order by id desc
-        limit 10
+        limit 1000
     </select>
 
     <insert id="insertSecueityCompanyKpi" parameterType="SecueityCompanyKpi" useGeneratedKeys="true" keyProperty="id">

@@ -58,4 +58,14 @@ public interface ISecuritySafetyInvestmentPlanService
      * @return 结果
      */
     public int deleteSecuritySafetyInvestmentPlanBySerialNumber(Long serialNumber);
+    
+    /**
+     * 导入安全投入计划数据
+     * 
+     * @param investmentPlanList 安全投入计划数据列表
+     * @param updateSupport 是否支持更新
+     * @param operName 操作用户
+     * @return 结果
+     */
+    public String importInvestmentPlan(List<SecuritySafetyInvestmentPlan> investmentPlanList, boolean updateSupport, String operName);
 }

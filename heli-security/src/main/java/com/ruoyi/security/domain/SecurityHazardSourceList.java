@@ -25,6 +25,10 @@ public class SecurityHazardSourceList extends BaseEntity
     @Excel(name = "作业活动", needMerge = true)
     private String activity;
 
+    /** 部位 */
+    @Excel(name = "部位", needMerge = true)
+    private String part;
+
     /** 危险源 */
     @Excel(name = "危险源")
     private String hazardSource;
@@ -98,6 +102,15 @@ public class SecurityHazardSourceList extends BaseEntity
     public String getActivity() 
     {
         return activity;
+    }
+    public void setPart(String part) 
+    {
+        this.part = part;
+    }
+
+    public String getPart() 
+    {
+        return part;
     }
     public void setHazardSource(String hazardSource) 
     {
@@ -232,6 +245,7 @@ public class SecurityHazardSourceList extends BaseEntity
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
             .append("activity", getActivity())
+            .append("part", getPart())
             .append("hazardSource", getHazardSource())
             .append("hazardMode", getHazardMode())
             .append("possibleConsequences", getPossibleConsequences())

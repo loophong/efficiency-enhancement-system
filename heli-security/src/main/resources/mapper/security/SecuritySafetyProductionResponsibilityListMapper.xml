@@ -9,10 +9,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="zhiDu"    column="zhi_du"    />
         <result property="banFa"    column="ban_fa"    />
         <result property="relatedId"    column="related_id"    />
+        <result property="fileList"    column="file_list"    />
     </resultMap>
 
     <sql id="selectSecuritySafetyProductionResponsibilityListVo">
-        select id, zhi_du, ban_fa, related_id from security_safety_production_responsibility_list
+        select id, zhi_du, ban_fa, related_id, file_list from security_safety_production_responsibility_list
     </sql>
 
     <select id="selectSecuritySafetyProductionResponsibilityListList" parameterType="SecuritySafetyProductionResponsibilityList" resultMap="SecuritySafetyProductionResponsibilityListResult">
@@ -28,27 +29,32 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSecuritySafetyProductionResponsibilityListVo"/>
         where id = #{id}
     </select>
-
-    <insert id="insertSecuritySafetyProductionResponsibilityList" parameterType="SecuritySafetyProductionResponsibilityList" useGeneratedKeys="true" keyProperty="id">
+        
+    <insert id="insertSecuritySafetyProductionResponsibilityList" parameterType="SecuritySafetyProductionResponsibilityList">
         insert into security_safety_production_responsibility_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
             <if test="zhiDu != null">zhi_du,</if>
             <if test="banFa != null">ban_fa,</if>
             <if test="relatedId != null">related_id,</if>
+            <if test="fileList != null">file_list,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
             <if test="zhiDu != null">#{zhiDu},</if>
             <if test="banFa != null">#{banFa},</if>
             <if test="relatedId != null">#{relatedId},</if>
+            <if test="fileList != null">#{fileList},</if>
          </trim>
     </insert>
-
+    
     <update id="updateSecuritySafetyProductionResponsibilityList" parameterType="SecuritySafetyProductionResponsibilityList">
         update security_safety_production_responsibility_list
         <trim prefix="SET" suffixOverrides=",">
             <if test="zhiDu != null">zhi_du = #{zhiDu},</if>
             <if test="banFa != null">ban_fa = #{banFa},</if>
             <if test="relatedId != null">related_id = #{relatedId},</if>
+            <if test="fileList != null">file_list = #{fileList},</if>
         </trim>
         where id = #{id}
     </update>
@@ -58,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSecuritySafetyProductionResponsibilityListByIds" parameterType="String">
-        delete from security_safety_production_responsibility_list where id in
+        delete from security_safety_production_responsibility_list where id in 
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

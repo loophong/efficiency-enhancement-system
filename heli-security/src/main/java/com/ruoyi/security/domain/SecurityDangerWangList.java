@@ -9,72 +9,78 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * 风险网格化清单对象 security_danger_wang_list
  * 
  * @author ruoyi
- * @date 2025-07-21
+ * @date 2025-07-30
  */
 public class SecurityDangerWangList extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** id */
-    private String id;
+    /** 序号 */
+    private Integer id;
 
-    /** 责任科室 */
-    @Excel(name = "责任科室")
-    private String zerenKeshi;
-
-    /** 场所/班组 */
-    @Excel(name = "场所/班组")
+    /** 所在班组 */
+    @Excel(name = "所在班组")
     private String changsuoBanzu;
 
-    /** 工序/设备/区域 */
-    @Excel(name = "工序/设备/区域")
+    /** 岗位/工序/设备 */
+    @Excel(name = "岗位/工序/设备")
     private String gongxuShebei;
 
-    /** 具体部位 */
-    @Excel(name = "具体部位")
+    /** 危险物质、作业、能量 */
+    @Excel(name = "危险物质、作业、能量")
     private String jituBuwei;
 
-    /** 作业工种 */
-    @Excel(name = "作业工种")
-    private String zuoyeGongzong;
-
-    /** 主要危险源/危险物质 */
-    @Excel(name = "主要危险源/危险物质")
+    /** 风险因素 */
+    @Excel(name = "风险因素")
     private String zhuyaoWeixian;
 
-    /** 可能发生的主要事故类型（安全风险类型） */
-    @Excel(name = "可能发生的主要事故类型（安全风险类型）")
+    /** 可能发生的事故类型 */
+    @Excel(name = "可能发生的事故类型")
     private String keNengFaSheng;
 
+    /** L */
+    @Excel(name = "L")
+    private String scoreL;
+
+    /** S */
+    @Excel(name = "S")
+    private String scoreS;
+
+    /** R(LS) */
+    @Excel(name = "R(LS)")
+    private String scoreLs;
+
+    /** 风险等级 */
+    @Excel(name = "风险等级")
+    private String fenXianDengJi;
+
+    /** 管控/预防措施 */
+    @Excel(name = "管控/预防措施")
+    private String guankongYufang;
+
+    /** 本岗位责任人 */
+    @Excel(name = "本岗位责任人")
+    private String fuZeRen;
+
     /** 网格负责人及联系电话 */
-    @Excel(name = "网格负责人及联系电话")
+    @Excel(name = "岗位责任人联系方式")
     private String wangLuoFuZeRen;
 
-    /** 主要工作内容 */
-    @Excel(name = "主要工作内容")
+    /** 备注 */
+    @Excel(name = "备注")
     private String zhuyaoGongzuo;
 
     /** 关联id */
-    @Excel(name = "关联id", type = Excel.Type.EXPORT)
     private String relatedId;
 
-    public void setId(String id) 
+    public void setId(Integer id) 
     {
         this.id = id;
     }
 
-    public String getId() 
+    public Integer getId() 
     {
         return id;
-    }
-    public void setZerenKeshi(String zerenKeshi) 
-    {
-        this.zerenKeshi = zerenKeshi;
-    }
-
-    public String getZerenKeshi() 
-    {
-        return zerenKeshi;
     }
     public void setChangsuoBanzu(String changsuoBanzu) 
     {
@@ -103,15 +109,6 @@ public class SecurityDangerWangList extends BaseEntity
     {
         return jituBuwei;
     }
-    public void setZuoyeGongzong(String zuoyeGongzong) 
-    {
-        this.zuoyeGongzong = zuoyeGongzong;
-    }
-
-    public String getZuoyeGongzong() 
-    {
-        return zuoyeGongzong;
-    }
     public void setZhuyaoWeixian(String zhuyaoWeixian) 
     {
         this.zhuyaoWeixian = zhuyaoWeixian;
@@ -129,6 +126,60 @@ public class SecurityDangerWangList extends BaseEntity
     public String getKeNengFaSheng() 
     {
         return keNengFaSheng;
+    }
+    public void setScoreL(String scoreL) 
+    {
+        this.scoreL = scoreL;
+    }
+
+    public String getScoreL() 
+    {
+        return scoreL;
+    }
+    public void setScoreS(String scoreS) 
+    {
+        this.scoreS = scoreS;
+    }
+
+    public String getScoreS() 
+    {
+        return scoreS;
+    }
+    public void setScoreLs(String scoreLs) 
+    {
+        this.scoreLs = scoreLs;
+    }
+
+    public String getScoreLs() 
+    {
+        return scoreLs;
+    }
+    public void setFenXianDengJi(String fenXianDengJi) 
+    {
+        this.fenXianDengJi = fenXianDengJi;
+    }
+
+    public String getFenXianDengJi() 
+    {
+        return fenXianDengJi;
+    }
+    public void setGuankongYufang(String guankongYufang) 
+    {
+        this.guankongYufang = guankongYufang;
+    }
+
+    public String getGuankongYufang() 
+    {
+        return guankongYufang;
+    }
+    public void setFuZeRen(String fuZeRen) 
+    {
+        this.fuZeRen = fuZeRen;
+    }
+
+    public String getFuZeRen() 
+    {
+        return fuZeRen;
     }
     public void setWangLuoFuZeRen(String wangLuoFuZeRen) 
     {
@@ -162,13 +213,17 @@ public class SecurityDangerWangList extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("zerenKeshi", getZerenKeshi())
             .append("changsuoBanzu", getChangsuoBanzu())
             .append("gongxuShebei", getGongxuShebei())
             .append("jituBuwei", getJituBuwei())
-            .append("zuoyeGongzong", getZuoyeGongzong())
             .append("zhuyaoWeixian", getZhuyaoWeixian())
             .append("keNengFaSheng", getKeNengFaSheng())
+            .append("scoreL", getScoreL())
+            .append("scoreS", getScoreS())
+            .append("scoreLs", getScoreLs())
+            .append("fenXianDengJi", getFenXianDengJi())
+            .append("guankongYufang", getGuankongYufang())
+            .append("fuZeRen", getFuZeRen())
             .append("wangLuoFuZeRen", getWangLuoFuZeRen())
             .append("zhuyaoGongzuo", getZhuyaoGongzuo())
             .append("relatedId", getRelatedId())

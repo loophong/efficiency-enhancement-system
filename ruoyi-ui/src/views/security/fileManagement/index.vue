@@ -82,6 +82,22 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="年份" prop="year">
+        <el-input
+          v-model="queryParams.year"
+          placeholder="请输入年份"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="其他信息" prop="text">
+        <el-input
+          v-model="queryParams.text"
+          placeholder="请输入其他信息"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
       <!-- <el-form-item label="更新者" prop="updateBy">
         <el-input
           v-model="queryParams.updateBy"
@@ -143,6 +159,13 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
+      <!-- <el-col :span="1.5">
+        <el-button link 
+        type="primary" 
+        icon="View"
+        @click="handleView(scope.row)"
+         >查看</el-button>
+      </el-col> -->
       <!-- 注释掉监控按钮
       <el-col :span="1.5">
         <el-button
@@ -158,8 +181,11 @@
 
     <el-table v-loading="loading" :data="filemanagementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <!-- <el-table-column label="主键ID" align="center" prop="id" /> -->
+      <el-table-column label="序号" align="center" type="index" width="50" />
+      <el-table-column label="年份" align="center" prop="year" />
       <el-table-column label="文件名称" align="center" prop="fileName" />
+
+
       <!-- <el-table-column label="文件路径" align="center" prop="filePath" /> -->
       <!-- <el-table-column label="文件大小(字节)" align="center" prop="fileSize" />
       <el-table-column label="文件类型(MIME类型)" align="center" prop="fileType" /> -->
@@ -177,8 +203,9 @@
         </template>
       </el-table-column>
       <el-table-column label="上传用户" align="center" prop="uploadUser" />
+      <el-table-column label="其他信息" align="center" prop="text" />
       <!-- <el-table-column label="状态(0正常 1禁用)" align="center" prop="status" /> -->
-      <el-table-column label="备注" align="center" prop="remark" />
+      <!-- <el-table-column label="备注" align="center" prop="remark" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="View" @click="handleView(scope.row)">查看</el-button>
@@ -202,14 +229,13 @@
         <el-form-item label="文件名称" prop="fileName">
           <el-input v-model="form.fileName" placeholder="请输入文件名称" />
         </el-form-item>
-        <el-form-item label="文件路径" prop="filePath">
+        <!-- <el-form-item label="文件路径" prop="filePath">
           <file-upload v-model="form.filePath" />
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="文件大小(字节)" prop="fileSize">
           <el-input v-model="form.fileSize" placeholder="请输入文件大小(字节)" />
         </el-form-item> -->
-        <!-- 注释掉文件分类表单项
-        <el-form-item label="文件分类" prop="fileCategory">
+        <!-- <el-form-item label="文件分类" prop="fileCategory">
           <el-select v-model="form.fileCategory" placeholder="请选择文件分类">
             <el-option
               v-for="dict in file_category"
@@ -218,8 +244,8 @@
               :value="dict.value"
             ></el-option>
           </el-select>
-        </el-form-item>
-        -->
+        </el-form-item> -->
+       
         <el-form-item label="所属模块名称" prop="moduleName">
           <el-input v-model="form.moduleName" placeholder="请输入所属模块名称" />
         </el-form-item>
@@ -243,9 +269,15 @@
         <el-form-item label="上传用户" prop="uploadUser">
           <el-input v-model="form.uploadUser" placeholder="请输入上传用户" />
         </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="年份" prop="year">
+          <el-input v-model="form.year" placeholder="请输入年份" />
         </el-form-item>
+        <el-form-item label="其他信息" prop="text">
+          <el-input v-model="form.text" type="textarea" placeholder="请输入其他信息" />
+        </el-form-item>
+        <!-- <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -345,6 +377,8 @@ const data = reactive({
     uploadTime: null,
     createBy: null,
     updateBy: null,
+    year: null,
+    text: null,
   },
   rules: {
     fileName: [
@@ -367,6 +401,9 @@ const data = reactive({
     // ],
     uploadTime: [
       { required: true, message: "上传时间不能为空", trigger: "blur" }
+    ],
+    year: [
+      { required: true, message: "年份不能为空", trigger: "blur" }
     ],
   }
 });
@@ -417,6 +454,8 @@ function reset() {
     uploadTime: null,
     uploadUser: null,
     status: null,
+    year: null,
+    text: null,
     remark: null,
     createBy: null,
     createTime: null,
@@ -531,6 +570,22 @@ function handleView(row) {
           const parts = processedUrl.split('?');
           processedUrl = parts[0];
           originalParams = parts[1];
+          
+          // 处理重复参数，只保留最后一个值
+          if (originalParams) {
+            const paramMap = new Map();
+            originalParams.split('&').forEach(param => {
+              if (param.includes('=')) {
+                const [key, value] = param.split('=');
+                paramMap.set(key, value);
+              }
+            });
+            
+            // 重建参数字符串
+            originalParams = Array.from(paramMap.entries())
+              .map(([key, value]) => `${key}=${value}`)
+              .join('&');
+          }
         }
         
         // 先完全移除所有securityConm前缀
@@ -551,21 +606,72 @@ function handleView(row) {
           processedUrl = `${processedUrl}?${originalParams}`;
         }
         
-        // 构建带有关联ID参数的URL
-        const url = processedUrl.includes('?') 
-          ? `${processedUrl}&relatedId=${row.id}` 
-          : `${processedUrl}?relatedId=${row.id}`;
+        // 构建新的参数对象
+        const params = new Map();
         
-        // 如果需要添加来源模块信息
-        const finalUrl = row.moduleName 
-          ? `${url}&sourceModule=${encodeURIComponent(row.moduleName)}` 
-          : url;
+        // 如果URL中已有参数，先解析它们
+        if (processedUrl.includes('?')) {
+          const queryString = processedUrl.split('?')[1];
+          if (queryString) {
+            queryString.split('&').forEach(param => {
+              if (param.includes('=')) {
+                const [key, value] = param.split('=');
+                // 不添加可能会重复的参数
+                if (key !== 'relatedId' && key !== 'sourceModule') {
+                  params.set(key, value);
+                }
+              }
+            });
+          }
+          // 移除原URL中的查询参数
+          processedUrl = processedUrl.split('?')[0];
+        }
+        
+        // 添加必要的参数
+        params.set('relatedId', row.id);
+        if (row.moduleName) {
+          params.set('sourceModule', encodeURIComponent(row.moduleName));
+        }
+        
+        // 构建最终URL
+        let finalUrl = processedUrl;
+        if (params.size > 0) {
+          const queryString = Array.from(params.entries())
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+          finalUrl = `${processedUrl}?${queryString}`;
+        }
           
-        console.log("跳转到关联页面，带上关联ID:", finalUrl);
+        console.log("跳转到关联页面，带上唯一参数:", finalUrl);
         proxy.$router.push(finalUrl);
       } else {
-        // 如果没有ID，直接跳转
-        proxy.$router.push(row.relatedUrl);
+        // 如果没有ID，也需要处理重复参数
+        let url = row.relatedUrl;
+        if (url && url.includes('?')) {
+          const baseUrl = url.split('?')[0];
+          const queryString = url.split('?')[1];
+          
+          // 处理重复参数
+          const params = new Map();
+          if (queryString) {
+            queryString.split('&').forEach(param => {
+              if (param.includes('=')) {
+                const [key, value] = param.split('=');
+                params.set(key, value);
+              }
+            });
+          }
+          
+          // 重建URL
+          const newQueryString = Array.from(params.entries())
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+          
+          url = newQueryString ? `${baseUrl}?${newQueryString}` : baseUrl;
+        }
+        
+        console.log("直接跳转到关联页面(处理后):", url);
+        proxy.$router.push(url);
       }
     } else {
       // 否则尝试打开文件
@@ -674,6 +780,7 @@ function renderModuleChart() {
 
 // 页面加载时获取列表数据
 onMounted(() => {
+  // 读出跳转进入的路由参数
   getList();
 });
 

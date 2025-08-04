@@ -58,8 +58,8 @@
     <select id="selectLatestImportedRecords" resultMap="SecurityEnvironmentalOrganizationDescriptionResult">
         <include refid="selectSecurityEnvironmentalOrganizationDescriptionVo"/>
         where related_id is null
-        order by create_time desc
-        limit 10
+        order by id desc
+        limit 1000
     </select>
         
     <insert id="insertSecurityEnvironmentalOrganizationDescription" parameterType="SecurityEnvironmentalOrganizationDescription" useGeneratedKeys="true" keyProperty="id">

@@ -41,6 +41,10 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
     /** 关联ID */
     private Long relatedId;
 
+    /** 时间 */
+    @Excel(name = "时间")
+    private String time;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -105,6 +109,16 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
         return relatedId;
     }
 
+    public String getTime() 
+    {
+        return time;
+    }
+
+    public void setTime(String time) 
+    {
+        this.time = time;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -115,6 +129,7 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
                 .append("isDestroyed", getIsDestroyed())
                 .append("remarks", getRemarks())
                 .append("relatedId", getRelatedId())
+                .append("time", getTime())
                 .toString();
     }
 }

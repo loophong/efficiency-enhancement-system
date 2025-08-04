@@ -164,7 +164,7 @@
 
     <el-table v-loading="loading" :data="PeopleListList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="班组" align="center" prop="banZu" />
       <el-table-column label="姓名" align="center" prop="xingMing" />
       <el-table-column label="性别" align="center" prop="xingBie" />

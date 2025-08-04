@@ -53,3 +53,31 @@ export function importFile(formData) {
     }
   })
 }
+
+// 上传文件
+export function uploadFile(data) {
+  return request({
+    url: '/common/upload',
+    method: 'post',
+    data: data
+  })
+}
+
+// 获取文件列表
+export function getFileList(businessId) {
+  return request({
+    url: '/system/file/list',
+    method: 'get',
+    params: {
+      businessId: businessId
+    }
+  })
+}
+
+// 删除文件
+export function deleteFile(fileId) {
+  return request({
+    url: '/system/file/' + fileId,
+    method: 'delete'
+  })
+}

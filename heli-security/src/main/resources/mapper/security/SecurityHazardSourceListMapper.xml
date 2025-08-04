@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="SecurityHazardSourceList" id="SecurityHazardSourceListResult">
         <result property="id"    column="id"    />
         <result property="activity"    column="activity"    />
+        <result property="part"    column="part"    />
         <result property="hazardSource"    column="hazard_source"    />
         <result property="hazardMode"    column="hazard_mode"    />
         <result property="possibleConsequences"    column="possible_consequences"    />
@@ -24,13 +25,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSecurityHazardSourceListVo">
-        select id, activity, hazard_source, hazard_mode, possible_consequences, evaluation_method, evaluation_a, evaluation_b, evaluation_c, evaluation_sanjiaoxing, risk_level, control_measures, auditor, approver, time, related_id from security_hazard_source_list
+        select id, activity, part, hazard_source, hazard_mode, possible_consequences, evaluation_method, evaluation_a, evaluation_b, evaluation_c, evaluation_sanjiaoxing, risk_level, control_measures, auditor, approver, time, related_id from security_hazard_source_list
     </sql>
 
     <select id="selectSecurityHazardSourceListList" parameterType="SecurityHazardSourceList" resultMap="SecurityHazardSourceListResult">
         <include refid="selectSecurityHazardSourceListVo"/>
         <where>  
             <if test="activity != null  and activity != ''"> and activity = #{activity}</if>
+            <if test="part != null  and part != ''"> and part = #{part}</if>
             <if test="hazardSource != null  and hazardSource != ''"> and hazard_source = #{hazardSource}</if>
             <if test="hazardMode != null  and hazardMode != ''"> and hazard_mode = #{hazardMode}</if>
             <if test="possibleConsequences != null  and possibleConsequences != ''"> and possible_consequences = #{possibleConsequences}</if>
@@ -57,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into security_hazard_source_list
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="activity != null and activity != ''">activity,</if>
+            <if test="part != null and part != ''">part,</if>
             <if test="hazardSource != null and hazardSource != ''">hazard_source,</if>
             <if test="hazardMode != null">hazard_mode,</if>
             <if test="possibleConsequences != null">possible_consequences,</if>
@@ -74,6 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="activity != null and activity != ''">#{activity},</if>
+            <if test="part != null and part != ''">#{part},</if>
             <if test="hazardSource != null and hazardSource != ''">#{hazardSource},</if>
             <if test="hazardMode != null">#{hazardMode},</if>
             <if test="possibleConsequences != null">#{possibleConsequences},</if>
@@ -95,6 +99,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update security_hazard_source_list
         <trim prefix="SET" suffixOverrides=",">
             <if test="activity != null and activity != ''">activity = #{activity},</if>
+            <if test="part != null and part != ''">part = #{part},</if>
             <if test="hazardSource != null and hazardSource != ''">hazard_source = #{hazardSource},</if>
             <if test="hazardMode != null">hazard_mode = #{hazardMode},</if>
             <if test="possibleConsequences != null">possible_consequences = #{possibleConsequences},</if>
@@ -127,13 +132,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <!-- 批量插入危险源清单数据 -->
     <insert id="batchInsertRiskList" parameterType="java.util.List">
         insert into security_hazard_source_list (
-          activity, hazard_source, hazard_mode, possible_consequences, 
+          activity, part, hazard_source, hazard_mode, possible_consequences, 
           evaluation_method, evaluation_a, evaluation_b, evaluation_c, 
           evaluation_sanjiaoxing, risk_level, control_measures, 
           auditor, approver, time, related_id
         ) values
         <foreach collection="list" item="item" index="index" separator=",">
-          (#{item.activity}, #{item.hazardSource}, #{item.hazardMode}, #{item.possibleConsequences}, 
+          (#{item.activity}, #{item.part}, #{item.hazardSource}, #{item.hazardMode}, #{item.possibleConsequences}, 
            #{item.evaluationMethod}, #{item.evaluationA}, #{item.evaluationB}, #{item.evaluationC}, 
            #{item.evaluationSanjiaoxing}, #{item.riskLevel}, #{item.controlMeasures}, 
            #{item.auditor}, #{item.approver}, #{item.time}, #{item.relatedId})

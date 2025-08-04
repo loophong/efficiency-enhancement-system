@@ -54,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSecurityRiskOpportunityAssessmentVo"/>
         where related_id is null
         order by  status_time desc
-        limit 10
+        limit 1000
     </select>
 
     <insert id="insertSecurityRiskOpportunityAssessment" parameterType="SecurityRiskOpportunityAssessment">

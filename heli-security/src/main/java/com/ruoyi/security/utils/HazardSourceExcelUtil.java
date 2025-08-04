@@ -111,6 +111,9 @@ public class HazardSourceExcelUtil extends ExcelUtil<SecurityHazardSourceList> {
         // 处理"作业活动"列的合并
         processMergeColumn(sheet, list, columnMap, "作业活动", dataStartRowIndex);
         
+        // 处理"部位"列的合并
+        processMergeColumn(sheet, list, columnMap, "部位", dataStartRowIndex);
+        
         // 移除控制措施列的合并处理
     }
     

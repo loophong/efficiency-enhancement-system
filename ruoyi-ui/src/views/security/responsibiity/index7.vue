@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="文件名称" prop="fileName">
+      <el-form-item label="设备名称" prop="fileName">
         <el-input
           v-model="queryParams.fileName"
-          placeholder="请输入文件名称"
+          placeholder="请输入设备名称"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -59,9 +59,9 @@
 
     <el-table v-loading="loading" :data="UploadfileJobList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
-      <el-table-column label="文件名称" align="center" prop="fileName" />
-      <el-table-column label="文件" align="center" prop="file" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
+      <el-table-column label="设备名称" align="center" prop="fileName" />
+      <el-table-column label="操作规程附件" align="center" prop="file" />
       <el-table-column label="备注" align="center" prop="text" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -83,10 +83,10 @@
     <!-- 添加或修改设备设施安全操作规程对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="UploadfileJobRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="文件名称" prop="fileName">
-          <el-input v-model="form.fileName" placeholder="请输入文件名称" />
+        <el-form-item label="设备名称" prop="fileName">
+          <el-input v-model="form.fileName" placeholder="请输入设备名称" />
         </el-form-item>
-        <el-form-item label="文件" prop="file">
+        <el-form-item label="操作规程附件" prop="file">
           <file-upload v-model="form.file"/>
         </el-form-item>
         <el-form-item label="备注" prop="text">

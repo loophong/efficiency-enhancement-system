@@ -58,8 +58,8 @@ export function importFile(formData) {
 // 下载受控文件发放目录导入模板
 export function downloadTemplate() {
   return request({
-    url: '/security/controlleddirectory/importTemplate',
-    method: 'post',
+    url: '/security/controlleddirectory/downloadTemplate',
+    method: 'get',
     responseType: 'blob'
   })
 }

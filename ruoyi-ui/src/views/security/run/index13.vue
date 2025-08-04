@@ -528,7 +528,7 @@ function checkRelatedId() {
     // 调用getList()执行实际的数据查询
     getList();
     // 显示提示信息
-    proxy.$modal.msgSuccess("已加载关联的特种设备台账信息数据");
+    proxy.$modal.msgSuccess("已加载关联的应急演练计划信息数据");
   } else {
     // 没有关联ID时，加载所有数据
     getList();

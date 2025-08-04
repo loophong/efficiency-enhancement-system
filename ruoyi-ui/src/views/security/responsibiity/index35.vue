@@ -75,7 +75,7 @@
   
       <el-table v-loading="loading" :data="SeasonListList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column label="id" align="center" prop="id" />
+        <el-table-column label="序号" align="center" type="index" width="100"/>
         <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
           <template #default="scope">
             <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
@@ -148,6 +148,7 @@
   <script setup name="SeasonList">
   import { listSeasonList, getSeasonList, delSeasonList, addSeasonList, updateSeasonList } from "@/api/security/SeasonList";
   import VueOfficeExcel from '@vue-office/excel'
+    import '@vue-office/excel/lib/index.css'
 const previewSrc = ref(''); // 确保 previewSrc 被正确声明
 const comStyle = ref({ width: '100%', height: '600px' });
 const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
@@ -179,7 +180,7 @@ const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正�
   const { queryParams, form, rules } = toRefs(data);
   /** 预览文件 */
 function handlePreview(row) {
-  const staticPath = 'http://localhost/dev-api'; // 静态地址
+   const staticPath = import.meta.env.VITE_APP_BASE_API ;  // 静态地址
   const dynamicPath = row.files; // 动态地址
   const fileExt = dynamicPath.split('.').pop().toLowerCase();
   

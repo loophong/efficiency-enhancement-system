@@ -79,6 +79,11 @@
       <el-table-column label="序号" align="center" type="index" width="80" />
       <el-table-column label="制度名称" align="center" prop="zhiDu" />
       <el-table-column label="办法名称" align="center" prop="banFa" />
+      <el-table-column label="文件" align="center" width="200">
+        <template #default="scope">
+          <file-upload v-model="scope.row.fileList" :limit="5" @change="handleFileChange($event, scope.row)" :show-button="false" />
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:ProductionResponsibilityList:edit']">修改</el-button>
@@ -103,6 +108,9 @@
         </el-form-item>
         <el-form-item label="办法名称" prop="banFa">
           <el-input v-model="form.banFa" placeholder="请输入办法名称" />
+        </el-form-item>
+        <el-form-item label="文件" prop="fileList">
+          <file-upload v-model="form.fileList" :limit="5" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -152,6 +160,7 @@
 <script setup name="ProductionResponsibilityList">
 import { listProductionResponsibilityList, getProductionResponsibilityList, delProductionResponsibilityList, addProductionResponsibilityList, updateProductionResponsibilityList } from "@/api/security/ProductionResponsibilityList";
 import { getToken } from "@/utils/auth";
+import FileUpload from "@/components/FileUpload/index.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -294,7 +303,8 @@ function reset() {
   form.value = {
     id: null,
     zhiDu: null,
-    banFa: null
+    banFa: null,
+    fileList: null
   };
   proxy.resetForm("ProductionResponsibilityListRef");
 }
@@ -355,6 +365,26 @@ function submitForm() {
       }
     }
   });
+}
+
+/** 文件上传变更处理 */
+function handleFileChange(file, row) {
+  if (file) {
+    console.log('文件上传成功:', file);
+    // 确保row.fileList是字符串格式
+    const updatedData = {
+      id: row.id,
+      fileList: typeof row.fileList === 'string' ? row.fileList : JSON.stringify(row.fileList)
+    };
+    console.log('准备更新的数据:', updatedData);
+    updateProductionResponsibilityList(updatedData).then(() => {
+      proxy.$modal.msgSuccess("文件更新成功");
+      getList(); // 更新列表数据
+    }).catch(err => {
+      console.error('文件更新失败:', err);
+      proxy.$modal.msgError("文件更新失败，请重试");
+    });
+  }
 }
 
 /** 删除按钮操作 */
