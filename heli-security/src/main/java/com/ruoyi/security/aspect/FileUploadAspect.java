@@ -224,20 +224,43 @@ public class FileUploadAspect {
         
         // 获取Referer和当前URI
         String referer = request.getHeader("Referer");
-                        String uri = request.getRequestURI();
-        
-        // 构造relatedUrl，优先使用Referer
-        String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
+        String uri = request.getRequestURI();
+
+        // 尝试从请求参数中获取原始URL信息（用于构造relatedUrl）
+        String sourceUrl = request.getParameter("sourceUrl");
+        String originalPath = request.getParameter("originalPath");
+
+        // 构造relatedUrl，优先使用FormData中的原始URL，然后是Referer
+        String relatedUrl;
+        if (StringUtils.isNotEmpty(sourceUrl)) {
+            relatedUrl = sourceUrl;
+            log.debug("使用FormData中的sourceUrl作为relatedUrl: {}", relatedUrl);
+        } else if (StringUtils.isNotEmpty(originalPath)) {
+            relatedUrl = originalPath;
+            log.debug("使用FormData中的originalPath作为relatedUrl: {}", relatedUrl);
+        } else {
+            relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
+            log.debug("使用默认的Referer或URI作为relatedUrl: {}", relatedUrl);
+        }
         relatedUrl = ensureSecurityConmPrefix(relatedUrl);
 
         // 获取当前用户
-                        String username = SecurityUtils.getUsername();
+        String username = SecurityUtils.getUsername();
 
-                        // 获取模块名称
-        String moduleName = getModuleNameFromUri(referer);
-                        if ("未知模块".equals(moduleName)) {
-                            moduleName = getModuleNameFromUri(uri);
-                        }
+        // 获取模块名称 - 优先使用FormData中的sourceUrl，然后使用原有的提取逻辑
+        String moduleName;
+        if (StringUtils.isNotEmpty(sourceUrl)) {
+            // 构造完整的URL用于模块名称提取
+            String fullSourceUrl = "http://172.19.10.170/" + sourceUrl;
+            moduleName = getModuleNameFromUri(fullSourceUrl);
+            log.debug("使用FormData中的sourceUrl进行模块名称提取: {}", fullSourceUrl);
+        } else {
+            // 使用原有的提取逻辑
+            moduleName = getModuleNameFromUri(referer);
+            if ("未知模块".equals(moduleName)) {
+                moduleName = getModuleNameFromUri(uri);
+            }
+        }
 
         Long fileManagementId = null;
 
@@ -648,15 +671,38 @@ public void afterFormManagement() {
             // 获取请求的URI和Referer
             String uri = request.getRequestURI();
             String referer = request.getHeader("Referer");
-            
-            // 构造完整的relatedUrl
-            String relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
+
+            // 尝试从请求参数中获取原始URL信息（用于构造relatedUrl）
+            String sourceUrl = request.getParameter("sourceUrl");
+            String originalPath = request.getParameter("originalPath");
+
+            // 构造完整的relatedUrl，优先使用FormData中的原始URL
+            String relatedUrl;
+            if (StringUtils.isNotEmpty(sourceUrl)) {
+                relatedUrl = sourceUrl;
+                log.debug("使用FormData中的sourceUrl作为relatedUrl: {}", relatedUrl);
+            } else if (StringUtils.isNotEmpty(originalPath)) {
+                relatedUrl = originalPath;
+                log.debug("使用FormData中的originalPath作为relatedUrl: {}", relatedUrl);
+            } else {
+                relatedUrl = StringUtils.isNotEmpty(referer) ? referer : uri;
+                log.debug("使用默认的Referer或URI作为relatedUrl: {}", relatedUrl);
+            }
             relatedUrl = ensureSecurityConmPrefix(relatedUrl);
-            
-            // 获取模块名称
-            String moduleName = getModuleNameFromUri(referer);
-            if ("未知模块".equals(moduleName)) {
-                moduleName = getModuleNameFromUri(uri);
+
+            // 获取模块名称 - 优先使用FormData中的sourceUrl，然后使用原有的提取逻辑
+            String moduleName;
+            if (StringUtils.isNotEmpty(sourceUrl)) {
+                // 构造完整的URL用于模块名称提取
+                String fullSourceUrl = "http://172.19.10.170/" + sourceUrl;
+                moduleName = getModuleNameFromUri(fullSourceUrl);
+                log.debug("使用FormData中的sourceUrl进行模块名称提取: {}", fullSourceUrl);
+            } else {
+                // 使用原有的提取逻辑
+                moduleName = getModuleNameFromUri(referer);
+                if ("未知模块".equals(moduleName)) {
+                    moduleName = getModuleNameFromUri(uri);
+                }
             }
             
             String controllerClassName = joinPoint.getTarget().getClass().getSimpleName();

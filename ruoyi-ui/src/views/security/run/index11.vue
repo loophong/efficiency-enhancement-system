@@ -264,10 +264,9 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已存在数据（基于内部编号匹配）
+              <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
             </div>
-            <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>

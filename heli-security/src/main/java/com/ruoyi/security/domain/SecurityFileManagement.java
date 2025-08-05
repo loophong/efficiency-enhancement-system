@@ -20,6 +20,10 @@ public class SecurityFileManagement extends BaseEntity
     /** 主键ID */
     private Long id;
 
+    /** 年份 */
+    @Excel(name = "年份")
+    private String year;
+
     /** 文件名称 */
     @Excel(name = "文件名称")
     private String fileName;
@@ -28,15 +32,15 @@ public class SecurityFileManagement extends BaseEntity
     private String filePath;
 
     /** 文件大小(字节) */
-    @Excel(name = "文件大小(字节)")
+//    @Excel(name = "文件大小(字节)")
     private Long fileSize;
 
     /** 文件类型(MIME类型) */
-    @Excel(name = "文件类型(MIME类型)")
+//    @Excel(name = "文件类型(MIME类型)")
     private String fileType;
 
     /** 文件分类(UPLOAD:上传文件/IMPORT:导入文件) */
-    @Excel(name = "文件分类(UPLOAD:上传文件/IMPORT:导入文件)")
+//    @Excel(name = "文件分类(UPLOAD:上传文件/IMPORT:导入文件)")
     private String fileCategory;
 
     /** 所属模块名称 */
@@ -62,12 +66,9 @@ public class SecurityFileManagement extends BaseEntity
     private String uploadUser;
 
     /** 状态(0正常 1禁用) */
-    @Excel(name = "状态(0正常 1禁用)")
+//    @Excel(name = "状态(0正常 1禁用)")
     private String status;
 
-    /** 年份 */
-    @Excel(name = "年份")
-    private String year;
 
     /** 其他信息 */
     @Excel(name = "其他信息")

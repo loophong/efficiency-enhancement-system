@@ -159,6 +159,23 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:OccupationaPersonnelList:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="Download"
+          @click="handleDownloadTemplate"
+        >下载模板</el-button>
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
         type="primary" 
@@ -287,6 +304,36 @@
       </template>
     </el-dialog>
 
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :auto-upload="false"
+        :on-change="handleFileChange"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm" :loading="upload.isUploading">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- 注释掉文件监控对话框
     <el-dialog title="文件监控" v-model="monitorOpen" width="800px" append-to-body>
       <el-tabs v-model="activeTab">
@@ -331,6 +378,9 @@
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
+import axios from 'axios';
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
@@ -348,6 +398,28 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const uploadRef = ref();
+const selectedFile = ref(null);
+
+// 导入参数
+const upload = reactive({
+  // 是否显示弹出层（导入）
+  open: false,
+  // 弹出层标题（导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的用户数据
+  updateSupport: 0,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/OccupationaPersonnelList/importData",
+  
+  data: {
+    sourceUrl: 'securityConm/security1/run/healthcontrol/OccupationaPersonnelList'
+  }
+});
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +550,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "危险职业岗位人员";
   handleQuery();
 }
 
@@ -659,6 +732,103 @@ function handleView(row) {
   } else {
     proxy.$modal.msgError("文件路径无效，无法查看");
   }
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "危险职业岗位人员清单及管理台帐导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download('security/OccupationaPersonnelList/importTemplateSimple', {}, '危险职业岗位人员清单及管理台帐导入模板.xlsx');
+}
+
+/** 文件选择处理 */
+function handleFileChange(file) {
+  console.log('文件选择:', file);
+  selectedFile.value = file;
+}
+
+/** 提交上传文件 */
+function submitFileForm() {
+  if (!selectedFile.value) {
+    proxy.$modal.msgError('请选择要上传的文件');
+    return;
+  }
+  
+  if (!selectedFile.value.raw) {
+    proxy.$modal.msgError('文件无效');
+    return;
+  }
+  
+  const file = selectedFile.value.raw;
+  console.log('获取到文件:', file);
+  
+  // 创建 FormData 并确保参数名正确
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  // 添加 sourceUrl 信息，告诉后端应该使用 run/index6.vue 界面的 URL 进行模块名称提取
+  formData.append('sourceUrl', 'securityConm/security1/run/healthcontrol/OccupationaPersonnelList');
+  
+  // 检查FormData内容
+  for (let [key, value] of formData.entries()) {
+    console.log('FormData内容:', key, value instanceof File ? value.name : value);
+  }
+  
+  upload.isUploading = true;
+  
+  // 复用 run/index6.vue 的导入 API
+  axios.post(import.meta.env.VITE_APP_BASE_API + '/security/OccupationaPersonnelList/importData', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + getToken()
+    }
+  }).then(response => {
+    console.log('上传成功:', response);
+    console.log('响应数据:', response.data);
+    
+    upload.open = false;
+    upload.isUploading = false;
+    selectedFile.value = null;
+    uploadRef.value.clearFiles();
+    
+    // 改善成功判断条件，兼容多种响应格式
+    if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
+      proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入成功') + "</div>", "导入结果", {
+        dangerouslyUseHTMLString: true,
+        type: 'success'
+      });
+      getList();
+    } else if (response.status === 200) {
+      // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功
+      console.log('根据 HTTP 状态码判断为成功');
+      proxy.$alert("导入成功", "导入结果", {
+        type: 'success'
+      });
+      getList();
+    } else {
+      proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入失败') + "</div>", "导入失败", {
+        dangerouslyUseHTMLString: true,
+        type: 'error'
+      });
+    }
+  }).catch(error => {
+    console.error('上传失败:', error);
+    upload.open = false;
+    upload.isUploading = false;
+    selectedFile.value = null;
+    // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
+    getList();
+    proxy.$modal.msgError('导入请求完成，请检查导入结果');
+  });
+}
+
+/** 导入模板 */
+function importTemplate() {
+  proxy.download('security/OccupationaPersonnelList/importTemplateSimple', {}, '危险职业岗位人员清单及管理台帐导入模板.xlsx');
 }
 
 // 注释掉监控相关函数

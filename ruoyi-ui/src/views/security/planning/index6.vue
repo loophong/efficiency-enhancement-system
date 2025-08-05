@@ -112,6 +112,15 @@
           v-hasPermi="['security:compliance:import']"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -381,7 +390,10 @@ function handleExport() {
     ...queryParams.value
   }, `compliance_${new Date().getTime()}.xlsx`)
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /** 导入按钮操作 */
 function handleImport() {
   upload.title = "导入合规性评价数据";

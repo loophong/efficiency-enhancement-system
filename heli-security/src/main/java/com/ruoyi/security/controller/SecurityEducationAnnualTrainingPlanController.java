@@ -60,17 +60,17 @@ public class SecurityEducationAnnualTrainingPlanController extends BaseControlle
         util.exportExcel(response, list, "年度培训计划数据");
     }
     
-    /**
-     * 导入年度培训计划数据
-     */
-    @PreAuthorize("@ss.hasPermi('security:trainingplan:import')")
-    @Log(title = "年度培训计划", businessType = BusinessType.IMPORT)
-    @PostMapping("/importData")
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
-    {
-        String message = securityEducationAnnualTrainingPlanService.importData(file.getInputStream(), updateSupport);
-        return success(message);
-    }
+//    /**
+//     * 导入年度培训计划数据
+//     */
+//    @PreAuthorize("@ss.hasPermi('security:trainingplan:import')")
+//    @Log(title = "年度培训计划", businessType = BusinessType.IMPORT)
+//    @PostMapping("/importData")
+//    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+//    {
+//        String message = securityEducationAnnualTrainingPlanService.importData(file.getInputStream(), updateSupport);
+//        return success(message);
+//    }
     
     /**
      * 下载导入模板
@@ -81,6 +81,18 @@ public class SecurityEducationAnnualTrainingPlanController extends BaseControlle
     {
         ExcelUtil<SecurityEducationAnnualTrainingPlan> util = new ExcelUtil<SecurityEducationAnnualTrainingPlan>(SecurityEducationAnnualTrainingPlan.class);
         util.importTemplateExcel(response, "年度培训计划数据");
+    }
+
+    /**
+     * 导入年度培训计划数据
+     */
+    @PreAuthorize("@ss.hasPermi('security:trainingplan:import')")
+    @Log(title = "年度培训计划", businessType = BusinessType.IMPORT)
+    @PostMapping("/importData")
+    public AjaxResult importData(MultipartFile file, boolean updateSupport) throws Exception
+    {
+        String message = securityEducationAnnualTrainingPlanService.importData(file.getInputStream(), updateSupport);
+        return success(message);
     }
 
     /**

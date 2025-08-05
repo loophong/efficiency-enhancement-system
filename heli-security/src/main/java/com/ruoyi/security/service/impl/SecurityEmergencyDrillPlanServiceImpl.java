@@ -111,6 +111,9 @@ public class SecurityEmergencyDrillPlanServiceImpl implements ISecurityEmergency
         if (StringUtils.isNull(drillPlanList) || drillPlanList.size() == 0) {
             throw new ServiceException("导入应急演练计划数据不能为空！");
         }
+        
+        // 添加调试日志，检查参数传递
+        log.info("应急演练计划导入开始，isUpdateSupport: {}, 操作用户: {}, 数据条数: {}", isUpdateSupport, operName, drillPlanList.size());
 
         // 处理合并单元格数据
         drillPlanList = MergedCellProcessor.processEmergencyDrillPlanMergedCells(drillPlanList);
@@ -145,24 +148,28 @@ public class SecurityEmergencyDrillPlanServiceImpl implements ISecurityEmergency
                     continue;
                 }
 
-                // 检查是否存在相同的记录（基于级别、科室/班组、演练主题）
-                SecurityEmergencyDrillPlan existingPlan = findByUniqueFields(drillPlan.getLevel(), drillPlan.getDepartmentTeam(), drillPlan.getDrillTheme());
-
-                if (existingPlan != null && isUpdateSupport) {
-                    // 更新现有记录
-                    drillPlan.setId(existingPlan.getId());
-                    this.updateSecurityEmergencyDrillPlan(drillPlan);
-                    successNum++;
-                    successMsg.append("<br/>" + successNum + "、级别 " + drillPlan.getLevel() + " 科室/班组 " + drillPlan.getDepartmentTeam() + " 更新成功");
-                } else if (existingPlan == null) {
-                    // 插入新记录
+                if (isUpdateSupport) {
+                    // 允许重复数据导入，直接插入新记录
+                    log.debug("执行重复数据导入逻辑，直接插入: 级别={}, 科室/班组={}", drillPlan.getLevel(), drillPlan.getDepartmentTeam());
                     this.insertSecurityEmergencyDrillPlan(drillPlan);
                     successNum++;
                     successMsg.append("<br/>" + successNum + "、级别 " + drillPlan.getLevel() + " 科室/班组 " + drillPlan.getDepartmentTeam() + " 导入成功");
                 } else {
-                    // 存在但不更新，跳过
-                    successNum++;
-                    successMsg.append("<br/>" + successNum + "、级别 " + drillPlan.getLevel() + " 科室/班组 " + drillPlan.getDepartmentTeam() + " 已存在，跳过导入");
+                    // 检查是否存在相同的记录（基于级别、科室/班组、演练主题）
+                    log.debug("执行重复数据检查逻辑: 级别={}, 科室/班组={}", drillPlan.getLevel(), drillPlan.getDepartmentTeam());
+                    SecurityEmergencyDrillPlan existingPlan = findByUniqueFields(drillPlan.getLevel(), drillPlan.getDepartmentTeam(), drillPlan.getDrillTheme());
+                    
+                    if (existingPlan == null) {
+                        // 插入新记录
+                        this.insertSecurityEmergencyDrillPlan(drillPlan);
+                        successNum++;
+                        successMsg.append("<br/>" + successNum + "、级别 " + drillPlan.getLevel() + " 科室/班组 " + drillPlan.getDepartmentTeam() + " 导入成功");
+                    } else {
+                        // 存在重复记录，跳过导入
+                        log.debug("发现重复记录，跳过导入: 级别={}, 科室/班组={}", drillPlan.getLevel(), drillPlan.getDepartmentTeam());
+                        successNum++;
+                        successMsg.append("<br/>" + successNum + "、级别 " + drillPlan.getLevel() + " 科室/班组 " + drillPlan.getDepartmentTeam() + " 已存在，跳过导入");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;

@@ -88,7 +88,7 @@
 
     <el-table v-loading="loading" :data="EnvironmentalOhsRecordListList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="记录编号" align="center" prop="recordNumber" />
       <el-table-column label="记录名称" align="center" prop="recordName" />
       <el-table-column label="归口部门" align="center" prop="responsibleDepartment" />

@@ -86,6 +86,15 @@
           @click="handleImportTemplate"
           v-hasPermi="['security:environmentidicaation:import']"
         >模板下载</el-button>
+        </el-col>
+      <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -118,7 +127,7 @@
       </el-table-column>
     </el-table>
 
-    <!-- 分页 -->
+    <!-- 分页 -->     
     <pagination
         v-show="total>0"
         :total="total"
@@ -228,7 +237,10 @@ function checkRelatedId() {
     proxy.$modal.msgSuccess("已加载关联文件的环境识别记录");
   }
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /** 查询环境识别列表 */
 function getList() {
   loading.value = true;

@@ -169,6 +169,15 @@
           @click="handleImportTemplate"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -401,10 +410,9 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据（不勾选则允许重复数据导入）
+              <span>仅允许导入xls、xlsx格式文件。支持空值、重复名称和完全重复数据导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleImportTemplate">下载模板</el-link>
             </div>
-            <span>仅允许导入xls、xlsx格式文件。支持空值、重复名称和完全重复数据导入。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleImportTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>
@@ -508,7 +516,10 @@ function getList() {
     loading.value = false;
   });
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 // 取消按钮
 function cancel() {
   open.value = false;

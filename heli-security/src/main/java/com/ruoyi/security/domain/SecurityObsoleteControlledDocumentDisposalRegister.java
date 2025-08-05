@@ -42,7 +42,7 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
     private Long relatedId;
 
     /** 时间 */
-    @Excel(name = "时间")
+//    @Excel(name = "时间")
     private String time;
 
     public void setId(Long id)

@@ -138,6 +138,15 @@
           v-hasPermi="['security:HealthAndSafetyGoals:import']"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -341,7 +350,10 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /** 查询年度环境职业健康安全目标、指标及工作分解列表 */
 function getList() {
   loading.value = true;

@@ -88,6 +88,7 @@
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:ProductionResponsibilityList:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:ProductionResponsibilityList:remove']">删除</el-button>
+          <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -99,6 +100,24 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
+
+       <!-- 文件预览对话框 预览excel文件-和docx文件 选择功能-->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-excel
+        v-if="fileType === 'excel'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+      <vue-office-docx
+        v-else-if="fileType === 'docx'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+    </el-dialog>
 
     <!-- 添加或修改安全生产责任制清单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -161,7 +180,10 @@
 import { listProductionResponsibilityList, getProductionResponsibilityList, delProductionResponsibilityList, addProductionResponsibilityList, updateProductionResponsibilityList } from "@/api/security/ProductionResponsibilityList";
 import { getToken } from "@/utils/auth";
 import FileUpload from "@/components/FileUpload/index.vue";
-
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
+import VueOfficeExcel from '@vue-office/excel'
+import '@vue-office/excel/lib/index.css'
 const { proxy } = getCurrentInstance();
 
 const ProductionResponsibilityListList = ref([]);
@@ -174,6 +196,10 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const route = useRoute();
+const previewSrc = ref(''); // 确保 previewSrc 被正确声明
+const comStyle = ref({ width: '100%', height: '600px' });
+const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
+const fileType = ref(''); // 添加 fileType 变量
 /*** 用户导入参数 */
 const upload = reactive({
   // 是否显示弹出层（用户导入）
@@ -296,6 +322,41 @@ function arraySpanMethod({ column, rowIndex }) {
 function cancel() {
   open.value = false;
   reset();
+}
+
+/** 预览文件 */
+function handlePreview(row) {
+  const staticPath = import.meta.env.VITE_APP_BASE_API; // 静态地址
+  const dynamicPath = row.fileList; // 动态地址
+  const fileExt = dynamicPath.split('.').pop().toLowerCase();
+  
+  // 设置文件类型
+  if (fileExt === 'xlsx') {
+    fileType.value = 'excel';
+  } else if (fileExt === 'docx') {
+    fileType.value = 'docx';
+  }
+  
+  if (fileExt === 'xlsx' || fileExt === 'docx') {
+    previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
+    console.log("文件地址: " + previewSrc.value);
+    previewDialogVisible.value = true;
+    console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
+    console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
+  } else {
+    console.error('不支持的文件类型,只能查看xlsx和docx文件:', fileExt);
+    proxy.$modal.msgError('不支持的文件类型,只能查看xlsx和docx文件');
+  }
+}
+
+/** 渲染完成处理 */
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+
+/** 错误处理 */
+function errorHandler(error) {
+  console.error('文档渲染错误', error);
 }
 
 // 表单重置

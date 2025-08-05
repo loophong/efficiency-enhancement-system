@@ -125,6 +125,15 @@
           v-hasPermi="['security:RegulationsIdentificationList1:import']"
         >下载模板</el-button>
       </el-col>
+    <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -318,7 +327,10 @@ function resetQuery() {
   proxy.resetForm("queryRef");
   handleQuery();
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id);
