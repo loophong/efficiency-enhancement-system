@@ -217,10 +217,10 @@
             >下载</el-button>
           </template>
       </el-table-column> -->
-      <el-table-column label="反馈单附件" align="center" prop="feedbackFileUrl" width="190">
+      <el-table-column label="回函附件" align="center" prop="replyFileUrl" width="190">
           <template #default="scope">
-            <div v-if="scope.row.feedbackFileUrl">
-              <div v-for="(fileUrl, index) in getFileList(scope.row.feedbackFileUrl)" :key="index" style="margin-bottom: 5px;">
+            <div v-if="scope.row.replyFileUrl">
+              <div v-for="(fileUrl, index) in getFileList(scope.row.replyFileUrl)" :key="index" style="margin-bottom: 5px;">
                 <span style="font-size: 12px; color: #666;">{{ getFileName(fileUrl) }}</span>
                 <br>
                 <el-button
@@ -279,12 +279,24 @@
     <!-- 添加或修改质量通知单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="happenRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="发生时间" prop="happenTime">
           <el-date-picker clearable
             v-model="form.happenTime"
@@ -341,7 +353,8 @@
 
     <!-- 回函弹窗 -->
     <el-dialog :title="'回函操作'" v-model="replyOpen" width="500px" append-to-body>
-  <el-form :model="replyForm" label-width="120px">
+  <el-form :model="replyForm" :rules="rules" label-width="120px">
+    <!-- <el-form ref="happenRef" :model="replyForm" :rules="rules" label-width="120px"> -->
     <el-form-item label="供应商代码">
       <el-input v-model="replyForm.supplierCode" disabled />
     </el-form-item>
@@ -410,6 +423,10 @@ import VueOfficeExcel from '@vue-office/excel'
 import VueOfficePdf from '@vue-office/pdf'
 import '@vue-office/docx/lib/index.css'
 import '@vue-office/excel/lib/index.css'
+
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
+
 const previewDialogVisible = ref(false);
 const previewSrc = ref('');
 const fileType = ref('');
@@ -481,7 +498,10 @@ const total = ref(0);
 const title = ref("");
 
 const data = reactive({
-  form: {},
+  form: {
+      supplierCode: '',
+      supplierName: ''
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -499,9 +519,38 @@ const data = reactive({
     createBy: null,
     one: null,
     two: null,
-    three: null
+    three: null,
+    orderByColumn: 'happen_time ',
+    isAsc: 'desc'
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商代码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    happenTime: [
+      { required: true, message: "发生时间不能为空", trigger: "blur" }
+    ],
+    deadline: [
+      { required: true, message: "回函截止时间不能为空", trigger: "blur" }
+    ],
+    feedbackFileName: [
+      { required: true, message: "反馈单文件名不能为空", trigger: "blur" }
+    ],
+    feedbackFileUrl: [
+      { required: true, message: "反馈单附件不能为空", trigger: "blur" }
+    ],
+    replyFileName: [
+      { required: true, message: "回函文件名不能为空", trigger: "blur" }
+    ],
+    replyFileUrl: [
+      { required: true, message: "回函附件路径不能为空", trigger: "blur" }
+    ],
+    replyTime: [
+      { required: true, message: "回函上传时间不能为空", trigger: "blur" }
+    ],
   }
 });
 
@@ -513,7 +562,8 @@ const replyForm = reactive({
   supplierName: '',
   replyTime: '',
   replyFileName: '',
-  replyFileUrl: ''
+  replyFileUrl: '',
+
 });
 function handleReply(row) {
   replyForm.id = row.id;
@@ -685,4 +735,45 @@ function handleExport() {
 }
 
 getList();
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

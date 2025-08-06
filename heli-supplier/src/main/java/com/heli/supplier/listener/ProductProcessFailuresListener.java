@@ -124,6 +124,7 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
                             .eq(SupplierZeroKilometerFailureRate::getUploadMonth, uploadMonth));
             if (selectOne != null) {
                 selectOne.setZeroFailureRate(result);
+
                 supplierZeroKilometerFailureRateMapper.updateById(selectOne);
             } else {
                 SupplierZeroKilometerFailureRate supplierZeroKilometerFailureRate = new SupplierZeroKilometerFailureRate();

@@ -123,15 +123,63 @@
     <!-- 添加或修改二方审核得分对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="scoreRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
-        <el-form-item label="不符合项" prop="">
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="不符合项" prop="notTrueList">
+          <div v-for="(item, index) in form.notTrueList" :key="index" style="display: flex; margin-bottom: 10px;">
+            <el-input 
+              v-model="form.notTrueList[index]" 
+              placeholder="请输入不符合项" 
+              style="flex: 1; margin-right: 10px;"
+            />
+            <!-- v-if="index === form.notTrueList.length - 1"  -->
+            <el-button 
+              v-if="!form.id && index === form.notTrueList.length - 1" 
+              type="primary" 
+              icon="Plus" 
+              circle 
+              size="small"
+              @click="addNotTrueItem"
+            />
+            <!-- v-if="form.notTrueList.length > 1"  -->
+            <el-button 
+              
+              v-if="!form.id && form.notTrueList.length > 1" 
+              type="danger" 
+              icon="Minus" 
+              circle 
+              size="small"
+              @click="removeNotTrueItem(index)"
+              style="margin-left: 5px;"
+            />
+          </div>
+        </el-form-item>
+        
+        <!-- <el-form-item label="不符合项" prop="notTrue">
           <el-input v-model="form.notTrue" placeholder="请输入不符合项" />
-        </el-form-item>
+        </el-form-item> -->
+
+
+
+
+
         <!-- <el-form-item label="不符合项2" prop="notTrue2">
           <el-input v-model="form.notTrue2" placeholder="请输入不符合项2" />
         </el-form-item>
@@ -209,6 +257,8 @@
 import { listScore, getScore, delScore, addScore, updateScore,importFile} from "@/api/supplier/score";
 import dayjs from 'dayjs';
 import {handleTrueDownload} from "@/api/tool/gen"
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
 
 const { proxy } = getCurrentInstance();
 
@@ -234,7 +284,12 @@ const inputFile = ref(null);
 
 
 const data = reactive({
-  form: {},
+  form: {
+    supplierCode: '',
+    supplierName: '',
+    notTrueList: [''],// 改为数组，默认一个空项
+    time: null
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -247,9 +302,34 @@ const data = reactive({
     notTrue5: null,
     score: null,
     time: null,
-    uploadName: null
+    uploadName: null,
+    orderByColumn: 'time',
+    isAsc: 'desc'
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商编码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    notTrueList: [
+    { 
+      required: true, 
+      validator: (rule, value, callback) => {
+        const validItems = value.filter(item => item && item.trim() !== '');
+        if (validItems.length === 0) {
+          callback(new Error('请至少填写一个不符合项'));
+        } else {
+          callback();
+        }
+      }, 
+      trigger: "blur" 
+    }
+  ],
+    time:[
+      { required: true, message: "上传时间不能为空", trigger: "blur" }
+    ]
   }
 });
 
@@ -287,7 +367,9 @@ function reset() {
     notTrue5: null,
     score: null,
     time: null,
-    uploadName: null
+    uploadName: null,
+    notTrueList: [''] ,// 重置为单个空项
+    time: null
   };
   proxy.resetForm("scoreRef");
 }
@@ -341,31 +423,84 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getScore(_id).then(response => {
     form.value = response.data;
+
+    // 将单个不符合项转换为数组格式
+    if (form.value.notTrue) {
+      form.value.notTrueList = [form.value.notTrue];
+    } else {
+      form.value.notTrueList = [''];
+    }
+
     open.value = true;
     title.value = "修改二方审核得分";
   });
 }
 
-/** 提交按钮 */
+// 添加不符合项
+function addNotTrueItem() {
+  form.value.notTrueList.push('');
+}
+
+// 删除不符合项
+function removeNotTrueItem(index) {
+  if (form.value.notTrueList.length > 1) {
+    form.value.notTrueList.splice(index, 1);
+  }
+}
 function submitForm() {
   proxy.$refs["scoreRef"].validate(valid => {
     if (valid) {
-      if (form.value.id != null) {
-        updateScore(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
-      } else {
-        addScore(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
+      // 过滤空的不符合项
+      const validNotTrueItems = form.value.notTrueList.filter(item => item.trim() !== '');
+      
+      if (validNotTrueItems.length === 0) {
+        proxy.$modal.msgError("请至少填写一个不符合项");
+        return;
       }
+
+      // 为每个不符合项创建单独的记录
+      const promises = validNotTrueItems.map(notTrueItem => {
+        const recordData = {
+          ...form.value,
+          notTrue: notTrueItem
+        };
+        delete recordData.notTrueList; // 删除数组字段
+        
+        return form.value.id != null ? 
+          updateScore(recordData) : 
+          addScore(recordData);
+      });
+
+      Promise.all(promises).then(() => {
+        proxy.$modal.msgSuccess(form.value.id != null ? "修改成功" : "新增成功");
+        open.value = false;
+        getList();
+      }).catch(() => {
+        proxy.$modal.msgError("操作失败");
+      });
     }
   });
 }
+// /** 提交按钮 */
+// function submitForm() {
+//   proxy.$refs["scoreRef"].validate(valid => {
+//     if (valid) {
+//       if (form.value.id != null) {
+//         updateScore(form.value).then(response => {
+//           proxy.$modal.msgSuccess("修改成功");
+//           open.value = false;
+//           getList();
+//         });
+//       } else {
+//         addScore(form.value).then(response => {
+//           proxy.$modal.msgSuccess("新增成功");
+//           open.value = false;
+//           getList();
+//         });
+//       }
+//     }
+//   });
+// }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
@@ -456,4 +591,49 @@ function checkFile() {
     resetUpload();
   }
 }
+
+
+
+
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

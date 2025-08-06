@@ -183,13 +183,26 @@
 
     <!-- 添加或修改擅自变更产品材质参数尺寸对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="changeRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+      <el-form ref="changeRef" :model="form" :rules="rules" label-width="120px">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
+
         <el-form-item label="供应商类别" prop="formLeibie">
           <el-radio-group v-model="form.formLeibie">
             <el-radio
@@ -239,6 +252,8 @@
 
 <script setup name="Change">
 import { listChange, getChange, delChange, addChange, updateChange } from "@/api/supplier/change";
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
 
 const { proxy } = getCurrentInstance();
 const { supplier_change } = proxy.useDict('supplier_change');
@@ -254,7 +269,10 @@ const total = ref(0);
 const title = ref("");
 
 const data = reactive({
-  form: {},
+  form: {
+        supplierCode: '',
+    supplierName: ''
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -268,9 +286,26 @@ const data = reactive({
     reporter: null,
     one: null,
     two: null,
-    three: null
+    three: null,
+    orderByColumn: 'responsibility_judgment_time',
+    isAsc: 'desc'
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商代码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    formLeibie: [
+      { required: true, message: "供应商类别不能为空", trigger: "blur" }
+    ],
+    responsibilityJudgmentTime: [
+      { required: true, message: "判定责任时间点不能为空", trigger: "blur" }
+    ],
+    specificContent: [
+      { required: true, message: "具体内容不能为空", trigger: "blur" }
+    ],
   }
 });
 
@@ -388,4 +423,46 @@ function handleExport() {
 }
 
 getList();
+
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

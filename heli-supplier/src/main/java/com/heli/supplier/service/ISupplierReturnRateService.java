@@ -65,4 +65,5 @@ public interface ISupplierReturnRateService extends IService<SupplierReturnRate>
     public int deleteSupplierReturnRateById(String id);
 
     void readSalaryExcelToDB(String originalFilename, MultipartFile excelFile, Date uploadMonth);
+
 }

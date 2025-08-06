@@ -357,7 +357,9 @@ const data = reactive({
     2: null,
     3: null,
     4: null,
-    storageFlag: null
+    storageFlag: null,
+    orderByColumn: 'end_time',  // 添加这行：按结束时间排序
+    isAsc: 'desc'  // 添加这行：降序排列，结束时间晚的在前
   },
   rules: {}
 });

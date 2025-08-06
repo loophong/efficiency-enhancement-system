@@ -4,12 +4,14 @@ import java.util.Date;
 import java.util.List;
 
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
 import com.heli.supplier.listener.ComplexHeaderReturnRateListener;
 import com.heli.supplier.listener.OnetimeSimpleListener;
 //import com.heli.supplier.listener.ReturnRateListener;  ///原来的监听器
+import com.ruoyi.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -119,8 +121,8 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
                 EasyExcel.read(excelFile.getInputStream(),
                                 new ComplexHeaderReturnRateListener(supplierReturnRateMapper, uploadMonth))
 //                                SupplierReturnRate.class, new ReturnRateListener(supplierReturnRateMapper,uploadMonth))
-
-                        .sheet("售后返修率").headRowNumber(1)
+                        .sheet().headRowNumber(1)
+//                        .sheet("售后返修率").headRowNumber(1)
                         .doRead();
 //                                .sheet(1).doRead();
 
@@ -140,9 +142,9 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
      * @return 最终得分（BigDecimal 格式）
      */
     private double calculateScore(String returnRate) {
-        if (returnRate == null || !returnRate.endsWith("%")) {
-            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
-        }
+//        if (returnRate == null || !returnRate.endsWith("%")) {
+//            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
+//        }
 
         // 去掉百分号并转换为数值
         double rate = Double.parseDouble(returnRate.replace("%", "").trim());
@@ -163,6 +165,5 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
         // 计算最终得分
         return baseScore * 0.08;
     }
-
 
 }
