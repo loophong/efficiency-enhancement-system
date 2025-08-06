@@ -1,6 +1,7 @@
 package com.heli.device.maintenanceTable.controller;
 
 import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -62,11 +63,13 @@ public class DeviceMaintenanceTableController extends BaseController
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
     @GetMapping("/listByDate")
-    public TableDataInfo listByDate(@DateTimeFormat(pattern = "yyyy-MM")Date yearAndMonth,String faultType)
-    {
+    public TableDataInfo listByDate(String yearAndMonth,String faultType) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-        String formattedDate = sdf.format(yearAndMonth);
+        Date parsedDate = sdf.parse(yearAndMonth);
+        // 如果需要，可以再次格式化为 yyyy-MM 的字符串
+        String formattedDate = sdf.format(parsedDate);
 //        startPage();
+
         List<DeviceMaintenanceTable> list = deviceMaintenanceTableMapper.selectListByDate(formattedDate,faultType);
         return getDataTable(list);
     }
