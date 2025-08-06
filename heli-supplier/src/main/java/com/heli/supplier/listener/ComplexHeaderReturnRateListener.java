@@ -2,6 +2,7 @@ package com.heli.supplier.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.heli.supplier.domain.SupplierReturnRate;
 import com.heli.supplier.mapper.SupplierReturnRateMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -192,6 +193,8 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
                 break;
             }
         }
+        // 在这里添加：删除该月份的旧数据
+        deleteExistingData();
     }
 
     @Override
@@ -222,7 +225,8 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
         log.info("读取到供应商[{}]的{}月售后反馈率: {}", supplierName,
                 new SimpleDateFormat("M").format(targetMonth), returnRate);
 
-        if (returnRate != null && !returnRate.isEmpty() && !returnRate.equals("#DIV/0!")) {
+//        if (returnRate != null && !returnRate.isEmpty() && !returnRate.equals("#DIV/0!")) {
+//        if (returnRate != null && !returnRate.isEmpty()) {
             try {
                 // 创建实体并保存
                 SupplierReturnRate entity = new SupplierReturnRate();
@@ -232,16 +236,22 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
 
                 // 计算分数
                 try {
-                    if (returnRate.endsWith("%")) {
+                    if(returnRate.equals("#DIV/0!"))
+                        entity.setScore(0.0);
+                    else if(returnRate == null || returnRate.isEmpty())
+                        entity.setScore(0.0);
+//                    if (returnRate.endsWith("%"))
+                    else {
                         double rate = Double.parseDouble(returnRate.replace("%", ""));
                         double baseScore;
                         if (rate < 80) baseScore = 0;
                         else if (rate < 90) baseScore = 30;
                         else if (rate < 100) baseScore = 60;
                         else baseScore = 100;
-                        entity.setScore(baseScore);
+                        entity.setScore(baseScore*0.08);
                     }
                 } catch (Exception e) {
+                    entity.setScore(0.0);
                     log.error("计算分数出错: {}", e.getMessage());
                 }
 
@@ -251,10 +261,25 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
                 log.error("插入数据出错: {}", e.getMessage());
             }
         }
-    }
+
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         log.info("所有数据解析完成!");
+    }
+
+    /**
+     * 删除指定月份的数据
+     */
+    private void deleteExistingData() {
+        try {
+            // 使用MyBatis-Plus的删除方法
+            QueryWrapper<SupplierReturnRate> deleteWrapper = new QueryWrapper<>();
+            deleteWrapper.eq("month", targetMonth);
+            int deletedCount = supplierReturnRateMapper.delete(deleteWrapper);
+            log.info("删除了 {} 条该月份的旧数据", deletedCount);
+        } catch (Exception e) {
+            log.error("删除旧数据失败: {}", e.getMessage());
+        }
     }
 }

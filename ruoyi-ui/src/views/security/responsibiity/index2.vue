@@ -75,7 +75,7 @@
 
     <el-table v-loading="loading" :data="MeetingRecordList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="会议时间" align="center" prop="meetingTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.meetingTime, '{y}-{m}-{d}') }}</span>

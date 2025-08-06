@@ -59,7 +59,7 @@
 
     <el-table v-loading="loading" :data="fileListList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100"/>
       <el-table-column label="文件名称" align="center" prop="fileName" />
       <el-table-column label="文件" align="center" prop="file" />
       <el-table-column label="备注" align="center" prop="text" />

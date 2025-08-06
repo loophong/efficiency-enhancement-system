@@ -108,7 +108,7 @@
 
     <el-table v-loading="loading" :data="emergencysuppliesledgerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100" />
       <el-table-column label="物资名称" align="center" prop="supplyName" />
       <el-table-column label="应急物资类型" align="center" prop="emergencySupplyType" />
       <el-table-column label="物资数量" align="center" prop="quantity" />
@@ -181,10 +181,9 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已存在数据（基于物资名称、应急物资类型匹配）
+              <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
             </div>
-            <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>

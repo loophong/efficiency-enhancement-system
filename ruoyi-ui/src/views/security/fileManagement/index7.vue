@@ -155,6 +155,14 @@
         <el-button
           type="info"
           plain
+          icon="Upload"
+          @click="handleImport"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
           icon="Refresh"
           @click="handleRefresh"
         >刷新</el-button>
@@ -325,13 +333,52 @@
       </template>
     </el-dialog>
     -->
+
+    <!-- 导入对话框 - 复用planning/index2.vue的导入功能 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        :data="upload.data"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleDownloadTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
+// 复用planning/index2.vue的导入API
+import { importUnacceptablerisklist, downloadTemplate } from "@/api/security/unacceptablerisklist";
 import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { onMounted, ref, reactive, toRefs, onUnmounted, getCurrentInstance } from 'vue';
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -348,6 +395,20 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 导入功能相关变量 - 复用planning/index2.vue的导入方法
+const upload = reactive({
+  open: false,
+  title: "导入不可接受风险清单数据",
+  isUploading: false,
+  updateSupport: 0,
+  url: import.meta.env.VITE_APP_BASE_API + "/security/unacceptablerisklist/importData",
+  headers: { Authorization: "Bearer " + getToken() },
+  // 添加sourceUrl参数传递给后端
+  data: {
+    sourceUrl: 'securityConm/security1/planning/hazard/unacceptablerisklist'
+  }
+});
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +539,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "不可接受风险清单";
   handleQuery();
 }
 
@@ -557,8 +619,55 @@ function handleExport() {
 function handleRefresh() {
   // 重新获取文件列表
   getList();
-  // 显示成功消息
-  proxy.$modal.msgSuccess("刷新成功，已获取最新文件记录");
+  // 显示刷新成功消息
+  proxy.$modal.msgSuccess("刷新成功");
+}
+
+/** 导入按钮操作 - 复用planning/index2.vue的导入方法 */
+function handleImport() {
+  upload.open = true;
+}
+
+/** 下载模板操作 - 复用planning/index2.vue的模板下载方法 */
+function handleDownloadTemplate() {
+  downloadTemplate().then(response => {
+    const blob = new Blob([response]);
+    const fileName = `不可接受风险清单模板_${new Date().getTime()}.xlsx`;
+    if ('download' in document.createElement('a')) {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.style.display = 'none';
+      link.href = URL.createObjectURL(blob);
+      document.body.appendChild(link);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    } else {
+      navigator.msSaveBlob(blob, fileName);
+    }
+  }).catch(err => {
+    console.error('下载模板失败', err);
+    proxy.$modal.msgError('下载模板失败，请联系管理员！');
+  });
+}
+
+/** 文件上传中处理 - 复用planning/index2.vue的上传进度处理 */
+function handleFileUploadProgress(event, file) {
+  upload.isUploading = true;
+}
+
+/** 文件上传成功处理 - 复用planning/index2.vue的上传成功处理 */
+function handleFileSuccess(response, file) {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+}
+
+/** 提交上传文件 - 复用planning/index2.vue的文件提交方法 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
 }
 
 /** 查看文件 */

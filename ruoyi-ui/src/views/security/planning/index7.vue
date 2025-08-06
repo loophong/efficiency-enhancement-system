@@ -122,6 +122,15 @@
           v-hasPermi="['security:trainingplan:export']"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -641,7 +650,10 @@ function processColumnMergeWithDependency(data, config, columnName, dependencies
     }
   }
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /**
  * 处理行内相同值的列合并（水平合并）
  */
@@ -736,7 +748,7 @@ function checkRelatedId() {
 onMounted(() => {
   // 如果没有关联ID参数，直接加载所有数据
   if (!route.query.relatedId) {
-getList();
+        getList();
   }
   // 有关联ID参数时，checkRelatedId会处理数据加载
   else {

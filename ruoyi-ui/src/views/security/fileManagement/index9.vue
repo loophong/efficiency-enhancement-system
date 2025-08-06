@@ -155,6 +155,14 @@
         <el-button
           type="info"
           plain
+          icon="Upload"
+          @click="handleCustomImport"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
           icon="Refresh"
           @click="handleRefresh"
         >刷新</el-button>
@@ -325,13 +333,49 @@
       </template>
     </el-dialog>
     -->
+
+    <!-- 导入对话框 - 复用planning/index4.vue的导入功能 -->
+    <el-dialog title="Excel导入" v-model="importDialogVisible" width="35%" @close="resetImportDialog">
+      <el-form label-width="90px">
+        <el-form-item label="导入模块：">
+          <span style="color: rgb(68, 140, 39)">环境法律法规识别清单</span>
+          <br>
+        </el-form-item>
+        <el-form-item label="选择文件：">
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".xlsx,.xls"
+            style="display: none;"
+            @change="handleFileChange"
+          />
+          <el-button @click="triggerFileSelect">选择文件</el-button>
+          <span v-if="selectedFile" style="margin-left: 10px; color: #67C23A;">
+            已选择: {{ selectedFile.name }}
+          </span>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleDownloadTemplate">下载模板</el-button>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="importDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitImportFile" :loading="importLoading">导 入</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
+// 复用planning/index4.vue的导入API
+import { downloadTemplate } from "@/api/security/legallist";
 import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { onMounted, ref, reactive, toRefs, onUnmounted, getCurrentInstance } from 'vue';
+import request from '@/utils/request';
+import { getToken } from '@/utils/auth';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -348,6 +392,12 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 导入功能相关变量 - 复用planning/index4.vue的导入方法
+const fileInput = ref(null);
+const selectedFile = ref(null);
+const importDialogVisible = ref(false);
+const importLoading = ref(false);
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +528,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+    queryParams.value.moduleName = "环境法律法规识别清单";
   handleQuery();
 }
 
@@ -559,6 +610,114 @@ function handleRefresh() {
   getList();
   // 显示成功消息
   proxy.$modal.msgSuccess("刷新成功，已获取最新文件记录");
+}
+
+/** 下载模板按钮操作 - 复用planning/index4.vue的模板下载方法 */
+function handleDownloadTemplate() {
+  downloadTemplate().then(response => {
+    const blob = new Blob([response]);
+    const fileName = `环境法律法规识别清单模板_${new Date().getTime()}.xlsx`;
+    if ('download' in document.createElement('a')) {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.style.display = 'none';
+      link.href = URL.createObjectURL(blob);
+      document.body.appendChild(link);
+      link.click();
+      URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    } else {
+      navigator.msSaveBlob(blob, fileName);
+    }
+  }).catch(err => {
+    console.error('下载模板失败', err);
+    proxy.$modal.msgError('下载模板失败，请联系管理员！');
+  });
+}
+
+/** 触发自定义导入对话框 - 复用planning/index4.vue的导入对话框 */
+function handleCustomImport() {
+  importDialogVisible.value = true;
+  selectedFile.value = null;
+}
+
+/** 触发文件选择 - 复用planning/index4.vue的文件选择方法 */
+function triggerFileSelect() {
+  fileInput.value.click();
+}
+
+/** 处理文件选择变更 - 复用planning/index4.vue的文件选择处理 */
+function handleFileChange(event) {
+  const files = event.target.files;
+  if (files && files.length > 0) {
+    const file = files[0];
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    
+    if (fileExt !== 'xlsx' && fileExt !== 'xls') {
+      proxy.$modal.msgError('只能上传Excel文件！');
+      resetFileInput();
+      return;
+    }
+    
+    selectedFile.value = file;
+  }
+}
+
+/** 重置文件输入框 - 复用planning/index4.vue的文件重置方法 */
+function resetFileInput() {
+  if (fileInput.value) {
+    fileInput.value.value = '';
+  }
+  selectedFile.value = null;
+}
+
+/** 重置导入对话框 - 复用planning/index4.vue的对话框重置方法 */
+function resetImportDialog() {
+  resetFileInput();
+  importLoading.value = false;
+}
+
+/** 提交导入文件 - 复用planning/index4.vue的文件导入方法，添加sourceUrl参数 */
+function submitImportFile() {
+  if (!selectedFile.value) {
+    proxy.$modal.msgError('请选择文件');
+    return;
+  }
+  
+  importLoading.value = true;
+  
+  // 创建FormData对象
+  const formData = new FormData();
+  formData.append('file', selectedFile.value);
+  // 添加sourceUrl参数传递给后端
+  formData.append('sourceUrl', 'securityConm/security1/planning/legal/legallist');
+  
+  // 发送请求
+  request({
+    url: '/security/legallist/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + getToken()
+    }
+  }).then(response => {
+    proxy.$modal.msgSuccess(response.msg || '导入成功');
+    importDialogVisible.value = false;
+    importLoading.value = false;
+    resetFileInput();
+    getList(); // 刷新列表
+  }).catch(error => {
+    console.error('导入失败:', error);
+    let errorMsg = '导入失败';
+    if (error.response && error.response.data) {
+      errorMsg = error.response.data.message || error.response.data.msg || errorMsg;
+    } else if (error.message) {
+      errorMsg = error.message;
+    }
+    proxy.$modal.msgError(errorMsg);
+    importLoading.value = false;
+  });
 }
 
 /** 查看文件 */

@@ -159,6 +159,30 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
+      <!-- 复用相关方期望界面的导入功能 -->
+      <el-col :span="1.5">
+        <el-upload
+          :show-file-list="false"
+          :before-upload="beforeImport"
+          accept=".xlsx,.xls"
+        >
+          <el-button
+            type="info"
+            plain
+            icon="Upload"
+            v-hasPermi="['security:RequireExpectParty:import']"
+          >导入</el-button>
+        </el-upload>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+          v-hasPermi="['security:RequireExpectParty:import']"
+        >模板下载</el-button>
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
         type="primary" 
@@ -329,9 +353,10 @@
 </template>
 
 <script setup name="Filemanagement">
-import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
-import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement } from "@/api/security/filemanagement";
+import { importRequireExpectParty, importTemplate } from "@/api/security/RequireExpectParty";
+import { onMounted, ref, reactive, toRefs, getCurrentInstance } from 'vue';
+import request from '@/utils/request';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -474,6 +499,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "相关方期望";
   handleQuery();
 }
 
@@ -777,6 +803,64 @@ function renderModuleChart() {
   moduleChart.setOption(option);
 }
 */
+
+/** 导入前校验 - 复用相关方期望界面的导入方法 */
+function beforeImport(file) {
+  loading.value = true;
+  const formData = new FormData();
+  formData.append("file", file);
+
+  // 添加原始URL信息，告诉后端应该使用相关方期望界面的URL进行模块名称提取
+  formData.append("sourceUrl", "securityConm/security1/securityConmenvironment/party1");
+
+  // 直接调用相关方期望的导入API
+  request({
+    url: '/security/RequireExpectParty/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    transformRequest: [function (data) {
+      if (data instanceof FormData) {
+        return data;
+      }
+      return JSON.stringify(data);
+    }]
+  }).then(res => {
+    if (res.code === 200) {
+      proxy.$modal.msgSuccess(res.msg);
+      getList(); // 导入成功后刷新文件管理列表
+    } else {
+      proxy.$modal.msgError(res.msg);
+    }
+  }).catch(err => {
+    console.error("导入失败:", err);
+    proxy.$modal.msgError("导入失败: " + (err.message || "未知错误"));
+  }).finally(() => {
+    loading.value = false;
+  });
+  return false;
+}
+
+/** 下载导入模板 - 复用相关方期望界面的模板下载方法 */
+function handleImportTemplate() {
+  // 直接调用相关方期望的模板下载API
+  importTemplate().then(response => {
+    if (!response) {
+      return;
+    }
+    const blob = new Blob([response], { type: "application/vnd.ms-excel" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "相关方期望导入模板.xlsx";
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  }).catch(err => {
+    console.error("模板下载失败:", err);
+    proxy.$modal.msgError("模板下载失败: " + (err.message || "未知错误"));
+  });
+}
 
 // 页面加载时获取列表数据
 onMounted(() => {

@@ -122,7 +122,7 @@
 
     <!-- 添加或修改供应商对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="qualifiedRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="qualifiedRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="系统" prop="controlSystem">
           <el-input v-model="form.controlSystem" placeholder="请输入系统" />
         </el-form-item>
@@ -203,6 +203,18 @@ const data = reactive({
     remarks: null
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商编码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    controlSystem: [
+      { required: true, message: "系统不能为空", trigger: "blur" }
+    ],
+    mainSupplyrange: [
+      { required: true, message: "主要供货范围不能为空", trigger: "blur" }
+    ]
   }
 });
 

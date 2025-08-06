@@ -3,7 +3,9 @@ package com.heli.supplier.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.heli.supplier.domain.SupplierReturnRate;
 import com.heli.supplier.mapper.SupplierOnetimeSimpleMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +93,13 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
      */
     private void saveToDB() {
         log.info("开始写入数据库");
+
+
+
+        // 先删除该月份的所有数据
+        deleteExistingData();
+
+
 //        supplierOnetimeSimpleMapper.insert(cacheDataList);
         supplierOnetimeSimpleMapper.insert(cacheDataList);
     }
@@ -103,7 +112,7 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
      */
     private double calculateScore(String quantityPassRate) {
         if (quantityPassRate == null || quantityPassRate.isEmpty()) {
-            return 0; // 为空时默认 0 分
+            return 100; // 为空时默认 0 分
         }
         try {
             // 去掉可能存在的 "%" 符号，并转换为 double
@@ -124,5 +133,18 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
             return 0; // 格式错误时默认 0 分
         }
     }
-
+    /**
+     * 删除指定月份的数据
+     */
+    private void deleteExistingData() {
+        try {
+            // 使用MyBatis-Plus的删除方法
+            QueryWrapper<SupplierOnetimeSimple> deleteWrapper = new QueryWrapper<>();
+            deleteWrapper.eq("update_month", uploadMonth);
+            int deletedCount = supplierOnetimeSimpleMapper.delete(deleteWrapper);
+            log.info("删除了 {} 条该月份的旧数据", deletedCount);
+        } catch (Exception e) {
+            log.error("删除旧数据失败: {}", e.getMessage());
+        }
+    }
 }

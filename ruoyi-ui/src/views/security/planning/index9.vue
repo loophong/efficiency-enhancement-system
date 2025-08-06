@@ -93,16 +93,17 @@
       <el-table-column label="序号" align="center" type="index"  width="100" />
       <el-table-column label="制度名称" align="center" prop="systemName" />
       <el-table-column label="编号" align="center" prop="documentNumber" />
-      <el-table-column label="文件列表" align="center" width="200">
+      <el-table-column label="文件列表" align="center"    width="200">
         <template #default="scope">
           <file-upload v-model="scope.row.fileList" :limit="5" @change="handleFileChange($event, scope.row)" :show-button="false" />
         </template>
-      </el-table-column>
+      </el-table-column> 
       <el-table-column label="备注" align="center" prop="remarks" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:OhsDocuments:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:OhsDocuments:remove']">删除</el-button>
+          <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -114,6 +115,24 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
+
+   <!-- 文件预览对话框 预览excel文件-和docx文件 选择功能-->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-excel
+        v-if="fileType === 'excel'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+      <vue-office-docx
+        v-else-if="fileType === 'docx'"
+        :src="previewSrc"
+        :style="comStyle"
+        @rendered="renderedHandler"
+        @error="errorHandler"
+      />
+    </el-dialog>
 
     <!-- 添加或修改环境职业健康安全管理体系文件清单对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -145,6 +164,11 @@
 import { listOhsDocuments, getOhsDocuments, delOhsDocuments, addOhsDocuments, updateOhsDocuments } from "@/api/security/OhsDocuments";
 import ExcelImport from "@/components/ExcelImport/index.vue";
 import FileUpload from "@/components/FileUpload/index.vue";
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
+import VueOfficeExcel from '@vue-office/excel'
+import '@vue-office/excel/lib/index.css'
+
 const route = useRoute();
 const { proxy } = getCurrentInstance();
 const OhsDocumentsList = ref([]);
@@ -156,7 +180,10 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-
+const previewSrc = ref(''); // 确保 previewSrc 被正确声明
+const comStyle = ref({ width: '100%', height: '600px' });
+const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
+const fileType = ref(''); // 添加 fileType 变量
 const data = reactive({
   form: {},
   queryParams: {
@@ -185,6 +212,40 @@ function getList() {
   });
 }
 
+/** 预览文件 */
+function handlePreview(row) {
+  const staticPath = import.meta.env.VITE_APP_BASE_API; // 静态地址
+  const dynamicPath = row.fileList; // 动态地址
+  const fileExt = dynamicPath.split('.').pop().toLowerCase();
+  
+  // 设置文件类型
+  if (fileExt === 'xlsx') {
+    fileType.value = 'excel';
+  } else if (fileExt === 'docx') {
+    fileType.value = 'docx';
+  }
+  
+  if (fileExt === 'xlsx' || fileExt === 'docx') {
+    previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
+    console.log("文件地址: " + previewSrc.value);
+    previewDialogVisible.value = true;
+    console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
+    console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
+  } else {
+    console.error('不支持的文件类型,只能查看xlsx和docx文件:', fileExt);
+    proxy.$modal.msgError('不支持的文件类型,只能查看xlsx和docx文件');
+  }
+}
+
+/** 渲染完成处理 */
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+
+/** 错误处理 */
+function errorHandler(error) {
+  console.error('文档渲染错误', error);
+}
 // 取消按钮
 function cancel() {
   open.value = false;

@@ -155,6 +155,24 @@
         <el-button
           type="info"
           plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['filemanagement:filemanagement:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Document"
+          @click="handleDownloadTemplate"
+          v-hasPermi="['filemanagement:filemanagement:export']"
+        >下载模板</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
           icon="Refresh"
           @click="handleRefresh"
         >刷新</el-button>
@@ -287,6 +305,39 @@
       </template>
     </el-dialog>
 
+    <!-- 导入弹窗 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url + '&updateSupport=' + upload.updateSupport + '&sourceUrl=' + encodeURIComponent('securityConm/security2/identify/wange')"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><UploadFilled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleDownloadTemplate">下载模板</el-link>
+            </div>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- 注释掉文件监控对话框
     <el-dialog title="文件监控" v-model="monitorOpen" width="800px" append-to-body>
       <el-tabs v-model="activeTab">
@@ -331,6 +382,8 @@
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
@@ -348,6 +401,22 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 导入参数
+const upload = reactive({
+  // 是否显示弹出层（导入）
+  open: false,
+  // 弹出层标题（导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的数据 - 始终为true，允许重复数据导入
+  updateSupport: true,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址 - 复用风险网格化清单的导入接口
+  url: import.meta.env.VITE_APP_BASE_API + "/security/DangerWangList/importData?temp=1"
+});
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +547,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "风险网格化清单";
   handleQuery();
 }
 
@@ -551,6 +621,36 @@ function handleExport() {
   proxy.download('filemanagement/filemanagement/export', {
     ...queryParams.value
   }, `filemanagement_${new Date().getTime()}.xlsx`)
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  upload.open = true;
+  upload.title = "导入风险网格化清单";
+}
+
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download('security/DangerWangList/importTemplate', {}, `风险网格化清单导入模板_${new Date().getTime()}.xlsx`, 'get');
+}
+
+/** 文件上传中处理 */
+function handleFileUploadProgress(event, file, fileList) {
+  upload.isUploading = true;
+}
+
+/** 文件上传成功处理 */
+function handleFileSuccess(response, file, fileList) {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + response.msg + "</div>", "导入结果", { dangerouslyUseHTMLString: true });
+  getList();
+}
+
+/** 提交上传文件 */
+function submitFileForm() {
+  proxy.$refs["uploadRef"].submit();
 }
 
 /** 刷新按钮操作 */

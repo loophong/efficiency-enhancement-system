@@ -148,15 +148,15 @@ public class SecurityEducationAnnualTrainingPlanServiceImpl implements ISecurity
                         securityEducationAnnualTrainingPlanMapper.updateSecurityEducationAnnualTrainingPlan(plan);
                         successNum++;
                         successMsg.append("<br/>第 ").append(successNum).append(" 条数据更新成功");
-                    } else if (existingPlans.isEmpty()) {
-                        // 插入新数据
+                    } else {
+                        // 始终插入数据，允许重复数据导入
                         securityEducationAnnualTrainingPlanMapper.insertSecurityEducationAnnualTrainingPlan(plan);
                         successNum++;
-                        successMsg.append("<br/>第 ").append(successNum).append(" 条数据导入成功");
-                    } else {
-                        // 数据已存在但不更新
-                        failureNum++;
-                        failureMsg.append("<br/>第 ").append(failureNum).append(" 条数据已存在，未更新");
+                        if (!existingPlans.isEmpty()) {
+                            successMsg.append("<br/>第 ").append(successNum).append(" 条数据导入成功（允许重复）");
+                        } else {
+                            successMsg.append("<br/>第 ").append(successNum).append(" 条数据导入成功");
+                        }
                     }
                 } catch (Exception e) {
                     failureNum++;

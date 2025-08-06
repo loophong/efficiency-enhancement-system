@@ -138,6 +138,15 @@
           v-hasPermi="['security:HealthAndSafetyGoals:import']"
         >下载模板</el-button>
       </el-col>
+      <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -353,7 +362,10 @@ function getList() {
     getSpanArr(HealthAndSafetyGoalsList.value);
   });
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 // 计算合并单元格的方法
 function getSpanArr(data) {
   spanArr.value = [];

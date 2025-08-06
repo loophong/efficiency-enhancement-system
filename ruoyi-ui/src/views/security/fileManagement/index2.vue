@@ -159,6 +159,30 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
+      <!-- 复用风险和机遇评估界面的导入功能 -->
+      <el-col :span="1.5">
+        <el-upload
+          :show-file-list="false"
+          :before-upload="beforeImport"
+          accept=".xlsx,.xls"
+        >
+          <el-button
+            type="info"
+            plain
+            icon="Upload"
+            v-hasPermi="['security:assessment:import']"
+          >导入</el-button>
+        </el-upload>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Download"
+          @click="handleImportTemplate"
+          v-hasPermi="['security:assessment:import']"
+        >模板下载</el-button>
+      </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
         type="primary" 
@@ -329,9 +353,10 @@
 </template>
 
 <script setup name="Filemanagement">
-import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
-import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement } from "@/api/security/filemanagement";
+import { importFile, getImportTemplate } from "@/api/security/assessment";
+import { onMounted, ref, reactive, toRefs, getCurrentInstance } from 'vue';
+import request from '@/utils/request';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -478,6 +503,8 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  // 重置查询表单时设置默认模块名称
+  queryParams.value.moduleName = "风险和机遇评估";
   handleQuery();
 }
 
@@ -782,6 +809,64 @@ function renderModuleChart() {
   moduleChart.setOption(option);
 }
 */
+
+/** 导入前校验 - 复用风险和机遇评估界面的导入方法 */
+function beforeImport(file) {
+  loading.value = true;
+  const formData = new FormData();
+  formData.append("excelFile", file);  // 使用后端期望的参数名 excelFile
+
+  // 添加原始URL信息，告诉后端应该使用风险和机遇评估界面的URL进行模块名称提取
+  formData.append("sourceUrl", "securityConm/security1/securityConmenvironment/asssessmentlist");
+
+  // 直接调用风险和机遇评估的导入API
+  request({
+    url: '/security/assessment/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    transformRequest: [function (data) {
+      if (data instanceof FormData) {
+        return data;
+      }
+      return JSON.stringify(data);
+    }]
+  }).then(res => {
+    if (res.code === 200) {
+      proxy.$modal.msgSuccess(res.msg);
+      getList(); // 导入成功后刷新文件管理列表
+    } else {
+      proxy.$modal.msgError(res.msg);
+    }
+  }).catch(err => {
+    console.error("导入失败:", err);
+    proxy.$modal.msgError("导入失败: " + (err.message || "未知错误"));
+  }).finally(() => {
+    loading.value = false;
+  });
+  return false;
+}
+
+/** 下载导入模板 - 复用风险和机遇评估界面的模板下载方法 */
+function handleImportTemplate() {
+  // 直接调用风险和机遇评估的模板下载API
+  getImportTemplate().then(response => {
+    if (!response) {
+      return;
+    }
+    const blob = new Blob([response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "风险和机遇评估导入模板.xlsx";
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  }).catch(err => {
+    console.error("模板下载失败:", err);
+    proxy.$modal.msgError("模板下载失败: " + (err.message || "未知错误"));
+  });
+}
 
 // 页面加载时获取列表数据
 onMounted(() => {

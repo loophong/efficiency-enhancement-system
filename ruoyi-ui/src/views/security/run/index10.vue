@@ -285,10 +285,9 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据（不勾选则允许重复数据导入）
+              <span>仅允许导入xls、xlsx格式文件。支持空值、重复姓名和重复身份证号导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
             </div>
-            <span>仅允许导入xls、xlsx格式文件。支持空值、重复姓名和重复身份证号导入。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>

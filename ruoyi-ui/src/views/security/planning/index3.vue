@@ -185,7 +185,6 @@
           v-hasPermi="['security:risklist:import']"
         >导入</el-button>
       </el-col>
-      <el-col :span="1.5">
         <el-button
           type="info"
           plain
@@ -193,6 +192,14 @@
           @click="handleDownloadTemplate"
           v-hasPermi="['security:risklist:import']"
         >下载模板</el-button>
+              <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -448,7 +455,9 @@ function getList() {
     calculateMergeConfig();
   });
 }
-
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /**
  * 计算表格合并配置
  * 使用更高效的算法计算合并单元格

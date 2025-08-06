@@ -125,7 +125,8 @@ public class SupplierTwoReviewScoreServiceImpl extends ServiceImpl<SupplierTwoRe
                 EasyExcel.read(excelFile.getInputStream(),
                                 SupplierTwoReviewScore.class,
                                 new TwoReviewScoreListener(supplierTwoReviewScoreMapper,uploadMonth))
-                        .sheet("二方审核得分")
+//                        .sheet("二方审核得分")
+                        .sheet()
                         .doRead();
                 log.info("读取文件成功: {}", fileName);
             } catch (Exception e) {

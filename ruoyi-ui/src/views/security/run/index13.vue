@@ -105,6 +105,15 @@
           v-hasPermi="['security:emergencydrillplan:import']"
         >导入</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -212,10 +221,9 @@
         <template #tip>
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip">
-              <el-checkbox v-model="upload.updateSupport" />是否更新已存在数据（基于级别、科室/班组、演练主题匹配）
+              <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
             </div>
-            <span>仅允许导入xls、xlsx格式文件。支持重复数据导入。</span>
-            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="importTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>
@@ -261,8 +269,8 @@ const upload = reactive({
   title: "",
   // 是否禁用上传
   isUploading: false,
-  // 是否更新已经存在的用户数据
-  updateSupport: 0,
+  // 是否更新已经存在的用户数据（true:允许重复数据导入，false:跳过重复数据）
+  updateSupport: true,
   // 设置上传的请求头部
   headers: { Authorization: "Bearer " + getToken() },
   // 上传的地址
@@ -312,7 +320,10 @@ function getList() {
     getSpanArr(emergencydrillplanList.value);
   });
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 // 取消按钮
 function cancel() {
   open.value = false;

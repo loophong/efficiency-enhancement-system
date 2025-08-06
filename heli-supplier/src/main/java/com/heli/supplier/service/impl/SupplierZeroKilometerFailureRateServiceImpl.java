@@ -148,7 +148,8 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
                 EasyExcel.read(excelFile.getInputStream(),
                                 ProductionErrorTable.class,
                                 new ProductProcessFailuresListener(supplierZeroKilometerFailureRateMapper,uploadMonth))
-                        .sheet("产品过程故障率").headRowNumber(2)
+                        .sheet().headRowNumber(2)
+//                        .sheet("产品过程故障率").headRowNumber(2)
                         .doRead();
                 log.info("读取文件成功: {}", fileName);
 

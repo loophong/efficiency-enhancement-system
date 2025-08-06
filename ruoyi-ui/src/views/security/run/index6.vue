@@ -79,6 +79,15 @@
           @click="handleDownloadTemplate"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -289,6 +298,8 @@ const upload = reactive({
   url: import.meta.env.VITE_APP_BASE_API + "/security/OccupationaPersonnelList/importData"
 });
 
+
+
 const data = reactive({
   form: {},
   queryParams: {
@@ -332,7 +343,10 @@ function getList() {
     processDataForMerge();
   });
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 /** 处理数据，为合并单元格做准备 */
 function processDataForMerge() {
   const data = OccupationaPersonnelListList.value;

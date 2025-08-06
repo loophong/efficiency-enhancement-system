@@ -104,13 +104,13 @@ public class SupplierChangeServiceImpl extends ServiceImpl<SupplierChangeMapper,
         }
         // 检查并防止修改 supplierCode, formLeibie, supplierName
         if (!existingChange.getSupplierCode().equals(supplierChange.getSupplierCode())) {
-            throw new IllegalArgumentException("不能修改供应商代码");
+            throw new IllegalArgumentException("禁止修改供应商代码");
         }
         if (!existingChange.getFormLeibie().equals(supplierChange.getFormLeibie())) {
-            throw new IllegalArgumentException("不能修改供应商类别");
+            throw new IllegalArgumentException("禁止修改供应商类别");
         }
         if (!existingChange.getSupplierName().equals(supplierChange.getSupplierName())) {
-            throw new IllegalArgumentException("不能修改供应商名称");
+            throw new IllegalArgumentException("禁止修改供应商名称");
         }
         return supplierChangeMapper.updateSupplierChange(supplierChange);
     }

@@ -2,8 +2,10 @@ package com.heli.supplier.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.heli.supplier.domain.SupplierOnetimeSimple;
+import com.heli.supplier.domain.SupplierReturnRate;
 
 
 /**
@@ -61,4 +63,5 @@ public interface SupplierOnetimeSimpleMapper extends BaseMapper<SupplierOnetimeS
      * @return 结果
      */
     public int deleteSupplierOnetimeSimpleByIds(Long[] ids);
+
 }

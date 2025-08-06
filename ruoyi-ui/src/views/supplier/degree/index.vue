@@ -144,12 +144,24 @@
     <!-- 添加或修改新产品研发配合程度对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="degreeRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="具体内容" prop="specificContent">
           <el-input v-model="form.specificContent" placeholder="请输入具体内容" />
         </el-form-item>
@@ -191,6 +203,10 @@
 <script setup name="Degree">
 import { listDegree, getDegree, delDegree, addDegree, updateDegree } from "@/api/supplier/degree";
 
+
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
+
 const { proxy } = getCurrentInstance();
 const { supplier_cooperation_degree } = proxy.useDict('supplier_cooperation_degree');
 
@@ -205,7 +221,10 @@ const total = ref(0);
 const title = ref("");
 
 const data = reactive({
-  form: {},
+  form: {
+    supplierCode: '',
+    supplierName: ''
+},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -218,8 +237,18 @@ const data = reactive({
     uploadName: null
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商编码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+
     cooperationDegree: [
       { required: true, message: '请选择配合程度', trigger: 'change' }
+    ],
+    month: [
+      { required: true, message: '请选择合作月份', trigger: 'change' }
     ]
   }
 });
@@ -334,4 +363,46 @@ function handleExport() {
 }
 
 getList();
+
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

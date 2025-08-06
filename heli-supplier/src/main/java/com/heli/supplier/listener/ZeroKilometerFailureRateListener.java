@@ -4,6 +4,7 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.heli.supplier.domain.SupplierZeroKilometerFailureRate;
 import com.heli.supplier.mapper.SupplierZeroKilometerFailureRateMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -92,8 +93,17 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
                             .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierZeroKilometerFailureRate.getSupplierName())
                             .eq(SupplierZeroKilometerFailureRate::getUploadMonth, supplierZeroKilometerFailureRate.getUploadMonth()));
             if (result != null ){
-                result.setPpmValue(supplierZeroKilometerFailureRate.getPpmValue());
-                supplierZeroKilometerFailureRateMapper.updateById(result);
+//                result.setPpmValue(supplierZeroKilometerFailureRate.getPpmValue());
+//                result.setZeroFailureRate("");
+//                result.setScore(null);
+//                supplierZeroKilometerFailureRateMapper.updateById(result);
+                // 使用 UpdateWrapper 明确设置为 null
+                UpdateWrapper<SupplierZeroKilometerFailureRate> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id", result.getId())
+                        .set("ppm_value", supplierZeroKilometerFailureRate.getPpmValue())
+                        .set("zero_failure_rate", "")
+                        .set("score", null);  // 明确设置为 null
+                supplierZeroKilometerFailureRateMapper.update(null, updateWrapper);
             }else {
                 supplierZeroKilometerFailureRateMapper.insert(supplierZeroKilometerFailureRate);
             }

@@ -68,8 +68,10 @@
                          v-hasPermi="['production:zeroFailureRate:import']">零公里故障指标完成率(PPM)导入
               </el-button>
             </el-col>
+
             <el-col :span="1.5">
               <el-button @click="handleImport1" type="success" plain icon="Upload"
+                :disabled="!isFirstImportCompleted"
                          v-hasPermi="['production:zeroFailureRate:import']">产品过程故障率导入
               </el-button>
             </el-col>
@@ -131,8 +133,15 @@
     <!-- 添加或修改零公里故障指标完成率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="zeroFailureRateRef" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="供应商名称" prop="supplierName">
+        <!-- <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
         </el-form-item>
         <!-- <el-form-item label="2024年指标值" prop="2024TargetPpm">
           <el-input v-model="form.TargetPpm" placeholder="请输入2024年指标值" />
@@ -230,6 +239,10 @@
 import { listZeroFailureRate, getZeroFailureRate, delZeroFailureRate, addZeroFailureRate, updateZeroFailureRate,importFile,importFile1 } from "@/api/supplier/zeroFailureRate";
 import dayjs from 'dayjs';
 import {handleTrueDownload} from "@/api/tool/gen"
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
+
+
 
 const { proxy } = getCurrentInstance();
 
@@ -249,7 +262,10 @@ const isLoading = ref(false);
 const inputFile = ref(null);
 
 const data = reactive({
-  form: {},
+  form: {
+    supplierCode: '',
+    supplierName: ''
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -263,10 +279,26 @@ const data = reactive({
     cumulativePpm: null,
     zeroFailureRate: null,
     score: null,
-    uploadmonth: null,
-    time: null
+    uploadMonth: null,
+    time: null,
+    orderByColumn: 'upload_month ',
+    isAsc: 'desc'
   },
   rules: {
+
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    // ppmValue: [
+    //   { required: true, message: "ppm值不能为空", trigger: "blur" }
+    // ],
+    // zeroFailureRate: [
+    //   { required: true, message: "零公里故障率不能为空", trigger: "blur" }
+    // ],
+    uploadMonth: [
+      { required: true, message: "上传月份不能为空", trigger: "blur" }
+    ],
+
   }
 });
 
@@ -311,7 +343,7 @@ function reset() {
     cumulativePpm: null,
     zeroFailureRate: null,
     score: null,
-    uploadmonth: null,
+    uploadMonth: null,
     time: null
   };
   proxy.resetForm("zeroFailureRateRef");
@@ -424,43 +456,136 @@ function cancelUpload() {
   resetUpload();
 }
 
+
+
+const isFirstImportCompleted = ref(false); // 第一个导入是否完成
+
+// /** excel文件上传 */
+// function uploadFile() {
+//   if (inputFile.value && inputFile.value.files.length > 0) {
+//     isLoading.value = true;
+//     const file = inputFile.value.files[0];
+//     console.log(inputFile.value);
+//     console.log(file);
+//     // let date = XXXdate;
+//     // const formData = new FormData();
+//     // formData.append('excelFile', file);
+
+
+//     console.log("上传时间"+uploadDate.value);
+//     let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
+//     // formData.append('uploadMonth',date );
+
+//     // formData.append('date', date);
+//     let uploadFileDTO = {
+//       'uploadMonth': date,
+//       'excelFile': file
+//     }
+//     currentImportFunction.value(uploadFileDTO).then(() => {
+//       proxy.$modal.msgSuccess("导入成功");
+
+//   if (currentImportFunction.value === importFile) {
+//     isFirstImportCompleted.value = true;
+//   } else if (currentImportFunction.value === importFile1) {
+//     // 第二个导入完成后自动重置
+//     setTimeout(() => {
+//       isFirstImportCompleted.value = false;
+//       proxy.$modal.msgInfo("导入流程已完成并重置");
+//     }, 100); // 1.5秒后自动重置
+//   }
+
+//       getList();
+//       uploadDialogVisible.value = false;
+//       isLoading.value = false;
+//     }).catch(() => {
+//       proxy.$modal.msgError("导入失败");
+//       isLoading.value = false;
+//     }).finally(() => {
+//       resetUpload();
+//     });
+//   }else {
+//     proxy.$modal.msgError("请选择文件");
+//   }
+// }
 /** excel文件上传 */
 function uploadFile() {
   if (inputFile.value && inputFile.value.files.length > 0) {
     isLoading.value = true;
     const file = inputFile.value.files[0];
-    console.log(inputFile.value);
-    console.log(file);
-    // let date = XXXdate;
-    // const formData = new FormData();
-    // formData.append('excelFile', file);
-
-
-    console.log("上传时间"+uploadDate.value);
-    let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
-    // formData.append('uploadMonth',date );
-
-    // formData.append('date', date);
-    let uploadFileDTO = {
-      'uploadMonth': date,
-      'excelFile': file
+    let date = dayjs(uploadDate.value).format('YYYY-MM-DD');
+    
+    // 只有零公里故障指标完成率导入时才检查月份冲突
+    if (currentImportFunction.value === importFile) {
+      // 先查询该月份是否有数据
+      listZeroFailureRate({ uploadMonth: date, pageNum: 1, pageSize: 1 }).then(response => {
+        if (response.rows && response.rows.length > 0) {
+          // 有数据，弹出确认对话框
+          proxy.$modal.confirm('该月份的数据已存在，是否覆盖？', '提示', {
+            confirmButtonText: '覆盖',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 用户选择覆盖，直接导入
+            performImport(file, date);
+          }).catch(() => {
+            // 用户取消
+            isLoading.value = false;
+            uploadDialogVisible.value = false;
+            resetUpload();
+            proxy.$message({
+            message: '导入已取消',
+            type: 'warning',
+            duration: 3000,
+            showClose: true
+          });
+          });
+        } else {
+          // 没有数据，直接导入
+          performImport(file, date);
+        }
+      }).catch(() => {
+        // 查询失败，直接导入
+        performImport(file, date);
+      });
+    } else {
+      // 产品过程故障率导入，直接导入不检查
+      performImport(file, date);
     }
-    currentImportFunction.value(uploadFileDTO).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
-      getList();
-      uploadDialogVisible.value = false;
-      isLoading.value = false;
-    }).catch(() => {
-      proxy.$modal.msgError("导入失败");
-      isLoading.value = false;
-    }).finally(() => {
-      resetUpload();
-    });
-  }else {
+  } else {
     proxy.$modal.msgError("请选择文件");
   }
 }
 
+// 执行导入操作
+function performImport(file, date) {
+  let uploadFileDTO = {
+    'uploadMonth': date,
+    'excelFile': file
+  };
+  
+  currentImportFunction.value(uploadFileDTO).then(() => {
+    proxy.$modal.msgSuccess("导入成功");
+
+    if (currentImportFunction.value === importFile) {
+      isFirstImportCompleted.value = true;
+    } else if (currentImportFunction.value === importFile1) {
+      // 第二个导入完成后自动重置
+      setTimeout(() => {
+        isFirstImportCompleted.value = false;
+        proxy.$modal.msgInfo("导入流程已完成并重置");
+      }, 100);
+    }
+
+    getList();
+    uploadDialogVisible.value = false;
+    isLoading.value = false;
+  }).catch(() => {
+    proxy.$modal.msgError("导入失败");
+    isLoading.value = false;
+  }).finally(() => {
+    resetUpload();
+  });
+}
 
 
 /** 检查文件是否为excel */
@@ -478,4 +603,45 @@ function checkFile() {
 }
 }
 
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

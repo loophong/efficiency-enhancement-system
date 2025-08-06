@@ -17,7 +17,7 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="上传时间" prop="uploadTime">
+      <!-- <el-form-item label="上传时间" prop="uploadTime">
         <el-date-picker clearable
         v-model="queryParams.uploadTime"
           type="month"
@@ -25,7 +25,7 @@
           placeholder="请选择上传时间">
         </el-date-picker>
     
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -124,12 +124,24 @@
     <!-- 添加或修改付款限制条件对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="paymentRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="付款条件" prop="paymentTerms">
           <el-input v-model="form.paymentTerms" placeholder="请输入付款条件" />
         </el-form-item>
@@ -221,6 +233,10 @@
 import { listPayment, getPayment, delPayment, addPayment, updatePayment,importFile } from "@/api/supplier/payment";
 import dayjs from 'dayjs';
 import {handleTrueDownload} from "@/api/tool/gen"
+
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
+
 const { proxy } = getCurrentInstance();
 
 const paymentList = ref([]);
@@ -240,7 +256,9 @@ const isLoading = ref(false);
 const inputFile = ref(null);
 
 const data = reactive({
-  form: {},
+  form: {    supplierCode: '',
+    supplierName: ''
+},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -254,6 +272,15 @@ const data = reactive({
     two: null
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商编码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    uploadTime:[
+      { required: true, message: "上传时间不能为空", trigger: "blur" }
+    ]
   }
 });
 
@@ -417,7 +444,7 @@ function uploadFile() {
     }
 
     importFile(uploadFileDTO).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
+      proxy.$modal.msgSuccess("数据已更新");
       getList();
       uploadDialogVisible.value = false;
       isLoading.value = false;
@@ -444,5 +471,45 @@ function checkFile() {
     resetUpload();
   }
 }
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
 
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>

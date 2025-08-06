@@ -123,7 +123,8 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
             EasyExcel.read(excelFile.getInputStream(),
                             SupplierOnetimeSimple.class,
                             new OnetimeSimpleListener(supplierOnetimeSimpleMapper, uploadMonth))
-                            .sheet("一次交检合格率").doRead();
+                    .sheet().doRead();
+//                            .sheet("一次交检合格率").doRead();
             log.info("读取文件成功: {}", fileName);
         } catch (Exception e) {
             log.error("读取 {} 文件失败, 原因: {}", fileName, e.getMessage());
@@ -138,7 +139,7 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
      */
     private double calculateScore(String quantityPassRate) {
         if (quantityPassRate == null || quantityPassRate.isEmpty()) {
-            return 0; // 为空时默认 0 分
+            return 100; // 为空时默认 0 分
         }
         try {
             // 去掉可能存在的 "%" 符号，并转换为 double

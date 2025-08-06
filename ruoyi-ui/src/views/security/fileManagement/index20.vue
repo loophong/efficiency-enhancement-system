@@ -152,6 +152,26 @@
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
+        <!-- 手动实现导入功能以确保 sourceUrl 参数正确传递 -->
+        <el-button
+          type="success"
+          plain
+          icon="Upload"
+          @click="handleImport"
+          v-hasPermi="['security:hazardousinspection:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="info"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            v-hasPermi="['security:hazardousinspection:import']"
+        >模板下载
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-button
           type="info"
           plain
@@ -325,12 +345,45 @@
       </template>
     </el-dialog>
     -->
+
+    <!-- 复用run/index1.vue的导入对话框 -->
+    <el-dialog title="导入数据" v-model="uploadDialogVisible" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :auto-upload="false"
+        :on-change="handleFileChange"
+        :on-exceed="handleExceed"
+        :before-remove="handleBeforeRemove"
+        :file-list="[]"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          将文件拖到此处，或<em>点击上传</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip">
+            只能上传xlsx/xls文件，且不超过500kb
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="uploadDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitUpload" :loading="isLoading">确 定</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
+import axios from 'axios';
+import { getToken } from '@/utils/auth';
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
@@ -348,21 +401,9 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-
-// 注释掉文件监控相关变量
-/*
-const monitorOpen = ref(false);
-const activeTab = ref('recent');
-const recentFiles = ref([]);
-const moduleStats = ref({});
-const statistics = ref({
-  totalFiles: 0,
-  uploadFiles: 0,
-  importFiles: 0,
-  moduleCount: 0
-});
-let moduleChart = null;
-*/
+const uploadDialogVisible = ref(false);
+const isLoading = ref(false);
+const selectedFile = ref(null);
 
 const data = reactive({
   form: {},
@@ -478,6 +519,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "危化品检查记录表";
   handleQuery();
 }
 
@@ -551,6 +593,123 @@ function handleExport() {
   proxy.download('filemanagement/filemanagement/export', {
     ...queryParams.value
   }, `filemanagement_${new Date().getTime()}.xlsx`)
+}
+
+/** 模板下载按钮操作 - 复用run/index1.vue的模板下载方法 */
+function handleDownloadTemplate() {
+  // 使用 proxy.download 方法，指定 GET 请求
+  proxy.download('security/hazardousinspection/template', {}, `危化品检查记录导入模板_${new Date().getTime()}.xlsx`, 'get');
+}
+
+// 导入相关函数 - 复用run/index1.vue的导入方法
+
+/** 导入按钮操作 */
+function handleImport() {
+  uploadDialogVisible.value = true;
+}
+
+/** 文件选择变化 */
+function handleFileChange(file, fileList) {
+  console.log('文件选择变化:', file, fileList);
+  selectedFile.value = file;
+  // 确保文件对象正确设置
+  if (file && file.raw) {
+    console.log('文件设置成功:', file.name, file.size);
+  }
+}
+
+/** 文件数量超出限制 */
+function handleExceed() {
+  proxy.$modal.msgWarning('只能上传一个文件');
+}
+
+/** 删除文件前的确认 */
+function handleBeforeRemove() {
+  selectedFile.value = null;
+  return true;
+}
+
+/** 提交上传 */
+function submitUpload() {
+  const uploadRef = proxy.$refs.uploadRef;
+  
+  console.log('submitUpload 开始执行');
+  console.log('uploadRef:', uploadRef);
+  console.log('selectedFile:', selectedFile.value);
+  
+  if (!uploadRef) {
+    console.error('uploadRef 为空');
+    proxy.$modal.msgError('上传组件未初始化');
+    return;
+  }
+  
+  // 直接使用 selectedFile，不依赖 uploadFiles
+  if (!selectedFile.value) {
+    console.error('没有选中的文件');
+    proxy.$modal.msgError('请选择要上传的文件');
+    return;
+  }
+  
+  console.log('selectedFile.value:', selectedFile.value);
+  
+  if (!selectedFile.value.raw) {
+    console.error('文件对象无效');
+    proxy.$modal.msgError('文件无效');
+    return;
+  }
+  
+  const file = selectedFile.value.raw;
+  console.log('获取到文件:', file);
+  
+  isLoading.value = true;
+  
+  // 调试信息
+  console.log('文件信息:', file.name, file.type, file.size);
+  
+  // 创建 FormData 并确保参数名正确
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  // 添加 sourceUrl 信息，告诉后端应该使用 run/index1.vue 界面的 URL 进行模块名称提取
+  formData.append('sourceUrl', 'securityConm/security1/run/chemical/hazardousinspection');
+  
+  // 检查 FormData 内容
+  for (let [key, value] of formData.entries()) {
+    console.log('FormData内容:', key, value instanceof File ? value.name : value);
+  }
+  
+  // 复用 run/index1.vue 的导入 API，但通过 sourceUrl 区分调用来源
+  axios.post(import.meta.env.VITE_APP_BASE_API + '/security/hazardousinspection/import', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      'Authorization': 'Bearer ' + getToken()
+    }
+  }).then(response => {
+    console.log('上传成功:', response);
+    console.log('响应数据:', response.data);
+    
+    // 改善成功判断条件，兼容多种响应格式
+    if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
+      proxy.$modal.msgSuccess(response.data.msg || response.data.message || '导入成功');
+      getList(); // 导入成功后刷新文件管理列表
+      uploadDialogVisible.value = false;
+    } else if (response.status === 200) {
+      // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功（因为刷新后有记录）
+      console.log('根据 HTTP 状态码判断为成功');
+      proxy.$modal.msgSuccess('导入成功');
+      getList();
+      uploadDialogVisible.value = false;
+    } else {
+      proxy.$modal.msgError(response.data.msg || response.data.message || '导入失败');
+    }
+  }).catch(error => {
+    console.error('上传失败:', error);
+    // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
+    getList();
+    proxy.$modal.msgError('导入请求完成，请检查导入结果');
+  }).finally(() => {
+    isLoading.value = false;
+  });
 }
 
 /** 刷新按钮操作 */

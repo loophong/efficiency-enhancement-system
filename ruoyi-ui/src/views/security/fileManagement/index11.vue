@@ -155,6 +155,14 @@
         <el-button
           type="info"
           plain
+          icon="Upload"
+          @click="handleImport"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
           icon="Refresh"
           @click="handleRefresh"
         >刷新</el-button>
@@ -325,6 +333,42 @@
       </template>
     </el-dialog>
     -->
+
+    <!-- 导入对话框 - 复用planning/index7.vue的导入方法 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body :before-close="cancelImport">
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :data="upload.data"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :on-error="handleFileError"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据
+            </div>
+            <span>仅允许导入xls、xlsx格式文件。</span>
+            <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" @click="handleDownloadTemplate">下载模板</el-link>
+          </div>
+        </template>
+      </el-upload>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" :loading="upload.isUploading" @click="submitFileForm">确 定</el-button>
+          <el-button @click="upload.open = false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -332,6 +376,9 @@
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -348,6 +395,20 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 添加上传相关的数据对象 - 复用planning/index7.vue的导入方法
+const upload = reactive({
+  open: false,
+  title: '',
+  isUploading: false,
+  updateSupport: false,
+  headers: { Authorization: "Bearer " + getToken() },
+  url: import.meta.env.VITE_APP_BASE_API + "/security/trainingplan/importData",
+  // 添加sourceUrl参数传递给后端
+  data: {
+    sourceUrl: 'securityConm/security1/support/tranning/trainingplan'
+  }
+});
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +539,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+  queryParams.value.moduleName = "年度培训计划";
   handleQuery();
 }
 
@@ -559,6 +621,92 @@ function handleRefresh() {
   getList();
   // 显示成功消息
   proxy.$modal.msgSuccess("刷新成功，已获取最新文件记录");
+}
+
+/** 导入按钮操作 - 复用planning/index7.vue的导入方法 */
+function handleImport() {
+  upload.title = "导入年度培训计划";
+  upload.open = true;
+  upload.isUploading = false;
+  upload.updateSupport = false;
+
+  proxy.nextTick(() => {
+    if (proxy.$refs.uploadRef) {
+      proxy.$refs.uploadRef.clearFiles();
+    }
+  });
+}
+
+/** 下载模板操作 - 复用planning/index7.vue的模板下载方法 */
+function handleDownloadTemplate() {
+  proxy.download('security/trainingplan/importTemplate', {}, `trainingplan_template_${new Date().getTime()}.xlsx`);
+}
+
+/** 文件上传中处理 - 复用planning/index7.vue的上传进度处理 */
+function handleFileUploadProgress(event) {
+  upload.isUploading = true;
+}
+
+/** 文件上传成功处理 - 复用planning/index7.vue的上传成功处理 */
+function handleFileSuccess(response) {
+  upload.isUploading = false;
+
+  try {
+    if (response && response.code === 200) {
+      // 关闭对话框
+      upload.open = false;
+
+      // 清空上传文件列表
+      if (proxy.$refs.uploadRef) {
+        proxy.$refs.uploadRef.clearFiles();
+      }
+
+      // 重置上传状态
+      upload.updateSupport = false;
+
+      // 显示成功消息
+      proxy.$modal.msgSuccess(response.msg || "导入成功");
+
+      // 刷新列表数据
+      setTimeout(() => {
+        getList();
+      }, 100);
+    } else {
+      proxy.$modal.msgError(response?.msg || "导入失败");
+    }
+  } catch (error) {
+    console.error("处理导入结果时出错:", error);
+    proxy.$modal.msgError("导入处理失败");
+  }
+}
+
+/** 文件上传失败处理 - 复用planning/index7.vue的上传失败处理 */
+function handleFileError(error) {
+  upload.isUploading = false;
+  proxy.$modal.msgError("导入失败，请检查文件格式或网络连接");
+  console.error("文件上传失败:", error);
+}
+
+/** 提交上传文件 - 复用planning/index7.vue的文件提交方法 */
+function submitFileForm() {
+  proxy.$refs.uploadRef.submit();
+}
+
+/** 取消导入 - 复用planning/index7.vue的取消导入方法 */
+function cancelImport(done) {
+  upload.open = false;
+  upload.isUploading = false;
+  upload.updateSupport = false;
+
+  // 清空上传文件列表
+  if (proxy.$refs.uploadRef) {
+    proxy.$refs.uploadRef.clearFiles();
+  }
+
+  // 如果是通过 before-close 调用的，需要执行 done 回调
+  if (typeof done === 'function') {
+    done();
+  }
 }
 
 /** 查看文件 */

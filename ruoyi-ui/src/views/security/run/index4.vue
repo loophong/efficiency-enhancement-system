@@ -83,7 +83,7 @@
 
     <el-table v-loading="loading" :data="OperationPointTestReportList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="序号" width="80" align="center" type="index" />
       <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>

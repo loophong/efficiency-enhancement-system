@@ -223,7 +223,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 //                supplierEvaluate.setQualityNotificationOrderrate(BigDecimal.valueOf(0));
 
 
-                supplierEvaluate.setWarrantyperiodRepairrate(warrantyperiodRepairrate(happenTime, endTime, item.getSupplierCode()));
+                supplierEvaluate.setWarrantyperiodRepairrate(warrantyperiodRepairrate(happenTime, endTime, item.getSupplierName()));
                 supplierEvaluate.setThreepackageComponentRepairrate(threePackageComponentRepairrate(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setSecondpartyAuditscore(secondpartyAuditscore(happenTime, endTime, item.getSupplierCode()));
                 supplierEvaluate.setSelfinspectionReportaccuracy(selfInspectionAccuracy(happenTime, endTime, item.getSupplierCode()));
@@ -327,11 +327,12 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
             avgScore = totalScore.divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
         } else {
             // 没有数据时默认满分
-            avgScore = new BigDecimal(2);
+            avgScore = new BigDecimal(100);
         }
 
         // 模块得分为平均分的2%
-        return avgScore;
+//        return avgScore*0.02;
+        return avgScore.multiply(BigDecimal.valueOf(0.02)).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -441,7 +442,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         List<SupplierHappen> list = supplierHappenService.list(
                 new LambdaQueryWrapper<SupplierHappen>()
                         .eq(SupplierHappen::getSupplierCode, supplierCode)
-                        .between(SupplierHappen::getHappenTime, happenTime, endTime));
+                        .between(SupplierHappen::getDeadline, happenTime, endTime));
         int feedbackCount = list.size();
         // 每次发生质量信息反馈单扣 20 分
         BigDecimal totalDeduction = BigDecimal.valueOf(feedbackCount * 20);
@@ -467,7 +468,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         List<SupplierHappen> list = supplierHappenService.list(
                 new LambdaQueryWrapper<SupplierHappen>()
                         .eq(SupplierHappen::getSupplierCode, supplierCode)
-                        .between(SupplierHappen::getHappenTime, happenTime, endTime));
+                        .between(SupplierHappen::getDeadline, happenTime, endTime));
         // 记录回函不及时的次数
         int feedbackCount = 0;
 
@@ -497,23 +498,15 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     /**
      * 3.1.6保修期内市场售后返修率
      */
-    BigDecimal warrantyperiodRepairrate(Date happenTime, Date endTime, String supplierCode) {
+    BigDecimal warrantyperiodRepairrate(Date happenTime, Date endTime, String supplierName) {
         BigDecimal bigDecimal = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierReturnRate> list = supplierReturnRateService.list(
                 new LambdaQueryWrapper<SupplierReturnRate>()
-                        .eq(SupplierReturnRate::getSupplierCode, supplierCode)
+                        .eq(SupplierReturnRate::getSupplierName, supplierName)
                         .between(SupplierReturnRate::getMonth, happenTime, endTime));
-//        if (list.size() > 0) {
-//            for (int i = 0; i < list.size(); i++) {
-//                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
-//            }
-//            bigDecimal.divide(new BigDecimal(list.size()));
-//        } else {
-//            bigDecimal = new BigDecimal(8);
-//        }
-//        return bigDecimal;
+
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
                 bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
@@ -522,38 +515,35 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         } else {
             bigDecimal = new BigDecimal(0);
         }
-        return bigDecimal.multiply(BigDecimal.valueOf(0.08));
+        return bigDecimal;
     }
 
     /**
      * 3.1.7三包配件发货及时率
      */
     BigDecimal threePackageComponentRepairrate(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(3);
+//        BigDecimal bigDecimal = new BigDecimal(3);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierThreePack> list = supplierThreePackService.list(
                 new LambdaQueryWrapper<SupplierThreePack>()
                         .eq(SupplierThreePack::getSupplierCode, supplierCode)
                         .between(SupplierThreePack::getResponsibilityJudgmentTime, happenTime, endTime));
+        BigDecimal score = new BigDecimal(0);
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
-                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
+//                score = score.add(new BigDecimal(list.get(i).getScore()));
+                if (list.get(i).getScore() == 0) {
+                    score = BigDecimal.valueOf(0);
+                    return score;
+                }
             }
-            bigDecimal.divide(new BigDecimal(list.size()));
-        } else {
-            bigDecimal = new BigDecimal(3);
         }
-//        log.info("一次交检合格率:{},供应商编号：{}", bigDecimal,supplierCode);
-//        log.info("list:{}",list);
-        return bigDecimal;
-//        for (SupplierThreePack supplierThreePack : list) {
-//            if (supplierThreePack.getActualDeliveryTime().after(supplierThreePack.getPlannedDeliveryTime())) {
-//                bigDecimal = BigDecimal.ZERO;
-//                break;
-//            }
+//            score = score.divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
+//        } else {
+            score = new BigDecimal(3);
 //        }
-//        return bigDecimal;
+        return score;
     }
 
     /**
@@ -588,33 +578,23 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      * 3.1.9 自检报告准确率
      */
     BigDecimal selfInspectionAccuracy(Date happenTime, Date endTime, String supplierCode) {
-        BigDecimal bigDecimal = new BigDecimal(2);
+//        BigDecimal bigDecimal = new BigDecimal(2);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
         endTime = DateUtils.getLastMonthEndDay(endTime);
         List<SupplierSelfTestReports> list = supplierSelfTestReportsService.list(
                 new LambdaQueryWrapper<SupplierSelfTestReports>()
                         .eq(SupplierSelfTestReports::getSupplierCode, supplierCode)
                         .between(SupplierSelfTestReports::getResponsibilityJudgmentTime, happenTime, endTime));
-//        boolean isFraudDetected = false; // 标志是否检测到造假行为
-//        for (SupplierSelfTestReports supplierSelfTestReports : list) {
-//            // 检查 specificContent 是否为空
-//            if (supplierSelfTestReports.getSpecificContent() == null || supplierSelfTestReports.getSpecificContent().isEmpty()) {
-//                isFraudDetected = true;
-//                break; // 发现造假行为后直接退出循环
-//            }
-//        }
-//        if (isFraudDetected) {
-//            bigDecimal = BigDecimal.ZERO; // 如果存在造假行为，得分为0
-//        }
+        BigDecimal score = new BigDecimal(0);
         if (list.size() > 0) {
-            for (int i = 0; i < list.size(); i++) {
-                bigDecimal = bigDecimal.add(new BigDecimal(list.get(i).getScore()));
-            }
-            bigDecimal.divide(new BigDecimal(list.size()));
+//            for (int i = 0; i < list.size(); i++) {
+//                score = score.add(new BigDecimal(list.get(i).getScore()));
+//            }
+            score = BigDecimal.valueOf(0.0);
         } else {
-            bigDecimal = new BigDecimal(2);
+            score = new BigDecimal(2);
         }
-        return bigDecimal;
+        return score;
     }
 
     /**
@@ -739,8 +719,6 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         score = avgTimelyRate;
         // 模块得分 = 基础分的7%
         return score.multiply(BigDecimal.valueOf(0.07)).setScale(2, RoundingMode.HALF_UP);
-//        score = new BigDecimal(list.get(0).getTimelyRateScore());
-//        return score.setScale(1, RoundingMode.HALF_UP);
     }
 
 
@@ -768,8 +746,6 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         BigDecimal avg = total.divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
         score = avg;
         return score.multiply(BigDecimal.valueOf(0.07)).setScale(2, RoundingMode.HALF_UP);
-//        score = new BigDecimal(list.get(0).getModelScore());
-//        return score.setScale(1, RoundingMode.HALF_UP);
     }
 
     /**
@@ -833,21 +809,6 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         BigDecimal avg = total.divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
         score = avg;
         return score.multiply(BigDecimal.valueOf(0.06)).setScale(2, RoundingMode.HALF_UP);
-//        long letter = 0;
-//        long punish = 0;
-//        long feedbackNotTimely = 0;
-//        // 获取数据并处理可能的 null 值
-//        letter = (list.get(0).getLetter() != null) ? list.get(0).getLetter() : 0;
-//        punish = (list.get(0).getPunish() != null) ? list.get(0).getPunish() : 0;
-//        feedbackNotTimely = (list.get(0).getFeedbackNotTimely() != null) ? list.get(0).getFeedbackNotTimely() : 0;
-//        // 计算扣分
-//        BigDecimal deduction = BigDecimal.valueOf((letter * 20) + (punish * 40) + (feedbackNotTimely * 10));
-//        // 计算最终得分
-//        BigDecimal finalScore = score.subtract(deduction);
-//        // 确保得分不能小于 0
-//        finalScore = finalScore.max(BigDecimal.ZERO);
-        // 计算得分，确保最终分数也不能小于 0
-//        return finalScore.multiply(BigDecimal.valueOf(0.06)).setScale(2, RoundingMode.HALF_UP);
     }
 
 
@@ -874,10 +835,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         BigDecimal avg = total.divide(new BigDecimal(list.size()), 2, RoundingMode.HALF_UP);
         score = avg;
         return score.multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
-//        long happenNumber = (list.get(0).getHappenNumber() != null) ? list.get(0).getHappenNumber() : 0;
-//        BigDecimal finalScore = score.subtract(BigDecimal.valueOf(happenNumber*20));
-//        finalScore = finalScore.max(BigDecimal.ZERO);
-//        return finalScore.multiply(BigDecimal.valueOf(0.05)).setScale(2, RoundingMode.HALF_UP);
+
     }
 
 

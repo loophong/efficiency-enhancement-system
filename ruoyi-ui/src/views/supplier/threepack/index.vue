@@ -122,13 +122,26 @@
 
     <!-- 添加或修改三包发货及时率对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="threepackRef" :model="form" :rules="rules" label-width="115px">
-        <el-form-item label="供应商代码" prop="supplierCode">
+      <el-form ref="threepackRef" :model="form" :rules="rules" label-width="120px">
+        <!-- <el-form-item label="供应商代码" prop="supplierCode">
           <el-input v-model="form.supplierCode" placeholder="请输入供应商代码" />
         </el-form-item>
         <el-form-item label="供应商名称" prop="supplierName">
           <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
+        </el-form-item> -->
+        <el-form-item label="供应商代码" prop="supplierCode">
+          <el-select v-model="form.supplierCode" clearable filterable placeholder="请选择或输入供应商代码" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.value" :value="item.value" />
+            </el-select>
         </el-form-item>
+
+        <el-form-item label="供应商名称" prop="supplierName">
+          <el-select v-model="form.supplierName" clearable filterable placeholder="请选择或输入供应商名称" style="width: 240px">
+            <el-option v-for="item in qualifiedList" :key="item.value" :label="item.label" :value="item.label" />
+          </el-select>
+        </el-form-item>
+
+
         <el-form-item label="判定责任时间点" prop="responsibilityJudgmentTime">
           <el-date-picker clearable
             v-model="form.responsibilityJudgmentTime"
@@ -169,6 +182,8 @@
 
 <script setup name="Threepack">
 import { listThreepack, getThreepack, delThreepack, addThreepack, updateThreepack } from "@/api/supplier/threepack";
+import { all } from "@/api/supplier/qualified";
+import { watch, ref, reactive } from 'vue';
 
 const { proxy } = getCurrentInstance();
 
@@ -183,7 +198,10 @@ const total = ref(0);
 const title = ref("");
 
 const data = reactive({
-  form: {},
+  form: {
+    supplierCode: '',
+    supplierName: ''
+  },
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -194,9 +212,29 @@ const data = reactive({
     actualDeliveryTime: null,
     specificWarrantyItems: null,
     happenTime: null,
-    reporter: null
+    reporter: null,
+    orderByColumn: 'responsibility_judgment_time',
+    isAsc: 'desc'
   },
   rules: {
+    supplierCode: [
+      { required: true, message: "供应商编码不能为空", trigger: "blur" }
+    ],
+    supplierName: [
+      { required: true, message: "供应商名称不能为空", trigger: "blur" }
+    ],
+    responsibilityJudgmentTime: [
+      { required: true, message: "判定时间责任点不能为空", trigger: "blur" }
+    ],
+    plannedDeliveryTime: [
+      { required: true, message: "计划发货时间点不能为空", trigger: "blur" }
+    ],
+    actualDeliveryTime: [
+      { required: true, message: "实际发货时间点不能为空", trigger: "blur" }
+    ],
+    specificWarrantyItems: [
+      { required: true, message: "具体三包事项不能为空", trigger: "blur" }
+    ],
   }
 });
 
@@ -311,4 +349,45 @@ function handleExport() {
 }
 
 getList();
+//供应商代码/名称 增加时 模糊查询
+const qualifiedList = ref([]);
+
+function getCodeAndName(row) {
+  all().then(response => {
+    console.log("请求的供应商数据" + JSON.stringify(response.data))
+    response.data.forEach(element => {
+      qualifiedList.value.push({
+        label: element.supplierName,
+        value: element.supplierCode
+      })
+    });
+    console.log("请求的供应商数据" + JSON.stringify(qualifiedList))
+
+  })
+}
+
+// 初始化时调用上面的方法
+onMounted(() => {
+  getCodeAndName()
+})
+
+//如果form.supplierName发生改变
+watch(() => form.value.supplierName, (newValue, oldValue) => {
+  console.log("form.supplierName发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.label === newValue);
+  if (selectedItem) {
+    form.value.supplierCode = selectedItem.value;
+  }
+  console.log("form.supplierCode", form.value.supplierCode);
+});
+
+//如果form.supplierCode发生改变
+watch(() => form.value.supplierCode, (newValue, oldValue) => {
+  console.log("form.supplierCode发生改变", newValue, oldValue);
+  const selectedItem = qualifiedList.value.find(item => item.value === newValue);
+  if (selectedItem) {
+    form.value.supplierName = selectedItem.label;
+  }
+  console.log("form.supplierName", form.value.supplierName);
+});
 </script>
