@@ -120,7 +120,7 @@ public class SupplierPaymentServiceImpl extends ServiceImpl<SupplierPaymentMappe
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-//            this.remove(new QueryWrapper<>());
+            this.remove(new QueryWrapper<>());
             log.info("开始读取文件: {}", fileName);
             PaymentListener listener = new PaymentListener(supplierPaymentMapper, uploadMonth);//xinzeng
             try {

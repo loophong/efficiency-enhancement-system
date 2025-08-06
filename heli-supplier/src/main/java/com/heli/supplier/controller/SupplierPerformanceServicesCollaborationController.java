@@ -40,7 +40,7 @@ public class SupplierPerformanceServicesCollaborationController extends BaseCont
 {
     @Autowired
     private ISupplierPerformanceServicesCollaborationService supplierPerformanceServicesCollaborationService;
-    @Log(title = "[服务于协作表]上传", businessType = BusinessType.IMPORT)
+    @Log(title = "[服务与协作表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional
     public void importTable(MultipartFile excelFile, Date uploadMonth) {

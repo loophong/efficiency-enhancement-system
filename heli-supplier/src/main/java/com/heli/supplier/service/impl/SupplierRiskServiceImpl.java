@@ -107,7 +107,7 @@ public class SupplierRiskServiceImpl  extends ServiceImpl<SupplierRiskMapper, Su
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-//            this.remove(new QueryWrapper<>());
+            this.remove(new QueryWrapper<>());
             log.info("开始读取文件: {}", fileName);
             try {
                 EasyExcel.read(excelFile.getInputStream(),

@@ -120,7 +120,7 @@ public class SupplierReduceSupportServiceImpl extends ServiceImpl<SupplierReduce
     public void readSalaryExcelToDB(String fileName, MultipartFile excelFile, Date uploadMonth) {
         try {
             // 清空表单
-//            this.remove(new QueryWrapper<>());
+            this.remove(new QueryWrapper<>());
             // 读取文件内容
             log.info("开始读取文件: {}", fileName);
 //            EasyExcel.read(excelFile.getInputStream(), SupplierReduceSupport.class,
@@ -158,16 +158,9 @@ public class SupplierReduceSupportServiceImpl extends ServiceImpl<SupplierReduce
      */
     private void calculateAndSetScore(SupplierReduceSupport supplierReduceSupport) {
         String percentageStr = supplierReduceSupport.getPercentage();
-//        if (percentageStr == null || !percentageStr.endsWith("%")) {
-//            throw new IllegalArgumentException("无效的降本占比格式");
-//        }
         double percentageValue;
-//        try {
         if (percentageStr != null && percentageStr.endsWith("%")) {
             percentageValue = Double.parseDouble(percentageStr.replace("%", ""));
-//        } catch (NumberFormatException e) {
-//            throw new IllegalArgumentException("无法解析降本占比数值: " + percentageStr);
-//        }
             int score = 0;
             if (percentageValue > 0.1 && percentageValue <= 0.5) {
                 score = 20;
