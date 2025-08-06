@@ -5,6 +5,7 @@ import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
 import com.heli.device.maintenanceTable.domain.DeviceGroupPlan;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -89,7 +90,9 @@ public class DeviceGroupPlanListener implements ReadListener<DeviceGroupPlan> {
                 // 否则，执行插入操作
             data.setCreateBy(userId.toString());
             data.setCreateTime(new Date());
-            data.setRollTime(new Date().toString());
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            data.setRollTime(sdf.format(new Date()));
             deviceGroupPlanMapper.insertDeviceGroupPlan(data);
 //            }
         }

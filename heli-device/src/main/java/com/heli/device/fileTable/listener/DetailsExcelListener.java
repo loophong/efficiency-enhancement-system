@@ -78,14 +78,14 @@ public class DetailsExcelListener implements ReadListener<DeviceDetails> {
 //        deviceDetailsMapper.insert(cacheDataList);
         for (DeviceDetails data : cacheDataList) {
             DeviceDetails existing = deviceDetailsMapper.selectExistByNum(data.getInventoryNum());
-            if (existing != null) {
-                // 如果存在重复记录，执行更新操作
-                data.setDetailsId(existing.getDetailsId()); // 确保设置了ID以便更新正确的记录
-                deviceDetailsMapper.updateDeviceDetails(data);
-            } else {
+//            if (existing != null) {
+//                // 如果存在重复记录，执行更新操作
+//                data.setDetailsId(existing.getDetailsId()); // 确保设置了ID以便更新正确的记录
+//                deviceDetailsMapper.updateDeviceDetails(data);
+//            } else {
                 // 否则，执行插入操作
                 deviceDetailsMapper.insertDeviceDetails(data);
-            }
+//            }
         }
     }
 }

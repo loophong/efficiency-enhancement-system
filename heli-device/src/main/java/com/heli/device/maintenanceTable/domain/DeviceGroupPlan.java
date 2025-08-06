@@ -215,6 +215,7 @@ public class DeviceGroupPlan extends BaseEntity
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("lastCompleteTime", getLastCompleteTime())
+                .append("rollTime", getRollTime())
                 .toString();
     }
 }

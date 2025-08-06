@@ -138,7 +138,7 @@ const existContent = ref(false);
 const ifShowExamine = ref(false);
 const ids = ref([]);
 const title = ref("");
-const status = ref("");
+const status = ref("◎(待审核)");
 const currentUserName = ref("");
 const currentUserId = ref(0);
 const emit = defineEmits(['getGroup', 'getMajor']);
@@ -225,8 +225,14 @@ getInfo().then(result => {
 /** 查询记录列表 */
 function getList() {
   if (props.timeOfClick) {
-    const date = parse(props.timeOfClick, 'yy-MM-dd', new Date());
+    const [yearStr, monthStr, weekPart] = props.timeOfClick.split('-');
+    const weekNum = parseInt(weekPart.replace('W', ''), 10);
+    const year = 2000 + parseInt(yearStr, 10);
+    const month = parseInt(monthStr, 10) - 1;
+    const day = weekNum * 7;
+    const date = new Date(year, month, day);
     var formattedDate = format(date, 'yyyy-MM-dd');
+    console.log(formattedDate);
   }
   existContent.value = false
   queryParams.value.maintenancePlanId = props.majorGroup == '班组' ? props.rowFromProps.data.groupId : props.rowFromProps.data.majorId
@@ -242,7 +248,7 @@ function getList() {
     } else {
       reset();
       existContent.value = false
-      status.value = ''
+      status.value = props.majorGroup == '班组' ? '◎(待审核)' : '';
       form.value.maintenancePlanId = props.majorGroup == '班组' ? props.rowFromProps.data.groupId : props.rowFromProps.data.majorId;
       form.value.planMonthTime = props.rowFromProps.data.monthTime;
       form.value.majorGroup = props.majorGroup;

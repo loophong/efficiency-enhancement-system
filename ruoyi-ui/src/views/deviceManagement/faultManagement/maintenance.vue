@@ -83,7 +83,7 @@
             <br />
             <el-button @click="showDialog = false">取 消</el-button>
             <el-button type="primary" @click="fileSend" v-if="buttonLoading === false">确 定</el-button>
-            <el-button type="primary" :loading="true" v-else>上传中(重复数据检查)</el-button>
+            <el-button type="primary" :loading="true" v-else>上传中</el-button>
           </span>
         </el-dialog>
       </el-col>

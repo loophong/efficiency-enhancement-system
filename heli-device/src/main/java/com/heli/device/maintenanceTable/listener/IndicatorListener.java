@@ -90,16 +90,16 @@ public class IndicatorListener implements ReadListener<DeviceIndicatorCount> {
         log.info("开始写入数据库");
 //        deviceIndicatorCountMapper.insert(cacheDataList);
         for (DeviceIndicatorCount data : cacheDataList) {
-            DeviceIndicatorCount existing = deviceIndicatorCountMapper.selectExist(year,data.getIndicatorName());
-            if (existing != null) {
-                // 如果存在重复记录，执行更新操作
-                data.setIndicatorId(existing.getIndicatorId()); // 确保设置了ID以便更新正确的记录
-                deviceIndicatorCountMapper.updateDeviceIndicatorCount(data);
-            } else {
+//            DeviceIndicatorCount existing = deviceIndicatorCountMapper.selectExist(year,data.getIndicatorName());
+//            if (existing != null) {
+//                // 如果存在重复记录，执行更新操作
+//                data.setIndicatorId(existing.getIndicatorId()); // 确保设置了ID以便更新正确的记录
+//                deviceIndicatorCountMapper.updateDeviceIndicatorCount(data);
+//            } else {
                 // 否则，执行插入操作
                 data.setIndicatorTime(year);
                 deviceIndicatorCountMapper.insertDeviceIndicatorCount(data);
-            }
+//            }
         }
     }
 }

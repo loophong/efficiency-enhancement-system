@@ -150,7 +150,7 @@
                   <span :style="{ fontSize: '36px' }">
                     {{ parseStatus(scope.row.monthTwo).symbol }}
                   </span>
-                  <span>{{ parseStatus(scope.row.monthTwo).description }}</span>
+                  <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthTwo).description }}</span>
                 </div>
               </template>
             </el-table-column>
@@ -161,7 +161,7 @@
                   <span>
                     <span :style="{ fontSize: '36px' }">{{ parseStatus(scope.row.monthThree).symbol
                     }}</span>
-                    <span>{{ parseStatus(scope.row.monthThree).description }}</span>
+                    <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthThree).description }}</span>
                   </span>
                 </div>
               </template>
@@ -177,7 +177,7 @@
                   <span>
                     <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.monthFour).symbol
                     }}</span>
-                    <span>{{ parseStatus(scope.row.monthFour).description }}</span>
+                    <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthFour).description }}</span>
                   </span>
                 </div>
               </template>
@@ -302,7 +302,7 @@
                   <span :style="{ fontSize: '36px' }">
                     {{ parseStatus(scope.row.monthTwo).symbol }}
                   </span>
-                  <span>{{ parseStatus(scope.row.monthTwo).description }}</span>
+                  <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthTwo).description }}</span>
                 </div>
               </template>
             </el-table-column>
@@ -313,7 +313,7 @@
                   <span>
                     <span :style="{ fontSize: '36px' }">{{ parseStatus(scope.row.monthThree).symbol
                     }}</span>
-                    <span>{{ parseStatus(scope.row.monthThree).description }}</span>
+                    <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthThree).description }}</span>
                   </span>
                 </div>
               </template>
@@ -329,7 +329,7 @@
                   <span>
                     <span :style="{ fontSize: '36px', fontWeight: 'bold' }">{{ parseStatus(scope.row.monthFour).symbol
                     }}</span>
-                    <span>{{ parseStatus(scope.row.monthFour).description }}</span>
+                    <span :style="{ fontSize: '16px' }">{{ parseStatus(scope.row.monthFour).description }}</span>
                   </span>
                 </div>
               </template>
@@ -586,91 +586,55 @@ function getList() {
         });
         console.log('ListForTipGroup------>', listForTip.value)
         listForTip.value.forEach(i => {
-          if (i.monthFour == null || i.monthFour === '') {
+          if (i.messageSet) {
             // const maintenanceCycle = i.maintenanceCycle;
             // const lastCompleteTime = i.lastCompleteTime;
-            if (i.maintenanceCycle == '1') {
+            if (i.messageSet == '1W' && i.monthOne != '' && i.monthOne != null && i.monthOne.includes('待提交')) {
               // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
-            } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+              showNotification(`自主保全计划1W`, '待提交')
+            } else if (i.messageSet == '2W' && i.monthTwo != '' && i.monthTwo != null && i.monthTwo.includes('待提交')) {
               // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
-            } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+              showNotification(`自主保全计划2W`, '待提交')
+            } else if (i.messageSet == '3W' && i.monthThree != '' && i.monthThree != null && i.monthThree.includes('待提交')) {
               // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
-            } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+              showNotification(`自主保全计划3W`, '待提交')
+            } else if (i.messageSet == '4W' && i.monthFour != '' && i.monthFour != null && i.monthFour.includes('待提交')) {
               // i.monthFour = '待提交'
-              showNotification(`自主保全计划${i.messageSet}`, '待提交')
+              showNotification(`自主保全计划4W`, '待提交')
             }
-            // try {
-            //   let date = new Date(lastCompleteTime);
-            //   let weeks = parseInt(maintenanceCycle, 10);
-            //   if (isNaN(weeks)) {
-            //     throw new Error("maintenanceCycle 必须是有效的数字");
-            //   }
-            //   date.setDate(date.getDate() + weeks * 7); 1
-            //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
-            //   if (isThisWeek(formattedDate)) {
-            //     i.monthFour = '待提交'
-            //     showNotification('自主保全计划', '待提交')
-            //   }
-            // } catch (error) {
-            //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
-            // }
           }
         });
       })
       // const tmpHandle = JSON.parse(JSON.stringify(response.rows))
       // console.log({ tmpHandle })
 
-      planList.value.forEach(i => {
-        if (i.monthFour == null || i.monthFour === '') {
-          if (i.maintenanceCycle == '1') {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
-          } else if (i.maintenanceCycle == '2' && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
-          } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
-          } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
-            // i.monthFour = '待提交'
-            showNotification(`自主保全计划${i.messageSet}`, '待提交')
-          }
-          // const maintenanceCycle = i.maintenanceCycle;
-          // const lastCompleteTime = i.lastCompleteTime;
-          // try {
-          //   let date = new Date(lastCompleteTime);
-          //   let weeks = parseInt(maintenanceCycle, 10);
-          //   if (isNaN(weeks)) {
-          //     throw new Error("maintenanceCycle 必须是有效的数字");
-          //   }
-          //   date.setDate(date.getDate() + weeks * 7); 1
-          //   const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss');
-          //   if (isThisWeek(formattedDate)) {
-          //     i.monthFour = '待提交'
-          //     showNotification('自主保全计划', '待提交')
-          //   }
-          // } catch (error) {
-          //   console.error(`处理设备 ${i.deviceId} 时出错：`, error.message);
-          // }
-        }
-      });
-      listForTip.value.forEach(element => {
-        if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-        if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-          showNotification('自主保全计划')
-        }
-      });
+      // planList.value.forEach(i => {
+      //   if (i.monthFour == null || i.monthFour === '') {
+      //     if (i.maintenanceCycle == '1') {
+      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+      //     } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+      //     } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+      //     } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+      //     }
+      //   }
+      // });
+      // listForTip.value.forEach(element => {
+      //   if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+      //     showNotification('自主保全计划')
+      //   }
+      //   if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+      //     showNotification('自主保全计划')
+      //   }
+      //   if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+      //     showNotification('自主保全计划')
+      //   }
+      //   if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+      //     showNotification('自主保全计划')
+      //   }
+      // });
       ifTip.value = false
     }
     loading.value = false;

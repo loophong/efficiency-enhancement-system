@@ -1,10 +1,9 @@
 <template>
   <div class="index">
-    <div ref="chartContainer" id="main" :style="{ width: '100%', height: chartHeight + 'vh' }"></div>
-    <!-- Tooltip for displaying detailed information -->
-    <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
+    <div ref="chartContainer" id="main" :style="{ width: '100%', height: defaultHeight + 'vh' }"></div>
+    <!-- <div id="tooltip" @mouseenter="handleTooltipMouseEnter" @mouseleave="handleTooltipMouseLeave"
       style="position:absolute;white-space:nowrap;background-color:#f9f9f9;border:1px solid #d3d3d3;padding:5px;display:none;z-index:1000;">
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -23,6 +22,7 @@ const props = defineProps({
 });
 // 定义容器高度的响应式变量
 const chartHeight = ref(200);
+const defaultHeight = ref(100);
 
 function renameField(node) {
   if (!node) return;
@@ -42,31 +42,31 @@ function renameField(node) {
     node.children.forEach(child => renameField(child));
   }
 }
-function countAllChildrenLength(node) {
-  console.log({ node })
-  let total = node.children ? node.children.length : 0;
-  if (node.children) {
-    for (const child of node.children) {
-      total += countAllChildrenLength(child);
-    }
-  }
-  return total;
-}
-// 计算容器高度
-function calculateHeight(data) {
-  const baseHeightPerNode = 3; // 每个节点基础高度
-  const totalChildrenLength = countAllChildrenLength(data[0]);
-  console.log({ totalChildrenLength })
-  return totalChildrenLength * baseHeightPerNode;
-}
+// function countAllChildrenLength(node) {
+//   console.log({ node })
+//   let total = node.children ? node.children.length : 0;
+//   if (node.children) {
+//     for (const child of node.children) {
+//       total += countAllChildrenLength(child);
+//     }
+//   }
+//   return total;
+// }
+// // 计算容器高度
+// function calculateHeight(data) {
+//   const baseHeightPerNode = 4; // 每个节点基础高度
+//   const totalChildrenLength = countAllChildrenLength(data[0]);
+//   console.log({ totalChildrenLength })
+//   return totalChildrenLength * baseHeightPerNode;
+// }
 
-// 初始化容器高度
-function initHeight() {
-  if (!chartContainer.value || !props.chartData?.data[0]) return;
-  const data = props.chartData.data[0]; // 获取根节点
-  console.log({ data })
-  chartHeight.value = Math.max(100, calculateHeight(data));
-}
+// // 初始化容器高度
+// function initHeight() {
+//   if (!chartContainer.value || !props.chartData?.data[0]) return;
+//   const data = props.chartData.data[0]; // 获取根节点
+//   console.log({ data })
+//   chartHeight.value = Math.max(100, calculateHeight(data));
+// }
 function parseChartData(input) {
   const data = JSON.parse(JSON.stringify(input));
 
@@ -91,91 +91,96 @@ console.log('treeData----->', treeData.value)
 
 const chartContainer = ref(null);
 
-onMounted(async () => {
-
-  // 确认DOM元素存在
-  const container = chartContainer.value;
-  if (container) {
-    container.addEventListener('click', () => {
-      console.log('DOM点击事件触发');
-    });
-  }
-  initHeight();
-  await nextTick();
+onMounted(() => {
   initChart();
   handleChart();
-
 });
-
 function handleChart() {
   myChart.value.on('click', function (params) {
-    console.log('任意点击事件:', params);
+    // console.log('任意点击事件:', params);
     if (!params.data.children) {
-      console.log('叶子节点数据:', params.data);
+      // console.log('叶子节点数据:', params.data);
       handleToAnalysis(params.data, 'fault', 'analysis')
-      console.log('完整路径:', getNodePath(params));
+      // console.log('完整路径:', getNodePath(params));
+    } else if (params.data.children && !!params.data.children) {
+      // console.log('点击叶子父节点')
+      if (!params.data.hasOwnProperty('expanded')) {
+        params.data.expanded = false; // 初始化为未展开
+      }
+      params.data.expanded = !params.data.expanded;
+      // console.log('当前父节点状态:', params.data.expanded ? '已展开' : '已收缩');
+      if (params.data.expanded) {
+        defaultHeight.value += 3 * params.data.count
+      } else {
+        defaultHeight.value -= 3 * params.data.count
+      }
+      nextTick(() => {
+        if (myChart.value && myChart.value.resize) {
+          myChart.value.resize();
+        }
+      });
     }
   });
-  // 修改mouseover事件处理
-  myChart.value.on('mouseover', function (params) {
-    const tooltip = document.getElementById('tooltip');
-    tooltip.style.display = 'block';
+  // // 修改mouseover事件处理
+  // myChart.value.on('mouseover', function (params) {
+  //   const tooltip = document.getElementById('tooltip');
+  //   tooltip.style.display = 'block';
 
-    const resultData = {
-      "申请人": params.data['applyBy'],
-      "申请部门": params.data['applyDepartment'],
-      "设备名称": params.data['deviceName'],
-      "故障时长": params.data['faultDuration'],
-      "故障现象": params.data['faultPhenomenon'],
-      "故障类型": params.data['faultType'],
-      "是否停机": params.data['ifDown'],
-      "问题类型": params.data['issueType'],
-      "维修分析": params.data['maintenanceAnalysis'],
-      "维修费用": params.data['maintenanceCast'],
-      "维修内容": params.data['maintenanceContent'],
-      "维修人员": params.data['maintenancePeople'],
-      "报告时间": params.data['reportedTime'],
-      "解决时间": params.data['resolutionTime'],
-      "工作状态": params.data['workStatus']
-    };
-    // 格式化JSON数据为带换行的HTML
-    const formattedData = JSON.stringify(resultData, null, 2)
-      .replace(/"/g, '')
-      .replace(/\n/g, '<br>')
-      .replace(/ /g, '&nbsp;');
+  //   const resultData = {
+  //     "申请人": params.data['applyBy'],
+  //     "申请部门": params.data['applyDepartment'],
+  //     "设备名称": params.data['deviceName'],
+  //     "故障时长": params.data['faultDuration'],
+  //     "故障现象": params.data['faultPhenomenon'],
+  //     "故障类型": params.data['faultType'],
+  //     "是否停机": params.data['ifDown'],
+  //     "问题类型": params.data['issueType'],
+  //     "维修分析": params.data['maintenanceAnalysis'],
+  //     "维修费用": params.data['maintenanceCast'],
+  //     "维修内容": params.data['maintenanceContent'],
+  //     "维修人员": params.data['maintenancePeople'],
+  //     "报告时间": params.data['reportedTime'],
+  //     "解决时间": params.data['resolutionTime'],
+  //     "工作状态": params.data['workStatus']
+  //   };
+  //   // 格式化JSON数据为带换行的HTML
+  //   const formattedData = JSON.stringify(resultData, null, 2)
+  //     .replace(/"/g, '')
+  //     .replace(/\n/g, '<br>')
+  //     .replace(/ /g, '&nbsp;');
 
-    tooltip.innerHTML = `
-    <div style="font-size:12px; line-height:1.5">
-      <strong>详细信息:</strong><br>
-      ${formattedData}
-    </div>
-  `;
+  //   tooltip.innerHTML = `
+  //   <div style="font-size:12px; line-height:1.5">
+  //     <strong>详细信息:</strong><br>
+  //     ${formattedData}
+  //   </div>
+  // `;
 
-    // 强制回流确保获取正确尺寸
-    void tooltip.offsetWidth;
+  //   // 强制回流确保获取正确尺寸
+  //   void tooltip.offsetWidth;
 
-    const { clientX, clientY } = params.event.event;
-    const tooltipRect = tooltip.getBoundingClientRect();
+  //   const { clientX, clientY } = params.event.event;
+  //   const tooltipRect = tooltip.getBoundingClientRect();
 
-    // 动态计算最大可用空间
-    const maxLeft = window.innerWidth - tooltipRect.width - 10;
-    const maxTop = window.innerHeight - tooltipRect.height - 10;
+  //   // 动态计算最大可用空间
+  //   const maxLeft = window.innerWidth - tooltipRect.width - 10;
+  //   const maxTop = window.innerHeight - tooltipRect.height - 10;
 
-    // 智能定位逻辑
-    tooltip.style.left = `${Math.min(Math.max(clientX + 10, 10), maxLeft)}px`;
-    tooltip.style.top = `${Math.min(Math.max(clientY + 10, 10), maxTop)}px`;
+  //   // 智能定位逻辑
+  //   tooltip.style.left = `${Math.min(Math.max(clientX + 10, 10), maxLeft)}px`;
+  //   tooltip.style.top = `${Math.min(Math.max(clientY + 10, 10), maxTop)}px`;
 
-  });
+  // });
 
-  // 添加mouseout事件监听器来隐藏tooltip
-  myChart.value.on('mouseout', function () {
-    document.getElementById('tooltip').style.display = 'none';
-  });
+  // // 添加mouseout事件监听器来隐藏tooltip
+  // myChart.value.on('mouseout', function () {
+  //   document.getElementById('tooltip').style.display = 'none';
+  // });
 
-  // 隐藏后恢复
-  tooltip.addEventListener('mouseleave', () => {
-    myChart.value.on('mousewheel', myChart.value._mousewheel);
-  });
+  // // 隐藏后恢复
+  // tooltip.addEventListener('mouseleave', () => {
+  //   myChart.value.on('mousewheel', myChart.value._mousewheel);
+  // });
 
 }
 
@@ -184,6 +189,7 @@ function initChart() {
     console.error('Chart container not found!');
     return;
   }
+
   let data = {}
   myChart.value = echarts.init(chartContainer.value);
   if (Array.isArray(props.chartData.data[0]) && props.chartData.data[0].length > 1) {
@@ -204,6 +210,7 @@ function initChart() {
     series: [
       {
         type: 'tree',
+        render: 'webgl',
         id: 0,
         name: 'tree1',
         initialTreeDepth: 1, // 默认只展开到二级节点
@@ -230,11 +237,11 @@ function initChart() {
             position: 'right',
             verticalAlign: 'middle',
             align: 'left',
-            fontSize: 16,
+            fontSize: 14,
           }
         },
         emphasis: {
-          focus: 'descendant'
+          focus: 'none'
         },
         expandAndCollapse: true,
         animationDuration: 550,
@@ -244,28 +251,23 @@ function initChart() {
   };
 
   option && myChart.value.setOption(option);
-  myChart.value.on('click', { seriesId: 0 }, (params) => {
-    console.log('点击事件触发:', params); // 检查点击事件是否被触发以及params的内容
-    if (params.dataType === 'leaf' || !params.data.children) {
-      console.log('叶子节点数据:', params.data);
-      console.log('完整路径:', getNodePath(params));
-    }
-  });
+  // myChart.value.on('click', { seriesId: 0 }, (params) => {
+  //   console.log('点击事件触发:', params); 
+  //   if (params.dataType === 'leaf' || !params.data.children) {
+  //     console.log('叶子节点数据:', params.data);
+  //     console.log('完整路径:', getNodePath(params));
+  //   }
+  // });
   // 窗口大小改变时重绘图表
+  let resizeTimer;
   window.addEventListener('resize', () => {
-    myChart.value.resize();
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      myChart.value.resize();
+    }, 300); // 300ms 防抖
   });
 }
-// 节点路径获取方法
-const getNodePath = (params) => {
-  const path = [];
-  let current = params.data;
-  while (current) {
-    path.unshift(current.name);
-    current = current.parentNode;
-  }
-  return path.join(' -> ');
-};
+
 
 watch(() => props.chartData, async (newVal) => {
   if (newVal) {
@@ -274,11 +276,11 @@ watch(() => props.chartData, async (newVal) => {
     if (myChart.value) {
       myChart.value.dispose();
     }
-    initHeight();
+    defaultHeight.value = 100
+    // initHeight();
     await nextTick();
     initChart();
     handleChart();
-
   }
 }, { deep: true }
 );

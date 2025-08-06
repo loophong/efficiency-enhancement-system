@@ -83,17 +83,17 @@ public class MaintenanceTableListener implements ReadListener<DeviceMaintenanceT
         log.info("开始写入数据库");
 //        deviceMaintenanceTableMapper.insert(cacheDataList);
         for (DeviceMaintenanceTable data : cacheDataList) {
-            DeviceMaintenanceTable existing = deviceMaintenanceTableMapper.selectExist(data.getDeviceNum(),data.getFaultPhenomenon(),data.getReportedTime());
-            if (existing != null) {
+//            DeviceMaintenanceTable existing = deviceMaintenanceTableMapper.selectExist(data.getDeviceNum(),data.getFaultPhenomenon(),data.getReportedTime());
+//            if (existing != null) {
                 // 如果存在重复记录，执行更新操作
-                data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
-                data.setUpdateTime(new Date());
-                deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
-            } else {
+//                data.setMaintenanceTableId(existing.getMaintenanceTableId()); // 确保设置了ID以便更新正确的记录
+//                data.setUpdateTime(new Date());
+//                deviceMaintenanceTableMapper.updateDeviceMaintenanceTable(data);
+//            } else {
                 // 否则，执行插入操作
-                data.setCreateTime(new Date());
+//                data.setCreateTime(new Date());
                 deviceMaintenanceTableMapper.insertDeviceMaintenanceTable(data);
-            }
+//            }
         }
 
     }

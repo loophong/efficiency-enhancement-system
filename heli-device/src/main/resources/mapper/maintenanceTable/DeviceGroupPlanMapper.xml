@@ -55,28 +55,16 @@
             </foreach>
 
             OR (
-            (message_set = '1W' AND month_one IS NULL)
+            message_set = '1W' AND month_one LIKE '%待提交%'
             )
             OR (
-            message_set = '2W' AND (
-            (maintenance_cycle = 1 AND month_two IS NULL)
-            OR (maintenance_cycle = 2 AND month_one IS NULL AND month_two IS NULL)
-            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL)
-            )
+            message_set = '2W' AND month_two LIKE '%待提交%'
             )
             OR (
-            message_set = '3W' AND (
-            (maintenance_cycle = 1 AND month_three IS NULL)
-            OR (maintenance_cycle = 2 AND month_one IS NOT NULL)
-            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL AND month_three IS NULL)
-            )
+            message_set = '3W' AND month_three LIKE '%待提交%'
             )
             OR (
-            message_set = '4W' AND (
-            (maintenance_cycle = 1 AND month_four IS NULL)
-            OR (maintenance_cycle = 2 AND month_two IS NOT NULL)
-            OR (maintenance_cycle = 4 AND month_one IS NULL AND month_two IS NULL AND month_three IS NULL AND month_four IS NULL)
-            )
+            message_set = '4W' AND month_four LIKE '%待提交%'
             )
         </where>
     </select>
@@ -104,7 +92,7 @@
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="lastCompleteTime != null">last_complete_time,</if>
-            <if test="rollTime != null">rollTime,</if>
+            <if test="rollTime != null">roll_time,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderNum != null">#{orderNum},</if>
@@ -191,10 +179,10 @@
     <update id="updateAllFieldsToZeroAndSetLastCompleteTime">
         UPDATE device_group_plan
         SET
-            month_one = NULL,
-            month_two = NULL,
-            month_three = NULL,
-            month_four = NULL,
+            month_one = CONCAT(month_one, '(待提交)'),
+            month_two = CONCAT(month_two, '(待提交)'),
+            month_three = CONCAT(month_three, '(待提交)'),
+            month_four = CONCAT(month_four, '(待提交)'),
             message_set = NULL,
             roll_time = #{currentTime}
     </update>
