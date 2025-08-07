@@ -200,8 +200,8 @@
         <el-form-item label="培训对象" prop="trainees">
           <el-input v-model="form.trainees" placeholder="请输入培训对象" />
         </el-form-item>
-        <el-form-item label="培训类别/内容">
-          <editor v-model="form.trainingCategoryContent" :min-height="192"/>
+        <el-form-item label="培训类别/内容" prop="trainingCategoryContent">
+          <el-input v-model="form.trainingCategoryContent" type="textarea" :min-height="192" />
         </el-form-item>
         <el-form-item label="培训方式" prop="trainingMethod">
           <el-input v-model="form.trainingMethod" placeholder="请输入培训方式" />

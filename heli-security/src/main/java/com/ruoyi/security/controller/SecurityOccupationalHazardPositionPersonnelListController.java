@@ -186,11 +186,14 @@ public class SecurityOccupationalHazardPositionPersonnelListController extends B
      */
     @PreAuthorize("@ss.hasPermi('security:OccupationaPersonnelList:list')")
     @GetMapping("/listByRelatedId/{relatedId}")
-    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId)
+    public TableDataInfo listByRelatedId(@PathVariable("relatedId") Long relatedId, 
+                                       SecurityOccupationalHazardPositionPersonnelList securityOccupationalHazardPositionPersonnelList)
     {
         logger.info("根据关联ID查询危险职业岗位人员清单及管理台帐列表，关联ID: {}", relatedId);
+        // 设置关联ID到查询对象中
+        securityOccupationalHazardPositionPersonnelList.setRelatedId(relatedId);
         startPage();
-        List<SecurityOccupationalHazardPositionPersonnelList> list = securityOccupationalHazardPositionPersonnelListService.selectByRelatedId(relatedId);
+        List<SecurityOccupationalHazardPositionPersonnelList> list = securityOccupationalHazardPositionPersonnelListService.selectSecurityOccupationalHazardPositionPersonnelListList(securityOccupationalHazardPositionPersonnelList);
         logger.info("查询到 {} 条关联数据", list.size());
         return getDataTable(list);
     }

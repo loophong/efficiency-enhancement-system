@@ -16,7 +16,7 @@ public class SecurityEducationAnnualTrainingPlan extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
-    @Excel(name = "序号")
+//    @Excel(name = "序号")
     private Long id;
 
     /** 培训项目1 */

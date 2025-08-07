@@ -75,7 +75,7 @@
 
     <el-table v-loading="loading" :data="annualplanList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="序号" align="center" type="index" width="100" />
       <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
@@ -135,7 +135,7 @@
     </el-dialog>
       <!-- 文件预览对话框 -->
     <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
-      <vue-office-excel
+      <vue-office-docx
           :src="previewSrc"
           :style="comStyle"
           @rendered="renderedHandler"
@@ -147,7 +147,8 @@
 
 <script setup name="Annualplan">
 import { listAnnualplan, getAnnualplan, delAnnualplan, addAnnualplan, updateAnnualplan } from "@/api/security/annualplan";
-import VueOfficeExcel from '@vue-office/excel'
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
 const { proxy } = getCurrentInstance();
 
 const annualplanList = ref([]);
@@ -294,19 +295,19 @@ function handlePreview(row) {
     console.error("预览失败 - 文件路径无效:", row.files);
     return;
   }
-  const staticPath = 'http://localhost/dev-api'; // 静态地址
+  const staticPath = import.meta.env.VITE_APP_BASE_API; // 静态地址
   const dynamicPath = row.files; // 动态地址 (使用正确的字段名)
   const fileExt = dynamicPath.split('.').pop().toLowerCase();
 
-  if (fileExt === 'xlsx' ) {
+  if (fileExt === 'docx' ) {
     previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
     console.log("文件地址: " + previewSrc.value);
     previewDialogVisible.value = true;
     console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
     console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
   } else {
-    console.error('不支持的文件类型,只能查看xlsx文件:', fileExt);
-    proxy.$modal.msgError(`不支持的文件类型: ${fileExt}，只能查看xlsx文件`);
+    console.error('不支持的文件类型,只能查看docx文件:', fileExt);
+    proxy.$modal.msgError(`不支持的文件类型: ${fileExt}，只能查看docx文件`);
   }
 }
 
