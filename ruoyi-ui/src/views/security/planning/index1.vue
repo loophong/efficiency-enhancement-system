@@ -122,6 +122,15 @@
           v-hasPermi="['security:importantfactors:export']"
         >下载模板</el-button>
       </el-col>
+            <!-- 添加返回上一级按钮 -->
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="Back"
+          @click="handleGoBack"
+        >返回</el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -345,7 +354,10 @@ function getList() {
     getSpanArr();
   });
 }
-
+// 返回上一级页面
+function handleGoBack() {
+  proxy.$router.go(-1);
+}
 // 获取合并单元格信息
 function getSpanArr() {
   const dataList = importantfactorsList.value;

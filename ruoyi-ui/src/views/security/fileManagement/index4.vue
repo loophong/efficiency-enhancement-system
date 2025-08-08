@@ -155,6 +155,22 @@
         <el-button
           type="info"
           plain
+          icon="Upload"
+          @click="handleImport"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="Document"
+          @click="handleDownloadTemplate"
+        >下载模板</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          plain
           icon="Refresh"
           @click="handleRefresh"
         >刷新</el-button>
@@ -287,6 +303,35 @@
       </template>
     </el-dialog>
 
+    <!-- 导入对话框 -->
+    <el-dialog :title="upload.title" v-model="upload.open" width="400px" append-to-body>
+      <el-upload
+        ref="uploadRef"
+        :limit="1"
+        accept=".xlsx, .xls"
+        :headers="upload.headers"
+        :action="upload.url"
+        :data="upload.data"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        :auto-upload="false"
+        drag
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <template #tip>
+          <div class="el-upload__tip text-center">
+            <div class="el-upload__tip">
+              <el-checkbox v-model="upload.updateSupport" />是否更新已经存在的数据
+            </div>
+            <el-button type="primary" @click="submitFileForm">确 定</el-button>
+            <el-button @click="upload.open = false">取 消</el-button>
+          </div>
+        </template>
+      </el-upload>
+    </el-dialog>
+
     <!-- 注释掉文件监控对话框
     <el-dialog title="文件监控" v-model="monitorOpen" width="800px" append-to-body>
       <el-tabs v-model="activeTab">
@@ -331,7 +376,9 @@
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 import FileUpload from "@/components/FileUpload/index.vue";
-import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { getToken } from "@/utils/auth";
+import { UploadFilled } from '@element-plus/icons-vue';
+import { onMounted, ref, reactive, toRefs, onUnmounted, getCurrentInstance } from 'vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -348,6 +395,27 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+// 导入参数
+const upload = reactive({
+  // 是否显示弹出层（导入）
+  open: false,
+  // 弹出层标题（导入）
+  title: "",
+  // 是否禁用上传
+  isUploading: false,
+  // 是否更新已经存在的数据
+  updateSupport: false,
+  // 设置上传的请求头部
+  headers: { Authorization: "Bearer " + getToken() },
+  // 上传的地址
+  url: import.meta.env.VITE_APP_BASE_API + "/security/importantfactors/importData",
+  // 上传时传递的额外数据
+  data: {
+    sourceUrl: "securityConm/security1/planning/environment/importantfactor",
+    updateSupport: false
+  }
+});
 
 // 注释掉文件监控相关变量
 /*
@@ -478,6 +546,7 @@ function handleQuery() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm("queryRef");
+   queryParams.value.moduleName = "公司级重要环境因素清单";
   handleQuery();
 }
 
@@ -552,6 +621,39 @@ function handleExport() {
   proxy.download('filemanagement/filemanagement/export', {
     ...queryParams.value
   }, `filemanagement_${new Date().getTime()}.xlsx`)
+}
+
+/** 导入按钮操作 */
+function handleImport() {
+  upload.title = "重要环境因素识别与评价导入";
+  upload.open = true;
+}
+
+/** 下载模板操作 */
+function handleDownloadTemplate() {
+  proxy.download("security/importantfactors/importTemplate", {
+  }, `重要环境因素识别与评价导入模板_${new Date().getTime()}.xlsx`);
+}
+
+/** 文件上传中处理 */
+function handleFileUploadProgress() {
+  upload.isUploading = true;
+}
+
+/** 文件上传成功处理 */
+function handleFileSuccess(response) {
+  upload.open = false;
+  upload.isUploading = false;
+  proxy.$refs["uploadRef"].clearFiles();
+  proxy.$modal.msgSuccess(response.msg);
+  getList();
+}
+
+/** 提交上传文件 */
+function submitFileForm() {
+  // 同步updateSupport的值到upload.data中
+  upload.data.updateSupport = upload.updateSupport;
+  proxy.$refs["uploadRef"].submit();
 }
 
 /** 刷新按钮操作 */
