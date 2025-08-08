@@ -246,7 +246,7 @@ const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正�
   }
   /** 预览文件 */
 function handlePreview(row) {
-  const staticPath = 'http://localhost/dev-api'; // 静态地址
+  const staticPath = import.meta.env.VITE_APP_BASE_API ; // 静态地址
   const dynamicPath = row.files; // 动态地址
   const fileExt = dynamicPath.split('.').pop().toLowerCase();
   
