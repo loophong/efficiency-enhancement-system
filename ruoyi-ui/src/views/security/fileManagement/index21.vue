@@ -264,9 +264,9 @@
           </el-select>
         </el-form-item> -->
        
-        <el-form-item label="所属模块名称" prop="moduleName">
+        <!-- <el-form-item label="所属模块名称" prop="moduleName">
           <el-input v-model="form.moduleName" placeholder="请输入所属模块名称" />
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="所属模块代码" prop="moduleCode">
           <el-input v-model="form.moduleCode" placeholder="请输入所属模块代码" /> -->
         <!-- </el-form-item> -->
