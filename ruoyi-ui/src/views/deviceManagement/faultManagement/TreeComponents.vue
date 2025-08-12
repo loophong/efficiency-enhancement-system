@@ -80,10 +80,10 @@ onMounted(() => {
 
 // 生成树状数据
 function generateTreeData() {
-  // 生成分组节点
   const groups = treeData.value.children || []
   const groupCount = Math.min(groups.length, 20)
 
+  // 生成新的 groupNodes
   groupNodes.value = groups.slice(0, groupCount).map((group, index) => ({
     timeSum: group.timeSum,
     faultType: group.faultType,
@@ -92,8 +92,13 @@ function generateTreeData() {
     expanded: false // 初始状态为收缩
   }))
 
-  // 生成所有维修记录节点（但不显示）
+  // 生成维修记录节点
   generateMaintenanceNodes()
+
+  // 检查当前展开的索引是否有效
+  if (expandedGroupIndex.value !== null && expandedGroupIndex.value >= groupNodes.value.length) {
+    expandedGroupIndex.value = null
+  }
 }
 
 // 生成维修记录节点
@@ -105,7 +110,8 @@ function generateMaintenanceNodes() {
     maintenanceItems.forEach((item, itemIndex) => {
       maintenanceNodes.value.push({
         ...item,
-        groupIndex
+        groupIndex,
+
       })
     })
   })
@@ -113,12 +119,18 @@ function generateMaintenanceNodes() {
 
 // 切换分组展开/收起
 function toggleGroup(index) {
+  // 索引有效性校验
+  if (index < 0 || index >= groupNodes.value.length) return
+
   if (expandedGroupIndex.value === index) {
     expandedGroupIndex.value = null
     groupNodes.value[index].expanded = false
   } else {
     if (expandedGroupIndex.value !== null) {
-      groupNodes.value[expandedGroupIndex.value].expanded = false
+      // 确保之前展开的索引有效
+      if (expandedGroupIndex.value < groupNodes.value.length) {
+        groupNodes.value[expandedGroupIndex.value].expanded = false
+      }
     }
     expandedGroupIndex.value = index
     groupNodes.value[index].expanded = true
