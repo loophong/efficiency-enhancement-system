@@ -92,7 +92,7 @@
     <!-- 添加或修改计划会签对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="planCoSignRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="会签人编号" prop="reviewerId">
+        <el-form-item label="会签人" prop="reviewerId">
 <!--          <el-input v-model="form.reviewerId" placeholder="请输入会签人编号"/>-->
           <el-select v-model="form.reviewerId" placeholder="请选择会签人" clearable style="width: 200px">
             <el-option v-for="item in userAndDeptList" :key="item.userId" :label="item.nickName" :value="item.userId"/>
@@ -238,7 +238,10 @@ const data = reactive({
     onlineDate: null,
     comments: null
   },
-  rules: {}
+  rules: {
+    reviewerId: [{ required: true, message: "会签人不能为空", trigger: "change" }],
+    onlineDate: [{ required: true, message: "上线日期不能为空", trigger: "change" }]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
