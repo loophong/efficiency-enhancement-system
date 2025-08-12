@@ -30,6 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="gender != null  and gender != ''"> and gender = #{gender}</if>
             <if test="jobType != null  and jobType != ''"> and job_type = #{jobType}</if>
             <if test="exposureFactors != null  and exposureFactors != ''"> and exposure_factors = #{exposureFactors}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     

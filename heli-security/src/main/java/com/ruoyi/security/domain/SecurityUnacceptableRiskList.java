@@ -16,7 +16,7 @@ public class SecurityUnacceptableRiskList extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
-    @Excel(name = "序号")
+//    @Excel(name = "序号")
     private Long id;
 
     /** 危险源点

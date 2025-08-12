@@ -251,7 +251,7 @@ function handleExport() {
 }
 
 function handlePreview(row) {
-  const staticPath = 'http://localhost/dev-api'; // 静态地址
+  const staticPath =import.meta.env.VITE_APP_BASE_API; // 静态地址
   const dynamicPath = row.file; // 动态地址
   const fileExt = dynamicPath.split('.').pop().toLowerCase();
   if (fileExt === 'docx') {

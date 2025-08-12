@@ -16,7 +16,7 @@ public class SecurityOccupationalHazardPositionPersonnelList extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 序号 */
-    @Excel(name = "序号", width = 10)
+//    @Excel(name = "序号", width = 10)
     private Long id;
 
     /** 班组 */

@@ -71,15 +71,15 @@ spring:
     # redis 配置
     redis:
       # redis 云服务器配置 - 不要修改删除！！！！！！
-#      host: 124.222.36.192
-#      port: 6379
-#      database: 0
-#      password: suRCEu#ZxNT#%Pga
-      # 地址
-      host: 172.17.101.85
-      port: 6378
+      host: 124.222.36.192
+      port: 6379
       database: 0
-      password:
+      password: rdeh3hkjsM6pf3
+      # 地址
+#      host: 172.17.101.85
+#      port: 6378
+#      database: 0
+#      password:
       # 端口，默认为6379
       # 数据库索引
       # 密码

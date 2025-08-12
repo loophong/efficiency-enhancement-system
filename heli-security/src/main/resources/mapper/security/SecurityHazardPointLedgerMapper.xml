@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="chemicalFactorName != null  and chemicalFactorName != ''"> and chemical_factor_name like concat('%', #{chemicalFactorName}, '%')</if>
             <if test="physicalFactorName != null  and physicalFactorName != ''"> and physical_factor_name like concat('%', #{physicalFactorName}, '%')</if>
             <if test="productionDustName != null  and productionDustName != ''"> and production_dust_name like concat('%', #{productionDustName}, '%')</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     

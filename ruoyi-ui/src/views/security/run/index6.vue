@@ -95,7 +95,7 @@
       v-loading="loading"
       :data="OccupationaPersonnelListList"
       @selection-change="handleSelectionChange"
-      :span-method="arraySpanMethod"
+
       border
     >
       <el-table-column type="selection" width="55" align="center" />
@@ -267,7 +267,7 @@
 </template>
 
 <script setup name="OccupationaPersonnelList">
-import { listOccupationaPersonnelList, getOccupationaPersonnelList, delOccupationaPersonnelList, addOccupationaPersonnelList, updateOccupationaPersonnelList, listByRelatedId } from "@/api/security/OccupationaPersonnelList";
+import { listOccupationaPersonnelList, getOccupationaPersonnelList, delOccupationaPersonnelList, addOccupationaPersonnelList, updateOccupationaPersonnelList } from "@/api/security/OccupationaPersonnelList";
 import { getToken } from "@/utils/auth";
 import { UploadFilled, Check, Close } from '@element-plus/icons-vue';
 const route = useRoute();
@@ -339,69 +339,13 @@ function getList() {
     OccupationaPersonnelListList.value = response.rows;
     total.value = response.total;
     loading.value = false;
-    // 处理数据，为合并单元格做准备
-    processDataForMerge();
   });
 }
 // 返回上一级页面
 function handleGoBack() {
   proxy.$router.go(-1);
 }
-/** 处理数据，为合并单元格做准备 */
-function processDataForMerge() {
-  const data = OccupationaPersonnelListList.value;
-  let currentTeam = '';
 
-  for (let i = 0; i < data.length; i++) {
-    // 如果当前行的班组为空或与上一行相同，则使用上一行的班组
-    if (!data[i].teamName || data[i].teamName.trim() === '') {
-      data[i].teamName = currentTeam;
-    } else {
-      currentTeam = data[i].teamName;
-    }
-  }
-}
-
-/** 表格合并行或列的计算方法 */
-function arraySpanMethod({ rowIndex, columnIndex }) {
-  // 只对班组列（第2列，索引为2）进行合并
-  if (columnIndex === 2) {
-    const data = OccupationaPersonnelListList.value;
-    if (rowIndex === 0) {
-      return getSpanArr(data, 'teamName', rowIndex);
-    } else {
-      // 如果当前行的班组与上一行相同，则不显示（rowspan为0）
-      if (data[rowIndex].teamName === data[rowIndex - 1].teamName) {
-        return {
-          rowspan: 0,
-          colspan: 1
-        };
-      } else {
-        return getSpanArr(data, 'teamName', rowIndex);
-      }
-    }
-  }
-}
-
-/** 获取合并的行数 */
-function getSpanArr(data, key, index) {
-  let spanCount = 1;
-  const currentValue = data[index][key];
-
-  // 向下查找相同的值
-  for (let i = index + 1; i < data.length; i++) {
-    if (data[i][key] === currentValue) {
-      spanCount++;
-    } else {
-      break;
-    }
-  }
-
-  return {
-    rowspan: spanCount,
-    colspan: 1
-  };
-}
 
 // 取消按钮
 function cancel() {
@@ -564,19 +508,9 @@ function checkRelatedId() {
   const relatedId = route.query.relatedId;
   if (relatedId) {
     console.log("检测到关联ID参数:", relatedId);
-    loading.value = true;
-    // 使用关联ID进行筛选查询
-    listByRelatedId(relatedId).then(response => {
-      OccupationaPersonnelListList.value = response.rows;
-      total.value = response.total;
-      loading.value = false;
-      // 处理数据，为合并单元格做准备
-      processDataForMerge();
-      proxy.$modal.msgSuccess(`已加载关联文件数据，共 ${response.total} 条记录`);
-    }).catch(() => {
-      loading.value = false;
-      proxy.$modal.msgError("加载关联数据失败");
-    });
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
   }
 }
 

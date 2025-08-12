@@ -36,6 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="fenXianDengJi != null  and fenXianDengJi != ''"> and fen_xian_deng_ji = #{fenXianDengJi}</if>
             <if test="fuZeRen != null  and fuZeRen != ''"> and fu_ze_ren = #{fuZeRen}</if>
             <if test="wangLuoFuZeRen != null  and wangLuoFuZeRen != ''"> and wang_luo_fu_ze_ren = #{wangLuoFuZeRen}</if>
+            <if test="relatedId != null"> and related_id = #{relatedId}</if>
         </where>
     </select>
     

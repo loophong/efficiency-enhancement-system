@@ -296,7 +296,7 @@
         <el-form-item label="控制措施" prop="controlMeasures">
           <el-input v-model="form.controlMeasures" placeholder="请输入控制措施" />
         </el-form-item>
-        <el-form-item label="审核人" prop="auditor">
+        <!-- <el-form-item label="审核人" prop="auditor">
           <el-input v-model="form.auditor" placeholder="请输入审核人" />
         </el-form-item>
         <el-form-item label="批准人" prop="approver">
@@ -309,8 +309,8 @@
             value-format="YYYY-MM-DD"
             placeholder="请选择时间">
           </el-date-picker>
-        </el-form-item>
-        <el-form-item label="审批状态" prop="statu">
+        </el-form-item> -->
+        <!-- <el-form-item label="审批状态" prop="statu">
           <el-select v-model="form.statu" placeholder="请选择审批状态">
             <el-option
               v-for="dict in security_status"
@@ -319,7 +319,7 @@
               :value="dict.value"
             ></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <template #footer>
         <div class="dialog-footer">

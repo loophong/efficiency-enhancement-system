@@ -129,7 +129,7 @@
       v-loading="loading"
       :data="hazardpointledgerList"
       @selection-change="handleSelectionChange"
-      :span-method="arraySpanMethod"
+
       class="hazard-point-ledger-table"
       border
       stripe
@@ -253,7 +253,7 @@
 </template>
 
 <script setup name="Hazardpointledger">
-import { listHazardpointledger, getHazardpointledger, delHazardpointledger, addHazardpointledger, updateHazardpointledger, downloadTemplate, listByRelatedId } from "@/api/security/hazardpointledger";
+import { listHazardpointledger, getHazardpointledger, delHazardpointledger, addHazardpointledger, updateHazardpointledger, downloadTemplate } from "@/api/security/hazardpointledger";
 import { getToken } from "@/utils/auth";
 import { UploadFilled } from '@element-plus/icons-vue';
 import { useRoute } from 'vue-router';
@@ -285,9 +285,7 @@ const upload = reactive({
   url: import.meta.env.VITE_APP_BASE_API + "/security/hazardpointledger/importData"
 });
 
-// 合并单元格相关数据
-const spanArr = ref([]);
-const pos = ref(0);
+
 
 const data = reactive({
   form: {},
@@ -323,8 +321,6 @@ function getList() {
     hazardpointledgerList.value = response.rows;
     total.value = response.total;
     loading.value = false;
-    // 处理数据，为合并单元格做准备
-    processDataForMerge();
   });
 }
 // 返回上一级页面
@@ -463,214 +459,13 @@ function checkRelatedId() {
   const relatedId = route.query.relatedId;
   if (relatedId) {
     console.log("检测到关联ID参数:", relatedId);
-    loading.value = true;
-    // 使用关联ID进行筛选查询
-    listByRelatedId(relatedId).then(response => {
-      hazardpointledgerList.value = response.rows;
-      total.value = response.total;
-      loading.value = false;
-      // 处理数据，为合并单元格做准备
-      processDataForMerge();
-      proxy.$modal.msgSuccess(`已加载关联文件数据，共 ${response.total} 条记录`);
-    }).catch(() => {
-      loading.value = false;
-      proxy.$modal.msgError("加载关联数据失败");
-    });
+    queryParams.value.relatedId = relatedId;
+    proxy.$modal.msgSuccess("已加载关联文件数据");
+    getList();
   }
 }
 
-/**
- * 处理数据，为合并单元格做准备
- */
-function processDataForMerge() {
-  // 重置合并数组
-  spanArr.value = [];
-  pos.value = 0;
 
-  if (!hazardpointledgerList.value || hazardpointledgerList.value.length === 0) {
-    return;
-  }
-
-  // 计算评价单元的合并信息
-  calculateSpanArray();
-}
-
-/**
- * 计算合并数组 - 三级合并版本
- * 层次：评价单元(序号) > 岗位 > 检测地点
- */
-function calculateSpanArray() {
-  const data = hazardpointledgerList.value;
-  spanArr.value = [];
-
-  if (!data || data.length === 0) {
-    return;
-  }
-
-  console.log('开始计算三级合并，数据条数:', data.length);
-
-  // 初始化合并数组
-  for (let i = 0; i < data.length; i++) {
-    spanArr.value.push({
-      evaluationUnit: 1,
-      position: 1,
-      inspectionLocation: 1
-    });
-  }
-
-  // 计算评价单元合并
-  for (let i = 0; i < data.length; i++) {
-    if (spanArr.value[i].evaluationUnit === 0) continue;
-
-    let count = 1;
-    const currentValue = data[i].evaluationUnit || '';
-
-    // 向下查找相同的评价单元
-    for (let j = i + 1; j < data.length; j++) {
-      const nextValue = data[j].evaluationUnit || '';
-      // 检查是否为相同值或空值（空值应该继承上一行）
-      if (currentValue === nextValue ||
-          (isEmptyOrMergedValue(nextValue) && currentValue) ||
-          (!nextValue && currentValue)) {
-        count++;
-        spanArr.value[j].evaluationUnit = 0;
-      } else {
-        break;
-      }
-    }
-
-    spanArr.value[i].evaluationUnit = count;
-  }
-
-  // 计算岗位合并
-  for (let i = 0; i < data.length; i++) {
-    if (spanArr.value[i].position === 0) continue;
-
-    let count = 1;
-    const currentEvaluationUnit = data[i].evaluationUnit || '';
-    const currentPosition = data[i].position || '';
-
-    // 向下查找相同评价单元内的相同岗位
-    for (let j = i + 1; j < data.length; j++) {
-      const nextEvaluationUnit = data[j].evaluationUnit || '';
-      const nextPosition = data[j].position || '';
-
-      // 必须在同一个评价单元内
-      if (currentEvaluationUnit === nextEvaluationUnit ||
-          (isEmptyOrMergedValue(nextEvaluationUnit) && currentEvaluationUnit) ||
-          (!nextEvaluationUnit && currentEvaluationUnit)) {
-        // 检查岗位是否相同
-        if (currentPosition === nextPosition ||
-            (isEmptyOrMergedValue(nextPosition) && currentPosition) ||
-            (!nextPosition && currentPosition)) {
-          count++;
-          spanArr.value[j].position = 0;
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-
-    spanArr.value[i].position = count;
-  }
-
-  // 计算检测地点合并
-  for (let i = 0; i < data.length; i++) {
-    if (spanArr.value[i].inspectionLocation === 0) continue;
-
-    let count = 1;
-    const currentEvaluationUnit = data[i].evaluationUnit || '';
-    const currentPosition = data[i].position || '';
-    const currentInspectionLocation = data[i].inspectionLocation || '';
-
-    // 向下查找相同评价单元和岗位内的相同检测地点
-    for (let j = i + 1; j < data.length; j++) {
-      const nextEvaluationUnit = data[j].evaluationUnit || '';
-      const nextPosition = data[j].position || '';
-      const nextInspectionLocation = data[j].inspectionLocation || '';
-
-      // 必须在同一个评价单元和岗位内
-      if ((currentEvaluationUnit === nextEvaluationUnit ||
-           (isEmptyOrMergedValue(nextEvaluationUnit) && currentEvaluationUnit) ||
-           (!nextEvaluationUnit && currentEvaluationUnit)) &&
-          (currentPosition === nextPosition ||
-           (isEmptyOrMergedValue(nextPosition) && currentPosition) ||
-           (!nextPosition && currentPosition))) {
-        // 检查检测地点是否相同
-        if (currentInspectionLocation === nextInspectionLocation ||
-            (isEmptyOrMergedValue(nextInspectionLocation) && currentInspectionLocation) ||
-            (!nextInspectionLocation && currentInspectionLocation)) {
-          count++;
-          spanArr.value[j].inspectionLocation = 0;
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-
-    spanArr.value[i].inspectionLocation = count;
-  }
-
-  // 输出调试信息
-  console.log('合并计算完成，合并数组:', spanArr.value);
-  console.log('数据预览:', data.slice(0, 5).map(item => ({
-    evaluationUnit: item.evaluationUnit,
-    position: item.position,
-    inspectionLocation: item.inspectionLocation
-  })));
-}
-
-/**
- * 检测是否为空值或合并单元格
- */
-function isEmptyOrMergedValue(value) {
-  if (!value) return true;
-
-  const trimmedValue = String(value).trim();
-
-  // 检查各种空值情况
-  return trimmedValue === '' ||
-         trimmedValue === 'null' ||
-         trimmedValue === 'NULL' ||
-         trimmedValue === '-' ||
-         trimmedValue === 'N/A' ||
-         trimmedValue === 'n/a';
-}
-
-/**
- * 表格合并单元格方法
- */
-function arraySpanMethod({ rowIndex, columnIndex }) {
-  if (!spanArr.value || spanArr.value.length === 0 || rowIndex >= spanArr.value.length) {
-    return [1, 1];
-  }
-
-  const spanInfo = spanArr.value[rowIndex];
-  if (!spanInfo) {
-    return [1, 1];
-  }
-
-  // 评价单元列（索引2）
-  if (columnIndex === 2) {
-    return [spanInfo.evaluationUnit, 1];
-  }
-
-  // 岗位列（索引3）
-  if (columnIndex === 3) {
-    return [spanInfo.position, 1];
-  }
-
-  // 检测地点列（索引4）
-  if (columnIndex === 4) {
-    return [spanInfo.inspectionLocation, 1];
-  }
-
-  return [1, 1];
-}
 
 onMounted(() => {
   // 如果没有关联ID参数，直接加载所有数据
