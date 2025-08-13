@@ -504,13 +504,66 @@ function handleCalculate() {
   calculateVisible.value = true;
 }
 
+// function calculate() {
+//   calculateScore(form.value).then(response => {
+//     console.log(response);
+//     proxy.$modal.msgSuccess("计算成功"); // 弹窗提醒
+//     calculateVisible.value = false; // 关闭对话框
+//   }).catch(error => {
+//     proxy.$modal.msgError("计算失败"); // 弹窗提醒
+//   });
+// }
+
 function calculate() {
+  // 检查是否选择了时间
+  if (!form.value.happenTime || !form.value.endTime) {
+    proxy.$modal.msgError("请选择开始时间和结束时间");
+    return;
+  }
+
+  // 使用现有的查询接口检查时间段是否存在数据
+  const checkParams = {
+    happenTime: form.value.happenTime,
+    endTime: form.value.endTime,
+    pageSize: 1,  // 只需要检查是否存在，不需要获取所有数据
+    pageNum: 1
+  };
+
+  listEvaluate(checkParams).then(response => {
+    if (response.total > 0) {
+      // 存在数据，弹出确认弹窗
+      proxy.$modal.confirm(
+        '该时间段已存在评分数据，是否覆盖？',
+        '提示',
+        {
+          confirmButtonText: '覆盖',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        // 用户选择覆盖，执行计算
+        executeCalculate();
+      }).catch(() => {
+        // 用户选择取消，关闭弹窗
+        calculateVisible.value = false;
+      });
+    } else {
+      // 不存在数据，直接执行计算
+      executeCalculate();
+    }
+  }).catch(error => {
+    proxy.$modal.msgError("检查失败");
+  });
+}
+
+function executeCalculate() {
   calculateScore(form.value).then(response => {
     console.log(response);
-    proxy.$modal.msgSuccess("计算成功"); // 弹窗提醒
-    calculateVisible.value = false; // 关闭对话框
+    proxy.$modal.msgSuccess("计算成功");
+    calculateVisible.value = false;
+    getList(); // 刷新列表
   }).catch(error => {
-    proxy.$modal.msgError("计算失败"); // 弹窗提醒
+    proxy.$modal.msgError("计算失败");
   });
 }
 </script>
