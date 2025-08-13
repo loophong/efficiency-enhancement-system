@@ -34,7 +34,7 @@ public class VehicleTypeController extends BaseController {
      * @date: 2025/1/8 14:59
      */
     @Log(title = "[车型表]上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
+    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
     @PostMapping("/import")
     @Transactional
     public void importTable(MultipartFile excelFile) {

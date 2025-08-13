@@ -57,6 +57,7 @@ public class OrderSchedulingController extends BaseController {
      * @date: 2025/2/28 14:59
      * @version: 1.0
      */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
     @GetMapping("/getOrdersAndCapacityInfoByDate")
     public AjaxResult list(@RequestParam Date date) {
         OrdersAndCapacityVO ordersAndCapacityVO = new OrdersAndCapacityVO();
@@ -77,6 +78,7 @@ public class OrderSchedulingController extends BaseController {
      * @date: 2025/2/28 14:59
      * @version: 1.0
      */
+    @PreAuthorize("@ss.hasPermi('production:scheduling:cancel')")
     @GetMapping("/cancel")
     public AjaxResult cancelSchedulingOrders(@RequestParam Date date) {
         log.info("取消订单排产，时间：" + date);
@@ -108,7 +110,7 @@ public class OrderSchedulingController extends BaseController {
      * @date: 2025/2/26 17:46
      * @version: 1.0
      */
-    //    @PreAuthorize("@ss.hasPermi('production:scheduling:list')")
+    @PreAuthorize("@ss.hasPermi('production:scheduling:scheduling')")
     @PostMapping("/orders")
     public AjaxResult schedulingOrders(@RequestBody SchedulingDTO schedulingDTO) {
         log.info("排产订单信息" + schedulingDTO.getOrderSchedulingList());

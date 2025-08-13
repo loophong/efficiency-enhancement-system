@@ -36,7 +36,7 @@
                         placeholder="请选择生成时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="自动重新报工时间" prop="autoReworkTime">
+      <el-form-item label="自动重新报工时间" label-width="130px" prop="autoReworkTime">
         <el-date-picker clearable v-model="queryParams.autoReworkTime" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择自动重新报工时间">
         </el-date-picker>
@@ -44,20 +44,20 @@
       <el-form-item label="报工人" prop="operator">
         <el-input v-model="queryParams.operator" placeholder="请输入报工人" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="SAP返回标记" prop="sapReturnFlag">
+      <el-form-item label="SAP返回标记" label-width="100px" prop="sapReturnFlag">
         <el-input v-model="queryParams.sapReturnFlag" placeholder="请输入SAP返回标记" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="SAP报工返回信息" prop="sapWorkorderReturnInfo">
+      <el-form-item label="SAP报工返回信息" label-width="130px" prop="sapWorkorderReturnInfo">
         <el-input v-model="queryParams.sapWorkorderReturnInfo" placeholder="请输入SAP报工返回信息" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="重发收货时间" prop="resendReceiptTime">
+      <el-form-item label="重发收货时间" label-width="100px" prop="resendReceiptTime">
         <el-date-picker clearable v-model="queryParams.resendReceiptTime" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择重发收货时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="SAP收货返回消息" prop="sapReceiptReturnMessage">
+      <el-form-item label="SAP收货返回消息" label-width="130px" prop="sapReceiptReturnMessage">
         <el-input v-model="queryParams.sapReceiptReturnMessage" placeholder="请输入SAP收货返回消息" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>

@@ -35,11 +35,12 @@
         </el-button>
       </el-col>
 
-      <!--      <el-col :span="1.5">-->
-      <!--        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['production:vehicle:export']">-->
-      <!--          导出-->
-      <!--        </el-button>-->
-      <!--      </el-col>-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
+<!--                   v-hasPermi="['production:vehicle:export']">-->
+<!--          导出-->
+<!--        </el-button>-->
+<!--      </el-col>-->
 
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['production:vehicle:import']">
@@ -48,7 +49,7 @@
       </el-col>
 
       <el-col :span="1.5">
-        <el-button type="primary" icon="Download" @click="handleDownload"  plain v-if="true">下载模版文件
+        <el-button type="primary" icon="Download" @click="handleDownload" plain v-if="true">下载模版文件
         </el-button>
       </el-col>
 
