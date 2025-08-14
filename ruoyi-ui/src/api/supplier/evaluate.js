@@ -51,3 +51,12 @@ export function calculateScore(data) {
     data: data
   })
 }
+
+// 按时间段删除评分表数据
+export function deleteByTimeRange(data) {
+  return request({
+    url: '/supplier/evaluate/deleteByTimeRange',
+    method: 'post',
+    data: data
+  })
+}

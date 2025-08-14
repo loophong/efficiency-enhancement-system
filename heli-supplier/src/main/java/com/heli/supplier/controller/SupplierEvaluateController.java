@@ -34,6 +34,27 @@ public class SupplierEvaluateController extends BaseController {
     @Autowired
     private ISupplierEvaluateService supplierEvaluateService;
 
+
+//    /**
+//     * 按时间段删除评分表数据
+//     */
+//    @PreAuthorize("@ss.hasPermi('supplier:evaluate:remove')")
+//    @Log(title = "评分表", businessType = BusinessType.DELETE)
+//    @PostMapping("/deleteByTimeRange")
+//    public AjaxResult deleteByTimeRange(@RequestBody SupplierEvaluate supplierEvaluate) {
+////        return toAjax(supplierEvaluateService.deleteSupplierEvaluateByTimeRange(
+////                supplierEvaluate.getHappenTime(),
+////                supplierEvaluate.getEndTime()
+////        ));
+//        boolean result = supplierEvaluateService.deleteSupplierEvaluateByTimeRange(
+//                supplierEvaluate.getHappenTime(),
+//                supplierEvaluate.getEndTime()
+//        );
+//        return toAjax(result ? 1 : 0); // 转换为AjaxResult期望的格式
+//    }
+//
+
+
     /**
      * 查询评分表列表
      */

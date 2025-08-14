@@ -4,14 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.heli.supplier.domain.*;
-import com.heli.supplier.mapper.SupplierCooperationDegreeMapper;
-import com.heli.supplier.mapper.SupplierGuaranteeMapper;
 import com.heli.supplier.service.*;
 import com.ruoyi.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -177,16 +173,16 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     @Transactional
     public int calculateScore(Date happenTime, Date endTime) {
         List<SuppliersQualified> list = suppliersQualifiedService.list();
-//        // 检查当前周期是否计算，如果已经计算则清空计算数据
-//        int size = this.list(new LambdaQueryWrapper<SupplierEvaluate>().
-//                eq(SupplierEvaluate::getHappenTime, happenTime).
-//                eq(SupplierEvaluate::getEndTime, endTime)).size();
+        // 检查当前周期是否计算，如果已经计算则清空计算数据
+        int size = this.list(new LambdaQueryWrapper<SupplierEvaluate>().
+                eq(SupplierEvaluate::getHappenTime, happenTime).
+                eq(SupplierEvaluate::getEndTime, endTime)).size();
 //        int size = this.list(new LambdaQueryWrapper<SupplierEvaluate>()).size();
-////        if (size > 0) {
-////            //this.remove(new LambdaQueryWrapper<SupplierEvaluate>().eq(SupplierEvaluate::getHappenTime, happenTime).eq(SupplierEvaluate::getEndTime, endTime));
-////            this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
-////            );
-////        }
+        if (size > 0) {
+            this.remove(new LambdaQueryWrapper<SupplierEvaluate>().eq(SupplierEvaluate::getHappenTime, happenTime).eq(SupplierEvaluate::getEndTime, endTime));
+//            this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
+
+        }
         list.forEach(item -> {
             SupplierEvaluate supplierEvaluate = new SupplierEvaluate();
 
@@ -924,5 +920,14 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         return cooperationScore.setScale(2, RoundingMode.HALF_UP);
 //        return cooperationScore.multiply(BigDecimal.valueOf(0.1)).setScale(2, RoundingMode.HALF_UP);
     }
+
+
+//    @Override
+//    public boolean deleteSupplierEvaluateByTimeRange(Date happenTime, Date endTime) {
+//       log.info("删除时间段内评分表数据：{} - {}", happenTime, endTime);
+//        return this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
+//                .eq(SupplierEvaluate::getHappenTime, happenTime)
+//                .eq(SupplierEvaluate::getEndTime, endTime));
+//    }
 
 }

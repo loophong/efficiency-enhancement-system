@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.heli.supplier.domain.SupplierEvaluate;
-import com.heli.supplier.domain.SupplierGuarantee;
 
 /**
  * 评分表Service接口
@@ -64,4 +63,15 @@ public interface ISupplierEvaluateService extends IService<SupplierEvaluate>
     public int deleteSupplierEvaluateById(String id);
 
     int calculateScore(Date happenTime, Date endTime);
+
+//
+//    /**
+//     * 按时间段删除评分表数据
+//     *
+//     * @param happenTime 开始时间
+//     * @param endTime    结束时间
+//     * @return 删除的记录数
+//     */
+//    boolean deleteSupplierEvaluateByTimeRange(Date happenTime, Date endTime);
+
 }
