@@ -54,15 +54,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:table:add']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd"
+          v-hasPermi="['fault:maintenance:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['system:table:edit']">修改</el-button>
+          v-hasPermi="['fault:maintenance:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['system:table:remove']">删除</el-button>
+          v-hasPermi="['fault:maintenance:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
@@ -89,7 +90,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="exportAll"
-          v-hasPermi="['system:table:export']">导出</el-button>
+          v-hasPermi="['fault:maintenance:export']">导出</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
@@ -127,13 +128,13 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['system:table:edit']">修改</el-button>
+            v-hasPermi="['fault:maintenance:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['system:table:remove']">删除</el-button>
+            v-hasPermi="['fault:maintenance:remove']">删除</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'details')"
-            v-hasPermi="['system:table:edit']">台账</el-button>
+            v-hasPermi="['file:details:list']">台账</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'sop')"
-            v-hasPermi="['system:table:edit']">SOP文件</el-button>
+            v-hasPermi="['file:sop:list']">SOP文件</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -582,10 +583,18 @@ function handleExport() {
   }, `table_${new Date().getTime()}.xlsx`)
 }
 function downloadTemplate() {
+
   listTemplate().then(r => {
     console.log(`${baseUrl}${r.rows[0].templateMaintenance}`)
     window.open(`${baseUrl}${r.rows[0].templateMaintenance}`)
   })
+
+  // const wordCountLink = document.createElement('a');
+  // wordCountLink.href = '/wordCount.docx'; 
+  // wordCountLink.download = 'wordCount.docx'; 
+  // document.body.appendChild(wordCountLink);
+  // wordCountLink.click();
+  // document.body.removeChild(wordCountLink);
 }
 // getList();
 </script>

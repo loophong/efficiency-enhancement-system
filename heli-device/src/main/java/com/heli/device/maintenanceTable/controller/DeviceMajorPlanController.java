@@ -50,7 +50,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 查询专业计划消息列表
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:list')")
+    @PreAuthorize("@ss.hasPermi('fault:major:list')")
     @GetMapping("/tipList")
     public TableDataInfo tipList()
     {
@@ -75,7 +75,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 查询专业计划保养列表
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:list')")
+    @PreAuthorize("@ss.hasPermi('fault:major:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceMajorPlan deviceMajorPlan)
     {
@@ -87,7 +87,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 导出专业计划保养列表
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:export')")
+    @PreAuthorize("@ss.hasPermi('fault:major:export')")
     @Log(title = "专业计划保养", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DeviceMajorPlan deviceMajorPlan)
@@ -100,7 +100,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 获取专业计划保养详细信息
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:query')")
+    @PreAuthorize("@ss.hasPermi('fault:major:query')")
     @GetMapping(value = "/{majorId}")
     public AjaxResult getInfo(@PathVariable("majorId") String majorId)
     {
@@ -110,7 +110,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 新增专业计划保养
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:add')")
+    @PreAuthorize("@ss.hasPermi('fault:major:add')")
     @Log(title = "专业计划保养", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody DeviceMajorPlan deviceMajorPlan)
@@ -121,7 +121,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 修改专业计划保养
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:edit')")
+    @PreAuthorize("@ss.hasPermi('fault:major:edit')")
     @Log(title = "专业计划保养", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody DeviceMajorPlan deviceMajorPlan)
@@ -132,7 +132,7 @@ public class DeviceMajorPlanController extends BaseController
     /**
      * 删除专业计划保养
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:remove')")
+    @PreAuthorize("@ss.hasPermi('fault:major:remove')")
     @Log(title = "专业计划保养", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{majorIds}")
     public AjaxResult remove(@PathVariable String[] majorIds)
@@ -141,7 +141,7 @@ public class DeviceMajorPlanController extends BaseController
     }
 
     @Log(title = "年度专业计划表上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PreAuthorize("@ss.hasPermi('fault:major:import')")
     @PostMapping("/import")
     @Transactional
     public AjaxResult majorPlanList(String yearAndMonth, MultipartFile excelFile) {

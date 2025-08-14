@@ -137,7 +137,7 @@ public class DeviceIndicatorCountController extends BaseController
     }
 
     @Log(title = "指标表上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PreAuthorize("@ss.hasPermi('fault:indicator:import')")
     @PostMapping("/import")
     @Transactional
     public AjaxResult indicatorList(String year, MultipartFile excelFile) {
