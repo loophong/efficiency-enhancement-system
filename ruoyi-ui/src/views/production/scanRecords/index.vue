@@ -82,11 +82,11 @@
                    v-hasPermi="['production:scanRecords:remove']">删除
         </el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport"
-                   v-hasPermi="['production:scanRecords:export']">导出
-        </el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button type="warning" plain icon="Download" @click="handleExport"-->
+<!--                   v-hasPermi="['production:scanRecords:export']">导出-->
+<!--        </el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button @click="handleImport" type="success" plain icon="Upload"
                    v-hasPermi="['production:scanRecords:import']">导入
@@ -101,7 +101,7 @@
 
     <el-table v-loading="loading" :data="scanRecordsList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="id" align="center" prop="id"/>
+<!--      <el-table-column label="id" align="center" prop="id"/>-->
       <el-table-column label="线号" align="center" prop="lineNumber"/>
       <el-table-column label="整机ID" align="center" prop="machineId"/>
       <el-table-column label="计划日期" align="center" prop="plannedDate" width="180">
@@ -152,8 +152,8 @@
                 @pagination="getList"/>
 
     <!-- 添加或修改整机扫码记录对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="scanRecordsRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
+      <el-form ref="scanRecordsRef" :model="form" :rules="rules" label-width="140px">
         <el-form-item label="线号" prop="lineNumber">
           <el-input v-model="form.lineNumber" placeholder="请输入线号"/>
         </el-form-item>
@@ -291,7 +291,62 @@ const data = reactive({
     sapReceiptStatus: null,
     sapReceiptReturnStatus: null
   },
-  rules: {}
+  rules: {
+    lineNumber: [
+      { required: true, message: "线号不能为空", trigger: "blur" }
+    ],
+    machineId: [
+      { required: true, message: "整机ID不能为空", trigger: "blur" }
+    ],
+    plannedDate: [
+      { required: true, message: "计划日期不能为空", trigger: "blur" }
+    ],
+    model: [
+      { required: true, message: "型号不能为空", trigger: "blur" }
+    ],
+    gantryModel: [
+      { required: true, message: "门架型号不能为空", trigger: "blur" }
+    ],
+    tonnage: [
+      { required: true, message: "吨位不能为空", trigger: "blur" }
+    ],
+    productionOrderNumber: [
+      { required: true, message: "生产单号不能为空", trigger: "blur" }
+    ],
+    okQuantity: [
+      { required: true, message: "OK数量不能为空", trigger: "blur" }
+    ],
+    sendFlag: [
+      { required: true, message: "发送标记不能为空", trigger: "blur" }
+    ],
+    creationTime: [
+      { required: true, message: "生成时间不能为空", trigger: "blur" }
+    ],
+    autoReworkTime: [
+      { required: true, message: "自动重新报工时间不能为空", trigger: "blur" }
+    ],
+    operator: [
+      { required: true, message: "报工人不能为空", trigger: "blur" }
+    ],
+    sapReturnFlag: [
+      { required: true, message: "SAP返回标记不能为空", trigger: "blur" }
+    ],
+    sapWorkorderReturnInfo: [
+      { required: true, message: "SAP报工返回信息不能为空", trigger: "blur" }
+    ],
+    resendReceiptTime: [
+      { required: true, message: "重发收货时间不能为空", trigger: "blur" }
+    ],
+    sapReceiptReturnMessage: [
+      { required: true, message: "SAP收货返回消息不能为空", trigger: "blur" }
+    ],
+    sapReceiptStatus: [
+      { required: true, message: "SAP收货状态不能为空", trigger: "change" }
+    ],
+    sapReceiptReturnStatus: [
+      { required: true, message: "SAP收货返回状态不能为空", trigger: "change" }
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
