@@ -9,17 +9,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="supplierCode"    column="supplier_code"    />
         <result property="supplierName"    column="supplier_name"    />
         <result property="notTrue"    column="not_true"    />
-<!--        <result property="notTrue2"    column="not_true2"    />-->
-<!--        <result property="notTrue3"    column="not_true3"    />-->
+        <result property="rowIndex"    column="row_index"    />
+        <result property="batchId"    column="batch_id"    />
 <!--        <result property="notTrue4"    column="not_true4"    />-->
 <!--        <result property="notTrue5"    column="not_true5"    />-->
         <result property="score"    column="score"    />
-        <result property="time"    column="time"    />
+        <result property="updateMonth"    column="update_month"    />
 <!--        <result property="uploadName"    column="upload_name"    />-->
     </resultMap>
 
     <sql id="selectSupplierTwoReviewScoreVo">
-        select id, supplier_code, supplier_name, not_true, score, time from supplier_two_review_score
+        select id, supplier_code, supplier_name, not_true, score, update_month, row_index,batch_id from supplier_two_review_score
     </sql>
 
     <select id="selectSupplierTwoReviewScoreList" parameterType="SupplierTwoReviewScore" resultMap="SupplierTwoReviewScoreResult">
@@ -28,14 +28,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null  and supplierCode != ''"> and supplier_code = #{supplierCode}</if>
             <if test="supplierName != null  and supplierName != ''"> and supplier_name like concat('%', #{supplierName}, '%')</if>
             <if test="notTrue != null  and notTrue != ''"> and not_true = #{notTrue}</if>
-<!--            <if test="notTrue2 != null  and notTrue2 != ''"> and not_true2 = #{notTrue2}</if>-->
-<!--            <if test="notTrue3 != null  and notTrue3 != ''"> and not_true3 = #{notTrue3}</if>-->
+            <if test="rowIndex != null  and rowIndex != ''"> and row_index = #{rowIndex}</if>
+            <if test="batchId != null  and batchId != ''"> and batch_id = #{batchId}</if>
 <!--            <if test="notTrue4 != null  and notTrue4 != ''"> and not_true4 = #{notTrue4}</if>-->
 <!--            <if test="notTrue5 != null  and notTrue5 != ''"> and not_true5 = #{notTrue5}</if>-->
             <if test="score != null "> and score = #{score}</if>
-            <if test="time != null "> and time = #{time}</if>
+            <if test="updateMonth != null "> and update_month = #{updateMonth}</if>
 <!--            <if test="uploadName != null  and uploadName != ''"> and upload_name like concat('%', #{uploadName}, '%')</if>-->
         </where>
+        order by batch_id desc,row_index asc
     </select>
     
     <select id="selectSupplierTwoReviewScoreById" parameterType="String" resultMap="SupplierTwoReviewScoreResult">
@@ -49,24 +50,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code,</if>
             <if test="supplierName != null">supplier_name,</if>
             <if test="notTrue != null">not_true,</if>
-<!--            <if test="notTrue2 != null">not_true2,</if>-->
-<!--            <if test="notTrue3 != null">not_true3,</if>-->
+            <if test="rowIndex != null">row_index,</if>
+            <if test="batchId != null">batch_id,</if>
 <!--            <if test="notTrue4 != null">not_true4,</if>-->
 <!--            <if test="notTrue5 != null">not_true5,</if>-->
             <if test="score != null">score,</if>
-            <if test="time != null">time,</if>
+            <if test="updateMonth != null">update_month,</if>
 <!--            <if test="uploadName != null">upload_name,</if>-->
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
             <if test="supplierName != null">#{supplierName},</if>
             <if test="notTrue != null">#{notTrue},</if>
-<!--            <if test="notTrue2 != null">#{notTrue2},</if>-->
-<!--            <if test="notTrue3 != null">#{notTrue3},</if>-->
+            <if test="rowIndex != null">#{rowIndex},</if>
+            <if test="batchId != null">#{batchId},</if>
 <!--            <if test="notTrue4 != null">#{notTrue4},</if>-->
 <!--            <if test="notTrue5 != null">#{notTrue5},</if>-->
             <if test="score != null">#{score},</if>
-            <if test="time != null">#{time},</if>
+            <if test="updateMonth != null">#{updateMonth},</if>
 <!--            <if test="uploadName != null">#{uploadName},</if>-->
          </trim>
     </insert>
@@ -77,12 +78,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="supplierCode != null">supplier_code = #{supplierCode},</if>
             <if test="supplierName != null">supplier_name = #{supplierName},</if>
             <if test="notTrue != null">not_true = #{notTrue},</if>
-<!--            <if test="notTrue2 != null">not_true2 = #{notTrue2},</if>-->
-<!--            <if test="notTrue3 != null">not_true3 = #{notTrue3},</if>-->
+            <if test="rowIndex != null">row_index = #{rowIndex},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
 <!--            <if test="notTrue4 != null">not_true4 = #{notTrue4},</if>-->
 <!--            <if test="notTrue5 != null">not_true5 = #{notTrue5},</if>-->
             <if test="score != null">score = #{score},</if>
-            <if test="time != null">time = #{time},</if>
+            <if test="updateMonth != null">update_month = #{updateMonth},</if>
 <!--            <if test="uploadName != null">upload_name = #{uploadName},</if>-->
         </trim>
         where id = #{id}

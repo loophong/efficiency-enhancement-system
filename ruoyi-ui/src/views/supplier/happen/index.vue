@@ -520,7 +520,7 @@ const data = reactive({
     one: null,
     two: null,
     three: null,
-    orderByColumn: 'happen_time ',
+    orderByColumn: 'id ',
     isAsc: 'desc'
   },
   rules: {

@@ -13,6 +13,7 @@ import com.ruoyi.common.core.domain.R;
 import com.ruoyi.common.exception.ServiceException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 查询设备故障记录列表
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceMaintenanceTable deviceMaintenanceTable)
     {
@@ -59,7 +60,7 @@ public class DeviceMaintenanceTableController extends BaseController
     }
 
     /**
-     * 查询设备故障记录列表
+     * 查询设备故障记录列表-原因分析
      */
 //    @PreAuthorize("@ss.hasPermi('fault:maintenance:list')")
     @GetMapping("/listByDate")
@@ -101,7 +102,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 导出设备故障记录列表
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:export')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:export')")
     @Log(title = "设备故障记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DeviceMaintenanceTable deviceMaintenanceTable)
@@ -114,7 +115,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 获取设备故障记录详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:query')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:query')")
     @GetMapping(value = "/{maintenanceTableId}")
     public AjaxResult getInfo(@PathVariable("maintenanceTableId") Long maintenanceTableId)
     {
@@ -124,7 +125,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 新增设备故障记录
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:add')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:add')")
     @Log(title = "2.设备故障记录(导入)", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody DeviceMaintenanceTable deviceMaintenanceTable)
@@ -135,7 +136,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 修改设备故障记录(导入)
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:edit')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:edit')")
     @Log(title = "2.设备故障记录(导入)", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody DeviceMaintenanceTable deviceMaintenanceTable)
@@ -146,7 +147,7 @@ public class DeviceMaintenanceTableController extends BaseController
     /**
      * 删除设备故障记录(导入)
      */
-//    @PreAuthorize("@ss.hasPermi('fault:maintenance:remove')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:remove')")
     @Log(title = "设备故障记录(导入)", businessType = BusinessType.DELETE)
     @DeleteMapping("/{maintenanceTableIds}")
     public AjaxResult remove(@PathVariable Long[] maintenanceTableIds)
@@ -156,7 +157,7 @@ public class DeviceMaintenanceTableController extends BaseController
 
 
     @Log(title = "故障记录表上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PreAuthorize("@ss.hasPermi('fault:maintenance:import')")
     @PostMapping("/import")
     @Transactional
     public AjaxResult faultRecordsList(String yearAndMonth, MultipartFile excelFile) {

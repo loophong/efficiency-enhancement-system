@@ -292,4 +292,21 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
         return calendar.getTime();
     }
+
+    public static Date getMonthEndDay(Date endTime) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endTime);
+
+        // 设置为当前月份的第一天
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        // 设置为当前月份的最后一天
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        // 设置为最后一秒（23:59:59.999）
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+
+        return calendar.getTime();
+    }
 }

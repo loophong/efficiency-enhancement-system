@@ -54,7 +54,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 查询专业计划消息列表
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:plan:list')")
+//    @PreAuthorize("@ss.hasPermi('fault:group:list')")
     @GetMapping("/tipList")
     public TableDataInfo tipList()
     {
@@ -75,7 +75,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 查询班组计划保养列表
      */
-//    @PreAuthorize("@ss.hasPermi('device:group:list')")
+    @PreAuthorize("@ss.hasPermi('fault:group:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceGroupPlan deviceGroupPlan)
     {
@@ -110,7 +110,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 导出班组计划保养列表
      */
-    @PreAuthorize("@ss.hasPermi('device:group:export')")
+    @PreAuthorize("@ss.hasPermi('fault:group:export')")
     @Log(title = "班组计划保养", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DeviceGroupPlan deviceGroupPlan)
@@ -123,7 +123,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 获取班组计划保养详细信息
      */
-    @PreAuthorize("@ss.hasPermi('device:group:query')")
+    @PreAuthorize("@ss.hasPermi('fault:group:query')")
     @GetMapping(value = "/{groupId}")
     public AjaxResult getInfo(@PathVariable("groupId") String groupId)
     {
@@ -133,7 +133,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 新增班组计划保养
      */
-    @PreAuthorize("@ss.hasPermi('device:group:add')")
+    @PreAuthorize("@ss.hasPermi('fault:group:add')")
     @Log(title = "班组计划保养", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody DeviceGroupPlan deviceGroupPlan)
@@ -144,7 +144,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 修改班组计划保养
      */
-    @PreAuthorize("@ss.hasPermi('device:group:edit')")
+    @PreAuthorize("@ss.hasPermi('fault:group:edit')")
     @Log(title = "班组计划保养", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody DeviceGroupPlan deviceGroupPlan)
@@ -155,7 +155,7 @@ public class DeviceGroupPlanController extends BaseController
     /**
      * 删除班组计划保养
      */
-    @PreAuthorize("@ss.hasPermi('device:group:remove')")
+    @PreAuthorize("@ss.hasPermi('fault:group:remove')")
     @Log(title = "班组计划保养", businessType = BusinessType.DELETE)
     @DeleteMapping("/{groupIds}")
     public AjaxResult remove(@PathVariable String[] groupIds)
@@ -168,7 +168,7 @@ public class DeviceGroupPlanController extends BaseController
 
 
     @Log(title = "班组计划表上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PreAuthorize("@ss.hasPermi('fault:group:import')")
     @PostMapping("/import")
     @Transactional
     public AjaxResult groupPlanList(String yearAndMonth, MultipartFile excelFile) {

@@ -37,7 +37,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 查询记录列表
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:list')")
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceMaintenanceRecord deviceMaintenanceRecord)
     {
@@ -49,7 +49,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 导出记录列表
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:export')")
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:export')")
     @Log(title = "记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DeviceMaintenanceRecord deviceMaintenanceRecord)
@@ -62,7 +62,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 获取记录详细信息
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:query')")
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:query')")
     @GetMapping(value = "/{maintenanceId}")
     public AjaxResult getInfo(@PathVariable("maintenanceId") Long maintenanceId)
     {
@@ -72,7 +72,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 新增记录
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:add')")
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:add')")
     @Log(title = "记录", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody DeviceMaintenanceRecord deviceMaintenanceRecord)
@@ -83,7 +83,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 修改记录
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:edit')")
+//    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:edit')")
     @Log(title = "记录", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody DeviceMaintenanceRecord deviceMaintenanceRecord)
@@ -94,7 +94,7 @@ public class DeviceMaintenanceRecordController extends BaseController
     /**
      * 删除记录
      */
-    @PreAuthorize("@ss.hasPermi('maintenanceTable:record:remove')")
+//    @PreAuthorize("@ss.hasPermi('fault:record:remove')")
     @Log(title = "记录", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{maintenanceIds}")
     public AjaxResult remove(@PathVariable Long[] maintenanceIds)

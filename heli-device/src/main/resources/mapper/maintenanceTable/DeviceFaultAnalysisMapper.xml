@@ -28,6 +28,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where analysis_id = #{analysisId}
     </select>
 
+    <select id="selectByNameAndDate" parameterType="DeviceFaultAnalysis"  resultMap="DeviceFaultAnalysisResult">
+        <include refid="selectDeviceFaultAnalysisVo"/>
+        <where>
+            <if test="analysisName != null  and analysisName != ''"> and analysis_name = #{analysisName}</if>
+            <if test="analysisRecordTime != null "> and analysis_record_time = #{analysisRecordTime}</if>
+        </where>
+    </select>
+
     <insert id="insertDeviceFaultAnalysis" parameterType="DeviceFaultAnalysis" useGeneratedKeys="true" keyProperty="analysisId">
         insert into device_fault_analysis
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 设备故障分析对象 device_fault_analysis
@@ -26,16 +27,15 @@ public class DeviceFaultAnalysis extends BaseEntity
     private String analysisId;
 
     /** 故障类型名称 */
-    @Excel(name = "故障类型名称")
+
     private String analysisName;
 
     /** 记录日期 */
-    @JsonFormat(pattern = "yyyy-MM")
-    @Excel(name = "记录日期", width = 30, dateFormat = "yyyy-MM")
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date analysisRecordTime;
 
     /** 原因分析 */
-    @Excel(name = "原因分析")
     private String maintenanceAnalysis;
 
     public void setAnalysisId(String analysisId)

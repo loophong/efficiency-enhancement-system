@@ -139,13 +139,23 @@ public class SupplierOnetimeSimpleServiceImpl extends ServiceImpl<SupplierOnetim
      */
     private double calculateScore(String quantityPassRate) {
         if (quantityPassRate == null || quantityPassRate.isEmpty()) {
-            return 100; // 为空时默认 0 分
+            return 100; // 为空时默认 100 分
         }
         try {
-            // 去掉可能存在的 "%" 符号，并转换为 double
-            double qualifiedRate = Double.parseDouble(quantityPassRate.replace("%", "").trim());
+            double qualifiedRate;
             double baseScore = 100; // 基础分 100 分
-
+            // 处理百分比格式
+            if (quantityPassRate.contains("%")) {
+                String cleanedRate = quantityPassRate.replace("%", "").trim();
+                qualifiedRate = Double.parseDouble(cleanedRate);
+            } else {
+                // 处理小数格式
+                qualifiedRate = Double.parseDouble(quantityPassRate);
+                if (qualifiedRate <= 1) {
+                    qualifiedRate *= 100; // 转换为百分比
+                }
+                // 对于 100, 99 这种整数，不需要转换，直接当作百分比使用
+            }
             // 计算不合格率
             double unqualifiedRate = 100 - qualifiedRate;
 

@@ -54,6 +54,7 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     @Override
     public List<SupplierReturnRate> selectSupplierReturnRateList(SupplierReturnRate supplierReturnRate)
     {
+
         return supplierReturnRateMapper.selectSupplierReturnRateList(supplierReturnRate);
     }
 
@@ -142,13 +143,13 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
      * @return 最终得分（BigDecimal 格式）
      */
     private double calculateScore(String returnRate) {
-//        if (returnRate == null || !returnRate.endsWith("%")) {
-//            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
-//        }
+        if (returnRate == null || !returnRate.endsWith("%")) {
+            throw new IllegalArgumentException("返修率格式错误，必须是百分比字符串，如 '85.5%'");
+        }
 
         // 去掉百分号并转换为数值
         double rate = Double.parseDouble(returnRate.replace("%", "").trim());
-
+        rate = 100 - rate;
         // 计算基础分
         double baseScore;
         if (rate < 80) {

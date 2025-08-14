@@ -37,7 +37,7 @@ public class DeviceTemplateController extends BaseController
     /**
      * 查询设备导入模板文件列表
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:template:list')")
+    @PreAuthorize("@ss.hasPermi('file:template:list')")
     @GetMapping("/list")
     public TableDataInfo list(DeviceTemplate deviceTemplate)
     {
@@ -62,7 +62,7 @@ public class DeviceTemplateController extends BaseController
     /**
      * 获取设备导入模板文件详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:template:query')")
+    @PreAuthorize("@ss.hasPermi('file:template:query')")
     @GetMapping(value = "/{templateId}")
     public AjaxResult getInfo(@PathVariable("templateId") Long templateId)
     {
@@ -72,7 +72,7 @@ public class DeviceTemplateController extends BaseController
     /**
      * 新增设备导入模板文件
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:template:add')")
+    @PreAuthorize("@ss.hasPermi('file:template:add')")
     @Log(title = "设备导入模板文件", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody DeviceTemplate deviceTemplate)
@@ -83,7 +83,7 @@ public class DeviceTemplateController extends BaseController
     /**
      * 修改设备导入模板文件
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:template:edit')")
+    @PreAuthorize("@ss.hasPermi('file:template:edit')")
     @Log(title = "设备导入模板文件", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody DeviceTemplate deviceTemplate)
@@ -94,7 +94,7 @@ public class DeviceTemplateController extends BaseController
     /**
      * 删除设备导入模板文件
      */
-//    @PreAuthorize("@ss.hasPermi('maintenanceTable:template:remove')")
+    @PreAuthorize("@ss.hasPermi('file:template:remove')")
     @Log(title = "设备导入模板文件", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{templateIds}")
     public AjaxResult remove(@PathVariable Long[] templateIds)

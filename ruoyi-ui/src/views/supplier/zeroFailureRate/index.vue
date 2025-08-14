@@ -214,6 +214,9 @@
         placeholder="Pick a day"
         date-format="yyyy-MM-dd"
         :size="size"
+        
+        :disabled="isFirstImportCompleted" 
+        
       />
     <br>
   </el-form-item>
@@ -280,9 +283,7 @@ const data = reactive({
     zeroFailureRate: null,
     score: null,
     uploadMonth: null,
-    time: null,
-    orderByColumn: 'upload_month ',
-    isAsc: 'desc'
+    time: null
   },
   rules: {
 
@@ -312,12 +313,14 @@ function handleDownload2() {
   const url = "/profile/excel_templates/supply/产品过程故障率.xlsx";
   handleTrueDownload(url);
 }
-
+const scoreList = ref([]);        // 数据列表
 /** 查询零公里故障指标完成率列表 */
 function getList() {
   loading.value = true;
   listZeroFailureRate(queryParams.value).then(response => {
     zeroFailureRateList.value = response.rows;
+
+
     total.value = response.total;
     loading.value = false;
   });
@@ -509,6 +512,11 @@ const isFirstImportCompleted = ref(false); // 第一个导入是否完成
 // }
 /** excel文件上传 */
 function uploadFile() {
+  // 检查时间是否为空
+if (!uploadDate.value) {
+  proxy.$modal.msgError("请选择时间");
+  return;
+}
   if (inputFile.value && inputFile.value.files.length > 0) {
     isLoading.value = true;
     const file = inputFile.value.files[0];

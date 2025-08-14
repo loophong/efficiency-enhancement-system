@@ -17,11 +17,11 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="上传时间" prop="time">
+      <el-form-item label="上传时间" prop="updateMonth">
         <el-date-picker clearable
-        v-model="queryParams.time"
+        v-model="queryParams.updateMonth"
           type="month"
-          value-format="YYYY-MM"
+          value-format="YYYY-MM-DD"
           placeholder="请选择上传时间">
         </el-date-picker>
         
@@ -98,9 +98,9 @@
       <el-table-column label="不符合项4" align="center" prop="notTrue4" />
       <el-table-column label="不符合项5" align="center" prop="notTrue5" /> -->
       <!-- <el-table-column label="得分" align="center" prop="score" /> -->
-      <el-table-column label="上传时间" align="center" prop="time" width="180">
+      <el-table-column label="上传时间" align="center" prop="updateMonth" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.time, '{y}-{m}') }}</span>
+          <span>{{ parseTime(scope.row.updateMonth, '{y}-{m}') }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="填报人" align="center" prop="uploadName" /> -->
@@ -195,11 +195,11 @@
         <!-- <el-form-item label="得分" prop="score">
           <el-input v-model="form.score" placeholder="请输入得分" />
         </el-form-item> -->
-        <el-form-item label="上传时间" prop="time">
+        <el-form-item label="上传时间" prop="updateMonth">
           <el-date-picker clearable
-            v-model="form.time"
+            v-model="form.updateMonth"
             type="month"
-            value-format="YYYY-MM"
+            value-format="YYYY-MM-DD"
             placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
@@ -228,11 +228,11 @@
   <el-form-item label="时间">
 <el-date-picker
     v-model="uploadDate"
+    value-format="YYYY-MM-DD"
     type="month"
     placeholder="请选择月份"
-    value-format="YYYY-MM-DD"
-    format="YYYY-MM"
-    :size="size"
+
+ 
   />
 <br>
 </el-form-item>
@@ -273,7 +273,8 @@ const total = ref(0);
 const title = ref("");
 
 
-const uploadDate = ref("");
+// const uploadDate = ref("");
+const uploadDate = ref('');
 
 
 // 导入参数
@@ -288,7 +289,7 @@ const data = reactive({
     supplierCode: '',
     supplierName: '',
     notTrueList: [''],// 改为数组，默认一个空项
-    time: null
+    updateMonth: null
   },
   queryParams: {
     pageNum: 1,
@@ -301,10 +302,8 @@ const data = reactive({
     notTrue4: null,
     notTrue5: null,
     score: null,
-    time: null,
+    updateMonth: null,
     uploadName: null,
-    orderByColumn: 'time',
-    isAsc: 'desc'
   },
   rules: {
     supplierCode: [
@@ -327,7 +326,7 @@ const data = reactive({
       trigger: "blur" 
     }
   ],
-    time:[
+  updateMonth:[
       { required: true, message: "上传时间不能为空", trigger: "blur" }
     ]
   }
@@ -366,10 +365,10 @@ function reset() {
     notTrue4: null,
     notTrue5: null,
     score: null,
-    time: null,
+    updateMonth: null,
     uploadName: null,
     notTrueList: [''] ,// 重置为单个空项
-    time: null
+    updateMonth: null
   };
   proxy.resetForm("scoreRef");
 }
@@ -542,43 +541,117 @@ function cancelUpload() {
   resetUpload();
 }
 
+// /** excel文件上传 */
+// function uploadFile() {
+  
+//   if (inputFile.value && inputFile.value.files.length > 0) {
+//     isLoading.value = true;
+//     const file = inputFile.value.files[0];
+//     console.log(inputFile.value);
+//     console.log(file);
+//     // let date = XXXdate;
+//     // const formData = new FormData();
+
+//     // formData.append('excelFile', file);
+//     // // formData.append('date', date);
+//     console.log("上传时间"+uploadDate.value);
+//     let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
+//     // formData.append('uploadMonth',date );
+
+//     // formData.append('date', date);
+//     let uploadFileDTO = {
+//       'uploadMonth': date,
+//       'excelFile': file
+//     }
+
+//     importFile(uploadFileDTO).then(() => {
+//       proxy.$modal.msgSuccess("导入成功");
+//       getList();
+//       uploadDialogVisible.value = false;
+//       isLoading.value = false;
+//     }).catch(() => {
+//       proxy.$modal.msgError("导入失败");
+//       isLoading.value = false;
+//     }).finally(() => {
+//       resetUpload();
+//     });
+//   }else {
+//     proxy.$modal.msgError("请选择文件");
+//   }
+// }
 /** excel文件上传 */
 function uploadFile() {
+
+
+
+  // 检查时间是否为空
+if (!uploadDate.value) {
+  proxy.$modal.msgError("请选择时间");
+  return;
+}
   if (inputFile.value && inputFile.value.files.length > 0) {
     isLoading.value = true;
     const file = inputFile.value.files[0];
-    console.log(inputFile.value);
-    console.log(file);
-    // let date = XXXdate;
-    // const formData = new FormData();
+    let date = dayjs(uploadDate.value).format('YYYY-MM-DD');
+    
+    // 先检查月份是否存在
+    listScore({ updateMonth: date, pageNum: 1, pageSize: 1 }).then(response => {
+      if (response.rows && response.rows.length > 0) {
 
-    // formData.append('excelFile', file);
-    // // formData.append('date', date);
-    console.log("上传时间"+uploadDate.value);
-    let date =dayjs(uploadDate.value).format('YYYY-MM-DD'); // 使用 dayjs 格式化日期
-    // formData.append('uploadMonth',date );
-
-    // formData.append('date', date);
-    let uploadFileDTO = {
-      'uploadMonth': date,
-      'excelFile': file
-    }
-
-    importFile(uploadFileDTO).then(() => {
-      proxy.$modal.msgSuccess("导入成功");
-      getList();
-      uploadDialogVisible.value = false;
-      isLoading.value = false;
+        // 有数据，弹出确认对话框
+        proxy.$modal.confirm('该月份的数据已存在，是否继续新增？', '提示', {
+          confirmButtonText: '新增',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 用户选择覆盖，直接导入
+          console.log(uploadDate.value)
+          performImport(file, date);
+        }).catch(() => {
+          // 用户取消
+          isLoading.value = false;
+          uploadDialogVisible.value = false;  // 添加这行关闭窗口
+          resetUpload();  // 添加这行重置表单
+          proxy.$message({
+            message: '导入已取消',
+            type: 'warning',
+            duration: 3000,
+            showClose: true
+          });
+        });
+      } else {
+        // 没有数据，直接导入
+        performImport(file, date);
+      }
     }).catch(() => {
-      proxy.$modal.msgError("导入失败");
-      isLoading.value = false;
-    }).finally(() => {
-      resetUpload();
+      // 查询失败，直接导入
+      performImport(file, date);
     });
-  }else {
+  } else {
     proxy.$modal.msgError("请选择文件");
   }
 }
+
+// 执行导入操作
+function performImport(file, date) {
+  let uploadFileDTO = {
+    'uploadMonth': date,
+    'excelFile': file
+  };
+  
+  importFile(uploadFileDTO).then(() => {
+    proxy.$modal.msgSuccess("导入成功");
+    getList();
+    uploadDialogVisible.value = false;
+    isLoading.value = false;
+  }).catch(() => {
+    proxy.$modal.msgError("导入失败");
+    isLoading.value = false;
+  }).finally(() => {
+    resetUpload();
+  });
+}
+
 
 /** 检查文件是否为excel */
 function checkFile() {

@@ -211,16 +211,15 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
         BigDecimal baseScore = new BigDecimal(100); // 基础分100分
 
         // 优先处理 ppmValue（产品过程故障率）
+
         if (ppmValue != null && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!") && !ppmValue.trim().isEmpty()) {
             try {
-                double ppm = new BigDecimal(ppmValue).doubleValue();
-                double rate = ppm / 1_000_000; // ppm 转换为小数（如1000ppm = 0.001 = 0.1%）
-
+                double rate = new BigDecimal(ppmValue.replace("%", "")).doubleValue();
                 if (rate <= 0) {
                     return baseScore; // 小于等于0，达标不扣分
                 } else {
                     // 转换为百分比进行计算
-                    double percentage = rate * 100;
+                    double percentage = rate ;
                     int deduction;
                     if (percentage <= 1.0) {
                         deduction = 10; // 1%以内（含）扣10分

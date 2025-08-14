@@ -20,16 +20,7 @@ public interface DeviceFaultAnalysisMapper extends BaseMapper<DeviceFaultAnalysi
 {
 
 
-    @Select({
-            "<script>",
-            "SELECT * FROM device_fault_analysis",
-            "WHERE analysis_record_time = #{analysisRecordTime}",
-            "<if test='analysisName != null and analysisName != \"\"'>",
-            "AND analysis_name = #{analysisName}",
-            "</if>",
-            "</script>"
-    })
-    public List<DeviceFaultAnalysis> selectByNameAndDate(@Param("analysisRecordTime") Date analysisRecordTime, @Param("analysisName") String analysisName);
+    public List<DeviceFaultAnalysis> selectByNameAndDate(DeviceFaultAnalysis deviceFaultAnalysis);
     /**
      * 查询设备故障分析
      * 

@@ -183,10 +183,9 @@ public class SupplierEvaluate implements Serializable
 //    @Excel(name = "备3")
 //    private String three;
 //
-//    /** 入库标识符 */
-//    @ExcelIgnore
-//    @Excel(name = "入库标识符")
-//    private Integer storageFlag;
+    /** 批次号 */
+    @ExcelIgnore
+    private Long storageFlag;
 
 
 }
