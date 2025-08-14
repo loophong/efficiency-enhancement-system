@@ -214,6 +214,9 @@
         placeholder="Pick a day"
         date-format="yyyy-MM-dd"
         :size="size"
+        
+        :disabled="isFirstImportCompleted" 
+        
       />
     <br>
   </el-form-item>
@@ -281,7 +284,7 @@ const data = reactive({
     score: null,
     uploadMonth: null,
     time: null,
-    orderByColumn: 'upload_month ',
+    orderByColumn: 'batch_id ',
     isAsc: 'desc'
   },
   rules: {
@@ -509,6 +512,11 @@ const isFirstImportCompleted = ref(false); // 第一个导入是否完成
 // }
 /** excel文件上传 */
 function uploadFile() {
+  // 检查时间是否为空
+if (!uploadDate.value) {
+  proxy.$modal.msgError("请选择时间");
+  return;
+}
   if (inputFile.value && inputFile.value.files.length > 0) {
     isLoading.value = true;
     const file = inputFile.value.files[0];

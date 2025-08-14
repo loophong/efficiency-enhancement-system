@@ -78,15 +78,12 @@ public class SupplierOnetimeSimple implements Serializable {
     @Excel(name = "分数")
     private Double score;
 
-//    /** 备选1 */
-//    @Excel(name = "备选1")
-//    @ExcelIgnore
-//    private String one;
-//
-//    /** 备选2 */
-//    @Excel(name = "备选2")
-//    @ExcelIgnore
-//    private String two;
+
+    @ExcelIgnore
+    private Integer rowIndex;
+
+    @ExcelIgnore
+    private Long batchId;
 
 
 }

@@ -116,4 +116,11 @@ public class SupplierZeroKilometerFailureRate{
 
     private Date time;
 
+
+    @ExcelIgnore
+    private Integer rowIndex;
+
+    @ExcelIgnore
+    private Long batchId;
+
 }

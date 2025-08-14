@@ -54,6 +54,7 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
     @Override
     public List<SupplierReturnRate> selectSupplierReturnRateList(SupplierReturnRate supplierReturnRate)
     {
+
         return supplierReturnRateMapper.selectSupplierReturnRateList(supplierReturnRate);
     }
 
@@ -148,7 +149,7 @@ public class SupplierReturnRateServiceImpl  extends ServiceImpl<SupplierReturnRa
 
         // 去掉百分号并转换为数值
         double rate = Double.parseDouble(returnRate.replace("%", "").trim());
-
+        rate = 100 - rate;
         // 计算基础分
         double baseScore;
         if (rate < 80) {

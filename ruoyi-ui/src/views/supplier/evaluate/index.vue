@@ -99,7 +99,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" width="50">
+    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" width="50" max-height="600">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" width="75" />
@@ -310,7 +310,8 @@
 </template>
 
 <script setup name="Evaluate">
-import {listEvaluate, getEvaluate, delEvaluate, addEvaluate, updateEvaluate,calculateScore} from "@/api/supplier/evaluate";
+import {listEvaluate, getEvaluate, delEvaluate, addEvaluate, 
+  updateEvaluate,calculateScore,deleteByTimeRange} from "@/api/supplier/evaluate";
 
 const {proxy} = getCurrentInstance();
 
@@ -361,7 +362,14 @@ const data = reactive({
     orderByColumn: 'end_time',  // 添加这行：按结束时间排序
     isAsc: 'desc'  // 添加这行：降序排列，结束时间晚的在前
   },
-  rules: {}
+  rules: {
+    happenTime: [
+      { required: true, message: "开始时间不能为空", trigger: "change" }
+    ],
+    endTime: [
+      { required: true, message: "结束时间不能为空", trigger: "change" }
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
@@ -541,8 +549,13 @@ function calculate() {
           type: 'warning'
         }
       ).then(() => {
-        // 用户选择覆盖，执行计算
-        executeCalculate();
+        // 用户选择覆盖，先删除现有数据，再执行计算
+        deleteByTimeRange(form.value).then(() => {
+          proxy.$modal.msgSuccess("已删除现有数据，开始重新计算");
+          executeCalculate();
+        }).catch(error => {
+          proxy.$modal.msgError("删除现有数据失败");
+        });
       }).catch(() => {
         // 用户选择取消，关闭弹窗
         calculateVisible.value = false;

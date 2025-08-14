@@ -552,7 +552,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
                 new LambdaQueryWrapper<SupplierTwoReviewScore>()
                         .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
-                        .between(SupplierTwoReviewScore::getTime, happenTime, endTime));
+                        .between(SupplierTwoReviewScore::getUpdateMonth, happenTime, endTime));
         // 计算不符合项的数量
         if (list.isEmpty()) {
             // 如果没有数据，默认得1分，乘以权重2%

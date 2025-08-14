@@ -11,12 +11,12 @@
         <result property="returnRate"    column="return_rate"    />
         <result property="month"    column="month"    />
         <result property="score"    column="score"    />
-<!--        <result property="two"    column="two"    />-->
-<!--        <result property="three"    column="three"    />-->
+        <result property="rowIndex"    column="row_index"    />
+        <result property="batchId"    column="batch_id"    />
     </resultMap>
 
     <sql id="selectSupplierReturnRateVo">
-        select id, supplier_code, supplier_name, return_rate, month, score  from supplier_return_rate
+        select id, supplier_code, supplier_name, return_rate, month, score, row_index, batch_id  from supplier_return_rate
     </sql>
 
     <select id="selectSupplierReturnRateList" parameterType="SupplierReturnRate" resultMap="SupplierReturnRateResult">
@@ -30,9 +30,10 @@
                 and DATE_FORMAT(month, '%Y-%m') = DATE_FORMAT(#{month}, '%Y-%m')
             </if>
             <if test="score != null  and score != ''"> and score = #{score}</if>
-<!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
-<!--            <if test="three != null  and three != ''"> and three = #{three}</if>-->
+            <if test="rowIndex != null  and rowIndex != ''"> and row_index = #{rowIndex}</if>
+            <if test="batchId != null  and batchId != ''"> and batch_id = #{batchId}</if>
         </where>
+        order by batch_id desc,row_index asc
     </select>
 
     <select id="selectSupplierReturnRateById" parameterType="String" resultMap="SupplierReturnRateResult">
@@ -48,8 +49,8 @@
             <if test="returnRate != null">return_rate,</if>
             <if test="month != null">month,</if>
             <if test="score != null">score,</if>
-<!--            <if test="two != null">two,</if>-->
-<!--            <if test="three != null">three,</if>-->
+            <if test="rowIndex != null">row_index,</if>
+            <if test="batchId != null">batch_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierCode != null">#{supplierCode},</if>
@@ -57,8 +58,8 @@
             <if test="returnRate != null">#{returnRate},</if>
             <if test="month != null">#{month},</if>
             <if test="score != null">#{score},</if>
-<!--            <if test="two != null">#{two},</if>-->
-<!--            <if test="three != null">#{three},</if>-->
+            <if test="rowIndex != null">#{rowIndex},</if>
+            <if test="batchId != null">#{batchId},</if>
         </trim>
     </insert>
 
@@ -70,8 +71,8 @@
             <if test="returnRate != null">return_rate = #{returnRate},</if>
             <if test="month != null">month = #{month},</if>
             <if test="score != null">score = #{score},</if>
-<!--            <if test="two != null">two = #{two},</if>-->
-<!--            <if test="three != null">three = #{three},</if>-->
+            <if test="rowIndex != null">row_index = #{rowIndex},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
         </trim>
         where id = #{id}
     </update>

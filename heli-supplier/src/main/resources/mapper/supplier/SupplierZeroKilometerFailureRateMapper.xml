@@ -18,10 +18,12 @@
         <result property="score"    column="score"    />
         <result property="uploadMonth"    column="upload_month"    />
         <result property="time"    column="time"    />
+        <result property="rowIndex"    column="row_index"    />
+        <result property="batchId"    column="batch_id"    />
     </resultMap>
 
     <sql id="selectSupplierZeroKilometerFailureRateVo">
-        select id, supplier_name, component_type, target_ppm, failure_description, failure_count, installed_vehicles, ppm_value, cumulative_ppm, zero_failure_rate, score, upload_month, time from supplier_zero_kilometer_failure_rate
+        select id, supplier_name, component_type, target_ppm, failure_description, failure_count, installed_vehicles, ppm_value, cumulative_ppm, zero_failure_rate, score, upload_month, time, row_index,batch_id from supplier_zero_kilometer_failure_rate
     </sql>
 
     <select id="selectSupplierZeroKilometerFailureRateList" parameterType="SupplierZeroKilometerFailureRate" resultMap="SupplierZeroKilometerFailureRateResult">
@@ -39,7 +41,10 @@
             <if test="score != null "> and score = #{score}</if>
             <if test="uploadMonth != null "> and upload_month = #{uploadMonth}</if>
             <if test="time != null "> and time = #{time}</if>
+            <if test="rowIndex != null  and rowIndex != ''"> and row_index = #{rowIndex}</if>
+            <if test="batchId != null  and batchId != ''"> and batch_id = #{batchId}</if>
         </where>
+        order by batch_id desc,row_index asc
     </select>
 
     <select id="selectSupplierZeroKilometerFailureRateById" parameterType="String" resultMap="SupplierZeroKilometerFailureRateResult">
@@ -62,6 +67,8 @@
             <if test="score != null">score,</if>
             <if test="uploadMonth != null">upload_month,</if>
             <if test="time != null">time,</if>
+            <if test="rowIndex != null">row_index,</if>
+            <if test="batchId != null">batch_id,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="supplierName != null">#{supplierName},</if>
@@ -76,6 +83,8 @@
             <if test="score != null">#{score},</if>
             <if test="uploadMonth != null">#{uploadMonth},</if>
             <if test="time != null">#{time},</if>
+            <if test="rowIndex != null">#{rowIndex},</if>
+            <if test="batchId != null">#{batchId},</if>
         </trim>
     </insert>
 
@@ -94,6 +103,8 @@
             <if test="score != null">score = #{score},</if>
             <if test="uploadMonth != null">upload_month = #{uploadMonth},</if>
             <if test="time != null">time = #{time},</if>
+            <if test="rowIndex != null">row_index = #{rowIndex},</if>
+            <if test="batchId != null">batch_id = #{batchId},</if>
         </trim>
         where id = #{id}
     </update>

@@ -33,9 +33,12 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
 
     private List<ProductionErrorTable> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
+    private int rowIndex = 0; // 添加行号计数器
+    private Long batchId = System.currentTimeMillis(); // 添加批次号
     public ProductProcessFailuresListener(SupplierZeroKilometerFailureRateMapper supplierZeroKilometerFailureRateMapper, Date uploadMonth) {
         this.supplierZeroKilometerFailureRateMapper = supplierZeroKilometerFailureRateMapper;
         this.uploadMonth = uploadMonth;
+        this.rowIndex = 0;// 重置行号
     }
 
 
@@ -70,6 +73,17 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
      */
     private void saveToDB() {
         log.info("开始写入数据库");
+
+        // 获取指定月份的数据个数
+        LambdaQueryWrapper<SupplierZeroKilometerFailureRate> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SupplierZeroKilometerFailureRate::getUploadMonth, uploadMonth);
+        long count = supplierZeroKilometerFailureRateMapper.selectCount(queryWrapper);
+        List<SupplierZeroKilometerFailureRate> records = supplierZeroKilometerFailureRateMapper.selectList(queryWrapper);
+        SupplierZeroKilometerFailureRate oneRecord = records.isEmpty() ? null : records.get(0);
+        batchId = oneRecord.getBatchId();
+        rowIndex = (int) count;
+        log.info("uploadMonth为 {} 的数据个数: {}", uploadMonth, count);
+
         int curMonth = uploadMonth.getMonth() + 1;
 
         for (ProductionErrorTable item : cacheDataList) {
@@ -118,10 +132,15 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
 //                result = "";
 //            }
 
+
+
+
             SupplierZeroKilometerFailureRate selectOne = supplierZeroKilometerFailureRateMapper.selectOne(
                     new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
                             .eq(SupplierZeroKilometerFailureRate::getSupplierName, item.getSupplierName())
                             .eq(SupplierZeroKilometerFailureRate::getUploadMonth, uploadMonth));
+
+
             if (selectOne != null) {
                 selectOne.setZeroFailureRate(result);
 
@@ -131,7 +150,13 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
                 supplierZeroKilometerFailureRate.setSupplierName(item.getSupplierName());
                 supplierZeroKilometerFailureRate.setUploadMonth(uploadMonth);
                 supplierZeroKilometerFailureRate.setZeroFailureRate(result);
+
+                // 设置行号和批次号
+                supplierZeroKilometerFailureRate.setRowIndex(rowIndex++);
+                supplierZeroKilometerFailureRate.setBatchId(batchId);
+
                 supplierZeroKilometerFailureRateMapper.insert(supplierZeroKilometerFailureRate);
+
             }
         }
     }

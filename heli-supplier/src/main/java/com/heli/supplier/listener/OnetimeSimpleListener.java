@@ -36,9 +36,14 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
 
     private List<SupplierOnetimeSimple> cacheDataList = ListUtils.newArrayListWithExpectedSize(BATCH_COUNT);
 
+
+
+    private int rowIndex = 0; // 添加行号计数器
+    private Long batchId = System.currentTimeMillis(); // 添加批次号
     public OnetimeSimpleListener(SupplierOnetimeSimpleMapper supplierOnetimeSimpleMapper, Date uploadMonth) {
         this.supplierOnetimeSimpleMapper = supplierOnetimeSimpleMapper;
         this.uploadMonth = uploadMonth;
+        this.rowIndex = 0;// 重置行号
     }
 
 
@@ -59,6 +64,11 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
         // 数据处理
         if(registerInfoExcel.getSupplierCode() != null){
             registerInfoExcel.setUpdateMonth(uploadMonth);
+            // 设置行号和批次号
+            registerInfoExcel.setRowIndex(rowIndex++);
+            registerInfoExcel.setBatchId(batchId);
+
+
 
             // 将供应商编码的前缀0去掉
             registerInfoExcel.setSupplierCode(registerInfoExcel.getSupplierCode().replaceFirst("^0+", ""));
@@ -112,13 +122,23 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
      */
     private double calculateScore(String quantityPassRate) {
         if (quantityPassRate == null || quantityPassRate.isEmpty()) {
-            return 100; // 为空时默认 0 分
+            return 100; // 为空时默认 100 分
         }
         try {
-            // 去掉可能存在的 "%" 符号，并转换为 double
-            double qualifiedRate = Double.parseDouble(quantityPassRate.replace("%", "").trim());
+            double qualifiedRate;
             double baseScore = 100; // 基础分 100 分
-
+            // 处理百分比格式
+            if (quantityPassRate.contains("%")) {
+                String cleanedRate = quantityPassRate.replace("%", "").trim();
+                qualifiedRate = Double.parseDouble(cleanedRate);
+            } else {
+                // 处理小数格式
+                qualifiedRate = Double.parseDouble(quantityPassRate);
+                if (qualifiedRate <= 1) {
+                    qualifiedRate *= 100; // 转换为百分比
+                }
+                // 对于 100, 99 这种整数，不需要转换，直接当作百分比使用
+            }
             // 计算不合格率
             double unqualifiedRate = 100 - qualifiedRate;
 
@@ -133,6 +153,7 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
             return 0; // 格式错误时默认 0 分
         }
     }
+
     /**
      * 删除指定月份的数据
      */
@@ -143,6 +164,9 @@ public class OnetimeSimpleListener implements ReadListener<SupplierOnetimeSimple
             deleteWrapper.eq("update_month", uploadMonth);
             int deletedCount = supplierOnetimeSimpleMapper.delete(deleteWrapper);
             log.info("删除了 {} 条该月份的旧数据", deletedCount);
+
+            // 重置行号计数器
+            this.rowIndex = 0;
         } catch (Exception e) {
             log.error("删除旧数据失败: {}", e.getMessage());
         }
