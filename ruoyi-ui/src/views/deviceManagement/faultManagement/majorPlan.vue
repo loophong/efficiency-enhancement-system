@@ -31,16 +31,15 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd"
-          v-hasPermi="['maintenanceTable:plan:add']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['fault:major:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['maintenanceTable:plan:edit']">修改</el-button>
+          v-hasPermi="['fault:major:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['maintenanceTable:plan:remove']">删除</el-button>
+          v-hasPermi="['fault:major:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
@@ -75,9 +74,9 @@
 
       <el-col :span="1.5">
         <el-button type="primary" plain icon="View" v-if="showFullYear == false" @click="showFullYear = true"
-          v-hasPermi="['maintenanceTable:plan:add']">显示全年数据</el-button>
+          v-hasPermi="['fault:major:add']">显示全年数据</el-button>
         <el-button type="primary" plain icon="Hide" v-else @click="showFullYear = false"
-          v-hasPermi="['maintenanceTable:plan:add']">显示当月及上月数据</el-button>
+          v-hasPermi="['fault:major:add']">显示当月及上月数据</el-button>
       </el-col>
 
       <el-col :span="1.5">
@@ -683,9 +682,9 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['maintenanceTable:plan:edit']">修改</el-button>
+            v-hasPermi="['fault:major:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['maintenanceTable:plan:remove']">删除</el-button>
+            v-hasPermi="['fault:major:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

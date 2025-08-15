@@ -63,9 +63,9 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['maintenanceTable:analysis:edit']" v-if="scope.row.faultTypeName">原因分析</el-button>
+            v-if="scope.row.faultTypeName">原因分析</el-button>
           <el-button link type="primary" icon="Document" @click="handleWord(scope.row)"
-            v-hasPermi="['maintenanceTable:analysis:edit']" v-if="scope.row.faultTypeName">生成文档</el-button>
+            v-if="scope.row.faultTypeName">生成文档</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -112,7 +112,7 @@
 <script setup name="Analysis">
 import { listAnalysis, getAnalysis, delAnalysis, addAnalysis, updateAnalysis, listAnalysisByNameAndDate } from "@/api/device/maintenanceTable/analysis";
 import { ElMessage } from 'element-plus'
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 //导出为word
 import JSZip from 'pizzip'
@@ -152,7 +152,7 @@ const data = reactive({
     pageSize: 10,
     analysisName: null,
     maintenanceAnalysis: null,
-    analysisRecordTime: null
+    analysisRecordTimeStr: null,
   },
   queryParams: {
     pageNum: 1,
@@ -434,7 +434,8 @@ function reset() {
     analysisId: null,
     analysisName: null,
     maintenanceAnalysis: null,
-    analysisRecordTime: null
+    analysisRecordTime: null,
+
   };
   proxy.resetForm("analysisRef");
 }
@@ -458,12 +459,7 @@ function resetQuery() {
   handleQuery();
 }
 
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.analysisId);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
-}
+
 
 /** 新增按钮操作 */
 function handleAdd() {
@@ -479,7 +475,6 @@ function handleUpdate(row) {
   queryParamsAnalysis.value.analysisRecordTime = queryParams.value.yearAndMonth
   console.log(queryParamsAnalysis.value)
   listAnalysisByNameAndDate(queryParamsAnalysis.value).then(result => {
-    console.log(result.rows)
     if (result.total) {
       form.value = result.rows[0];
       open.value = true;
@@ -492,12 +487,6 @@ function handleUpdate(row) {
       title.value = "添加原因分析";
     }
   })
-  // const _analysisId = row.analysisId || ids.value
-  // getAnalysis(_analysisId).then(response => {
-  //   form.value = response.data;
-  //   open.value = true;
-  //   title.value = "修改设备故障分析";
-  // });
 }
 
 /** 提交按钮 */
@@ -511,6 +500,8 @@ function submitForm() {
           getList();
         });
       } else {
+        console.log(form.value)
+        form.value.analysisRecordTime = parse(queryParams.value.yearAndMonth, 'yyyy-MM', new Date())
         addAnalysis(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;

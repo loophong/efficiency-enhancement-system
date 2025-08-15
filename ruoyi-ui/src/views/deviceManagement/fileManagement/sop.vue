@@ -28,24 +28,22 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd"
-          v-hasPermi="['maintenanceTable:file:add']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['file:sop:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['maintenanceTable:file:edit']">修改</el-button>
+          v-hasPermi="['file:sop:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['maintenanceTable:file:remove']">删除</el-button>
+          v-hasPermi="['file:sop:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="handleExport"
-          v-hasPermi="['maintenanceTable:file:export']">导出</el-button>
+          v-hasPermi="['file:sop:export']">导出</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="info" plain icon="Refresh" @click="resetGetList"
-          v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
+        <el-button type="info" plain icon="Refresh" @click="resetGetList" v-hasPermi="['file:sop:list']">重置</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -86,13 +84,13 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['maintenanceTable:file:edit']">修改</el-button>
+            v-hasPermi="['file:sop:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['maintenanceTable:file:remove']">删除</el-button>
+            v-hasPermi="['file:sop:remove']">删除</el-button>
           <el-button link type="primary" icon="InfoFilled" @click="getHistoryList(scope.row)"
-            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
+            v-hasPermi="['file:sop:list']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
           <el-button link type="primary" icon="Back" @click="resetGetList(scope.row)"
-            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '1'">返回</el-button>
+            v-if="scope.row.ifHistory == '1'">返回</el-button>
         </template>
       </el-table-column>
     </el-table>

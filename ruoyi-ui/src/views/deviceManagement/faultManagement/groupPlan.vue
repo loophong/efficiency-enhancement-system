@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-tabs type="border-card" style="padding: 6px">
-      <el-tab-pane label="班组自主">
+      <el-tab-pane label="班组自主" v-if="proxy?.$auth?.hasPermi('fault:group:list')">
         <div class="app-container">
           <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
             <el-form-item label="序号" prop="orderNum">
@@ -77,15 +77,15 @@
           <el-row :gutter="10" class="mb8">
             <el-col :span="1.5">
               <el-button type="primary" plain icon="Plus" @click="handleAdd"
-                v-hasPermi="['maintenanceTable:plan:add']">新增</el-button>
+                v-hasPermi="['fault:group:add']">新增</el-button>
             </el-col>
             <el-col :span="1.5">
               <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-                v-hasPermi="['maintenanceTable:plan:edit']">修改</el-button>
+                v-hasPermi="['fault:group:edit']">修改</el-button>
             </el-col>
             <el-col :span="1.5">
               <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-                v-hasPermi="['maintenanceTable:plan:remove']">删除</el-button>
+                v-hasPermi="['fault:group:remove']">删除</el-button>
             </el-col>
             <el-col :span="1.5">
               <!--Excel 参数导入 -->
@@ -185,9 +185,9 @@
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
               <template #default="scope">
                 <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                  v-hasPermi="['maintenanceTable:plan:edit']">修改</el-button>
+                  v-hasPermi="['fault:group:edit']">修改</el-button>
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                  v-hasPermi="['maintenanceTable:plan:remove']">删除</el-button>
+                  v-hasPermi="['fault:group:remove']">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -338,7 +338,7 @@
         </el-dialog>
       </el-tab-pane>
 
-      <el-tab-pane label="专业计划">
+      <el-tab-pane label="专业计划" v-if="hasMajorListPerm">
         <major-plan></major-plan>
       </el-tab-pane>
     </el-tabs>
@@ -381,6 +381,9 @@ const showDialog = ref(false);
 const showCurrent = ref(false);
 const title = ref("");
 const messageSetContent = ref("");
+const hasMajorListPerm = computed(() => {
+  return proxy?.$auth?.hasPermi('fault:major:list')
+})
 // 获取年份（后两位）
 const shortYear = new Date().getFullYear().toString().slice(-2);
 
@@ -560,85 +563,87 @@ function parseStatus(input) {
 
 /** 查询班组计划保养列表 */
 function getList() {
-
-  loading.value = true;
-  listPlan(queryParams.value).then(response => {
-    planList.value = response.rows;
-    total.value = response.total;
-    if (ifTip.value) {
-      //消息通知
-      tipList().then(result => {
-        listForTip.value = result.rows
-        const tmp = JSON.parse(JSON.stringify(result.rows))
-        tmp.forEach(element => {
-          if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-            showNotification('自主保全计划')
-          }
-          if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-            showNotification('自主保全计划')
-          }
-          if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-            showNotification('自主保全计划')
-          }
-          if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-            showNotification('自主保全计划')
-          }
-        });
-        console.log('ListForTipGroup------>', listForTip.value)
-        listForTip.value.forEach(i => {
-          if (i.messageSet) {
-            // const maintenanceCycle = i.maintenanceCycle;
-            // const lastCompleteTime = i.lastCompleteTime;
-            if (i.messageSet == '1W' && i.monthOne != '' && i.monthOne != null && i.monthOne.includes('待提交')) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划1W`, '待提交')
-            } else if (i.messageSet == '2W' && i.monthTwo != '' && i.monthTwo != null && i.monthTwo.includes('待提交')) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划2W`, '待提交')
-            } else if (i.messageSet == '3W' && i.monthThree != '' && i.monthThree != null && i.monthThree.includes('待提交')) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划3W`, '待提交')
-            } else if (i.messageSet == '4W' && i.monthFour != '' && i.monthFour != null && i.monthFour.includes('待提交')) {
-              // i.monthFour = '待提交'
-              showNotification(`自主保全计划4W`, '待提交')
+  if (proxy?.$auth?.hasPermi('fault:group:list')) {
+    loading.value = true;
+    listPlan(queryParams.value).then(response => {
+      planList.value = response.rows;
+      total.value = response.total;
+      if (ifTip.value) {
+        //消息通知
+        tipList().then(result => {
+          listForTip.value = result.rows
+          const tmp = JSON.parse(JSON.stringify(result.rows))
+          tmp.forEach(element => {
+            if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+              showNotification('自主保全计划')
             }
-          }
-        });
-      })
-      // const tmpHandle = JSON.parse(JSON.stringify(response.rows))
-      // console.log({ tmpHandle })
+            if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+              showNotification('自主保全计划')
+            }
+            if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+              showNotification('自主保全计划')
+            }
+            if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+              showNotification('自主保全计划')
+            }
+          });
+          console.log('ListForTipGroup------>', listForTip.value)
+          listForTip.value.forEach(i => {
+            if (i.messageSet) {
+              // const maintenanceCycle = i.maintenanceCycle;
+              // const lastCompleteTime = i.lastCompleteTime;
+              if (i.messageSet == '1W' && i.monthOne != '' && i.monthOne != null && i.monthOne.includes('待提交')) {
+                // i.monthFour = '待提交'
+                showNotification(`自主保全计划1W`, '待提交')
+              } else if (i.messageSet == '2W' && i.monthTwo != '' && i.monthTwo != null && i.monthTwo.includes('待提交')) {
+                // i.monthFour = '待提交'
+                showNotification(`自主保全计划2W`, '待提交')
+              } else if (i.messageSet == '3W' && i.monthThree != '' && i.monthThree != null && i.monthThree.includes('待提交')) {
+                // i.monthFour = '待提交'
+                showNotification(`自主保全计划3W`, '待提交')
+              } else if (i.messageSet == '4W' && i.monthFour != '' && i.monthFour != null && i.monthFour.includes('待提交')) {
+                // i.monthFour = '待提交'
+                showNotification(`自主保全计划4W`, '待提交')
+              }
+            }
+          });
+        })
+        // const tmpHandle = JSON.parse(JSON.stringify(response.rows))
+        // console.log({ tmpHandle })
 
-      // planList.value.forEach(i => {
-      //   if (i.monthFour == null || i.monthFour === '') {
-      //     if (i.maintenanceCycle == '1') {
-      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
-      //     } else if (i.maintenanceCycle == '2' && !i.monthThree) {
-      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
-      //     } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
-      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
-      //     } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
-      //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
-      //     }
-      //   }
-      // });
-      // listForTip.value.forEach(element => {
-      //   if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
-      //     showNotification('自主保全计划')
-      //   }
-      //   if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
-      //     showNotification('自主保全计划')
-      //   }
-      //   if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
-      //     showNotification('自主保全计划')
-      //   }
-      //   if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
-      //     showNotification('自主保全计划')
-      //   }
-      // });
-      ifTip.value = false
-    }
-    loading.value = false;
-  });
+        // planList.value.forEach(i => {
+        //   if (i.monthFour == null || i.monthFour === '') {
+        //     if (i.maintenanceCycle == '1') {
+        //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+        //     } else if (i.maintenanceCycle == '2' && !i.monthThree) {
+        //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+        //     } else if (i.maintenanceCycle == '3' && !i.monthTwo && !i.monthThree) {
+        //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+        //     } else if (i.maintenanceCycle == '4' && !i.monthOne && !i.monthTwo && !i.monthThree) {
+        //       showNotification(`自主保全计划${i.messageSet}`, '待提交')
+        //     }
+        //   }
+        // });
+        // listForTip.value.forEach(element => {
+        //   if ((element.createBy == currentUserId.value) && element.monthOne != '' && element.monthOne != null && element.monthOne.includes('待审核')) {
+        //     showNotification('自主保全计划')
+        //   }
+        //   if ((element.createBy == currentUserId.value) && element.monthTwo != '' && element.monthTwo != null && element.monthTwo.includes('待审核')) {
+        //     showNotification('自主保全计划')
+        //   }
+        //   if ((element.createBy == currentUserId.value) && element.monthThree != '' && element.monthThree != null && element.monthThree.includes('待审核')) {
+        //     showNotification('自主保全计划')
+        //   }
+        //   if ((element.createBy == currentUserId.value) && element.monthFour != '' && element.monthFour != null && element.monthFour.includes('待审核')) {
+        //     showNotification('自主保全计划')
+        //   }
+        // });
+        ifTip.value = false
+      }
+      loading.value = false;
+    });
+  }
+
 }
 
 // 取消按钮
