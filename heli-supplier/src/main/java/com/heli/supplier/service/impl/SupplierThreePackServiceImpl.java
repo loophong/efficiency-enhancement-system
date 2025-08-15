@@ -106,10 +106,10 @@ public class SupplierThreePackServiceImpl  extends ServiceImpl<SupplierThreePack
      * @return 最终得分（3分或0分）
      */
     private double calculateThreePackScore(Date plannedDeliveryTime, Date actualDeliveryTime) {
-        if (plannedDeliveryTime == null || actualDeliveryTime == null) {
-            throw new IllegalArgumentException("计划发货时间点和实际发货时间点不能为空");
+        if (plannedDeliveryTime == null) {
+            throw new IllegalArgumentException("计划发货时间点不能为空");
         }
-
+        if ( actualDeliveryTime == null)   return 0.0;
         // 如果实际发货时间晚于计划发货时间，则得分为0，否则为3
         return actualDeliveryTime.after(plannedDeliveryTime) ? 0.0 : 3.0;
     }

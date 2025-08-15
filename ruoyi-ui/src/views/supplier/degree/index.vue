@@ -234,7 +234,9 @@ const data = reactive({
     cooperationDegree: null,
     month: null,
     score: null,
-    uploadName: null
+    uploadName: null,
+    orderByColumn: 'id',
+    isAsc: 'desc'
   },
   rules: {
     supplierCode: [

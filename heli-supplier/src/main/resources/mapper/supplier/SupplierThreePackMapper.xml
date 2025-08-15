@@ -38,6 +38,7 @@
 <!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
 <!--            <if test="two != null  and two != ''"> and two = #{two}</if>-->
         </where>
+        order by id desc
     </select>
 
     <select id="selectSupplierThreePackById" parameterType="String" resultMap="SupplierThreePackResult">

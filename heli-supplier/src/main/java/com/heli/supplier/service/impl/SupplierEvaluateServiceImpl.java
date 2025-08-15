@@ -183,8 +183,15 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 //            this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
 
         }
+        Long picihao = System.currentTimeMillis(); // 添加批次号
+
+        log.info("开始计算"+list.size());
+        log.info("批次号" + picihao);
         list.forEach(item -> {
+
             SupplierEvaluate supplierEvaluate = new SupplierEvaluate();
+
+            supplierEvaluate.setStorageFlag(picihao);
 
             supplierEvaluate.setSupplierCode(item.getSupplierCode());
             supplierEvaluate.setSupplierName(item.getSupplierName());
@@ -245,7 +252,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 
             //保存计算结果
             this.save(supplierEvaluate);
-            log.info("计算已完成");
+//            log.info("计算已完成");
 
 
         });
@@ -293,6 +300,8 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
      */
     boolean qualityIncident(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal bigDecimal = new BigDecimal(0);
+        happenTime = DateUtils.getMonthFirstDay(happenTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierQualityIncidents> list = supplierQualityIncidentsService.list(
                 new LambdaQueryWrapper<SupplierQualityIncidents>()
                         .eq(SupplierQualityIncidents::getSupplierCode, supplierCode)
@@ -307,7 +316,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal firstInspectionPassrate(Date happenTime, Date endTime, String supplierCode) {
 //        BigDecimal bigDecimal = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierOnetimeSimple> list = supplierOnetimeSimpleService.list(
                 new LambdaQueryWrapper<SupplierOnetimeSimple>()
                         .eq(SupplierOnetimeSimple::getSupplierCode, supplierCode)
@@ -337,7 +346,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal zeroKilometerFailurerate(Date happenTime, Date endTime, String supplierName) {
         BigDecimal baseScore = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierZeroKilometerFailureRate> list = supplierZeroKilometerFailureRateService.list(
                 new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
                         .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierName)
@@ -434,7 +443,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal qualityNotificationOrderrate(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal baseScore = BigDecimal.valueOf(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierHappen> list = supplierHappenService.list(
                 new LambdaQueryWrapper<SupplierHappen>()
                         .eq(SupplierHappen::getSupplierCode, supplierCode)
@@ -460,7 +469,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal feedbackOrderletterTimeliness(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal baseScore = BigDecimal.valueOf(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierHappen> list = supplierHappenService.list(
                 new LambdaQueryWrapper<SupplierHappen>()
                         .eq(SupplierHappen::getSupplierCode, supplierCode)
@@ -497,7 +506,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal warrantyperiodRepairrate(Date happenTime, Date endTime, String supplierName) {
         BigDecimal bigDecimal = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierReturnRate> list = supplierReturnRateService.list(
                 new LambdaQueryWrapper<SupplierReturnRate>()
                         .eq(SupplierReturnRate::getSupplierName, supplierName)
@@ -520,11 +529,11 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal threePackageComponentRepairrate(Date happenTime, Date endTime, String supplierCode) {
 //        BigDecimal bigDecimal = new BigDecimal(3);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierThreePack> list = supplierThreePackService.list(
                 new LambdaQueryWrapper<SupplierThreePack>()
                         .eq(SupplierThreePack::getSupplierCode, supplierCode)
-                        .between(SupplierThreePack::getResponsibilityJudgmentTime, happenTime, endTime));
+                        .between(SupplierThreePack::getPlannedDeliveryTime, happenTime, endTime));
         BigDecimal score = new BigDecimal(0);
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {
@@ -548,11 +557,11 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal secondpartyAuditscore(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal bigDecimal = new BigDecimal(1);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierTwoReviewScore> list = supplierTwoReviewScoreService.list(
                 new LambdaQueryWrapper<SupplierTwoReviewScore>()
                         .eq(SupplierTwoReviewScore::getSupplierCode, supplierCode)
-                        .between(SupplierTwoReviewScore::getTime, happenTime, endTime));
+                        .between(SupplierTwoReviewScore::getUpdateMonth, happenTime, endTime));
         // 计算不符合项的数量
         if (list.isEmpty()) {
             // 如果没有数据，默认得1分，乘以权重2%
@@ -576,7 +585,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal selfInspectionAccuracy(Date happenTime, Date endTime, String supplierCode) {
 //        BigDecimal bigDecimal = new BigDecimal(2);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierSelfTestReports> list = supplierSelfTestReportsService.list(
                 new LambdaQueryWrapper<SupplierSelfTestReports>()
                         .eq(SupplierSelfTestReports::getSupplierCode, supplierCode)
@@ -599,7 +608,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal productmaterialParametersizeChange(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal bigDecimal = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         // 查询该供应商的所有变更记录
         List<SupplierChange> list = supplierChangeService.list(
                 new LambdaQueryWrapper<SupplierChange>()
@@ -629,7 +638,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal weight(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal importanceScore = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierImportance> list = supplierImportanceService.list(
                 new LambdaQueryWrapper<SupplierImportance>()
                         .eq(SupplierImportance::getSupplierCode, supplierCode)
@@ -660,7 +669,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal businessRisk(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal riskScore = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierRisk> list = supplierRiskService.list(
                 new LambdaQueryWrapper<SupplierRisk>()
                         .eq(SupplierRisk::getSupplierCode, supplierCode)
@@ -694,7 +703,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal supplyGuarantee(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierGuarantee> list = supplierGuaranteeService.list(
                 new LambdaQueryWrapper<SupplierGuarantee>()
                         .eq(SupplierGuarantee::getSupplierCode, supplierCode)
@@ -724,7 +733,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal priceCompetitiveness(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(60);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierPriceCompete> list = supplierPriceCompeteService.list(
                 new LambdaQueryWrapper<SupplierPriceCompete>()
                         .eq(SupplierPriceCompete::getSupplierCode, supplierCode)
@@ -750,7 +759,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal costReductionSupport(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierReduceSupport> list = supplierReduceSupportService.list(
                 new LambdaQueryWrapper<SupplierReduceSupport>()
                         .eq(SupplierReduceSupport::getSupplierCode, supplierCode)
@@ -787,7 +796,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal serviceAndCoordination(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierPerformanceServicesCollaboration> list = supplierPerformanceServicesCollaborationService.list(
                 new LambdaQueryWrapper<SupplierPerformanceServicesCollaboration>()
                         .eq(SupplierPerformanceServicesCollaboration::getSupplierCode, supplierCode)
@@ -814,7 +823,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal priceIntegrity(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(100);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierPriceTrust> list = supplierPriceTrustService.list(
                 new LambdaQueryWrapper<SupplierPriceTrust>()
                         .eq(SupplierPriceTrust::getSupplierCode, supplierCode)
@@ -842,7 +851,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal paymentRestrictionconditions(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal score = new BigDecimal(0);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierPayment> list = supplierPaymentService.list(
                 new LambdaQueryWrapper<SupplierPayment>()
                         .eq(SupplierPayment::getSupplierCode, supplierCode)
@@ -875,7 +884,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal newProductDevelopmentCooperationDegree(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal cooperationScore = new BigDecimal(70);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierCooperationDegree> list = supplierCooperationDegreeService.list(
                 new LambdaQueryWrapper<SupplierCooperationDegree>()
                         .eq(SupplierCooperationDegree::getSupplierCode, supplierCode)
@@ -901,7 +910,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
     BigDecimal productTechnologyProblemImprovementTimeliness(Date happenTime, Date endTime, String supplierCode) {
         BigDecimal cooperationScore = new BigDecimal(70);
         happenTime = DateUtils.getMonthFirstDay(happenTime);
-        endTime = DateUtils.getLastMonthEndDay(endTime);
+        endTime = DateUtils.getMonthEndDay(endTime);
         List<SupplierRectificationTimeliness> list = supplierRectificationTimelinessService.list(
                 new LambdaQueryWrapper<SupplierRectificationTimeliness>()
                         .eq(SupplierRectificationTimeliness::getSupplierCode, supplierCode)

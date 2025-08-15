@@ -69,31 +69,21 @@ public class SupplierTwoReviewScore {
      * 上传时间
      */
     @ExcelIgnore
-    @JsonFormat(pattern = "yyyy-MM")
+    @JsonFormat(pattern = "yyyy-MM-dd")
 //    @Excel(name = "上传时间", width = 30, dateFormat = "yyyy-MM-dd")
 //    @ExcelProperty(value = "上传时间")
-    private Date time;
+    private Date updateMonth;
 
 
-
-
-
-
-    /**
-     * 不符合项2
-     */
     @ExcelIgnore
-//    @Excel(name = "不符合项2")
-//    @ExcelProperty(value = "不符合项2")
-    private String notTrue2;
+    private Integer rowIndex;
 
-    /**
-     * 不符合项3
-     */
     @ExcelIgnore
-//    @Excel(name = "不符合项3")
-//    @ExcelProperty(value = "不符合项3")
-    private String notTrue3;
+    private Long batchId;
+
+
+
+
 
     /**
      * 不符合项4
