@@ -212,9 +212,9 @@ const data = reactive({
     actualDeliveryTime: null,
     specificWarrantyItems: null,
     happenTime: null,
-    reporter: null
-    // orderByColumn: 'responsibility_judgment_time',
-    // isAsc: 'desc'
+    reporter: null,
+    orderByColumn: 'id',
+    isAsc: 'desc'
   },
   rules: {
     supplierCode: [

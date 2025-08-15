@@ -219,7 +219,7 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
                     return baseScore; // 小于等于0，达标不扣分
                 } else {
                     // 转换为百分比进行计算
-                    double percentage = rate * 100;
+                    double percentage = rate ;
                     int deduction;
                     if (percentage <= 1.0) {
                         deduction = 10; // 1%以内（含）扣10分

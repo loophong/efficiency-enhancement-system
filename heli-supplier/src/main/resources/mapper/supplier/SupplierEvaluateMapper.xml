@@ -34,11 +34,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--        <result property="one"    column="one"    />-->
 <!--        <result property="two"    column="two"    />-->
 <!--        <result property="three"    column="three"    />-->
-<!--        <result property="storageFlag"    column="storage_flag"    />-->
+        <result property="storageFlag"    column="storage_flag"    />
     </resultMap>
 
     <sql id="selectSupplierEvaluateVo">
-        select id, supplier_code, supplier_name, quality_incident, first_inspection_passRate, zero_kilometer_failureRate, quality_notification_orderRate, feedback_orderLetter_timeliness, warrantyPeriod_repairRate, threePackage_component_repairRate, secondParty_auditScore, selfInspection_reportAccuracy, productMaterial_parameterSize_Change, weight, business_risk, supply_guarantee, price_competitiveness, costReduction_support, service_and_coordination, price_integrity, payment_restrictionConditions, newProduct_development_cooperationDegree, productTechnologyProblem_improvementTimeliness, total_score, happen_time, end_time  from supplier_evaluate
+        select id, supplier_code, supplier_name, quality_incident, first_inspection_passRate, zero_kilometer_failureRate, quality_notification_orderRate, feedback_orderLetter_timeliness, warrantyPeriod_repairRate, threePackage_component_repairRate, secondParty_auditScore, selfInspection_reportAccuracy, productMaterial_parameterSize_Change, weight, business_risk, supply_guarantee, price_competitiveness, costReduction_support, service_and_coordination, price_integrity, payment_restrictionConditions, newProduct_development_cooperationDegree, productTechnologyProblem_improvementTimeliness, total_score, happen_time, end_time, storage_flag  from supplier_evaluate
     </sql>
 
     <select id="selectSupplierEvaluateList" parameterType="SupplierEvaluate" resultMap="SupplierEvaluateResult">
@@ -72,9 +72,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="one != null  and one != ''"> and one = #{one}</if>-->
 <!--            <if test="two != null "> and two = #{two}</if>-->
 <!--            <if test="three != null  and three != ''"> and three = #{three}</if>-->
-<!--            <if test="storageFlag != null "> and storage_flag = #{storageFlag}</if>-->
+            <if test="storageFlag != null "> and storage_flag = #{storageFlag}</if>
         </where>
-        order by id desc
+        order by storage_flag desc,id asc
     </select>
     
     <select id="selectSupplierEvaluateById" parameterType="String" resultMap="SupplierEvaluateResult">
@@ -114,7 +114,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="one != null">one,</if>-->
 <!--            <if test="two != null">two,</if>-->
 <!--            <if test="three != null">three,</if>-->
-<!--            <if test="storageFlag != null">storage_flag,</if>-->
+            <if test="storageFlag != null">storage_flag,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -146,7 +146,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="one != null">#{one},</if>-->
 <!--            <if test="two != null">#{two},</if>-->
 <!--            <if test="three != null">#{three},</if>-->
-<!--            <if test="storageFlag != null">#{storageFlag},</if>-->
+            <if test="storageFlag != null">#{storageFlag},</if>
          </trim>
     </insert>
 
@@ -181,7 +181,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="one != null">one = #{one},</if>-->
 <!--            <if test="two != null">two = #{two},</if>-->
 <!--            <if test="three != null">three = #{three},</if>-->
-<!--            <if test="storageFlag != null">storage_flag = #{storageFlag},</if>-->
+            <if test="storageFlag != null">storage_flag = #{storageFlag},</if>
         </trim>
         where id = #{id}
     </update>

@@ -287,7 +287,7 @@ const data = reactive({
     one: null,
     two: null,
     three: null,
-    orderByColumn: 'responsibility_judgment_time',
+    orderByColumn: 'id',
     isAsc: 'desc'
   },
   rules: {

@@ -183,9 +183,15 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
 //            this.remove(new LambdaQueryWrapper<SupplierEvaluate>()
 
         }
+        Long picihao = System.currentTimeMillis(); // 添加批次号
+
         log.info("开始计算"+list.size());
+        log.info("批次号" + picihao);
         list.forEach(item -> {
+
             SupplierEvaluate supplierEvaluate = new SupplierEvaluate();
+
+            supplierEvaluate.setStorageFlag(picihao);
 
             supplierEvaluate.setSupplierCode(item.getSupplierCode());
             supplierEvaluate.setSupplierName(item.getSupplierName());
@@ -527,7 +533,7 @@ public class SupplierEvaluateServiceImpl  extends ServiceImpl<SupplierEvaluateMa
         List<SupplierThreePack> list = supplierThreePackService.list(
                 new LambdaQueryWrapper<SupplierThreePack>()
                         .eq(SupplierThreePack::getSupplierCode, supplierCode)
-                        .between(SupplierThreePack::getResponsibilityJudgmentTime, happenTime, endTime));
+                        .between(SupplierThreePack::getPlannedDeliveryTime, happenTime, endTime));
         BigDecimal score = new BigDecimal(0);
         if (list.size() > 0) {
             for (int i = 0; i < list.size(); i++) {

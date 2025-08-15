@@ -599,8 +599,8 @@ if (!uploadDate.value) {
       if (response.rows && response.rows.length > 0) {
 
         // 有数据，弹出确认对话框
-        proxy.$modal.confirm('该月份的数据已存在，是否覆盖？', '提示', {
-          confirmButtonText: '覆盖',
+        proxy.$modal.confirm('该月份的数据已存在，是否继续新增？', '提示', {
+          confirmButtonText: '新增',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {

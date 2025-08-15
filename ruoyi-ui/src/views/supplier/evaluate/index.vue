@@ -151,9 +151,9 @@
       <!-- <el-table-column label="入库标识符" align="center" prop="storageFlag" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+          <!-- <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['supplier:evaluate:edit']">修改
-          </el-button>
+          </el-button> -->
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['supplier:evaluate:remove']">删除
           </el-button>
@@ -308,7 +308,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="calculate">确 定</el-button>
-          <el-button @click="cancelCalculate">取 消</el-button>
+          <el-button @click="cancelUpload">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -336,6 +336,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    supplierCode: null,
     supplierCode: null,
     supplierName: null,
     qualityIncident: null,
@@ -365,8 +366,6 @@ const data = reactive({
     3: null,
     4: null,
     storageFlag: null
-    // orderByColumn: 'id',  // 添加这行：按结束时间排序
-    // isAsc: 'desc'  // 添加这行：降序排列，结束时间晚的在前
   },
   rules: {
     happenTime: [
@@ -514,6 +513,11 @@ getList();
 
 const calculateVisible = ref(false);
 
+/** 取消上传 */
+function cancelUpload() {
+  calculateVisible.value = false;
+
+}
 function handleCalculate() {
   calculateVisible.value = true;
 }
