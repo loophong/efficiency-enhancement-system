@@ -304,8 +304,6 @@ const data = reactive({
     score: null,
     updateMonth: null,
     uploadName: null,
-    orderByColumn: 'batch_id',
-    isAsc: 'desc'
   },
   rules: {
     supplierCode: [

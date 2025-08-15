@@ -44,7 +44,7 @@
             <if test="rowIndex != null  and rowIndex != ''"> and row_index = #{rowIndex}</if>
             <if test="batchId != null  and batchId != ''"> and batch_id = #{batchId}</if>
         </where>
-        order by batch_id desc,row_index asc
+        order by batch_id desc, row_index asc
     </select>
 
     <select id="selectSupplierZeroKilometerFailureRateById" parameterType="String" resultMap="SupplierZeroKilometerFailureRateResult">

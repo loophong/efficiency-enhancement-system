@@ -81,7 +81,7 @@ public class ComplexHeaderReturnRateListener extends AnalysisEventListener<Map<I
         String returnRate = rowData.get(monthColumnStart + 8);
 
         // 处理 #DIV/0! 错误值
-        if (returnRate != null && returnRate.contains("#DIV/0!")) {
+        if (returnRate == null || returnRate.contains("#DIV/0!")) {
             returnRate = "0%";
         }
 

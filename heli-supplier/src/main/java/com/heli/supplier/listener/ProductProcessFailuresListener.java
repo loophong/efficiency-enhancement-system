@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ClassName: OnetimeSimpleListener
@@ -77,10 +78,16 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
         // 获取指定月份的数据个数
         LambdaQueryWrapper<SupplierZeroKilometerFailureRate> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SupplierZeroKilometerFailureRate::getUploadMonth, uploadMonth);
+
         long count = supplierZeroKilometerFailureRateMapper.selectCount(queryWrapper);
         List<SupplierZeroKilometerFailureRate> records = supplierZeroKilometerFailureRateMapper.selectList(queryWrapper);
         SupplierZeroKilometerFailureRate oneRecord = records.isEmpty() ? null : records.get(0);
-        batchId = oneRecord.getBatchId();
+        if (oneRecord != null) {
+            batchId = oneRecord.getBatchId();
+        }else {
+            batchId = System.currentTimeMillis();
+        }
+//        batchId = oneRecord.getBatchId();
         rowIndex = (int) count;
         log.info("uploadMonth为 {} 的数据个数: {}", uploadMonth, count);
 
@@ -133,7 +140,11 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
 //            }
 
 
-
+            if ((Objects.equals(result, "#DIV/0!")) || (Objects.equals(result, "#VALUE!")))
+            {
+                result = "0%";
+                log.info("result为: {}", result);
+            }
 
             SupplierZeroKilometerFailureRate selectOne = supplierZeroKilometerFailureRateMapper.selectOne(
                     new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
@@ -141,9 +152,9 @@ public class ProductProcessFailuresListener implements ReadListener<ProductionEr
                             .eq(SupplierZeroKilometerFailureRate::getUploadMonth, uploadMonth));
 
 
-            if (selectOne != null) {
-                selectOne.setZeroFailureRate(result);
 
+            if (selectOne != null) {
+                    selectOne.setZeroFailureRate(result);
                 supplierZeroKilometerFailureRateMapper.updateById(selectOne);
             } else {
                 SupplierZeroKilometerFailureRate supplierZeroKilometerFailureRate = new SupplierZeroKilometerFailureRate();

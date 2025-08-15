@@ -7,6 +7,7 @@ import java.util.Date;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -78,10 +79,11 @@ public class SupplierOnetimeSimple implements Serializable {
     @Excel(name = "分数")
     private Double score;
 
-
+    @TableField("row_index")
     @ExcelIgnore
     private Integer rowIndex;
 
+    @TableField("batch_id")
     @ExcelIgnore
     private Long batchId;
 

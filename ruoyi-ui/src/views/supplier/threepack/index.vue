@@ -159,7 +159,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="实际发货时间点" prop="actualDeliveryTime">
-          <el-date-picker clearable
+          <el-date-picker 
             v-model="form.actualDeliveryTime"
             type="date"
             value-format="YYYY-MM-DD"
@@ -212,9 +212,9 @@ const data = reactive({
     actualDeliveryTime: null,
     specificWarrantyItems: null,
     happenTime: null,
-    reporter: null,
-    orderByColumn: 'responsibility_judgment_time',
-    isAsc: 'desc'
+    reporter: null
+    // orderByColumn: 'responsibility_judgment_time',
+    // isAsc: 'desc'
   },
   rules: {
     supplierCode: [
@@ -229,9 +229,9 @@ const data = reactive({
     plannedDeliveryTime: [
       { required: true, message: "计划发货时间点不能为空", trigger: "blur" }
     ],
-    actualDeliveryTime: [
-      { required: true, message: "实际发货时间点不能为空", trigger: "blur" }
-    ],
+    // actualDeliveryTime: [
+    //   { required: true, message: "实际发货时间点不能为空", trigger: "blur" }
+    // ],
     specificWarrantyItems: [
       { required: true, message: "具体三包事项不能为空", trigger: "blur" }
     ],

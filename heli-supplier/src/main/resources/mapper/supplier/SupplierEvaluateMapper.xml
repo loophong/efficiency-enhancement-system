@@ -74,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <!--            <if test="three != null  and three != ''"> and three = #{three}</if>-->
 <!--            <if test="storageFlag != null "> and storage_flag = #{storageFlag}</if>-->
         </where>
+        order by id desc
     </select>
     
     <select id="selectSupplierEvaluateById" parameterType="String" resultMap="SupplierEvaluateResult">

@@ -280,9 +280,7 @@ const data = reactive({
     month: null,
     score: null,
     two: null,
-    three: null,
-    orderByColumn: 'batch_id',
-    isAsc: 'desc'
+    three: null
   },
   rules: {
     supplierName: [

@@ -283,9 +283,7 @@ const data = reactive({
     zeroFailureRate: null,
     score: null,
     uploadMonth: null,
-    time: null,
-    orderByColumn: 'batch_id ',
-    isAsc: 'desc'
+    time: null
   },
   rules: {
 
@@ -315,12 +313,14 @@ function handleDownload2() {
   const url = "/profile/excel_templates/supply/产品过程故障率.xlsx";
   handleTrueDownload(url);
 }
-
+const scoreList = ref([]);        // 数据列表
 /** 查询零公里故障指标完成率列表 */
 function getList() {
   loading.value = true;
   listZeroFailureRate(queryParams.value).then(response => {
     zeroFailureRateList.value = response.rows;
+
+
     total.value = response.total;
     loading.value = false;
   });

@@ -12,6 +12,7 @@ import com.heli.supplier.mapper.SupplierZeroKilometerFailureRateMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -67,6 +68,22 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
             // 设置行号和批次号
             registerInfoExcel.setRowIndex(rowIndex++);
             registerInfoExcel.setBatchId(batchId);
+
+            if (registerInfoExcel.getPpmValue().equals("#DIV/0!") ||
+                    registerInfoExcel.getPpmValue().equals("#VALUE!"))
+            {
+                registerInfoExcel.setPpmValue("0");
+            }else
+            {
+                double ppm = new BigDecimal(registerInfoExcel.getPpmValue()).doubleValue();
+                double target = new BigDecimal(registerInfoExcel.getTargetPpm()).doubleValue();
+                double rate =((ppm - target)/target)*100;
+
+                // 保留两位小数
+                String formattedRate = String.format("%.2f", rate);
+
+                registerInfoExcel.setPpmValue(formattedRate +"%");
+            }
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);
@@ -97,8 +114,6 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
 
         deleteExistingData();
 
-        // 重置行号计数器
-        this.rowIndex = 0;
 //        supplierOnetimeSimpleMapper.insert(cacheDataList);
 //        supplierZeroKilometerFailureRateMapper.insert(cacheDataList);
         for (SupplierZeroKilometerFailureRate supplierZeroKilometerFailureRate : cacheDataList) {
@@ -106,21 +121,22 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
                     new LambdaQueryWrapper<SupplierZeroKilometerFailureRate>()
                             .eq(SupplierZeroKilometerFailureRate::getSupplierName, supplierZeroKilometerFailureRate.getSupplierName())
                             .eq(SupplierZeroKilometerFailureRate::getUploadMonth, supplierZeroKilometerFailureRate.getUploadMonth()));
-//            if (result != null ){
-////                result.setPpmValue(supplierZeroKilometerFailureRate.getPpmValue());
-////                result.setZeroFailureRate("");
-////                result.setScore(null);
-////                supplierZeroKilometerFailureRateMapper.updateById(result);
-//                // 使用 UpdateWrapper 明确设置为 null
-//                UpdateWrapper<SupplierZeroKilometerFailureRate> updateWrapper = new UpdateWrapper<>();
-//                updateWrapper.eq("id", result.getId())
-//                        .set("ppm_value", supplierZeroKilometerFailureRate.getPpmValue())
-//                        .set("zero_failure_rate", "")
-//                        .set("score", null);  // 明确设置为 null
-//                supplierZeroKilometerFailureRateMapper.update(null, updateWrapper);
-//            }else {
+            if (result != null ){
+//                result.setPpmValue(supplierZeroKilometerFailureRate.getPpmValue());
+//                result.setZeroFailureRate("");
+//                result.setScore(null);
+//                supplierZeroKilometerFailureRateMapper.updateById(result);
+                // 使用 UpdateWrapper 明确设置为 null
+
+                UpdateWrapper<SupplierZeroKilometerFailureRate> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id", result.getId())
+                        .set("ppm_value", supplierZeroKilometerFailureRate.getPpmValue())
+                        .set("zero_failure_rate", "")
+                        .set("score", null);  // 明确设置为 null
+                supplierZeroKilometerFailureRateMapper.update(null, updateWrapper);
+            }else {
                 supplierZeroKilometerFailureRateMapper.insert(supplierZeroKilometerFailureRate);
-//            }
+            }
         }
     }
     private void deleteExistingData() {
