@@ -42,6 +42,7 @@ public class SupplierImportanceController extends BaseController
     private ISupplierImportanceService supplierImportanceService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:importance:import')")
     @Log(title = "[重要度表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

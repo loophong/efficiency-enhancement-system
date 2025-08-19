@@ -40,6 +40,8 @@ public class SupplierPerformanceServicesCollaborationController extends BaseCont
 {
     @Autowired
     private ISupplierPerformanceServicesCollaborationService supplierPerformanceServicesCollaborationService;
+
+    @PreAuthorize("@ss.hasPermi('supplier:collaboration:import')")
     @Log(title = "[服务与协作表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

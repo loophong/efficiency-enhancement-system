@@ -122,7 +122,7 @@
 
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:guarantee:import']">导入
+                         v-hasPermi="['supplier:guarantee:import']">导入
               </el-button>
             </el-col>
       <el-col :span="1.5">

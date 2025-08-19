@@ -41,6 +41,8 @@ public class SupplierPriceCompeteController extends BaseController
     @Autowired
     private ISupplierPriceCompeteService supplierPriceCompeteService;
 
+
+    @PreAuthorize("@ss.hasPermi('supplier:pricecompete:import')")
     @Log(title = "[价格竞争力]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

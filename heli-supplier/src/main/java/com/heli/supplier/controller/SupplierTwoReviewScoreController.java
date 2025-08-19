@@ -40,7 +40,7 @@ public class SupplierTwoReviewScoreController extends BaseController
 {
     @Autowired
     private ISupplierTwoReviewScoreService supplierTwoReviewScoreService;
-
+    @PreAuthorize("@ss.hasPermi('supplier:score:import')")
     @Log(title = "[二方审核得分]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

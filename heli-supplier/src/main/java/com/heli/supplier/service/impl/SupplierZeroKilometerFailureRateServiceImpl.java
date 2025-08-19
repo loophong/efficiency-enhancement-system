@@ -118,7 +118,7 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
             // 清空表单
 //            this.remove(new QueryWrapper<>());
             log.info("开始读取文件: {}", fileName);
-            String sheetName = String.valueOf(uploadMonth.getMonth() + 1) + "月";
+            String sheetName = uploadMonth.getMonth() + 1 + "月";
             try {
 //                int x = 2;
 //                Date month = null;
@@ -182,7 +182,7 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
             int updatedCount = 0;
             for (SupplierZeroKilometerFailureRate record : records) {
                 // 计算分数
-                BigDecimal score = calculateScore(record.getPpmValue(), record.getZeroFailureRate());
+                BigDecimal score = calculateScore(record.getPpmValue(), record.getZeroFailureRate(),record.getTargetPpm());
 
                 // 更新分数
                 record.setScore(new Double(String.valueOf(score)));
@@ -207,14 +207,28 @@ public class SupplierZeroKilometerFailureRateServiceImpl extends ServiceImpl<Sup
      * 基础分100分，零公里故障指标完成率小于或等于零，即达标不扣分，
      * 1%以内（含）的扣10分，每超过1%加扣10分。
      */
-    private BigDecimal calculateScore(String ppmValue, String zeroFailureRate) {
+    private BigDecimal calculateScore(String ppmValue, String zeroFailureRate, String targetPpm) {
         BigDecimal baseScore = new BigDecimal(100); // 基础分100分
+
+//                double ppm = new BigDecimal(registerInfoExcel.getPpmValue()).doubleValue();
+//                double target = new BigDecimal(registerInfoExcel.getTargetPpm()).doubleValue();
+//                double rate =((ppm - target)/target)*100;
+//
+//                // 保留两位小数
+//                String formattedRate = String.format("%.2f", rate);
+//
+//                registerInfoExcel.setPpmValue(formattedRate +"%");
+
 
         // 优先处理 ppmValue（产品过程故障率）
 
         if (ppmValue != null && !ppmValue.equals("#DIV/0!") && !ppmValue.equals("#VALUE!") && !ppmValue.trim().isEmpty()) {
             try {
-                double rate = new BigDecimal(ppmValue.replace("%", "")).doubleValue();
+
+                double  ppm = new BigDecimal(ppmValue).doubleValue();
+                double target = new BigDecimal(targetPpm).doubleValue();
+                double rate =((ppm - target)/target)*100;
+//                double rate = new BigDecimal(ppmValue.replace("%", "")).doubleValue();
                 if (rate <= 0) {
                     return baseScore; // 小于等于0，达标不扣分
                 } else {

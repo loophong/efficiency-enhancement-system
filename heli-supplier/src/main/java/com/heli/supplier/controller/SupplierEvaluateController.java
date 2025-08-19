@@ -102,6 +102,8 @@ public class SupplierEvaluateController extends BaseController {
      */
 //    @PreAuthorize("@ss.hasPermi('supplier:evaluate:add')")
 //    @Log(title = "评分表", businessType = BusinessType.INSERT)
+    @PreAuthorize("@ss.hasPermi('supplier:evaluate:calculate')")
+    @Log(title = "评分表", businessType = BusinessType.OTHER)
     @PostMapping("/calculateScore")
     public AjaxResult calculateScore(@RequestBody SupplierEvaluate supplierEvaluate) {
         return toAjax(supplierEvaluateService.calculateScore(supplierEvaluate.getHappenTime(), supplierEvaluate.getEndTime()));

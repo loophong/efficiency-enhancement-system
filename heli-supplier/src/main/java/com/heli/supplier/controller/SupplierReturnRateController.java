@@ -42,6 +42,7 @@ public class SupplierReturnRateController extends BaseController
     private ISupplierReturnRateService supplierReturnRateService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:returnrate:import')")
     @Log(title = "[返修率表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

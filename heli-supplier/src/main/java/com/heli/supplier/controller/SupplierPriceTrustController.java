@@ -40,6 +40,8 @@ public class SupplierPriceTrustController extends BaseController
 {
     @Autowired
     private ISupplierPriceTrustService supplierPriceTrustService;
+
+    @PreAuthorize("@ss.hasPermi('supplier:pricetrust:import')")
     @Log(title = "[价格诚信]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional
