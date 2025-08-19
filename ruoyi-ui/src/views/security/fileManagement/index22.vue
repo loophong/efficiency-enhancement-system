@@ -344,7 +344,7 @@
     -->
 
     <!-- 复用planning/index00.vue的导入对话框 -->
-    <el-dialog title="导入数据" v-model="uploadDialogVisible" width="400px" append-to-body>
+    <el-dialog title="环境目标指标考核达成表数据导入" v-model="uploadDialogVisible" width="400px" append-to-body>
       <el-upload
         ref="uploadRef"
         :limit="1"
@@ -858,7 +858,7 @@ function handleDownloadTemplate() {
     console.log('下载模板URL:', downloadUrl);
     
     // 使用原生的下载方法
-    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `文件管理导入模板_${new Date().getTime()}.xlsx`, 'get');
+    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `环境目标指标考核达成表模板_${new Date().getTime()}.xlsx`, 'get');
     console.log('下载请求已发送');
   } catch (error) {
     console.error('下载模板出错:', error);
