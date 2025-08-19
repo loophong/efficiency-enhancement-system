@@ -50,7 +50,7 @@
 
       <el-col :span="1.5">
         <el-button type="info" plain icon="Refresh" @click="resetGetList"
-          v-hasPermi="['maintenanceTable:file:export']">重置</el-button>
+          v-hasPermi="['file:basic:list']">重置</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -94,9 +94,9 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['file:basic:remove']">删除</el-button>
           <el-button link type="primary" icon="InfoFilled" @click="getHistoryList(scope.row)"
-            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
+            v-hasPermi="['file:basic:list']" v-if="scope.row.ifHistory == '0'">查看历史</el-button>
           <el-button link type="primary" icon="Back" @click="resetGetList(scope.row)"
-            v-hasPermi="['maintenanceTable:file:remove']" v-if="scope.row.ifHistory == '1'">返回</el-button>
+            v-if="scope.row.ifHistory == '1'">返回</el-button>
         </template>
       </el-table-column>
     </el-table>

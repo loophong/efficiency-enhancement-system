@@ -146,7 +146,7 @@ const data = reactive({
     uploadTime: null,
     uploadName: null,
     incidentDescription: null,
-    orderByColumn: 'upload_time',
+    orderByColumn: 'id',
     isAsc: 'desc'
   },
   rules: {

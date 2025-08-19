@@ -75,7 +75,11 @@
                      type="primary" icon="Edit" @click="submitCoSign(scope.row)"
                      v-hasPermi="['production:planCoSign:handle']">发起会签
           </el-button>
-          <el-button link v-if="scope.row.reviewStatus ==='pending'" type="primary" icon="Edit"
+<!--          <el-button link v-if="scope.row.reviewStatus ==='pending'" type="primary" icon="Edit"-->
+<!--                     @click="handleCoSign(scope.row)"-->
+<!--                     v-hasPermi="['production:planCoSign:handle']">处理会签-->
+<!--          </el-button>-->
+          <el-button link v-if="scope.row.reviewStatus ==='pending' && scope.row.reviewerId === currentUserId" type="primary" icon="Edit"
                      @click="handleCoSign(scope.row)"
                      v-hasPermi="['production:planCoSign:handle']">处理会签
           </el-button>
@@ -214,6 +218,7 @@ import {
   getCoSignAndDailyPlan
 } from "@/api/production/planCoSign";
 import {listUserAndDept} from "@/api/system/user.js"
+import useUserStore from '@/store/modules/user'
 const {proxy} = getCurrentInstance();
 const {production_plan_co_sign_status} = proxy.useDict('production_plan_co_sign_status');
 
@@ -471,5 +476,12 @@ function getReviewerName(id) {
   const user = userAndDeptList.value.find(item => item.userId === id);
   return user ? user.nickName : '';
 }
+
+
+// 获取当前用户信息
+// 获取当前用户信息
+const userStore = useUserStore();
+const currentUserId = computed(() => userStore.id);
+
 </script>
 

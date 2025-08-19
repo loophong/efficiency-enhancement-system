@@ -115,7 +115,7 @@
       </el-col>
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:pricecompete:import']">导入
+                         v-hasPermi="['supplier:pricecompete:import']">导入
               </el-button>
             </el-col>
 
@@ -491,6 +491,13 @@ function cancelUpload() {
 
 /** excel文件上传 */
 function uploadFile() {
+
+  // 检查时间是否为空
+if (!uploadDate.value) {
+  proxy.$modal.msgError("请选择时间");
+  return;
+}
+
   if (inputFile.value && inputFile.value.files.length > 0) {
     isLoading.value = true;
     const file = inputFile.value.files[0];

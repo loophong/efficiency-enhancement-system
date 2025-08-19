@@ -41,6 +41,7 @@ public class SupplierGuaranteeController extends BaseController
     @Autowired
     private ISupplierGuaranteeService supplierGuaranteeService;
 
+    @PreAuthorize("@ss.hasPermi('supplier:guarantee:import')")
     @Log(title = "[供货保障表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

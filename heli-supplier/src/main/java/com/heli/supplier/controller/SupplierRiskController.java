@@ -41,7 +41,7 @@ public class SupplierRiskController extends BaseController
     @Autowired
     private ISupplierRiskService supplierRiskService;
 
-
+    @PreAuthorize("@ss.hasPermi('supplier:risk:import')")
     @Log(title = "[经营风险表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

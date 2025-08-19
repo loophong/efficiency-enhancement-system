@@ -98,39 +98,45 @@
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
+    <!-- width="50"   height="600" -->
+    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" 
+  
+    :height="tableHeight"
+  :sticky-header="true"
+  sticky-offset-top="0"
+  class="fixed-header-table">
 
-    <el-table v-loading="loading" :data="evaluateList" @selection-change="handleSelectionChange" width="50">
       <el-table-column type="selection" width="55" align="center" />
       <!-- <el-table-column label="" align="center" prop="id" /> -->
       <el-table-column label="供应商代码" align="center" prop="supplierCode" width="75" />
       <el-table-column label="供应商名称" align="center" prop="supplierName" width="120"/>
       <el-table-column label="质量事故" align="center" prop="qualityIncident" width="50"/>
-      <el-table-column label="一次交检合格率" align="center" prop="firstInspectionPassrate" width="70"/>
-      <el-table-column label="零公里故障指标完成率" align="center" prop="zeroKilometerFailurerate" width="50"/>
-      <el-table-column label="质量通知单发生" align="center" prop="qualityNotificationOrderrate" width="50"/>
-      <el-table-column label="反馈单回函及时率" align="center" prop="feedbackOrderletterTimeliness" width="50"/>
-      <el-table-column label="保修期内市场售后返修率" align="center" prop="warrantyperiodRepairrate" width="50"/>
-      <el-table-column label="三包配件发货及时率" align="center" prop="threepackageComponentRepairrate" width="50"/>
-      <el-table-column label="二方审核得分" align="center" prop="secondpartyAuditscore" width="50"/>
-      <el-table-column label="自检报告准确率" align="center" prop="selfinspectionReportaccuracy" width="50"/>
-      <el-table-column label="擅自变更产品材质参数尺寸" align="center" prop="productmaterialParametersizeChange" width="50"/>
-      <el-table-column label="重要度" align="center" prop="weight" width="50"/>
-      <el-table-column label="经营风险" align="center" prop="businessRisk" width="50"/>
-      <el-table-column label="供货保障" align="center" prop="supplyGuarantee" width="50"/>
-      <el-table-column label="价格竞争力" align="center" prop="priceCompetitiveness" width="50"/>
-      <el-table-column label="降本支持" align="center" prop="costreductionSupport" width="50"/>
-      <el-table-column label="服务与协作" align="center" prop="serviceAndCoordination" width="50"/>
-      <el-table-column label="价格诚信" align="center" prop="priceIntegrity" width="50"/>
-      <el-table-column label="付款限制条件" align="center" prop="paymentRestrictionconditions" width="50"/>
-      <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree" width="50"/>
-      <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness" width="50"/>
+      <el-table-column label="一次交检合格率" align="center" prop="firstInspectionPassrate" width="55"/>
+      <el-table-column label="零公里故障指标完成率" align="center" prop="zeroKilometerFailurerate" width="55"/>
+      <el-table-column label="质量通知单发生" align="center" prop="qualityNotificationOrderrate" width="55"/>
+      <el-table-column label="反馈单回函及时率" align="center" prop="feedbackOrderletterTimeliness" width="55"/>
+      <el-table-column label="保修期内市场售后返修率" align="center" prop="warrantyperiodRepairrate" width="55"/>
+      <el-table-column label="三包配件发货及时率" align="center" prop="threepackageComponentRepairrate" width="55"/>
+      <el-table-column label="二方审核得分" align="center" prop="secondpartyAuditscore" width="55"/>
+      <el-table-column label="自检报告准确率" align="center" prop="selfinspectionReportaccuracy" width="55"/>
+      <el-table-column label="擅自变更产品材质参数尺寸" align="center" prop="productmaterialParametersizeChange" width="55"/>
+      <el-table-column label="重要度" align="center" prop="weight" width="55"/>
+      <el-table-column label="经营风险" align="center" prop="businessRisk" width="55"/>
+      <el-table-column label="供货保障" align="center" prop="supplyGuarantee" width="55"/>
+      <el-table-column label="价格竞争力" align="center" prop="priceCompetitiveness" width="55"/>
+      <el-table-column label="降本支持" align="center" prop="costreductionSupport" width="55"/>
+      <el-table-column label="服务与协作" align="center" prop="serviceAndCoordination" width="55"/>
+      <el-table-column label="价格诚信" align="center" prop="priceIntegrity" width="55"/>
+      <el-table-column label="付款限制条件" align="center" prop="paymentRestrictionconditions" width="55"/>
+      <el-table-column label="新产品研发配合程度" align="center" prop="newproductDevelopmentCooperationdegree" width="55"/>
+      <el-table-column label="产品技术问题整改及时性" align="center" prop="producttechnologyproblemImprovementtimeliness" width="55"/>
       <el-table-column label="总分" align="center" prop="totalScore" width="70"/>
-      <el-table-column label="开始时间" align="center" prop="happenTime" width="180">
+      <el-table-column label="开始时间" align="center" prop="happenTime" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.happenTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" align="center" prop="endTime" width="180">
+      <el-table-column label="结束时间" align="center" prop="endTime" width="100">
         <template #default="scope">
           <span>{{ parseTime(scope.row.endTime, '{y}-{m}-{d}') }}</span>
         </template>
@@ -145,9 +151,9 @@
       <!-- <el-table-column label="入库标识符" align="center" prop="storageFlag" /> -->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+          <!-- <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['supplier:evaluate:edit']">修改
-          </el-button>
+          </el-button> -->
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['supplier:evaluate:remove']">删除
           </el-button>
@@ -302,7 +308,7 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="calculate">确 定</el-button>
-          <el-button @click="cancelCalculate">取 消</el-button>
+          <el-button @click="cancelUpload">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -310,7 +316,8 @@
 </template>
 
 <script setup name="Evaluate">
-import {listEvaluate, getEvaluate, delEvaluate, addEvaluate, updateEvaluate,calculateScore} from "@/api/supplier/evaluate";
+import {listEvaluate, getEvaluate, delEvaluate, addEvaluate, 
+  updateEvaluate,calculateScore,deleteByTimeRange} from "@/api/supplier/evaluate";
 
 const {proxy} = getCurrentInstance();
 
@@ -329,6 +336,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    supplierCode: null,
     supplierCode: null,
     supplierName: null,
     qualityIncident: null,
@@ -357,11 +365,16 @@ const data = reactive({
     2: null,
     3: null,
     4: null,
-    storageFlag: null,
-    orderByColumn: 'end_time',  // 添加这行：按结束时间排序
-    isAsc: 'desc'  // 添加这行：降序排列，结束时间晚的在前
+    storageFlag: null
   },
-  rules: {}
+  rules: {
+    happenTime: [
+      { required: true, message: "开始时间不能为空", trigger: "change" }
+    ],
+    endTime: [
+      { required: true, message: "结束时间不能为空", trigger: "change" }
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
@@ -500,17 +513,155 @@ getList();
 
 const calculateVisible = ref(false);
 
+/** 取消上传 */
+function cancelUpload() {
+  calculateVisible.value = false;
+
+}
 function handleCalculate() {
   calculateVisible.value = true;
 }
 
+// function calculate() {
+//   calculateScore(form.value).then(response => {
+//     console.log(response);
+//     proxy.$modal.msgSuccess("计算成功"); // 弹窗提醒
+//     calculateVisible.value = false; // 关闭对话框
+//   }).catch(error => {
+//     proxy.$modal.msgError("计算失败"); // 弹窗提醒
+//   });
+// }
+
 function calculate() {
-  calculateScore(form.value).then(response => {
-    console.log(response);
-    proxy.$modal.msgSuccess("计算成功"); // 弹窗提醒
-    calculateVisible.value = false; // 关闭对话框
+  // 检查是否选择了时间
+  if (!form.value.happenTime || !form.value.endTime) {
+    proxy.$modal.msgError("请选择开始时间和结束时间");
+    return;
+  }
+
+  // 使用现有的查询接口检查时间段是否存在数据
+  const checkParams = {
+    happenTime: form.value.happenTime,
+    endTime: form.value.endTime,
+    pageSize: 1,  // 只需要检查是否存在，不需要获取所有数据
+    pageNum: 1
+  };
+
+  listEvaluate(checkParams).then(response => {
+    if (response.total > 0) {
+      // 存在数据，弹出确认弹窗
+      proxy.$modal.confirm(
+        '该时间段已存在评分数据，是否覆盖？',
+        '提示',
+        {
+          confirmButtonText: '覆盖',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).then(() => {
+        // 用户选择覆盖，先删除现有数据，再执行计算
+        // deleteByTimeRange(form.value).then(() => {
+          // proxy.$modal.msgSuccess("已删除现有数据，开始重新计算");
+          executeCalculate();
+        // }).catch(error => {
+        //   proxy.$modal.msgError("删除现有数据失败");
+        // });
+      }).catch(() => {
+        // 用户选择取消，关闭弹窗
+        calculateVisible.value = false;
+      });
+    } else {
+      // 不存在数据，直接执行计算
+      executeCalculate();
+    }
   }).catch(error => {
-    proxy.$modal.msgError("计算失败"); // 弹窗提醒
+    proxy.$modal.msgError("检查失败");
   });
 }
+
+function executeCalculate() {
+  calculateScore(form.value).then(response => {
+    console.log(response);
+    proxy.$modal.msgSuccess("计算成功");
+    calculateVisible.value = false;
+    queryParams.value.happenTime = form.value.happenTime;
+    queryParams.value.endTime = form.value.endTime;
+
+    getList(); // 刷新列表
+  }).catch(error => {
+    proxy.$modal.msgError("计算失败");
+  });
+}
+
+
+
+// 添加动态表格高度
+const tableHeight = ref(600);
+
+// 计算表格高度
+function calculateTableHeight() {
+  const windowHeight = window.innerHeight;
+  const otherElementsHeight = 120;
+  tableHeight.value = windowHeight - otherElementsHeight;
+}
+
+onMounted(() => {
+  calculateTableHeight();
+  window.addEventListener('resize', calculateTableHeight);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', calculateTableHeight);
+});
 </script>
+
+<style scoped>
+/* 固定表头到视窗顶部 */
+.fixed-header-table {
+  /* 减少顶部边距，让表格更贴近表头 */
+  margin-top: 40px; /* 从50px减少到40px */
+}
+
+/* 表头固定在视窗顶部 */
+.fixed-header-table .el-table__header-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid #e4e7ed;
+}
+
+/* 表头背景色 */
+.fixed-header-table .el-table__header {
+  background-color: #f5f7fa;
+}
+
+/* 表格内容区域 */
+.fixed-header-table .el-table__body-wrapper {
+  overflow-y: auto;
+}
+
+/* 表格容器 - 减少不必要的边距 */
+.app-container {
+  position: relative;
+  padding: 10px; /* 减少容器内边距 */
+}
+
+/* 确保表格占满宽度 */
+.el-table {
+  width: 100%;
+}
+
+/* 减少表格行间距 */
+.el-table__row {
+  height: 40px; /* 减少行高 */
+}
+
+/* 减少表格内边距 */
+.el-table td, .el-table th {
+  padding: 8px 0; /* 减少单元格内边距 */
+}
+</style>

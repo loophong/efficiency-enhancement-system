@@ -48,17 +48,17 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:cases:add']">新增
+        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['production:special:add']">新增
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-                   v-hasPermi="['production:cases:edit']">修改
+                   v-hasPermi="['production:special:edit']">修改
         </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-                   v-hasPermi="['production:cases:remove']">删除
+                   v-hasPermi="['production:special:remove']">删除
         </el-button>
       </el-col>
       <!--      <el-col :span="1.5">-->
@@ -113,13 +113,13 @@
           <!--                    </el-button>-->
           <el-button v-if="scope.row.approvalStatus === 0" link type="primary" icon="Edit"
                      @click="handleSpecial(scope.row)"
-                     v-hasPermi="['production:cases:handle']">处理
-          </el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                     v-hasPermi="['production:cases:remove']">删除
+                     v-hasPermi="['production:special:edit']">处理
           </el-button>
           <el-button link type="primary" icon="View" @click="viewResult(scope.row)"
-                     v-hasPermi="['production:cases:query']">查看
+                     v-hasPermi="['production:special:query']">查看
+          </el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                     v-hasPermi="['production:special:remove']">删除
           </el-button>
         </template>
       </el-table-column>

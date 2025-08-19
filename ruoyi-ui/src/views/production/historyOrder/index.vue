@@ -21,11 +21,11 @@
       <el-form-item label="数量" prop="quantity">
         <el-input v-model="queryParams.quantity" placeholder="请输入数量" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="订单年份" prop="orderYear">
-        <el-date-picker clearable v-model="queryParams.orderYear" type="date" value-format="YYYY-MM-DD"
-                        placeholder="请选择订单年份">
-        </el-date-picker>
-      </el-form-item>
+<!--      <el-form-item label="订单年份" prop="orderYear">-->
+<!--        <el-date-picker clearable v-model="queryParams.orderYear" type="date" value-format="YYYY-MM-DD"-->
+<!--                        placeholder="请选择订单年份">-->
+<!--        </el-date-picker>-->
+<!--      </el-form-item>-->
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -79,7 +79,7 @@
       <el-table-column label="数量" align="center" prop="quantity"/>
       <el-table-column label="订单年份" align="center" prop="orderYear" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.orderYear, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.orderYear, '{y}') }}</span>
         </template>
       </el-table-column>
       <!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->

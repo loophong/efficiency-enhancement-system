@@ -41,6 +41,7 @@ public class SuppliersQualifiedController extends BaseController {
     @Autowired
     private ISuppliersQualifiedService suppliersQualifiedService;
 
+    @PreAuthorize("@ss.hasPermi('supplier:qualified:import')")
     @Log(title = "[合格供应商表]上传", businessType = BusinessType.IMPORT)
 //    @PreAuthorize("@ss.hasPermi('production:qualified:import')")
     @PostMapping("/import")

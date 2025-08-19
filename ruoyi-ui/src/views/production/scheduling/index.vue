@@ -276,61 +276,61 @@
           </el-form>
         </div>
 
-        <div style="flex: 4; border: #2d2d2d solid;">
-          <!--   展示预测订单   -->
-          <el-row :gutter="10" class="mb8">
-            <el-col :span="1.5">
-              <el-button type="primary" plain icon="Plus" v-hasPermi="['production:orderStatistics:add']">
-                新增
-              </el-button>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button type="success" plain icon="Edit" :disabled="single"
-                         v-hasPermi="['production:orderStatistics:edit']">修改
-              </el-button>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button type="danger" plain icon="Delete" :disabled="multiple"
-                         v-hasPermi="['production:orderStatistics:remove']">删除
-              </el-button>
-            </el-col>
-          </el-row>
+<!--        <div style="flex: 4; border: #2d2d2d solid;">-->
+<!--          &lt;!&ndash;   展示预测订单   &ndash;&gt;-->
+<!--          <el-row :gutter="10" class="mb8">-->
+<!--            <el-col :span="1.5">-->
+<!--              <el-button type="primary" plain icon="Plus" v-hasPermi="['production:orderStatistics:add']">-->
+<!--                新增-->
+<!--              </el-button>-->
+<!--            </el-col>-->
+<!--            <el-col :span="1.5">-->
+<!--              <el-button type="success" plain icon="Edit" :disabled="single"-->
+<!--                         v-hasPermi="['production:orderStatistics:edit']">修改-->
+<!--              </el-button>-->
+<!--            </el-col>-->
+<!--            <el-col :span="1.5">-->
+<!--              <el-button type="danger" plain icon="Delete" :disabled="multiple"-->
+<!--                         v-hasPermi="['production:orderStatistics:remove']">删除-->
+<!--              </el-button>-->
+<!--            </el-col>-->
+<!--          </el-row>-->
 
-          <el-table ref="unscheduledTable" :data="unscheduledList" height="500px" width="auto"
-                    @selection-change="handleUnscheduledSelectionChange">
-            <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column label="网点名称" align="center" prop="branch"/>
-            <el-table-column label="合同号" align="center" prop="contractNumber"/>
-            <el-table-column label="订单号" align="center" prop="orderNumber"/>
-            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>
-            <el-table-column label="数量" align="center" prop="quantity"/>
-            <!--            <el-table-column label="车号" align="center" prop="vehicleNumber"/>-->
-            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>
-            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>
-            <el-table-column label="产能型号" align="center" prop="capacityType"/>
-            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">
-              <template #default="scope">
-                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="是否超期" align="center" prop="isOverdue"/>
-          </el-table>
-        </div>
+<!--          <el-table ref="unscheduledTable" :data="unscheduledList" height="500px" width="auto"-->
+<!--                    @selection-change="handleUnscheduledSelectionChange">-->
+<!--            <el-table-column type="selection" width="55" align="center"/>-->
+<!--            <el-table-column label="网点名称" align="center" prop="branch"/>-->
+<!--            <el-table-column label="合同号" align="center" prop="contractNumber"/>-->
+<!--            <el-table-column label="订单号" align="center" prop="orderNumber"/>-->
+<!--            <el-table-column label="接单日期" align="center" prop="orderDate" width="100">-->
+<!--              <template #default="scope">-->
+<!--                <span>{{ parseTime(scope.row.orderDate, '{y}-{m}-{d}') }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="车型" align="center" prop="vehicleModel" width="100"/>-->
+<!--            <el-table-column label="数量" align="center" prop="quantity"/>-->
+<!--            &lt;!&ndash;            <el-table-column label="车号" align="center" prop="vehicleNumber"/>&ndash;&gt;-->
+<!--            <el-table-column label="备注信息" align="center" prop="remarks" width="150"/>-->
+<!--            <el-table-column label="订单系统交货期" align="center" prop="systemDeliveryDate" width="100">-->
+<!--              <template #default="scope">-->
+<!--                <span>{{ parseTime(scope.row.systemDeliveryDate, '{y}-{m}-{d}') }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="采购回复到货时间" align="center" prop="procurementArrivalDate" width="100">-->
+<!--              <template #default="scope">-->
+<!--                <span>{{ parseTime(scope.row.procurementArrivalDate, '{y}-{m}-{d}') }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="生产周期(天)" align="center" prop="productionCycle"/>-->
+<!--            <el-table-column label="产能型号" align="center" prop="capacityType"/>-->
+<!--            <el-table-column label="最晚上线日期" align="center" prop="latestOnlineDate" width="100">-->
+<!--              <template #default="scope">-->
+<!--                <span>{{ parseTime(scope.row.latestOnlineDate, '{y}-{m}-{d}') }}</span>-->
+<!--              </template>-->
+<!--            </el-table-column>-->
+<!--            <el-table-column label="是否超期" align="center" prop="isOverdue"/>-->
+<!--          </el-table>-->
+<!--        </div>-->
       </div>
 
 
@@ -343,7 +343,7 @@
     <div style="  display: flex;  justify-content: center;">
       <el-button v-if="active > 1" type="primary" size="large" @click="pre">上一步</el-button>
       <el-button v-if="active < 4" type="primary" size="large" @click="next">下一步</el-button>
-      <el-button v-if="active === 4" type="success" size="large" @click="submitForm">完成</el-button>
+      <el-button v-if="active === 4" type="success" size="large" @click="submitForm" v-hasPermi="['production:scheduling:scheduling']">完成</el-button>
     </div>
 
 

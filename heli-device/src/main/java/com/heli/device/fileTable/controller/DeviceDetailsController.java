@@ -110,7 +110,7 @@ public class DeviceDetailsController extends BaseController
     }
 
     @Log(title = "设备台账上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('financial:interests:import')")
+    @PreAuthorize("@ss.hasPermi('file:details:import')")
     @PostMapping("/import")
     @Transactional
     public AjaxResult faultRecordsList(String yearAndMonth, MultipartFile excelFile) {

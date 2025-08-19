@@ -80,15 +80,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['device:count:add']">新增</el-button>
+        <el-button type="primary" plain icon="Plus" @click="handleAdd"
+          v-hasPermi="['fault:indicator:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['device:count:edit']">修改</el-button>
+          v-hasPermi="['fault:indicator:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['device:count:remove']">删除</el-button>
+          v-hasPermi="['fault:indicator:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
         <!--Excel 参数导入 -->
@@ -119,7 +120,7 @@
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="exportAll"
-          v-hasPermi="['device:count:export']">导出</el-button>
+          v-hasPermi="['fault:indicator:export']">导出</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button type="warning" plain icon="Download" @click="downloadTemplate()">下载导入模板</el-button>
@@ -228,13 +229,13 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['device:count:edit']">修改</el-button>
+            v-hasPermi="['fault:indicator:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['device:count:remove']">删除</el-button>
+            v-hasPermi="['fault:indicator:remove']">删除</el-button>
           <el-button link type="primary" icon="Histogram" @click="handleShowChart(scope.row)"
-            v-hasPermi="['device:count:remove']">展示图</el-button>
+            v-hasPermi="['fault:indicator:list']">展示图</el-button>
           <el-button link type="primary" icon="Document" @click="wordExport(scope.row)"
-            v-hasPermi="['device:count:remove']">生成文档</el-button>
+            v-hasPermi="['fault:indicator:list']">生成文档</el-button>
         </template>
       </el-table-column>
     </el-table>

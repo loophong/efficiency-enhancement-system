@@ -1,20 +1,17 @@
 package com.heli.device.maintenanceTable.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+
 import com.heli.device.maintenanceTable.mapper.DeviceFaultAnalysisMapper;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -30,8 +27,10 @@ import com.ruoyi.common.core.page.TableDataInfo;
  * @author YYY
  * @date 2025-01-17
  */
+
 @RestController
 @RequestMapping("/fault/analysis")
+@Slf4j
 public class DeviceFaultAnalysisController extends BaseController
 {
     @Autowired
@@ -39,13 +38,27 @@ public class DeviceFaultAnalysisController extends BaseController
     @Autowired
     private DeviceFaultAnalysisMapper deviceFaultAnalysisMapper;
 
-//    @PreAuthorize("@ss.hasPermi('fault:analysis:list')")
+    @PreAuthorize("@ss.hasPermi('fault:analysis:list')")
     @GetMapping("/listByNameAndDate")
-    public TableDataInfo listByNameAndDate(Date analysisRecordTime , String analysisName)
+    public TableDataInfo listByNameAndDate(@RequestParam(required = false) String analysisName,
+                                           @RequestParam(required = false) String analysisRecordTime)
     {
+        log.info("analysisRecordTimeStr---->"+analysisRecordTime);
+        DeviceFaultAnalysis query = new DeviceFaultAnalysis();
+        if (analysisRecordTime != null && !analysisRecordTime.isEmpty()) {
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+                Date tmp = formatter.parse(analysisRecordTime);
+                query.setAnalysisRecordTime(tmp);
+            } catch (Exception e) {
+                log.error("Failed to parse date: {}", analysisRecordTime, e);
+            }
+        }
+        query.setAnalysisName(analysisName);
+        log.info("测试cesium"+query);
 
-        List<DeviceFaultAnalysis> deviceFaultAnalysis = deviceFaultAnalysisMapper.selectByNameAndDate(analysisRecordTime,analysisName);
-        return getDataTable(deviceFaultAnalysis);
+        List<DeviceFaultAnalysis> result = deviceFaultAnalysisMapper.selectByNameAndDate(query);
+        return getDataTable(result);
     }
 
 

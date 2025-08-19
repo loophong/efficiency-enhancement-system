@@ -40,7 +40,7 @@ public class ScanRecordsController extends BaseController {
 
 
     @Log(title = "[整机扫码记录表]上传", businessType = BusinessType.IMPORT)
-//    @PreAuthorize("@ss.hasPermi('production:scanRecords:import')")
+    @PreAuthorize("@ss.hasPermi('production:scanRecords:import')")
     @PostMapping("/import")
     public void importTable(MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");

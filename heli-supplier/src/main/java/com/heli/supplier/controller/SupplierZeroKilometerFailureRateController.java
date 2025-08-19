@@ -42,6 +42,7 @@ public class SupplierZeroKilometerFailureRateController extends BaseController
     private ISupplierZeroKilometerFailureRateService supplierZeroKilometerFailureRateService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:zeroFailureRate:import')")
     @Log(title = "[产品过程故障率]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/importProductProcessFailures")
     @Transactional
@@ -56,6 +57,7 @@ public class SupplierZeroKilometerFailureRateController extends BaseController
         }
     }
 
+    @PreAuthorize("@ss.hasPermi('supplier:zeroFailureRate:import')")
     @Log(title = "[零公里故障指标完成率]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

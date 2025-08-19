@@ -42,6 +42,7 @@ public class SupplierReduceSupportController extends BaseController
     private ISupplierReduceSupportService supplierReduceSupportService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:support:import')")
     @Log(title = "[降本支持表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional
