@@ -157,7 +157,7 @@
           plain
           icon="Upload"
           @click="handleImport"
-          v-hasPermi="['filemanagement:filemanagement:import']"
+          v-hasPermi="['security:relatedpartyledger:import']"
         >导入</el-button>
       </el-col>
       <!-- 下载模板按钮 -->
@@ -167,7 +167,6 @@
           plain
           icon="Document"
           @click="handleDownloadTemplate"
-          v-hasPermi="['filemanagement:filemanagement:list']"
         >下载模板</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -630,13 +629,13 @@ function handleRefresh() {
 
 /** 导入按钮操作 */
 function handleImport() {
-  upload.title = "数据导入（使用有害点台账模板）";
+  upload.title = "相关方管理台账导入";
   upload.open = true;
 }
 
 /** 下载模板操作 */
 function handleDownloadTemplate() {
-  proxy.download('security/hazardpointledger/importTemplate', {}, `有害点台账导入模板_${new Date().getTime()}.xlsx`, 'post');
+  proxy.download('security/relatedpartyledger/importTemplate', {}, `相关方管理台账导入模板_${new Date().getTime()}.xlsx`, 'post');
 }
 
 /** 提交上传文件 */

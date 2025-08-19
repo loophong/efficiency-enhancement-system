@@ -89,6 +89,7 @@
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:copy222:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:copy222:remove']">删除</el-button>
+          <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -100,6 +101,16 @@
       v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
+
+        <!-- 文件预览对话框 -->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-docx
+          :src="previewSrc"
+          :style="comStyle"
+          @rendered="renderedHandler"
+          @error="errorHandler"
+      />
+    </el-dialog>
 
     <!-- 添加或修改风险和机遇评应对措施评审记录2对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
@@ -137,7 +148,8 @@
 
 <script setup name="Copy222">
 import { listCopy222, getCopy222, delCopy222, addCopy222, updateCopy222 } from "@/api/security/copy222";
-
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
 const { proxy } = getCurrentInstance();
 
 const copy222List = ref([]);
@@ -149,6 +161,9 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const previewSrc = ref(''); // 确保 previewSrc 被正确声明
+const comStyle = ref({ width: '100%', height: '600px' });
+const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
 
 const data = reactive({
   form: {},
@@ -220,7 +235,7 @@ function handleAdd() {
     form.value.relatedId = queryParams.value.relatedId;
   }
   open.value = true;
-  title.value = "添加风险和机遇评应对措施评审记录2";
+  title.value = "添加风险和机遇评应对措施评审记录";
 }
 
 /** 修改按钮操作 */
@@ -230,7 +245,7 @@ function handleUpdate(row) {
   getCopy222(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改风险和机遇评应对措施评审记录2";
+    title.value = "修改风险和机遇评应对措施评审记录";
   });
 }
 
@@ -258,7 +273,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除风险和机遇评应对措施评审记录2编号为"' + _ids + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除风险和机遇评应对措施评审记录编号为"' + _ids + '"的数据项？').then(function() {
     return delCopy222(_ids);
   }).then(() => {
     getList();
@@ -272,6 +287,32 @@ function handleExport() {
     ...queryParams.value
   }, `copy222_${new Date().getTime()}.xlsx`)
 }
+/** 预览文件 */
+function handlePreview(row) {
+  const staticPath = import.meta.env.VITE_APP_BASE_API  ; // 静态地址
+  const dynamicPath = row.files; // 动态地址
+  const fileExt = dynamicPath.split('.').pop().toLowerCase();
+  
+  if (fileExt === 'docx') {
+    previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
+    console.log("文件地址: " + previewSrc.value);
+    previewDialogVisible.value = true;
+    console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
+    console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
+  } else {
+    console.error('不支持的文件类型,只能查看docx文件:', fileExt);
+    proxy.$modal.msgError('不支持的文件类型,只能查看docx文件');
+  }
+}
 
+/** 渲染完成处理 */
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+
+/** 错误处理 */
+function errorHandler(error) {
+  console.error('文档渲染错误', error);
+}
 getList();
 </script>

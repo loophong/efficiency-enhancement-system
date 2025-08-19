@@ -2,7 +2,7 @@
     <div class="app-container">
       <el-tabs v-model="activeTab" type="card">
         <el-tab-pane label="操作视图" name="operation">
-          <el-button type="primary" @click="handleAddRoot">添加根节点</el-button>
+          <el-button type="primary" @click="handleAddRoot" v-hasPermi="['security:menu:add']">添加根节点   </el-button>
           <div style="margin-top: 20px">
             <el-tree
               ref="menuTree"
@@ -13,6 +13,7 @@
               :indent="30"
               :expand-on-click-node="false"
               @node-click="handleNodeClick"
+          
             >
               <template #default="{ node, data }">
                 <div class="custom-tree-node">
@@ -26,6 +27,7 @@
                       link
                       size="small"
                       @click.stop="() => handleAddChild(data)"
+                      v-hasPermi="['security:menu:add']"
                     >
                       <el-icon><Plus /></el-icon>
                       添加子节点
@@ -35,6 +37,7 @@
                       link
                       size="small"
                       @click.stop="() => handleEdit(data)"
+                      v-hasPermi="['security:menu:edit']"
                     >
                       <el-icon><Edit /></el-icon>
                       编辑
@@ -44,6 +47,7 @@
                       link
                       size="small"
                       @click.stop="() => handleDelete(data)"
+                      v-hasPermi="['security:menu:remove']"
                     >
                       <el-icon><Delete /></el-icon>
                       删除

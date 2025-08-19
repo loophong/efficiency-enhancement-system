@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.security.domain.securitysysmenu;
 import com.ruoyi.security.service.ISecuritySysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class SecuritySysMenuController extends BaseController {
     private ISecuritySysMenuService securitySysMenuService;
 
     // 获取菜单树
+    @PreAuthorize("@ss.hasPermi('security:sysmenu:list')")
     @GetMapping("/tree")
     public AjaxResult tree() {
         List<securitysysmenu> menus = securitySysMenuService.selectMenuTree();
@@ -24,18 +26,21 @@ public class SecuritySysMenuController extends BaseController {
     }
 
     // 新增菜单
+    @PreAuthorize("@ss.hasPermi('security:sysmenu:add')")
     @PostMapping
     public AjaxResult add(@RequestBody securitysysmenu menu) {
         return toAjax(securitySysMenuService.insertMenu(menu));
     }
 
     // 修改菜单
+    @PreAuthorize("@ss.hasPermi('security:sysmenu:edit')")
     @PutMapping
     public AjaxResult edit(@RequestBody securitysysmenu menu) {
         return toAjax(securitySysMenuService.updateMenu(menu));
     }
 
     // 删除菜单
+    @PreAuthorize("@ss.hasPermi('security:sysmenu:remove')")
     @DeleteMapping("/{menuId}")
     public AjaxResult remove(@PathVariable Long menuId) {
         if (securitySysMenuService.hasChildByMenuId(menuId)) {
@@ -45,6 +50,7 @@ public class SecuritySysMenuController extends BaseController {
     }
 
     // 获取菜单详情
+    @PreAuthorize("@ss.hasPermi('security:sysmenu:query')")
     @GetMapping("/{menuId}")
     public AjaxResult getInfo(@PathVariable Long menuId) {
         return success(securitySysMenuService.selectMenuById(menuId));
