@@ -125,11 +125,11 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
             v-hasPermi="['file:details:remove']">删除</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'fault', 'maintenance')"
-            v-hasPermi="['file:details:remove']">故障记录</el-button>
+            v-hasPermi="['fault:maintenance:list']">故障记录</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'basic')"
-            v-hasPermi="['file:details:remove']">基础档案</el-button>
+            v-hasPermi="['file:basic:list']">基础档案</el-button>
           <el-button link type="primary" icon="Position" @click="handleToRoute(scope.row, 'file', 'sop')"
-            v-hasPermi="['file:details:remove']">SOP</el-button>
+            v-hasPermi="['file:sop:list']">SOP</el-button>
         </template>
       </el-table-column>
     </el-table>
