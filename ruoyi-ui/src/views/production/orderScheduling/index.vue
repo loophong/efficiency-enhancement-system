@@ -235,12 +235,12 @@
           <!--     如果订单未排产，则显示插单按钮     -->
           <el-button link type="primary" icon="Edit" @click="handleInsert(scope.row)"
                      v-if="scope.row.isScheduling === 0"
-                     v-hasPermi="['production:scheduling:insert']">插单
+                     v-hasPermi="['production:scheduling:scheduling']">插单
           </el-button>
           <!--    如果已经排产，则显示特殊情况上报按钮    -->
           <el-button link type="primary" icon="Upload" @click="handleSpecialReport(scope.row)"
                      v-if="scope.row.isScheduling === 1"
-                     v-hasPermi="['production:scheduling:report']">特殊情况上报
+                     v-hasPermi="['production:special:add']">特殊情况上报
           </el-button>
         </template>
       </el-table-column>

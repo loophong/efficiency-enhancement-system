@@ -73,17 +73,18 @@ public class ZeroKilometerFailureRateListener implements ReadListener<SupplierZe
                     registerInfoExcel.getPpmValue().equals("#VALUE!"))
             {
                 registerInfoExcel.setPpmValue("0");
-            }else
-            {
-                double ppm = new BigDecimal(registerInfoExcel.getPpmValue()).doubleValue();
-                double target = new BigDecimal(registerInfoExcel.getTargetPpm()).doubleValue();
-                double rate =((ppm - target)/target)*100;
-
-                // 保留两位小数
-                String formattedRate = String.format("%.2f", rate);
-
-                registerInfoExcel.setPpmValue(formattedRate +"%");
             }
+//            else
+//            {
+//                double ppm = new BigDecimal(registerInfoExcel.getPpmValue()).doubleValue();
+//                double target = new BigDecimal(registerInfoExcel.getTargetPpm()).doubleValue();
+//                double rate =((ppm - target)/target)*100;
+//
+//                // 保留两位小数
+//                String formattedRate = String.format("%.2f", rate);
+//
+//                registerInfoExcel.setPpmValue(formattedRate +"%");
+//            }
             currentRow++;
             // 加入缓存
             cacheDataList.add(registerInfoExcel);

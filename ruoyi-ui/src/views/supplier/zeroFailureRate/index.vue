@@ -65,14 +65,14 @@
       </el-col>
       <el-col :span="1.5">
               <el-button @click="handleImport" type="success" plain icon="Upload"
-                         v-hasPermi="['production:zeroFailureRate:import']">零公里故障指标完成率(PPM)导入
+                         v-hasPermi="['supplier:zeroFailureRate:import']">零公里故障指标完成率(PPM)导入
               </el-button>
             </el-col>
 
             <el-col :span="1.5">
               <el-button @click="handleImport1" type="success" plain icon="Upload"
                 :disabled="!isFirstImportCompleted"
-                         v-hasPermi="['production:zeroFailureRate:import']">产品过程故障率导入
+                         v-hasPermi="['supplier:zeroFailureRate:import']">产品过程故障率导入
               </el-button>
             </el-col>
       

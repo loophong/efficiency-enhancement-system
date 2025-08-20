@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -34,7 +35,7 @@ public class VehicleTypeController extends BaseController {
      * @date: 2025/1/8 14:59
      */
     @Log(title = "[车型表]上传", businessType = BusinessType.INSERT)
-//    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
+    @PreAuthorize("@ss.hasPermi('production:vehicle:import')")
     @PostMapping("/import")
     @Transactional
     public void importTable(MultipartFile excelFile) {

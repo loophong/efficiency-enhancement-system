@@ -42,6 +42,7 @@ public class SupplierPaymentController extends BaseController
     private ISupplierPaymentService supplierPaymentService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:payment:import')")
     @Log(title = "[付款限制条件表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

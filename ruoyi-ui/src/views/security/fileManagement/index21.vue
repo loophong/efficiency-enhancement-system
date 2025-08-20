@@ -157,7 +157,7 @@
           plain
           icon="Upload"
           @click="handleImport"
-          v-hasPermi="['filemanagement:filemanagement:import']"
+          v-hasPermi="['security:DangerWangList:import']"
         >导入</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -166,7 +166,7 @@
           plain
           icon="Document"
           @click="handleDownloadTemplate"
-          v-hasPermi="['filemanagement:filemanagement:export']"
+          v-hasPermi="['security:DangerWangList:export']"
         >下载模板</el-button>
       </el-col>
       <el-col :span="1.5">

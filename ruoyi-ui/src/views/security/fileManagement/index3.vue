@@ -858,7 +858,7 @@ function handleDownloadTemplate() {
     console.log('下载模板URL:', downloadUrl);
     
     // 使用原生的下载方法
-    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `文件管理导入模板_${new Date().getTime()}.xlsx`, 'get');
+    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `安全目标考核表导入模板_${new Date().getTime()}.xlsx`, 'get');
     console.log('下载请求已发送');
   } catch (error) {
     console.error('下载模板出错:', error);

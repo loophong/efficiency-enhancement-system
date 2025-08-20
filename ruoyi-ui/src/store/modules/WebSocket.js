@@ -16,8 +16,8 @@ const mutations = {
 
 export function initWebSocket(token) {
     let userId = store.state.value.user.id
-    console.log("当前用户id：" + JSON.stringify(userId));
-    console.log("当前用户token：" + JSON.stringify(token));
+    // console.log("当前用户id：" + JSON.stringify(userId));
+    // console.log("当前用户token：" + JSON.stringify(token));
     const url = `ws://127.0.0.1:8080/websocket/${userId}`; // 拼接用户ID到URL中
     const socket = new WebSocket(url);
 

@@ -79,7 +79,8 @@
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button @click="handleImport" type="success" plain icon="Upload">
+        <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['security:EnvironmentalOhsRecordList:import']">
+
           导入
         </el-button>
       </el-col>

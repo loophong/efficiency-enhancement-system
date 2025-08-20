@@ -43,6 +43,7 @@ public class SupplierOnetimeSimpleController extends BaseController
     private ISupplierOnetimeSimpleService supplierOnetimeSimpleService;
 
 
+    @PreAuthorize("@ss.hasPermi('supplier:onetimesimple:import')")
     @Log(title = "[一次交检合格率表]上传", businessType = BusinessType.IMPORT)
     @PostMapping("/import")
     @Transactional

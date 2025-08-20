@@ -45,6 +45,7 @@ public class CycleController extends BaseController {
     @Log(title = "[生产周期]上传", businessType = BusinessType.INSERT)
     @PostMapping("/import")
     @Transactional
+    @PreAuthorize("@ss.hasPermi('production:cycle:import')")
     public AjaxResult importTable(MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");
         try {

@@ -17,6 +17,7 @@ import com.heli.production.service.IVehicleTypeService;
 import com.ruoyi.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,7 +50,7 @@ public class HistoryOrderStatisticsController extends BaseController {
     /**
      * 查询历史订单统计列表
      */
-//    @PreAuthorize("@ss.hasPermi('production:orderStatistics:list')")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:list')")
     @GetMapping("/list")
     public TableDataInfo list(HistoryOrderStatisticsEntity historyOrderStatisticsEntity) {
         startPage();
@@ -60,7 +61,7 @@ public class HistoryOrderStatisticsController extends BaseController {
     /**
      * 获取历史订单统计详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('production:orderStatistics:query')")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:query')")
     @GetMapping(value = "/{id}")
     public AjaxResult getInfo(@PathVariable("id") String id) {
         return success(historyOrderStatisticsEntityService.getById(id));
@@ -69,7 +70,7 @@ public class HistoryOrderStatisticsController extends BaseController {
     /**
      * 新增历史订单统计
      */
-//    @PreAuthorize("@ss.hasPermi('production:orderStatistics:add')")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:add')")
     @Log(title = "历史订单统计", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody HistoryOrderStatisticsEntity historyOrderStatisticsEntity) {
@@ -79,7 +80,7 @@ public class HistoryOrderStatisticsController extends BaseController {
     /**
      * 修改历史订单统计
      */
-//    @PreAuthorize("@ss.hasPermi('production:orderStatistics:edit')")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:edit')")
     @Log(title = "历史订单统计", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody HistoryOrderStatisticsEntity historyOrderStatisticsEntity) {
@@ -89,7 +90,7 @@ public class HistoryOrderStatisticsController extends BaseController {
     /**
      * 删除历史订单统计
      */
-//    @PreAuthorize("@ss.hasPermi('production:orderStatistics:remove')")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:remove')")
     @Log(title = "历史订单统计", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
@@ -104,6 +105,7 @@ public class HistoryOrderStatisticsController extends BaseController {
      * @version: 1.0
      */
     @PostMapping("/charData")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:list')")
     public AjaxResult getCharData(@RequestBody CharParamsDTO charParamsDTO) {
         log.info("charParamsDTO:{}", charParamsDTO);
         LambdaQueryWrapper<HistoryOrderStatisticsEntity> queryWrapper = new LambdaQueryWrapper<HistoryOrderStatisticsEntity>()
@@ -123,6 +125,7 @@ public class HistoryOrderStatisticsController extends BaseController {
      * @version: 1.0
      */
     @PostMapping("/forecast")
+    @PreAuthorize("@ss.hasPermi('production:orderStatistics:forecast')")
     public AjaxResult forecast(@RequestBody ForecastDTO forecastDTO) {
         log.info("forecastDTO:{}", forecastDTO);
         Date date = forecastDTO.getDate();

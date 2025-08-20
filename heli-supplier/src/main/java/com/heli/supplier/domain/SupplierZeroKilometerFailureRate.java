@@ -100,6 +100,7 @@ public class SupplierZeroKilometerFailureRate{
     /**
      * 得分
      */
+    @ExcelIgnore
     @Excel(name = "得分")
     @ExcelProperty(value = "得分")
     private Double score;
@@ -107,14 +108,15 @@ public class SupplierZeroKilometerFailureRate{
     /**
      * 上传月份
      */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date uploadMonth;
 
     /**
      * 时间
      */
+    @ExcelIgnore
     @JsonFormat(pattern = "yyyy-MM-dd")
-
     private Date time;
 
     @TableField("row_index")

@@ -4,7 +4,7 @@
       <el-form-item label="序号" prop="serialNumber">
         <el-input v-model="queryParams.serialNumber" placeholder="请输入序号" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="生产订单号" prop="productionOrderNumber">
+      <el-form-item label="生产订单号" prop="productionOrderNumber" label-width="90px">
         <el-input v-model="queryParams.productionOrderNumber" placeholder="请输入生产订单号" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>
@@ -33,11 +33,11 @@
       <el-form-item label="阀片" prop="valvePlate">
         <el-input v-model="queryParams.valvePlate" placeholder="请输入阀片" clearable @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="描述性配置信息" prop="descriptiveConfigurationInfo">
+      <el-form-item label="描述性配置信息" prop="descriptiveConfigurationInfo" label-width="110px">
         <el-input v-model="queryParams.descriptiveConfigurationInfo" placeholder="请输入描述性配置信息" clearable
                   @keyup.enter="handleQuery"/>
       </el-form-item>
-      <el-form-item label="订单系统交货期" prop="systemDeliveryDate">
+      <el-form-item label="订单系统交货期" prop="systemDeliveryDate"  label-width="110px">
         <el-date-picker clearable v-model="queryParams.systemDeliveryDate" type="date" value-format="YYYY-MM-DD"
                         placeholder="请选择订单系统交货期">
         </el-date-picker>
@@ -131,8 +131,8 @@
                 @pagination="getList"/>
 
     <!-- 添加或修改日生产计划对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="dailyPlanRef" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="700px" append-to-body>
+      <el-form ref="dailyPlanRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="序号" prop="serialNumber">
           <el-input v-model="form.serialNumber" placeholder="请输入序号"/>
         </el-form-item>
@@ -240,7 +240,53 @@ const data = reactive({
     orderDate: null,
     onlineDate: null
   },
-  rules: {}
+  rules: {
+    serialNumber: [
+      { required: true, message: "序号不能为空", trigger: "blur" }
+    ],
+    productionOrderNumber: [
+      { required: true, message: "生产订单号不能为空", trigger: "blur" }
+    ],
+    contractNumber: [
+      { required: true, message: "合同号不能为空", trigger: "blur" }
+    ],
+    vehicleModel: [
+      { required: true, message: "车型不能为空", trigger: "blur" }
+    ],
+    mast: [
+      { required: true, message: "门架不能为空", trigger: "blur" }
+    ],
+    projectDescription: [
+      { required: true, message: "项目说明不能为空", trigger: "blur" }
+    ],
+    vehicleNumber: [
+      { required: true, message: "车号不能为空", trigger: "blur" }
+    ],
+    quantity: [
+      { required: true, message: "数量不能为空", trigger: "blur" }
+    ],
+    attachments: [
+      { required: true, message: "属具不能为空", trigger: "blur" }
+    ],
+    valvePlate: [
+      { required: true, message: "阀片不能为空", trigger: "blur" }
+    ],
+    descriptiveConfigurationInfo: [
+      { required: true, message: "描述性配置信息不能为空", trigger: "blur" }
+    ],
+    systemDeliveryDate: [
+      { required: true, message: "订单系统交货期不能为空", trigger: "blur" }
+    ],
+    branch: [
+      { required: true, message: "网点名称不能为空", trigger: "blur" }
+    ],
+    orderDate: [
+      { required: true, message: "接单日期不能为空", trigger: "blur" }
+    ],
+    onlineDate: [
+      { required: true, message: "上线日期不能为空", trigger: "blur" }
+    ]
+  }
 });
 
 const {queryParams, form, rules} = toRefs(data);
