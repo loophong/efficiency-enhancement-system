@@ -128,7 +128,7 @@
       </template>
     </el-dialog>
 
-    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :before-close="handleClose">
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
       <vue-office-docx v-if="showDocx" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
         @error="errorHandler" />
       <vue-office-excel v-if="showExcel" :src="drawerUrl" style="height: 100vh;" />
@@ -300,7 +300,7 @@ function handlePreview(input) {
   showDocx.value = false
   showExcel.value = false
   showPdf.value = false
-  const firstFaultFile = input.sopMaintenance.split(',')[0].trim();
+  const firstFaultFile = input.split(',')[0].trim();
   if (firstFaultFile && firstFaultFile.includes('doc')) {
     showDocx.value = true
   } else if (firstFaultFile && firstFaultFile.includes('xl')) {
@@ -316,25 +316,6 @@ function handlePreview(input) {
   openDrawer.value = true
 }
 
-function handlePreview2(input, index, num, name) {
-  // console.log({ input })
-  // console.log({ index })
-  showDocx.value = false
-  showExcel.value = false
-  showPdf.value = false
-  const firstFaultFile = input.split(',')[index].trim();
-  if (firstFaultFile && firstFaultFile.includes('doc')) {
-    showDocx.value = true
-  } else if (firstFaultFile && firstFaultFile.includes('xl')) {
-    showExcel.value = true
-  } else if (firstFaultFile && firstFaultFile.includes('pdf')) {
-    showPdf.value = true
-  }
-  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
-  drawerTitle.value = `${name}(${num})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
-  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
-  openDrawer.value = true
-}
 
 // docx作为参数通过父组件传参
 const renderedHandler = () => {
@@ -344,15 +325,15 @@ const errorHandler = () => {
   console.log("渲染失败")
 }
 
-function handleClose(done) {
-  ElMessageBox.confirm(`确认关闭吗?`)
-    .then(() => {
-      openDrawer.value = false
-    })
-    .catch(() => {
-      // catch error
-    })
-}
+// function handleClose(done) {
+//   ElMessageBox.confirm(`确认关闭吗?`)
+//     .then(() => {
+//       openDrawer.value = false
+//     })
+//     .catch(() => {
+//       // catch error
+//     })
+// }
 
 
 function resetGetList() {
