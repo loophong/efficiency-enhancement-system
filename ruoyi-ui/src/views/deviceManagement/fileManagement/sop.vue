@@ -55,22 +55,25 @@
       <el-table-column label="保养文件" align="center" prop="sopMaintenance">
         <template #default="scope">
           <el-button @click="handlePreview(scope.row)" v-if="scope.row.sopMaintenance">
-            {{ formatFileInfo(scope.row.sopMaintenance) }}
+            {{ formatFileInfo2(scope.row.sopMaintenance) }}
           </el-button>
           <span v-else>-</span>
         </template>
       </el-table-column>
       <el-table-column label="维修文件" align="center" prop="sopRepair">
         <template #default="scope">
-          <!-- 调用 formatFileInfo 处理文件信息 -->
           <div v-if="scope.row.sopRepair && scope.row.sopRepair !== ''">
-            <!-- 遍历格式化后的文件信息 -->
-            <div v-for="(file, index) in parseFileInfo(scope.row.sopRepair)" :key="index">
-              <el-button @click="handlePreview2(scope.row.sopRepair, index, scope.row.sopNum, scope.row.sopName)"
+            <!-- 显示截取后的文件列表 -->
+            <div v-for="(file, index) in getVisibleFiles(scope.row)" :key="index">
+              <el-button @click="handlePreview(scope.row.sopRepair, index, scope.row.sopNum, scope.row.deviceName)"
                 style="margin-bottom: 5px; display: block;">
                 {{ file }}
               </el-button>
             </div>
+            <!-- 只有文件数量 > 5 时才显示展开/收起按钮 -->
+            <el-button v-if="shouldShowToggle(scope.row)" @click="toggleExpand(scope.row)" style="margin-top: 5px;">
+              {{ expandedRows[scope.row.sopNum] ? '收起' : '展开' }}
+            </el-button>
           </div>
           <span v-else>-</span>
         </template>
@@ -114,7 +117,7 @@
           <file-upload :limit="1" v-model="form.sopMaintenance" />
         </el-form-item>
         <el-form-item label="维修文件" prop="sopRepair">
-          <file-upload v-model="form.sopRepair" />
+          <file-upload :limit="50" v-model="form.sopRepair" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -125,7 +128,7 @@
       </template>
     </el-dialog>
 
-    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%" :before-close="handleClose">
+    <el-drawer :title="drawerTitle" v-model="openDrawer" size="40%">
       <vue-office-docx v-if="showDocx" :src="drawerUrl" style="height: 100vh;" @rendered="renderedHandler"
         @error="errorHandler" />
       <vue-office-excel v-if="showExcel" :src="drawerUrl" style="height: 100vh;" />
@@ -173,7 +176,7 @@ const router = useRouter();
 const currentUserName = ref("");
 const currentUserId = ref(0);
 
-var routerDeviceNum = route.query.deviceNum;
+var routerDeviceNum = route.query.sopNum;
 
 const data = reactive({
   form: {},
@@ -197,7 +200,7 @@ const { queryParams, form, rules, formForHistory } = toRefs(data);
 
 const handleRouteParams = () => {
   if (routerDeviceNum) {
-    console.log('跳转进入---→Received deviceNum:', routerDeviceNum);
+    console.log('跳转进入---→Received sopNum:', routerDeviceNum);
     data.queryParams.sopNum = routerDeviceNum;
     getList(); // 假设需要根据路由参数重新获取列表数据
   } else {
@@ -207,16 +210,86 @@ const handleRouteParams = () => {
 };
 
 
-watch(() => ({ deviceNum: route.query.deviceNum, from: route.query.from }),
+watch(() => ({ sopNum: route.query.sopNum, from: route.query.from }),
   (newParams) => {
-    console.log('检测到新参数 deviceNum -->', newParams.deviceNum);
+    console.log('检测到新参数 sopNum -->', newParams.sopNum);
     console.log('检测到新参数 from -->', newParams.from);
     if (newParams.from && newParams.from != 'sop') {
-      routerDeviceNum = newParams.deviceNum;
+      routerDeviceNum = newParams.sopNum;
       handleRouteParams(newParams);
     }
   }
 );
+const expandedRows = reactive({});
+// 格式化文件信息（保留原逻辑）
+function formatFileInfo(fileInfo) {
+  // 如果 fileInfo 无效，直接返回空字符串
+  if (!fileInfo || typeof fileInfo !== 'string') {
+    return '';
+  }
+
+  const filePaths = (fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo]).filter(Boolean); // 过滤空值
+
+  const formattedInfo = filePaths.map(path => {
+    if (!path || typeof path !== 'string') {
+      return '';
+    }
+
+    const fileNameWithExt = path.split && path.includes('/')
+      ? path.split('/').pop()
+      : (path.includes('.') ? path : '');
+
+    if (!fileNameWithExt || !fileNameWithExt.includes('.')) {
+      return ''; // 没有扩展名的无效文件名
+    }
+    const fileName = fileNameWithExt.split && fileNameWithExt.includes('_')
+      ? fileNameWithExt.split('_')[0]
+      : fileNameWithExt.split && !fileNameWithExt.includes('_')
+        ? fileNameWithExt
+        : ''; // 如果没有 '_', 整个作为文件名
+
+    const fileExt = fileNameWithExt.split && fileNameWithExt.includes('.')
+      ? fileNameWithExt.split('.').pop()
+      : '';
+
+    const uploadDateMatch = path.match ? path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//) : null;
+    const formattedDate = uploadDateMatch
+      ? `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+      : '';
+
+    return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
+  })
+    .filter(item => item) // 去除空字符串
+    .join('<br>');
+
+  return formattedInfo;
+}
+
+// 解析文件信息为格式化后的数组（保留原逻辑）
+function parseFileInfo(fileInfo) {
+  const formattedInfo = formatFileInfo(fileInfo);
+  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
+}
+
+// 获取当前行中应显示的文件数组
+const getVisibleFiles = (row) => {
+  const files = parseFileInfo(row.sopRepair);
+  const isExpanded = expandedRows[row.sopNum] || false;
+  const visibleCount = isExpanded ? files.length : 5; // 默认显示前5个
+  return files.slice(0, visibleCount);
+};
+
+// 判断当前行是否需要显示“展开/收起”按钮
+const shouldShowToggle = (row) => {
+  const files = parseFileInfo(row.sopRepair);
+  return files.length > 5;
+};
+
+// 切换当前行的展开状态
+const toggleExpand = (row) => {
+  expandedRows[row.sopNum] = !expandedRows[row.sopNum];
+};
+
 
 // 使用 Vue 的生命周期钩子，在组件挂载完成后检查路由参数
 onMounted(() => {
@@ -227,7 +300,7 @@ function handlePreview(input) {
   showDocx.value = false
   showExcel.value = false
   showPdf.value = false
-  const firstFaultFile = input.sopMaintenance.split(',')[0].trim();
+  const firstFaultFile = input.split(',')[0].trim();
   if (firstFaultFile && firstFaultFile.includes('doc')) {
     showDocx.value = true
   } else if (firstFaultFile && firstFaultFile.includes('xl')) {
@@ -243,25 +316,6 @@ function handlePreview(input) {
   openDrawer.value = true
 }
 
-function handlePreview2(input, index, num, name) {
-  // console.log({ input })
-  // console.log({ index })
-  showDocx.value = false
-  showExcel.value = false
-  showPdf.value = false
-  const firstFaultFile = input.split(',')[index].trim();
-  if (firstFaultFile && firstFaultFile.includes('doc')) {
-    showDocx.value = true
-  } else if (firstFaultFile && firstFaultFile.includes('xl')) {
-    showExcel.value = true
-  } else if (firstFaultFile && firstFaultFile.includes('pdf')) {
-    showPdf.value = true
-  }
-  const uploadDateMatch = firstFaultFile.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
-  drawerTitle.value = `${name}(${num})  上传日期：${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
-  drawerUrl.value = `${import.meta.env.VITE_APP_BASE_API}${firstFaultFile}`
-  openDrawer.value = true
-}
 
 // docx作为参数通过父组件传参
 const renderedHandler = () => {
@@ -271,15 +325,15 @@ const errorHandler = () => {
   console.log("渲染失败")
 }
 
-function handleClose(done) {
-  ElMessageBox.confirm(`确认关闭吗?`)
-    .then(() => {
-      openDrawer.value = false
-    })
-    .catch(() => {
-      // catch error
-    })
-}
+// function handleClose(done) {
+//   ElMessageBox.confirm(`确认关闭吗?`)
+//     .then(() => {
+//       openDrawer.value = false
+//     })
+//     .catch(() => {
+//       // catch error
+//     })
+// }
 
 
 function resetGetList() {
@@ -298,40 +352,62 @@ function resetGetList() {
   getList();
 }
 
-function formatFileInfo(fileInfo) {
-  if (fileInfo == '' || fileInfo == null) {
-    return fileInfo;
+function formatFileInfo2(fileInfo) {
+  // 1. 判断 fileInfo 是否有效字符串
+  if (!fileInfo || typeof fileInfo !== 'string') {
+    return '';
   }
 
-  // 判断是否包含逗号（多个文件）
-  const filePaths = fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo];
+  // 2. 安全 split 逗号：判断是否包含逗号再 split
+  const filePaths = fileInfo.includes(',')
+    ? fileInfo.split(',')
+    : [fileInfo];
+
   const formattedInfo = filePaths.map(path => {
-    // 提取文件名（带扩展名）
-    const fileNameWithExt = path.split('/').pop();
+    if (!path || typeof path !== 'string') {
+      return '';
+    }
+    const fileNameWithExt = path.split && path.includes('/')
+      ? path.split('/').pop()
+      : (path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path);
+    if (!fileNameWithExt || typeof fileNameWithExt !== 'string') {
+      return '';
+    }
 
-    // 去掉文件名中的时间戳部分
-    const fileName = fileNameWithExt.split('_')[0]; // 取第一部分作为文件名
-    const fileExt = fileNameWithExt.split('.').pop(); // 获取文件扩展名
+    const fileName = fileNameWithExt.split && fileNameWithExt.includes('_')
+      ? fileNameWithExt.split('_')[0]
+      : (fileNameWithExt.indexOf('_') > -1
+        ? fileNameWithExt.substring(0, fileNameWithExt.indexOf('_'))
+        : fileNameWithExt.replace(/\.\w+$/, '')); // 没有下划线，则取全名（去扩展名前）
 
-    // 提取上传日期
-    const uploadDateMatch = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+    const lastDotIndex = fileNameWithExt.lastIndexOf('.');
+    const fileExt = lastDotIndex > -1 && lastDotIndex < fileNameWithExt.length - 1
+      ? fileNameWithExt.substring(lastDotIndex + 1)
+      : '';
+
+    const uploadDateMatch = path && typeof path === 'string'
+      ? path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//)
+      : null;
+
     let formattedDate = '';
     if (uploadDateMatch) {
-      // 组合上传日期
       formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
     }
-    // 返回格式化后的字符串，用 [] 括起来
+
+    // 返回格式化字符串
     return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
-  }).join('<br>'); // 如果有多个文件
+  })
+    .filter(item => item) // 过滤空字符串
+    .join('<br>');
+
   return formattedInfo;
 }
-
-function parseFileInfo(fileInfo) {
-  // 调用 formatFileInfo 格式化文件信息
-  const formattedInfo = formatFileInfo(fileInfo);
-  // 将格式化后的字符串按 <br> 拆分为数组
-  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
-}
+// function parseFileInfo(fileInfo) {
+//   // 调用 formatFileInfo 格式化文件信息
+//   const formattedInfo = formatFileInfo2(fileInfo);
+//   // 将格式化后的字符串按 <br> 拆分为数组
+//   return formattedInfo.split('<br>').filter(item => item.trim() !== '');
+// }
 
 /** 查询SOP文件管理列表 */
 function getList() {

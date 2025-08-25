@@ -114,10 +114,13 @@ public class PaymentListener implements ReadListener<SupplierPayment> {
     private int calculatePaymentScore(SupplierPayment supplierPayment) {
         // 优先检查备注中是否包含特殊字样
         String remark = supplierPayment.getRemark();
+        String paymentTerms = supplierPayment.getPaymentTerms();
         if (remark != null && (remark.contains("平衡重") || remark.contains("第三方"))) {
             return 80;
         }
-
+        if (remark == null && paymentTerms == null ) {
+            return 0;
+        }
         // 定义所有可能的付款条件和对应分数
         Map<String, Integer> paymentRules = new HashMap<>();
 

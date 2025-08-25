@@ -65,16 +65,19 @@
       <el-table-column label="档案类型" align="center" prop="fileType" width="160" />
       <el-table-column label="文件信息" align="center" prop="fileInfoRepair">
         <template #default="scope">
-          <!-- 调用 formatFileInfo 处理文件信息 -->
           <div v-if="scope.row.fileInfoRepair && scope.row.fileInfoRepair !== ''">
-            <!-- 遍历格式化后的文件信息 -->
-            <div v-for="(file, index) in parseFileInfo(scope.row.fileInfoRepair)" :key="index">
+            <!-- 显示截取后的文件列表 -->
+            <div v-for="(file, index) in getVisibleFiles(scope.row)" :key="index">
               <el-button
                 @click="handlePreview(scope.row.fileInfoRepair, index, scope.row.deviceNum, scope.row.deviceName)"
                 style="margin-bottom: 5px; display: block;">
                 {{ file }}
               </el-button>
             </div>
+            <!-- 只有文件数量 > 5 时才显示展开/收起按钮 -->
+            <el-button v-if="shouldShowToggle(scope.row)" @click="toggleExpand(scope.row)" style="margin-top: 5px;">
+              {{ expandedRows[scope.row.deviceNum] ? '收起' : '展开' }}
+            </el-button>
           </div>
           <span v-else>-</span>
         </template>
@@ -130,7 +133,7 @@
           <file-upload :limit="1" v-model="form.fileInfo" />
         </el-form-item> -->
         <el-form-item label="文件信息" prop="fileInfoRepair">
-          <file-upload v-model="form.fileInfoRepair" />
+          <file-upload :limit="50" v-model="form.fileInfoRepair" />
         </el-form-item>
         <!-- <el-form-item label="是否是历史版本" prop="ifHistory">
           <el-input v-model="form.ifHistory" placeholder="请输入是否是历史版本" />
@@ -248,6 +251,78 @@ onMounted(() => {
   handleRouteParams();
 });
 
+// 记录每行的展开状态
+const expandedRows = reactive({});
+
+// 格式化文件信息（保留原逻辑）
+function formatFileInfo(fileInfo) {
+  // 如果 fileInfo 无效，直接返回空字符串
+  if (!fileInfo || typeof fileInfo !== 'string') {
+    return '';
+  }
+
+  const filePaths = (fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo]).filter(Boolean); // 过滤空值
+
+  const formattedInfo = filePaths.map(path => {
+    if (!path || typeof path !== 'string') {
+      return '';
+    }
+
+    const fileNameWithExt = path.split && path.includes('/')
+      ? path.split('/').pop()
+      : (path.includes('.') ? path : '');
+
+    if (!fileNameWithExt || !fileNameWithExt.includes('.')) {
+      return ''; // 没有扩展名的无效文件名
+    }
+    const fileName = fileNameWithExt.split && fileNameWithExt.includes('_')
+      ? fileNameWithExt.split('_')[0]
+      : fileNameWithExt.split && !fileNameWithExt.includes('_')
+        ? fileNameWithExt
+        : ''; // 如果没有 '_', 整个作为文件名
+
+    const fileExt = fileNameWithExt.split && fileNameWithExt.includes('.')
+      ? fileNameWithExt.split('.').pop()
+      : '';
+
+    const uploadDateMatch = path.match ? path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//) : null;
+    const formattedDate = uploadDateMatch
+      ? `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`
+      : '';
+
+    return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
+  })
+    .filter(item => item) // 去除空字符串
+    .join('<br>');
+
+  return formattedInfo;
+}
+
+// 解析文件信息为格式化后的数组（保留原逻辑）
+function parseFileInfo(fileInfo) {
+  const formattedInfo = formatFileInfo(fileInfo);
+  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
+}
+
+// 获取当前行中应显示的文件数组
+const getVisibleFiles = (row) => {
+  const files = parseFileInfo(row.fileInfoRepair);
+  const isExpanded = expandedRows[row.deviceNum] || false;
+  const visibleCount = isExpanded ? files.length : 5; // 默认显示前5个
+  return files.slice(0, visibleCount);
+};
+
+// 判断当前行是否需要显示“展开/收起”按钮
+const shouldShowToggle = (row) => {
+  const files = parseFileInfo(row.fileInfoRepair);
+  return files.length > 5;
+};
+
+// 切换当前行的展开状态
+const toggleExpand = (row) => {
+  expandedRows[row.deviceNum] = !expandedRows[row.deviceNum];
+};
+
 function resetGetList() {
   currentStatus.value = '默认';
   queryParams.value = {
@@ -285,47 +360,47 @@ function handlePreview(input, index, num, name) {
   openDrawer.value = true
 }
 
-function parseFileInfo(fileInfo) {
-  // 调用 formatFileInfo 格式化文件信息
-  const formattedInfo = formatFileInfo(fileInfo);
-  // 将格式化后的字符串按 <br> 拆分为数组
-  return formattedInfo.split('<br>').filter(item => item.trim() !== '');
-}
+// function parseFileInfo(fileInfo) {
+//   // 调用 formatFileInfo 格式化文件信息
+//   const formattedInfo = formatFileInfo(fileInfo);
+//   // 将格式化后的字符串按 <br> 拆分为数组
+//   return formattedInfo.split('<br>').filter(item => item.trim() !== '');
+// }
 
 getInfo().then(result => {
   currentUserId.value = result.user.userId
   currentUserName.value = result.user.userName
 })
 
-function formatFileInfo(fileInfo) {
-  if (fileInfo == '' || fileInfo == null) {
-    return fileInfo;
-  }
+// function formatFileInfo(fileInfo) {
+//   if (fileInfo == '' || fileInfo == null) {
+//     return fileInfo;
+//   }
 
-  // 判断是否包含逗号（多个文件）
-  const filePaths = fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo];
-  const formattedInfo = filePaths.map(path => {
-    // 提取文件名（带扩展名）
-    const fileNameWithExt = path.split('/').pop();
+//   // 判断是否包含逗号（多个文件）
+//   const filePaths = fileInfo.includes(',') ? fileInfo.split(',') : [fileInfo];
+//   const formattedInfo = filePaths.map(path => {
+//     // 提取文件名（带扩展名）
+//     const fileNameWithExt = path.split('/').pop();
 
-    // 去掉文件名中的时间戳部分
-    const fileName = fileNameWithExt.split('_')[0]; // 取第一部分作为文件名
-    const fileExt = fileNameWithExt.split('.').pop(); // 获取文件扩展名
+//     // 去掉文件名中的时间戳部分
+//     const fileName = fileNameWithExt.split('_')[0]; // 取第一部分作为文件名
+//     const fileExt = fileNameWithExt.split('.').pop(); // 获取文件扩展名
 
-    // 提取上传日期
-    const uploadDateMatch = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
-    let formattedDate = '';
-    if (uploadDateMatch) {
-      // 组合上传日期
-      formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
-    }
+//     // 提取上传日期
+//     const uploadDateMatch = path.match(/\/(\d{4})\/(\d{2})\/(\d{2})\//);
+//     let formattedDate = '';
+//     if (uploadDateMatch) {
+//       // 组合上传日期
+//       formattedDate = `${uploadDateMatch[1]}/${uploadDateMatch[2]}/${uploadDateMatch[3]}`;
+//     }
 
-    // 返回格式化后的字符串，用 [] 括起来
-    return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
-  }).join('<br>'); // 如果有多个文件
+//     // 返回格式化后的字符串，用 [] 括起来
+//     return `{文件名：${fileName}.${fileExt} 上传日期：${formattedDate}}`;
+//   }).join('<br>'); // 如果有多个文件
 
-  return formattedInfo;
-}
+//   return formattedInfo;
+// }
 
 
 /** 查询设备基础档案列表 */
