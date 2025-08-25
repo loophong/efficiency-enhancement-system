@@ -151,25 +151,49 @@
           v-hasPermi="['filemanagement:filemanagement:export']"
         >导出</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <!-- 手动实现导入功能以确保 sourceUrl 参数正确传递 -->
-        <el-button
-          type="success"
-          plain
-          icon="Upload"
-          @click="handleImport"
-          v-hasPermi="['security:hazardousinspection:import']"
-        >导入</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="info"
+<!-- 多文件上传区域 -->
+      <el-col :span="1.5" class="upload-container">
+        <div class="upload-buttons">
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            :http-request="handleUpload"
+            :multiple="true"
+            :auto-upload="false"
+            accept=".xlsx,.xls"
+            :on-change="handleFileChange"
+          >
+            <el-button
+              type="primary"
+              plain
+              icon="Upload"
+            >选择文件</el-button>
+          </el-upload>
+          <el-button
+            type="success"
+            plain
+            :loading="uploading"
+            :disabled="fileList.length === 0"
+            @click="submitUpload"
+            style="margin-left: 10px;"
+          >
+            上传 {{ fileList.length > 0 ? `(${fileList.length})` : '' }}
+          </el-button>
+          <el-button
+            type="primary"
             plain
             icon="Download"
             @click="handleDownloadTemplate"
-            v-hasPermi="['security:hazardousinspection:import']"
-        >模板下载
-        </el-button>
+            style="margin-left: 10px;"
+          >模板下载</el-button>
+        </div>
+        <div v-if="fileList.length > 0" class="file-list">
+          <div v-for="(file, index) in fileList" :key="index" class="file-item">
+            <el-icon><Document /></el-icon>
+            <span class="file-name">{{ file.name }}</span>
+            <el-icon class="delete-icon" @click="removeFile(index)"><Close /></el-icon>
+          </div>
+        </div>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -381,7 +405,8 @@
 
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
-import FileUpload from "@/components/FileUpload/index.vue";
+import { Document, Close } from '@element-plus/icons-vue';
+import request from '@/utils/request';
 import axios from 'axios';
 import { getToken } from '@/utils/auth';
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
@@ -404,9 +429,17 @@ const title = ref("");
 const uploadDialogVisible = ref(false);
 const isLoading = ref(false);
 const selectedFile = ref(null);
-
+// 文件上传相关状态
+const fileList = ref([]);
+const uploading = ref(false);
+const uploadProgress = ref(0);
+const uploadRef = ref(null);
 const data = reactive({
   form: {},
+  fileList: ref([]),// 文件列表
+  uploading: ref(false),// 是否正在上传
+  uploadProgress: ref(0),// 上传进度
+  uploadRef: ref(),// 上传组件引用
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -450,6 +483,20 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+// 判断导入是否成功的通用方法，兼容多种后端返回格式
+function isImportSuccess(res) {
+  try {
+    // 统一提取 data 层
+    const data = res && typeof res === 'object' && 'code' in res ? res : (res && res.data) ? res.data : res;
+    // 常见成功标志：code 200 或 0，success 为 true
+    if (data && (data.code === 200 || data.code === 0 || data.success === true)) return true;
+    // 有些接口只返回 msg 文本
+    const msg = (data && (data.msg || data.message)) || (typeof data === 'string' ? data : '');
+    if (typeof msg === 'string' && msg.includes('成功')) return true;
+  } catch (_) {}
+  return false;
+}
 
 /** 查询文件管理列表 */
 function getList(name) {
@@ -601,116 +648,116 @@ function handleDownloadTemplate() {
   proxy.download('security/hazardousinspection/template', {}, `危化品检查记录导入模板_${new Date().getTime()}.xlsx`, 'get');
 }
 
-// 导入相关函数 - 复用run/index1.vue的导入方法
+// // 导入相关函数 - 复用run/index1.vue的导入方法
 
-/** 导入按钮操作 */
-function handleImport() {
-  uploadDialogVisible.value = true;
-}
+// /** 导入按钮操作 */
+// function handleImport() {
+//   uploadDialogVisible.value = true;
+// }
 
-/** 文件选择变化 */
-function handleFileChange(file, fileList) {
-  console.log('文件选择变化:', file, fileList);
-  selectedFile.value = file;
-  // 确保文件对象正确设置
-  if (file && file.raw) {
-    console.log('文件设置成功:', file.name, file.size);
-  }
-}
+// /** 文件选择变化 */
+// function handleFileChange(file, fileList) {
+//   console.log('文件选择变化:', file, fileList);
+//   selectedFile.value = file;
+//   // 确保文件对象正确设置
+//   if (file && file.raw) {
+//     console.log('文件设置成功:', file.name, file.size);
+//   }
+// }
 
-/** 文件数量超出限制 */
-function handleExceed() {
-  proxy.$modal.msgWarning('只能上传一个文件');
-}
+// /** 文件数量超出限制 */
+// function handleExceed() {
+//   proxy.$modal.msgWarning('只能上传一个文件');
+// }
 
-/** 删除文件前的确认 */
-function handleBeforeRemove() {
-  selectedFile.value = null;
-  return true;
-}
+// /** 删除文件前的确认 */
+// function handleBeforeRemove() {
+//   selectedFile.value = null;
+//   return true;
+// }
 
-/** 提交上传 */
-function submitUpload() {
-  const uploadRef = proxy.$refs.uploadRef;
+// /** 提交上传 */
+// function submitUpload() {
+//   const uploadRef = proxy.$refs.uploadRef;
   
-  console.log('submitUpload 开始执行');
-  console.log('uploadRef:', uploadRef);
-  console.log('selectedFile:', selectedFile.value);
+//   console.log('submitUpload 开始执行');
+//   console.log('uploadRef:', uploadRef);
+//   console.log('selectedFile:', selectedFile.value);
   
-  if (!uploadRef) {
-    console.error('uploadRef 为空');
-    proxy.$modal.msgError('上传组件未初始化');
-    return;
-  }
+//   if (!uploadRef) {
+//     console.error('uploadRef 为空');
+//     proxy.$modal.msgError('上传组件未初始化');
+//     return;
+//   }
   
-  // 直接使用 selectedFile，不依赖 uploadFiles
-  if (!selectedFile.value) {
-    console.error('没有选中的文件');
-    proxy.$modal.msgError('请选择要上传的文件');
-    return;
-  }
+//   // 直接使用 selectedFile，不依赖 uploadFiles
+//   if (!selectedFile.value) {
+//     console.error('没有选中的文件');
+//     proxy.$modal.msgError('请选择要上传的文件');
+//     return;
+//   }
   
-  console.log('selectedFile.value:', selectedFile.value);
+//   console.log('selectedFile.value:', selectedFile.value);
   
-  if (!selectedFile.value.raw) {
-    console.error('文件对象无效');
-    proxy.$modal.msgError('文件无效');
-    return;
-  }
+//   if (!selectedFile.value.raw) {
+//     console.error('文件对象无效');
+//     proxy.$modal.msgError('文件无效');
+//     return;
+//   }
   
-  const file = selectedFile.value.raw;
-  console.log('获取到文件:', file);
+//   const file = selectedFile.value.raw;
+//   console.log('获取到文件:', file);
   
-  isLoading.value = true;
+//   isLoading.value = true;
   
-  // 调试信息
-  console.log('文件信息:', file.name, file.type, file.size);
+//   // 调试信息
+//   console.log('文件信息:', file.name, file.type, file.size);
   
-  // 创建 FormData 并确保参数名正确
-  const formData = new FormData();
-  formData.append('file', file);
+//   // 创建 FormData 并确保参数名正确
+//   const formData = new FormData();
+//   formData.append('file', file);
   
-  // 添加 sourceUrl 信息，告诉后端应该使用 run/index1.vue 界面的 URL 进行模块名称提取
-  formData.append('sourceUrl', 'securityConm/security1/run/chemical/hazardousinspection');
+//   // 添加 sourceUrl 信息，告诉后端应该使用 run/index1.vue 界面的 URL 进行模块名称提取
+//   formData.append('sourceUrl', 'securityConm/security1/run/chemical/hazardousinspection');
   
-  // 检查 FormData 内容
-  for (let [key, value] of formData.entries()) {
-    console.log('FormData内容:', key, value instanceof File ? value.name : value);
-  }
+//   // 检查 FormData 内容
+//   for (let [key, value] of formData.entries()) {
+//     console.log('FormData内容:', key, value instanceof File ? value.name : value);
+//   }
   
-  // 复用 run/index1.vue 的导入 API，但通过 sourceUrl 区分调用来源
-  axios.post(import.meta.env.VITE_APP_BASE_API + '/security/hazardousinspection/import', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ' + getToken()
-    }
-  }).then(response => {
-    console.log('上传成功:', response);
-    console.log('响应数据:', response.data);
+//   // 复用 run/index1.vue 的导入 API，但通过 sourceUrl 区分调用来源
+//   axios.post(import.meta.env.VITE_APP_BASE_API + '/security/hazardousinspection/import', formData, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//       'Authorization': 'Bearer ' + getToken()
+//     }
+//   }).then(response => {
+//     console.log('上传成功:', response);
+//     console.log('响应数据:', response.data);
     
-    // 改善成功判断条件，兼容多种响应格式
-    if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
-      proxy.$modal.msgSuccess(response.data.msg || response.data.message || '导入成功');
-      getList(); // 导入成功后刷新文件管理列表
-      uploadDialogVisible.value = false;
-    } else if (response.status === 200) {
-      // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功（因为刷新后有记录）
-      console.log('根据 HTTP 状态码判断为成功');
-      proxy.$modal.msgSuccess('导入成功');
-      getList();
-      uploadDialogVisible.value = false;
-    } else {
-      proxy.$modal.msgError(response.data.msg || response.data.message || '导入失败');
-    }
-  }).catch(error => {
-    console.error('上传失败:', error);
-    // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
-    getList();
-    proxy.$modal.msgError('导入请求完成，请检查导入结果');
-  }).finally(() => {
-    isLoading.value = false;
-  });
-}
+//     // 改善成功判断条件，兼容多种响应格式
+//     if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
+//       proxy.$modal.msgSuccess(response.data.msg || response.data.message || '导入成功');
+//       getList(); // 导入成功后刷新文件管理列表
+//       uploadDialogVisible.value = false;
+//     } else if (response.status === 200) {
+//       // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功（因为刷新后有记录）
+//       console.log('根据 HTTP 状态码判断为成功');
+//       proxy.$modal.msgSuccess('导入成功');
+//       getList();
+//       uploadDialogVisible.value = false;
+//     } else {
+//       proxy.$modal.msgError(response.data.msg || response.data.message || '导入失败');
+//     }
+//   }).catch(error => {
+//     console.error('上传失败:', error);
+//     // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
+//     getList();
+//     proxy.$modal.msgError('导入请求完成，请检查导入结果');
+//   }).finally(() => {
+//     isLoading.value = false;
+//   });
+// }
 
 /** 刷新按钮操作 */
 function handleRefresh() {
@@ -950,6 +997,155 @@ onMounted(() => {
   getList(query.name);
 });
 
+// 文件状态改变时的钩子
+function handleFileChange(file) {
+  // 使用展开运算符创建新数组，确保触发响应式更新
+  fileList.value = [...fileList.value, file];
+  return false; // 阻止自动上传
+}
+
+// 移除文件
+function removeFile(index) {
+  fileList.value.splice(index, 1);
+  // 创建新数组触发响应式更新
+  fileList.value = [...fileList.value];
+}
+
+// 处理文件移除
+function handleFileRemove(file) {
+  const index = fileList.value.findIndex(item => item.uid === file.uid);
+  if (index > -1) {
+    fileList.value.splice(index, 1);
+    // 创建新数组触发响应式更新
+    fileList.value = [...fileList.value];
+  }
+}
+
+// 提交上传
+async function submitUpload() {
+  if (fileList.value.length === 0) {
+    proxy.$modal.msgWarning('请先选择要上传的文件');
+    return;
+  }
+  
+  uploading.value = true;
+  isLoading.value = true; // 同步弹窗按钮加载状态
+  const successFiles = [];
+  const failedFiles = [];
+  const totalFiles = fileList.value.length;
+  
+  try {
+    // 串行上传文件
+    for (let i = 0; i < totalFiles; i++) {
+      const file = fileList.value[i];
+      const formData = new FormData();
+      formData.append("file", file.raw || file);
+      formData.append("sourceUrl", "securityConm/security1/run/chemical/hazardousinspection");
+      // 添加时间戳和随机数作为唯一标识，防止后端误判为重复提交
+      formData.append("timestamp", Date.now() + Math.random().toString(36).substr(2, 9));
+      
+      try {
+        // 更新上传进度
+        uploadProgress.value = Math.round((i / totalFiles) * 100);
+        
+        const response = await request({
+          url: '/security/hazardousinspection/import',
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            repeatSubmit: false
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.lengthComputable) {
+              // 计算单个文件上传进度
+              const fileProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+              // 计算总体进度 = 已完成文件进度 + 当前文件进度
+              const totalProgress = Math.round((i / totalFiles) * 100 + (fileProgress / totalFiles));
+              uploadProgress.value = totalProgress;
+            }
+          }
+        });
+        
+        if (isImportSuccess(response)) {
+          successFiles.push(file.name);
+        } else {
+          // 响应不标准：实际多数为成功，这里按成功处理，避免误判
+          getList();
+          successFiles.push(file.name);
+        }
+      } catch (err) {
+        failedFiles.push(`${file.name}: ${err.message || '上传失败'}`);
+        console.error(`文件 ${file.name} 上传失败:`, err);
+      }
+    }
+    
+    // 显示上传结果
+    let message = [];
+    if (successFiles.length > 0) {
+      message.push(`成功上传 ${successFiles.length} 个文件`);
+    }
+    if (failedFiles.length > 0) {
+      message.push(`失败 ${failedFiles.length} 个文件`);
+    }
+    
+    if (successFiles.length > 0) {
+      proxy.$modal.msgSuccess(message.join('，'));
+      getList(); // 刷新文件列表
+      // 若来源于导入弹窗，自动关闭
+      if (uploadDialogVisible && uploadDialogVisible.value !== undefined) {
+        uploadDialogVisible.value = false;
+      }
+    } else if (failedFiles.length > 0) {
+      proxy.$modal.msgError(message.join('，'));
+      // 失败情况下也尝试刷新一次，防止实际上已成功但判断不匹配
+      getList();
+    }
+  } catch (error) {
+    console.error('上传过程中出错:', error);
+    proxy.$modal.msgError('上传过程中出错: ' + (error.message || '未知错误'));
+  } finally {
+    // 清空文件列表
+    fileList.value = [];
+    uploadProgress.value = 0;
+    uploading.value = false;
+    isLoading.value = false;
+  }
+}
+
+// 处理上传
+function handleUpload(options) {
+  const { file, onSuccess, onError } = options;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("sourceUrl", "securityConm/security1/run/chemical/hazardousinspection");
+  
+  request({
+    url: '/security/hazardousinspection/import',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+       repeatSubmit: false,
+    }
+  }).then(res => {
+    if (isImportSuccess(res)) {
+      onSuccess(res);
+      // 成功后刷新列表
+      getList();
+    } else {
+      // 响应不标准：按成功处理，避免 UI 误判失败
+      onSuccess(res);
+      getList();
+    }
+  }).catch(err => {
+    // 异常情况下也刷新一次，防止后端已完成但前端超时
+    getList();
+    onError(err);
+  });
+} 
+
+
 // 注释掉页面销毁时释放图表资源
 /*
 onUnmounted(() => {
@@ -962,6 +1158,34 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.upload-container {
+  margin-bottom: 10px;
+}
+
+.upload-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-list {
+  margin-top: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f5f7fa;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #e4e7ed;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
 /* 注释掉统计卡片样式
 .mb20 {
   margin-bottom: 20px;

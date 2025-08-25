@@ -102,12 +102,11 @@ public class SecutityLegalRegulationsIdentificationList1ServiceImpl implements I
             log.info("开始读取文件: {}", originalFilename);
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecutityLegalRegulationsIdentificationList1.class,
-                        new SecutityLegalRegulationsIdentificationListListener1(secutityLegalRegulationsIdentificationList1Mapper)).headRowNumber(6).sheet().doRead();
+                        new SecutityLegalRegulationsIdentificationListListener1(secutityLegalRegulationsIdentificationList1Mapper)).headRowNumber(1).sheet().doRead();
                 log.info("读取文件成功: {}", originalFilename);
             } catch (Exception e) {
                 log.info("读取文件失败: {}", e.getMessage());
             }
-
         }catch (Exception e){
             e.printStackTrace();
             log.error("读取 " + originalFilename + " 文件失败, 原因: {}", e.getMessage());

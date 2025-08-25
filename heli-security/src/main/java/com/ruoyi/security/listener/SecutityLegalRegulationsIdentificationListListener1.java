@@ -2,6 +2,7 @@ package com.ruoyi.security.listener;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
+import com.alibaba.excel.exception.ExcelDataConvertException;
 import com.ruoyi.security.domain.SecutityLegalRegulationsIdentificationList1;
 import com.ruoyi.security.mapper.SecutityLegalRegulationsIdentificationList1Mapper;
 import lombok.extern.slf4j.Slf4j;
@@ -9,25 +10,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public class SecutityLegalRegulationsIdentificationListListener1 implements ReadListener<SecutityLegalRegulationsIdentificationList1> {
-    @Autowired
-    private SecutityLegalRegulationsIdentificationList1Mapper secutityLegalRegulationsIdentificationList1Mapper;
+	@Autowired
+	private SecutityLegalRegulationsIdentificationList1Mapper secutityLegalRegulationsIdentificationList1Mapper;
 
-    public SecutityLegalRegulationsIdentificationListListener1(SecutityLegalRegulationsIdentificationList1Mapper secutityLegalRegulationsIdentificationList1Mapper)
-    {
-        this.secutityLegalRegulationsIdentificationList1Mapper = secutityLegalRegulationsIdentificationList1Mapper;
-    }
+	public SecutityLegalRegulationsIdentificationListListener1(SecutityLegalRegulationsIdentificationList1Mapper secutityLegalRegulationsIdentificationList1Mapper)
+	{
+		this.secutityLegalRegulationsIdentificationList1Mapper = secutityLegalRegulationsIdentificationList1Mapper;
+	}
 
-    public void invoke(SecutityLegalRegulationsIdentificationList1 registerInfoExcel, AnalysisContext analysisContext)
-    {
-        log.info("解析到一条数据:{}", registerInfoExcel);
-        if (registerInfoExcel.getId() != null)
-        {
-            secutityLegalRegulationsIdentificationList1Mapper.insertSecutityLegalRegulationsIdentificationList1(registerInfoExcel);
-        }
-    }
+	public void invoke(SecutityLegalRegulationsIdentificationList1 registerInfoExcel, AnalysisContext analysisContext)
+	{
+		log.info("解析到一条数据:{}", registerInfoExcel);
+		secutityLegalRegulationsIdentificationList1Mapper.insertSecutityLegalRegulationsIdentificationList1(registerInfoExcel);
+	}
 
-    public void doAfterAllAnalysed(AnalysisContext analysisContext)
-    {
-        log.info("所有数据解析完成");
-    }
+	public void doAfterAllAnalysed(AnalysisContext analysisContext)
+	{
+		log.info("所有数据解析完成");
+	}
+
+	@Override
+	public void onException(Exception exception, AnalysisContext context) throws Exception {
+		Integer rowIndex = context.readRowHolder() != null ? context.readRowHolder().getRowIndex() : null;
+		if (exception instanceof ExcelDataConvertException) {
+			ExcelDataConvertException e = (ExcelDataConvertException) exception;
+			Integer columnIndex = e.getColumnIndex();
+			log.error("数据转换异常: 行={}, 列={}, 原因={}", rowIndex, columnIndex, e.getMessage());
+		} else {
+			log.error("读取异常: 行={}, 原因={}", rowIndex, exception.getMessage());
+		}
+		// 不中断读取，跳过该单元格/行
+	}
 }

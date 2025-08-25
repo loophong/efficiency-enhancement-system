@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.security.domain.SecurityRequireExpectParty;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,21 +68,6 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
         return getDataTable(list);
     }
 
-    /**
-     * 查询环境识别树列表
-     */
-    @PreAuthorize("@ss.hasPermi('security:environmentidicaation:list')")
-    @GetMapping("/treeList")
-    public AjaxResult treeList(SecurityEnvironmentalOrganizationDescription securityEnvironmentalOrganizationDescription)
-    {
-        // 构建树形结构
-        List<SecurityEnvironmentalOrganizationDescription> list = securityEnvironmentalOrganizationDescriptionService.buildTreeList(securityEnvironmentalOrganizationDescription);
-        if (list.isEmpty()) {
-            return AjaxResult.success(new ArrayList<>());
-        }
-        
-        return success(list);
-    }
 
     /**
      * 导出环境识别列表（自定義合併功能）
@@ -314,30 +300,6 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
             // 使用原有逻辑导入数据
             ExcelUtil<SecurityEnvironmentalOrganizationDescription> util = new ExcelUtil<>(SecurityEnvironmentalOrganizationDescription.class);
             List<SecurityEnvironmentalOrganizationDescription> list = util.importExcel(file.getInputStream());
-            
-            // 自动补齐环境字段
-            String lastEnv = null;
-            for (SecurityEnvironmentalOrganizationDescription item : list) {
-                if (item == null) continue;
-                
-                // 处理环境字段
-                if (item.getEnvironment() != null && !item.getEnvironment().trim().isEmpty()) {
-                    lastEnv = item.getEnvironment();
-                } else {
-                    item.setEnvironment(lastEnv);
-                }
-                
-                // 设置创建时间
-                if (item.getCreateTime() == null) {
-                    item.setCreateTime(DateUtils.getNowDate());
-                }
-                
-                // 初始化父ID为0(顶级节点)
-                if (item.getParentId() == null) {
-                    item.setParentId(0L);
-                }
-            }
-            
             // 过滤有效行
             List<SecurityEnvironmentalOrganizationDescription> validList = list.stream()
                 .filter(item -> item != null && (
@@ -350,7 +312,25 @@ public class SecurityEnvironmentalOrganizationDescriptionController extends Base
             if (validList.isEmpty()) {
                 return AjaxResult.error("导入失败：无有效数据");
             }
-            
+            //处理内部环境的单元格合并
+            // 按顺序处理数据，保持Excel中的顺序
+            String currentPartyInvolved = null;
+
+
+            for (SecurityEnvironmentalOrganizationDescription item : validList) {
+                // 处理相关方类型的合并单元格
+                if (item.getEnvironment() == null || item.getEnvironment().trim().isEmpty()) {
+                    if (currentPartyInvolved != null) {
+                        item.setEnvironment(currentPartyInvolved);
+                    } else {
+                        // 如果没有前一个值，跳过这一行
+                        continue;
+                    }
+                } else {
+                    currentPartyInvolved = item.getEnvironment();
+                }
+            }
+
             // 插入数据
             int successCount = 0;
             for (SecurityEnvironmentalOrganizationDescription item : validList) {

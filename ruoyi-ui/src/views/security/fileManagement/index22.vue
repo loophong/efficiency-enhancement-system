@@ -160,21 +160,49 @@
         >刷新</el-button>
       </el-col>
       <!-- 复用planning/index00.vue的导入功能 -->
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="Upload"
-          @click="handleImport"
-        >导入</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Download"
-          @click="handleDownloadTemplate"
-        >下载模板</el-button>
+  <!-- 多文件上传区域 -->
+      <el-col :span="1.5" class="upload-container">
+        <div class="upload-buttons">
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            :http-request="handleUpload"
+            :multiple="true"
+            :auto-upload="false"
+            accept=".xlsx,.xls"
+            :on-change="handleFileChange"
+          >
+            <el-button
+              type="primary"
+              plain
+              icon="Upload"
+            >选择文件</el-button>
+          </el-upload>
+          <el-button
+            type="success"
+            plain
+            :loading="uploading"
+            :disabled="fileList.length === 0"
+            @click="submitUpload"
+            style="margin-left: 10px;"
+          >
+            上传 {{ fileList.length > 0 ? `(${fileList.length})` : '' }}
+          </el-button>
+          <el-button
+            type="primary"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            style="margin-left: 10px;"
+          >模板下载</el-button>
+        </div>
+        <div v-if="fileList.length > 0" class="file-list">
+          <div v-for="(file, index) in fileList" :key="index" class="file-item">
+            <el-icon><Document /></el-icon>
+            <span class="file-name">{{ file.name }}</span>
+            <el-icon class="delete-icon" @click="removeFile(index)"><Close /></el-icon>
+          </div>
+        </div>
       </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
@@ -379,17 +407,20 @@
 <script setup name="Filemanagement">
 import { listFilemanagement, getFilemanagement, delFilemanagement, addFilemanagement, updateFilemanagement, getFileStatistics, getFileMonitorData } from "@/api/security/filemanagement";
 // 复用planning/index00.vue的导入API
-import { importHealthAndSafetyGoals } from "@/api/security/HealthAndSafetyGoals";
-import FileUpload from "@/components/FileUpload/index.vue";
+import { Document, Close } from '@element-plus/icons-vue';
+import request from '@/utils/request';
 import { onMounted, ref, reactive, toRefs, onUnmounted, getCurrentInstance } from 'vue';
-import axios from 'axios';
-import { getToken } from "@/utils/auth";
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
 const { proxy } = getCurrentInstance();
 // 注释掉文件分类字典
 // const { file_category } = proxy.useDict('file_category');
+// 文件上传相关状态
+const fileList = ref([]);
+const uploading = ref(false);
+const uploadProgress = ref(0);
+const uploadRef = ref(null);
 
 const filemanagementList = ref([]);
 const open = ref(false);
@@ -423,6 +454,10 @@ let moduleChart = null;
 
 const data = reactive({
   form: {},
+  fileList: ref([]),// 文件列表
+  uploading: ref(false),// 是否正在上传
+  uploadProgress: ref(0),// 上传进度
+  uploadRef: ref(),// 上传组件引用
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -866,30 +901,30 @@ function handleDownloadTemplate() {
   }
 }
 
-/** 上传文件超出数量限制 - 复用planning/index00.vue */
-function handleExceed() {
-  proxy.$modal.msgError("最多只能上传一个文件！");
-}
+// /** 上传文件超出数量限制 - 复用planning/index00.vue */
+// function handleExceed() {
+//   proxy.$modal.msgError("最多只能上传一个文件！");
+// }
 
-/** 文件选择变更 - 复用planning/index00.vue */
-function handleFileChange(file) {
-  console.log('文件选择变更:', file);
-  if (file) {
-    const fileName = file.name;
-    const fileExt = fileName.split(".").pop().toLowerCase();
-    if (fileExt !== "xlsx" && fileExt !== "xlsm" && fileExt !== "xls") {
-      proxy.$modal.msgError("只能上传 Excel 文件！");
-      if (proxy.$refs.uploadRef) {
-        proxy.$refs.uploadRef.clearFiles();
-      }
-      selectedFile.value = null;
-      return false;
-    }
-    selectedFile.value = file;
-    return true;
-  }
-  return false;
-}
+// /** 文件选择变更 - 复用planning/index00.vue */
+// function handleFileChange(file) {
+//   console.log('文件选择变更:', file);
+//   if (file) {
+//     const fileName = file.name;
+//     const fileExt = fileName.split(".").pop().toLowerCase();
+//     if (fileExt !== "xlsx" && fileExt !== "xlsm" && fileExt !== "xls") {
+//       proxy.$modal.msgError("只能上传 Excel 文件！");
+//       if (proxy.$refs.uploadRef) {
+//         proxy.$refs.uploadRef.clearFiles();
+//       }
+//       selectedFile.value = null;
+//       return false;
+//     }
+//     selectedFile.value = file;
+//     return true;
+//   }
+//   return false;
+// }
 
 /** 文件移除前的处理 - 复用planning/index00.vue */
 function handleBeforeRemove() {
@@ -907,80 +942,80 @@ function cancelUpload() {
 }
 
 /** excel文件上传 - 复用planning/index00.vue的上传方法，但调用文件管理相关的API */
-function uploadFile() {
-  try {
-    console.log('开始上传文件，selectedFile:', selectedFile.value);
+// function uploadFile() {
+//   try {
+//     console.log('开始上传文件，selectedFile:', selectedFile.value);
     
-    if (!selectedFile.value) {
-      const uploadRef = proxy.$refs.uploadRef;
-      console.log('uploadRef:', uploadRef);
+//     if (!selectedFile.value) {
+//       const uploadRef = proxy.$refs.uploadRef;
+//       console.log('uploadRef:', uploadRef);
       
-      if (!uploadRef || !uploadRef.uploadFiles || uploadRef.uploadFiles.length === 0) {
-        proxy.$modal.msgError("请选择文件");
-        return;
-      }
+//       if (!uploadRef || !uploadRef.uploadFiles || uploadRef.uploadFiles.length === 0) {
+//         proxy.$modal.msgError("请选择文件");
+//         return;
+//       }
       
-      selectedFile.value = uploadRef.uploadFiles[0];
-    }
+//       selectedFile.value = uploadRef.uploadFiles[0];
+//     }
     
-    if (!selectedFile.value || !selectedFile.value.raw) {
-      proxy.$modal.msgError("文件无效");
-      return;
-    }
+//     if (!selectedFile.value || !selectedFile.value.raw) {
+//       proxy.$modal.msgError("文件无效");
+//       return;
+//     }
     
-    isLoading.value = true;
-    const file = selectedFile.value.raw;
+//     isLoading.value = true;
+//     const file = selectedFile.value.raw;
     
-    // 调试信息
-    console.log('文件信息:', file.name, file.type, file.size);
+//     // 调试信息
+//     console.log('文件信息:', file.name, file.type, file.size);
     
-    // 创建FormData并确保参数名正确
-    const formData = new FormData();
-    formData.append('excelFile', file);
+//     // 创建FormData并确保参数名正确
+//     const formData = new FormData();
+//     formData.append('excelFile', file);
     
-    // 添加原始URL信息，告诉后端应该使用planning界面的URL进行模块名称提取
-    formData.append('sourceUrl', 'securityConm/security1/planning/indication/annualcontrol2');
+//     // 添加原始URL信息，告诉后端应该使用planning界面的URL进行模块名称提取
+//     formData.append('sourceUrl', 'securityConm/security1/planning/indication/annualcontrol2');
     
-    // 检查FormData内容
-    for (let [key, value] of formData.entries()) {
-      console.log('FormData内容:', key, value instanceof File ? value.name : value);
-    }
+//     // 检查FormData内容
+//     for (let [key, value] of formData.entries()) {
+//       console.log('FormData内容:', key, value instanceof File ? value.name : value);
+//     }
     
-    // 复用planning/index00.vue的导入API，但通过sourceUrl区分调用来源
-    axios.post(import.meta.env.VITE_APP_BASE_API + '/security/HealthAndSafetyGoals/importData', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ' + getToken()
-      }
-    }).then(response => {
-      console.log('上传成功:', response);
-      if (response.data.code === 200) {
-        proxy.$modal.msgSuccess(response.data.msg || "导入成功");
-        getList(); // 导入成功后刷新文件管理列表
-      } else {
-        proxy.$modal.msgError(response.data.msg || "导入失败");
-      }
-      uploadDialogVisible.value = false;
-      selectedFile.value = null;
-    }).catch(error => {
-      console.error('上传失败:', error);
-      if (error.response && error.response.data && error.response.data.msg) {
-        proxy.$modal.msgError(error.response.data.msg);
-      } else {
-        proxy.$modal.msgError(error.message || "导入失败");
-      }
-    }).finally(() => {
-      isLoading.value = false;
-      if (proxy.$refs.uploadRef) {
-        proxy.$refs.uploadRef.clearFiles();
-      }
-    });
-  } catch (error) {
-    console.error('上传文件出错:', error);
-    proxy.$modal.msgError("上传过程中发生错误");
-    isLoading.value = false;
-  }
-}
+//     // 复用planning/index00.vue的导入API，但通过sourceUrl区分调用来源
+//     axios.post(import.meta.env.VITE_APP_BASE_API + '/security/HealthAndSafetyGoals/importData', formData, {
+//       headers: {
+//         'Content-Type': 'multipart/form-data',
+//         'Authorization': 'Bearer ' + getToken()
+//       }
+//     }).then(response => {
+//       console.log('上传成功:', response);
+//       if (response.data.code === 200) {
+//         proxy.$modal.msgSuccess(response.data.msg || "导入成功");
+//         getList(); // 导入成功后刷新文件管理列表
+//       } else {
+//         proxy.$modal.msgError(response.data.msg || "导入失败");
+//       }
+//       uploadDialogVisible.value = false;
+//       selectedFile.value = null;
+//     }).catch(error => {
+//       console.error('上传失败:', error);
+//       if (error.response && error.response.data && error.response.data.msg) {
+//         proxy.$modal.msgError(error.response.data.msg);
+//       } else {
+//         proxy.$modal.msgError(error.message || "导入失败");
+//       }
+//     }).finally(() => {
+//       isLoading.value = false;
+//       if (proxy.$refs.uploadRef) {
+//         proxy.$refs.uploadRef.clearFiles();
+//       }
+//     });
+//   } catch (error) {
+//     console.error('上传文件出错:', error);
+//     proxy.$modal.msgError("上传过程中发生错误");
+//     isLoading.value = false;
+//   }
+// }
 
 // 页面加载时获取列表数据
 onMounted(() => {
@@ -990,6 +1025,137 @@ onMounted(() => {
   queryParams.value.moduleName = query.name;
   getList(query.name);
 });
+
+// 文件状态改变时的钩子
+function handleFileChange(file) {
+  // 使用展开运算符创建新数组，确保触发响应式更新
+  fileList.value = [...fileList.value, file];
+  return false; // 阻止自动上传
+}
+
+// 移除文件
+function removeFile(index) {
+  fileList.value.splice(index, 1);
+  // 创建新数组触发响应式更新
+  fileList.value = [...fileList.value];
+}
+
+// 处理文件移除
+function handleFileRemove(file) {
+  const index = fileList.value.findIndex(item => item.uid === file.uid);
+  if (index > -1) {
+    fileList.value.splice(index, 1);
+    // 创建新数组触发响应式更新
+    fileList.value = [...fileList.value];
+  }
+}
+
+// 提交上传
+async function submitUpload() {
+  if (fileList.value.length === 0) {
+    proxy.$modal.msgWarning('请先选择要上传的文件');
+    return;
+  }
+  
+  uploading.value = true;
+  const successFiles = [];
+  const failedFiles = [];
+  const totalFiles = fileList.value.length;
+  
+  try {
+    // 串行上传文件
+    for (let i = 0; i < totalFiles; i++) {
+      const file = fileList.value[i];
+      const formData = new FormData();
+      formData.append("excelFile", file.raw || file);
+      formData.append("sourceUrl", "securityConm/security1/planning/indication/annualcontrol2");
+      // 添加时间戳和随机数作为唯一标识，防止后端误判为重复提交
+      formData.append("timestamp", Date.now() + Math.random().toString(36).substr(2, 9));
+      
+      try {
+        // 更新上传进度
+        uploadProgress.value = Math.round((i / totalFiles) * 100);
+        const response = await request({
+          url: '/security/HealthAndSafetyGoals/importData',
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            repeatSubmit: false
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.lengthComputable) {
+              // 计算单个文件上传进度
+              const fileProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+              // 计算总体进度 = 已完成文件进度 + 当前文件进度
+              const totalProgress = Math.round((i / totalFiles) * 100 + (fileProgress / totalFiles));
+              uploadProgress.value = totalProgress;
+            }
+          }
+        });
+        
+        if (response.code === 200) {
+          successFiles.push(file.name);
+        } else {
+          failedFiles.push(`${file.name}: ${response.msg || '上传失败'}`);
+        }
+      } catch (err) {
+        failedFiles.push(`${file.name}: ${err.message || '上传失败'}`);
+        console.error(`文件 ${file.name} 上传失败:`, err);
+      }
+    }
+    
+    // 显示上传结果
+    let message = [];
+    if (successFiles.length > 0) {
+      message.push(`成功上传 ${successFiles.length} 个文件`);
+    }
+    if (failedFiles.length > 0) {
+      message.push(`失败 ${failedFiles.length} 个文件`);
+    }
+    
+    if (successFiles.length > 0) {
+      proxy.$modal.msgSuccess(message.join('，'));
+      getList(); // 刷新文件列表
+    } else if (failedFiles.length > 0) {
+      proxy.$modal.msgError(message.join('，'));
+    }
+  } catch (error) {
+    console.error('上传过程中出错:', error);
+    proxy.$modal.msgError('上传过程中出错: ' + (error.message || '未知错误'));
+  } finally {
+    // 清空文件列表
+    fileList.value = [];
+    uploadProgress.value = 0;
+    uploading.value = false;
+  }
+}
+
+// 处理上传
+function handleUpload(options) {
+  const { file, onSuccess, onError } = options;
+  const formData = new FormData();
+  formData.append("excelFile", file);
+  formData.append("sourceUrl", "securityConm/security1/planning/indication/annualcontrol2");
+  
+  request({
+    url: '/security/HealthAndSafetyGoals/importData',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+       repeatSubmit: false,
+    }
+  }).then(res => {
+    if (res.code === 200) {
+      onSuccess(res);
+    } else {
+      onError(new Error(res.msg || '上传失败'));
+    }
+  }).catch(err => {
+    onError(err);
+  });
+} 
 
 // 注释掉页面销毁时释放图表资源
 /*
@@ -1003,6 +1169,35 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.upload-container {
+  margin-bottom: 10px;
+}
+
+.upload-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-list {
+  margin-top: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f5f7fa;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #e4e7ed;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
 /* 注释掉统计卡片样式
 .mb20 {
   margin-bottom: 20px;

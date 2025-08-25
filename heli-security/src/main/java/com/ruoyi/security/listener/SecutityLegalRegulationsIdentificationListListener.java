@@ -20,10 +20,7 @@ public class SecutityLegalRegulationsIdentificationListListener implements ReadL
     public void invoke(SecutityLegalRegulationsIdentificationList registerInfoExcel, AnalysisContext analysisContext)
     {
         log.info("解析到一条数据:{}", registerInfoExcel);
-        if (registerInfoExcel.getId() != null)
-        {
-            secutityLegalRegulationsIdentificationListMapper.insertSecutityLegalRegulationsIdentificationList(registerInfoExcel);
-        }
+        secutityLegalRegulationsIdentificationListMapper.insertSecutityLegalRegulationsIdentificationList(registerInfoExcel);
     }
 
     public void doAfterAllAnalysed(AnalysisContext analysisContext)

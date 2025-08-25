@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertSecutityLegalRegulationsIdentificationList1" parameterType="SecutityLegalRegulationsIdentificationList1" useGeneratedKeys="true" keyProperty="id">
         insert into secutity_legal_regulations_identification_list_1
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="regulationName != null and regulationName != ''">regulation_name,</if>
+            <if test="regulationName != null" >regulation_name,</if>
             <if test="documentNumber != null">document_number,</if>
             <if test="issuingUnit != null">issuing_unit,</if>
             <if test="issuanceRevisionDate != null">issuance_revision_date,</if>
@@ -48,8 +48,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="effectiveness != null">effectiveness,</if>
             <if test="relatedId != null">related_id,</if>
          </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="regulationName != null and regulationName != ''">#{regulationName},</if>
+        <trim  prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regulationName != null">#{regulationName},</if>
             <if test="documentNumber != null">#{documentNumber},</if>
             <if test="issuingUnit != null">#{issuingUnit},</if>
             <if test="issuanceRevisionDate != null">#{issuanceRevisionDate},</if>

@@ -96,7 +96,7 @@ public class SecutityLegalRegulationsIdentificationListServiceImpl implements IS
             log.info("开始读取文件: {}", originalFilename);
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecutityLegalRegulationsIdentificationList.class,
-                        new SecutityLegalRegulationsIdentificationListListener(secutityLegalRegulationsIdentificationListMapper)).headRowNumber(6).sheet().doRead();
+                        new SecutityLegalRegulationsIdentificationListListener(secutityLegalRegulationsIdentificationListMapper)).headRowNumber(1).sheet().doRead();
                 log.info("读取文件成功: {}", originalFilename);
             } catch (Exception e) {
                 log.info("读取文件失败: {}", e.getMessage());

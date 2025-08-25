@@ -159,22 +159,49 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="info"
-          plain
-          icon="Upload"
-          @click="handleImport"
-          v-hasPermi="['security:OccupationaPersonnelList:import']"
-        >导入</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Download"
-          @click="handleDownloadTemplate"
-        >下载模板</el-button>
+ <!-- 多文件上传区域 -->
+      <el-col :span="1.5" class="upload-container">
+        <div class="upload-buttons">
+          <el-upload
+            ref="uploadRef"
+            :show-file-list="false"
+            :http-request="handleUpload"
+            :multiple="true"
+            :auto-upload="false"
+            accept=".xlsx,.xls"
+            :on-change="handleFileChange"
+          >
+            <el-button
+              type="primary"
+              plain
+              icon="Upload"
+            >选择文件</el-button>
+          </el-upload>
+          <el-button
+            type="success"
+            plain
+            :loading="uploading"
+            :disabled="fileList.length === 0"
+            @click="submitUpload"
+            style="margin-left: 10px;"
+          >
+            上传 {{ fileList.length > 0 ? `(${fileList.length})` : '' }}
+          </el-button>
+          <el-button
+            type="primary"
+            plain
+            icon="Download"
+            @click="handleDownloadTemplate"
+            style="margin-left: 10px;"
+          >模板下载</el-button>
+        </div>
+        <div v-if="fileList.length > 0" class="file-list">
+          <div v-for="(file, index) in fileList" :key="index" class="file-item">
+            <el-icon><Document /></el-icon>
+            <span class="file-name">{{ file.name }}</span>
+            <el-icon class="delete-icon" @click="removeFile(index)"><Close /></el-icon>
+          </div>
+        </div>
       </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
@@ -382,6 +409,8 @@ import { getToken } from "@/utils/auth";
 import { UploadFilled } from '@element-plus/icons-vue';
 import axios from 'axios';
 import { onMounted, ref, reactive, toRefs, onUnmounted } from 'vue';
+import { Document, Close } from '@element-plus/icons-vue';
+import request from '@/utils/request';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -400,7 +429,10 @@ const total = ref(0);
 const title = ref("");
 const uploadRef = ref();
 const selectedFile = ref(null);
-
+// 文件上传相关状态
+const fileList = ref([]);
+const uploading = ref(false);
+const uploadProgress = ref(0);
 // 导入参数
 const upload = reactive({
   // 是否显示弹出层（导入）
@@ -438,6 +470,10 @@ let moduleChart = null;
 
 const data = reactive({
   form: {},
+  fileList: ref([]),// 文件列表
+  uploading: ref(false),// 是否正在上传
+  uploadProgress: ref(0),// 上传进度
+  uploadRef: ref(),// 上传组件引用
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -745,91 +781,223 @@ function handleDownloadTemplate() {
   proxy.download('security/OccupationaPersonnelList/importTemplateSimple', {}, '危险职业岗位人员清单及管理台帐导入模板.xlsx');
 }
 
-/** 文件选择处理 */
-function handleFileChange(file) {
-  console.log('文件选择:', file);
-  selectedFile.value = file;
-}
+// /** 文件选择处理 */
+// function handleFileChange(file) {
+//   console.log('文件选择:', file);
+//   selectedFile.value = file;
+// }
 
-/** 提交上传文件 */
-function submitFileForm() {
-  if (!selectedFile.value) {
-    proxy.$modal.msgError('请选择要上传的文件');
-    return;
-  }
+// /** 提交上传文件 */
+// function submitFileForm() {
+//   if (!selectedFile.value) {
+//     proxy.$modal.msgError('请选择要上传的文件');
+//     return;
+//   }
   
-  if (!selectedFile.value.raw) {
-    proxy.$modal.msgError('文件无效');
-    return;
-  }
+//   if (!selectedFile.value.raw) {
+//     proxy.$modal.msgError('文件无效');
+//     return;
+//   }
   
-  const file = selectedFile.value.raw;
-  console.log('获取到文件:', file);
+//   const file = selectedFile.value.raw;
+//   console.log('获取到文件:', file);
   
-  // 创建 FormData 并确保参数名正确
-  const formData = new FormData();
-  formData.append('file', file);
+//   // 创建 FormData 并确保参数名正确
+//   const formData = new FormData();
+//   formData.append('file', file);
   
-  // 添加 sourceUrl 信息，告诉后端应该使用 run/index6.vue 界面的 URL 进行模块名称提取
-  formData.append('sourceUrl', 'securityConm/security1/run/healthcontrol/OccupationaPersonnelList');
+//   // 添加 sourceUrl 信息，告诉后端应该使用 run/index6.vue 界面的 URL 进行模块名称提取
+//   formData.append('sourceUrl', 'securityConm/security1/run/healthcontrol/OccupationaPersonnelList');
   
-  // 检查FormData内容
-  for (let [key, value] of formData.entries()) {
-    console.log('FormData内容:', key, value instanceof File ? value.name : value);
-  }
+//   // 检查FormData内容
+//   for (let [key, value] of formData.entries()) {
+//     console.log('FormData内容:', key, value instanceof File ? value.name : value);
+//   }
   
-  upload.isUploading = true;
+//   upload.isUploading = true;
   
-  // 复用 run/index6.vue 的导入 API
-  axios.post(import.meta.env.VITE_APP_BASE_API + '/security/OccupationaPersonnelList/importData', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-      'Authorization': 'Bearer ' + getToken()
-    }
-  }).then(response => {
-    console.log('上传成功:', response);
-    console.log('响应数据:', response.data);
+//   // 复用 run/index6.vue 的导入 API
+//   axios.post(import.meta.env.VITE_APP_BASE_API + '/security/OccupationaPersonnelList/importData', formData, {
+//     headers: {
+//       'Content-Type': 'multipart/form-data',
+//       'Authorization': 'Bearer ' + getToken()
+//     }
+//   }).then(response => {
+//     console.log('上传成功:', response);
+//     console.log('响应数据:', response.data);
     
-    upload.open = false;
-    upload.isUploading = false;
-    selectedFile.value = null;
-    uploadRef.value.clearFiles();
+//     upload.open = false;
+//     upload.isUploading = false;
+//     selectedFile.value = null;
+//     uploadRef.value.clearFiles();
     
-    // 改善成功判断条件，兼容多种响应格式
-    if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
-      proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入成功') + "</div>", "导入结果", {
-        dangerouslyUseHTMLString: true,
-        type: 'success'
-      });
-      getList();
-    } else if (response.status === 200) {
-      // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功
-      console.log('根据 HTTP 状态码判断为成功');
-      proxy.$alert("导入成功", "导入结果", {
-        type: 'success'
-      });
-      getList();
-    } else {
-      proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入失败') + "</div>", "导入失败", {
-        dangerouslyUseHTMLString: true,
-        type: 'error'
-      });
-    }
-  }).catch(error => {
-    console.error('上传失败:', error);
-    upload.open = false;
-    upload.isUploading = false;
-    selectedFile.value = null;
-    // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
-    getList();
-    proxy.$modal.msgError('导入请求完成，请检查导入结果');
-  });
-}
+//     // 改善成功判断条件，兼容多种响应格式
+//     if (response.status === 200 && (response.data.code === 200 || response.data.code === 0 || response.data.success === true)) {
+//       proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入成功') + "</div>", "导入结果", {
+//         dangerouslyUseHTMLString: true,
+//         type: 'success'
+//       });
+//       getList();
+//     } else if (response.status === 200) {
+//       // 如果 HTTP 状态码是 200，但业务状态码不是成功，也认为成功
+//       console.log('根据 HTTP 状态码判断为成功');
+//       proxy.$alert("导入成功", "导入结果", {
+//         type: 'success'
+//       });
+//       getList();
+//     } else {
+//       proxy.$alert("<div style='overflow: auto;overflow-x: hidden;max-height: 70vh;padding: 10px 20px 0;'>" + (response.data.msg || response.data.message || '导入失败') + "</div>", "导入失败", {
+//         dangerouslyUseHTMLString: true,
+//         type: 'error'
+//       });
+//     }
+//   }).catch(error => {
+//     console.error('上传失败:', error);
+//     upload.open = false;
+//     upload.isUploading = false;
+//     selectedFile.value = null;
+//     // 如果是网络错误但实际上可能成功了，先刷新列表再显示错误
+//     getList();
+//     proxy.$modal.msgError('导入请求完成，请检查导入结果');
+//   });
+// }
 
 /** 导入模板 */
 function importTemplate() {
   proxy.download('security/OccupationaPersonnelList/importTemplateSimple', {}, '危险职业岗位人员清单及管理台帐导入模板.xlsx');
 }
+
+// 文件状态改变时的钩子
+function handleFileChange(file) {
+  // 使用展开运算符创建新数组，确保触发响应式更新
+  fileList.value = [...fileList.value, file];
+  return false; // 阻止自动上传
+}
+
+// 移除文件
+function removeFile(index) {
+  fileList.value.splice(index, 1);
+  // 创建新数组触发响应式更新
+  fileList.value = [...fileList.value];
+}
+
+// 处理文件移除
+function handleFileRemove(file) {
+  const index = fileList.value.findIndex(item => item.uid === file.uid);
+  if (index > -1) {
+    fileList.value.splice(index, 1);
+    // 创建新数组触发响应式更新
+    fileList.value = [...fileList.value];
+  }
+}
+
+// 提交上传
+async function submitUpload() {
+  if (fileList.value.length === 0) {
+    proxy.$modal.msgWarning('请先选择要上传的文件');
+    return;
+  }
+  
+  uploading.value = true;
+  const successFiles = [];
+  const failedFiles = [];
+  const totalFiles = fileList.value.length;
+  
+  try {
+    // 串行上传文件
+    for (let i = 0; i < totalFiles; i++) {
+      const file = fileList.value[i];
+      const formData = new FormData();
+      formData.append("file", file.raw || file);
+      formData.append("sourceUrl", "securityConm/security1/run/healthcontrol/OccupationaPersonnelList");
+      // 添加时间戳和随机数作为唯一标识，防止后端误判为重复提交
+      formData.append("timestamp", Date.now() + Math.random().toString(36).substr(2, 9));
+      
+      try {
+        // 更新上传进度
+        uploadProgress.value = Math.round((i / totalFiles) * 100);
+        
+        const response = await request({
+          url: '/security/OccupationaPersonnelList/importData',
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            repeatSubmit: false
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.lengthComputable) {
+              // 计算单个文件上传进度
+              const fileProgress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+              // 计算总体进度 = 已完成文件进度 + 当前文件进度
+              const totalProgress = Math.round((i / totalFiles) * 100 + (fileProgress / totalFiles));
+              uploadProgress.value = totalProgress;
+            }
+          }
+        });
+        
+        if (response.code === 200) {
+          successFiles.push(file.name);
+        } else {
+          failedFiles.push(`${file.name}: ${response.msg || '上传失败'}`);
+        }
+      } catch (err) {
+        failedFiles.push(`${file.name}: ${err.message || '上传失败'}`);
+        console.error(`文件 ${file.name} 上传失败:`, err);
+      }
+    }
+    
+    // 显示上传结果
+    let message = [];
+    if (successFiles.length > 0) {
+      message.push(`成功上传 ${successFiles.length} 个文件`);
+    }
+    if (failedFiles.length > 0) {
+      message.push(`失败 ${failedFiles.length} 个文件`);
+    }
+    
+    if (successFiles.length > 0) {
+      proxy.$modal.msgSuccess(message.join('，'));
+      getList(); // 刷新文件列表
+    } else if (failedFiles.length > 0) {
+      proxy.$modal.msgError(message.join('，'));
+    }
+  } catch (error) {
+    console.error('上传过程中出错:', error);
+    proxy.$modal.msgError('上传过程中出错: ' + (error.message || '未知错误'));
+  } finally {
+    // 清空文件列表
+    fileList.value = [];
+    uploadProgress.value = 0;
+    uploading.value = false;
+  }
+}
+
+// 处理上传
+function handleUpload(options) {
+  const { file, onSuccess, onError } = options;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("sourceUrl", "securityConm/security1/run/healthcontrol/OccupationaPersonnelList");
+  
+  request({
+    url: '/security/OccupationaPersonnelList/importData',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+       repeatSubmit: false,
+    }
+  }).then(res => {
+    if (res.code === 200) {
+      onSuccess(res);
+    } else {
+      onError(new Error(res.msg || '上传失败'));
+    }
+  }).catch(err => {
+    onError(err);
+  });
+} 
 
 // 注释掉监控相关函数
 /*
@@ -973,6 +1141,35 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.upload-container {
+  margin-bottom: 10px;
+}
+
+.upload-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-list {
+  margin-top: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f5f7fa;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #e4e7ed;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
 /* 注释掉统计卡片样式
 .mb20 {
   margin-bottom: 20px;

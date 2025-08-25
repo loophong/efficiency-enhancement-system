@@ -159,7 +159,7 @@
           @click="handleRefresh"
         >刷新</el-button>
       </el-col>
-      <!-- 复用planning/index0.vue的导入功能 -->
+      <!-- 复用planning/index0.vue的导入功能
       <el-col :span="1.5">
         <el-button
           type="primary"
@@ -167,7 +167,7 @@
           icon="Upload"
           @click="handleImport"
         >导入</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="success"
@@ -175,6 +175,43 @@
           icon="Download"
           @click="handleDownloadTemplate"
         >下载模板</el-button>
+      </el-col>
+      <!-- 新增：多文件上传区域，复用 index0.vue 的样式与交互 -->
+      <el-col :span="1.5" class="upload-container">
+        <div class="upload-buttons">
+          <el-upload
+            ref="multiUploadRef"
+            :show-file-list="false"
+            :http-request="handleMultiUpload"
+            :multiple="true"
+            :auto-upload="false"
+            accept=".xlsx,.xls"
+            :on-change="handleMultiFileChange"
+          >
+            <el-button
+              type="primary"
+              plain
+              icon="Upload"
+            >选择文件</el-button>
+          </el-upload>
+          <el-button
+            type="success"
+            plain
+            :loading="multiUploading"
+            :disabled="multiFileList.length === 0"
+            @click="submitMultiUpload"
+            style="margin-left: 10px;"
+          >
+            上传 {{ multiFileList.length > 0 ? `(${multiFileList.length})` : '' }}
+          </el-button>
+        </div>
+        <div v-if="multiFileList.length > 0" class="file-list">
+          <div v-for="(file, index) in multiFileList" :key="index" class="file-item">
+            <el-icon><Document /></el-icon>
+            <span class="file-name">{{ file.name }}</span>
+            <el-icon class="delete-icon" @click="removeMultiFile(index)"><Close /></el-icon>
+          </div>
+        </div>
       </el-col>
       <!-- <el-col :span="1.5">
         <el-button link 
@@ -344,7 +381,7 @@
     -->
 
     <!-- 复用planning/index0.vue的导入对话框 -->
-    <el-dialog title="安全目标考核达成表数据导入" v-model="uploadDialogVisible" width="400px" append-to-body>
+    <el-dialog title="导入数据" v-model="uploadDialogVisible" width="400px" append-to-body>
       <el-upload
         ref="uploadRef"
         :limit="1"
@@ -384,6 +421,8 @@ import FileUpload from "@/components/FileUpload/index.vue";
 import { onMounted, ref, reactive, toRefs, onUnmounted, getCurrentInstance } from 'vue';
 import axios from 'axios';
 import { getToken } from "@/utils/auth";
+import request from '@/utils/request';
+import { Document, Close } from '@element-plus/icons-vue';
 // 注释掉echarts导入
 // import * as echarts from 'echarts';
 
@@ -405,6 +444,12 @@ const title = ref("");
 const uploadDialogVisible = ref(false);
 const selectedFile = ref(null);
 const isLoading = ref(false);
+
+// 新增：多文件上传相关状态（复用 index0.vue 的命名与行为）
+const multiFileList = ref([]);
+const multiUploading = ref(false);
+const multiUploadProgress = ref(0);
+const multiUploadRef = ref(null);
 
 // 注释掉文件监控相关变量
 /*
@@ -720,6 +765,97 @@ function handleView(row) {
   }
 }
 
+// 多文件上传：从列表移除某个文件
+function removeMultiFile(index) {
+  multiFileList.value.splice(index, 1);
+  multiFileList.value = [...multiFileList.value];
+}
+
+// 多文件上传：串行提交
+async function submitMultiUpload() {
+  if (!multiFileList.value || multiFileList.value.length === 0) {
+    proxy.$modal.msgWarning('请先选择要上传的文件');
+    return;
+  }
+
+  multiUploading.value = true;
+  const successFiles = [];
+  const failedFiles = [];
+  const totalFiles = multiFileList.value.length;
+
+  try {
+    for (let i = 0; i < totalFiles; i++) {
+      const item = multiFileList.value[i];
+      const rawFile = item.raw || item;
+      const formData = new FormData();
+      formData.append('excelFile', rawFile);
+      formData.append('sourceUrl', 'securityConm/security1/planning/indication/annualcontrol');
+      formData.append('timestamp', Date.now() + Math.random().toString(36).slice(2));
+
+      try {
+        const res = await request({
+          url: '/security/HealthAndSafetyGoals/importData',
+          method: 'post',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            repeatSubmit: false
+          }
+        });
+
+        if (res && res.code === 200) {
+          successFiles.push(rawFile.name);
+        } else {
+          failedFiles.push(`${rawFile.name}: ${res?.msg || '上传失败'}`);
+        }
+      } catch (err) {
+        failedFiles.push(`${rawFile.name}: ${err?.message || '上传失败'}`);
+        console.error('批量上传失败: ', rawFile?.name, err);
+      }
+    }
+
+    if (successFiles.length > 0) {
+      proxy.$modal.msgSuccess(`成功 ${successFiles.length} 个，失败 ${failedFiles.length} 个`);
+      getList();
+    } else {
+      proxy.$modal.msgError(`全部失败，共 ${failedFiles.length} 个`);
+    }
+
+    if (failedFiles.length > 0) {
+      console.warn('失败文件明细: ', failedFiles.join('\n'));
+    }
+  } finally {
+    multiUploading.value = false;
+    multiFileList.value = [];
+  }
+}
+
+// 自定义上传钩子（未使用自动上传，但保留以兼容 el-upload 的 http-request）
+function handleMultiUpload(options) {
+  const { file, onSuccess, onError } = options || {};
+  const formData = new FormData();
+  formData.append('excelFile', file);
+  formData.append('sourceUrl', 'securityConm/security1/planning/indication/annualcontrol');
+
+  request({
+    url: '/security/HealthAndSafetyGoals/importData',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+      repeatSubmit: false
+    }
+  }).then(res => {
+    if (res && res.code === 200) {
+      onSuccess && onSuccess(res);
+    } else {
+      onError && onError(new Error(res?.msg || '上传失败'));
+    }
+  }).catch(err => {
+    onError && onError(err);
+  });
+}
+
 // 注释掉监控相关函数
 /*
 function handleMonitor() {
@@ -858,7 +994,7 @@ function handleDownloadTemplate() {
     console.log('下载模板URL:', downloadUrl);
     
     // 使用原生的下载方法
-    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `安全目标考核达成表导入模板_${new Date().getTime()}.xlsx`, 'get');
+    proxy.download('security/HealthAndSafetyGoals/importTemplate', {}, `安全目标考核表导入模板_${new Date().getTime()}.xlsx`, 'get');
     console.log('下载请求已发送');
   } catch (error) {
     console.error('下载模板出错:', error);
@@ -872,10 +1008,11 @@ function handleExceed() {
 }
 
 /** 文件选择变更 - 复用planning/index0.vue */
-function handleFileChange(file) {
-  console.log('文件选择变更:', file);
-  if (file) {
-    const fileName = file.name;
+function handleMultiFileChange(file, files) {
+  // files 为当前选择后的完整文件列表
+  multiFileList.value = Array.isArray(files) ? [...files] : (file ? [file] : []);
+  if (files) {
+    const fileName = files[0].name;
     const fileExt = fileName.split(".").pop().toLowerCase();
     if (fileExt !== "xlsx" && fileExt !== "xlsm" && fileExt !== "xls") {
       proxy.$modal.msgError("只能上传 Excel 文件！");
@@ -1003,6 +1140,35 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.upload-container {
+  margin-bottom: 10px;
+}
+
+.upload-buttons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.file-list {
+  margin-top: 10px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 10px;
+  background-color: #f5f7fa;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px dashed #e4e7ed;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
 /* 注释掉统计卡片样式
 .mb20 {
   margin-bottom: 20px;
