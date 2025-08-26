@@ -110,7 +110,7 @@ public class SecurityControlledDocumentDistributionDirectoryController extends B
         return toAjax(securityControlledDocumentDistributionDirectoryService.deleteSecurityControlledDocumentDistributionDirectoryByIds(ids));
     }
 
-    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PreAuthorize("@ss.hasPermi('security:controlleddirectory:import')")
     @PostMapping("/import")
     public AjaxResult importTable( MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");

@@ -1,6 +1,8 @@
 package com.ruoyi.security.domain;
 
 import java.util.Date;
+
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -22,14 +24,17 @@ public class SecurityHazardousMaterialsSafetyInspection extends BaseEntity
 
     /** 检查项目 */
     @Excel(name = "检查项目")
+    @ExcelProperty(index = 0)
     private String inspectionItem;
 
     /** 检查标准 */
     @Excel(name = "检查标准")
+    @ExcelProperty(index = 1)
     private String inspectionStandard;
 
     /** 检查挤入 */
     @Excel(name = "检查记录")
+    @ExcelProperty(index = 2)
     private String inspectionRecord;
 
     /** 检查人 */

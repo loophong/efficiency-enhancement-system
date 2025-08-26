@@ -1,5 +1,6 @@
 package com.ruoyi.security.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -20,22 +21,27 @@ public class SecurityObsoleteControlledDocumentDisposalRegister extends BaseEnti
 
     /** 文件名称 */
     @Excel(name = "文件名称")
+    @ExcelProperty(index = 0)
     private String fileName;
 
     /** 编号 */
     @Excel(name = "编号")
+    @ExcelProperty(index = 1)
     private String documentNumber;
 
     /** 回收部门 */
     @Excel(name = "回收部门")
+    @ExcelProperty(index = 2)
     private String recyclingDepartment;
 
     /** 是否销毁 */
     @Excel(name = "是否销毁")
+    @ExcelProperty(index = 3)
     private String isDestroyed;
 
     /** 备注 */
     @Excel(name = "备注")
+    @ExcelProperty(index = 4)
     private String remarks;
 
     /** 关联ID */

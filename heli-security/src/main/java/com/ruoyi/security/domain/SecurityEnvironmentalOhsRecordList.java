@@ -1,5 +1,6 @@
 package com.ruoyi.security.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -20,18 +21,22 @@ public class SecurityEnvironmentalOhsRecordList extends BaseEntity
 
     /** 记录编号 */
     @Excel(name = "记录编号")
+    @ExcelProperty(index = 0)
     private String recordNumber;
 
     /** 记录名称 */
     @Excel(name = "记录名称")
+    @ExcelProperty(index = 1)
     private String recordName;
 
     /** 归口部门 */
     @Excel(name = "归口部门")
+    @ExcelProperty(index = 2)
     private String responsibleDepartment;
 
     /** 保存期限 */
     @Excel(name = "保存期限")
+    @ExcelProperty(index = 3)
     private String retentionPeriod;
 
     /** 关联ID */

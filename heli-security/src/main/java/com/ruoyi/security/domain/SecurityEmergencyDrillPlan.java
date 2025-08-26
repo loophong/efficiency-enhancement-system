@@ -1,6 +1,7 @@
 package com.ruoyi.security.domain;
 
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -21,34 +22,42 @@ public class SecurityEmergencyDrillPlan extends BaseEntity
 
     /** 级别 */
     @Excel(name = "级别")
+    @ExcelProperty(value = "级别", index = 0)
     private String level;
 
     /** 科室/班组 */
     @Excel(name = "科室/班组")
+    @ExcelProperty(value = "科室/班组", index = 1)
     private String departmentTeam;
 
     /** 类型 */
     @Excel(name = "科室")
+    @ExcelProperty(value = "科室", index = 2)
     private String drillType;
 
     /** 预计演练时间 */
     @Excel(name = "预计演练时间")
+    @ExcelProperty(value = "预计演练时间", index = 3)
     private String plannedDrillTime;
 
     /** 演练主题 */
     @Excel(name = "演练主题")
+    @ExcelProperty(value = "演练主题", index = 4)
     private String drillTheme;
 
     /** 参考情景 */
     @Excel(name = "参考情景")
+    @ExcelProperty(value = "参考情景", index = 5)
     private String referenceScenario;
 
     /** 参演及观摩人员 */
     @Excel(name = "参演及观摩人员")
+    @ExcelProperty(value = "参演及观摩人员", index = 6)
     private String participantsObservers;
 
     /** 类型 */
     @Excel(name = "类型")
+    @ExcelProperty(value = "类型", index = 7)
     private String drillCategory;
 
     /** 审批状态 */

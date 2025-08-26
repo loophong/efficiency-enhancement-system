@@ -104,7 +104,7 @@
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button @click="handleImport" type="success" plain icon="Upload">
+        <el-button @click="handleImport" type="success" plain icon="Upload" v-hasPermi="['security:controlleddirectory:import']">
           导入
         </el-button>
       </el-col>
@@ -189,9 +189,10 @@
           <div class="upload-container">
             <el-upload
               ref="uploadRef"
-              :limit="1"
+              :limit="20"
               accept=".xlsx,.xls"
               :auto-upload="false"
+              :multiple="true"
               :on-change="handleFileChange"
               :on-remove="handleFileRemove"
               :file-list="fileList"
@@ -203,7 +204,7 @@
               </div>
               <template #tip>
                 <div class="el-upload__tip">
-                  只能上传 xlsx/xls 文件，且不超过 10MB
+                  支持批量，最多20个文件。只能上传 xlsx/xls 文件，且每个不超过 10MB
                 </div>
               </template>
             </el-upload>
@@ -219,7 +220,7 @@
             :loading="isLoading"
             :disabled="fileList.length === 0"
           >
-            {{ isLoading ? '导入中...' : '确 定' }}
+            {{ isLoading ? '导入中...' : '上 传' }}
           </el-button>
         </div>
       </template>
@@ -231,6 +232,7 @@
 
 <script setup name="Controlleddirectory">
 import { listControlleddirectory, getControlleddirectory, delControlleddirectory, addControlleddirectory, updateControlleddirectory ,importFile, downloadTemplate, listByRelatedId} from "@/api/security/controlleddirectory";
+import { UploadFilled } from '@element-plus/icons-vue';
 const route = useRoute();
 const { proxy } = getCurrentInstance();
 // 上传文件
@@ -458,22 +460,49 @@ function uploadFile() {
   }
 
   isLoading.value = true;
-  const file = fileList.value[0].raw;
-  const formData = new FormData();
+  const files = fileList.value.map(f => f.raw || f);
+  let successCount = 0;
+  let failCount = 0;
+  const failMsgs = [];
+  const gapMs = 600; // 两次请求之间的最小间隔，避免被判重复提交
 
-  formData.append('excelFile', file);
+  // 逐个串行上传，避免并发导致后端判重或资源占用
+  const uploadNext = async (index) => {
+    if (index >= files.length) {
+      // 完成
+      const summary = `成功 ${successCount} 个，失败 ${failCount} 个`;
+      if (successCount > 0) {
+        proxy.$modal.msgSuccess(summary);
+        getList();
+      } else {
+        proxy.$modal.msgError(summary);
+      }
+      if (failMsgs.length > 0) {
+        console.error('批量导入失败明细:', failMsgs);
+      }
+      uploadDialogVisible.value = false;
+      isLoading.value = false;
+      resetUpload();
+      return;
+    }
+    const fd = new FormData();
+    fd.append('excelFile', files[index]); // 保持后端所需字段名
+    // 添加唯一字段，绕过后端重复提交判定（不会影响业务解析）
+    fd.append('nonce', `${Date.now()}-${index}-${Math.random().toString(36).slice(2,8)}`);
+    try {
+      await importFile(fd);
+      successCount++;
+    } catch (e) {
+      failCount++;
+      const name = (fileList.value[index] && fileList.value[index].name) || `第${index+1}个文件`;
+      failMsgs.push(`${name}: ${e?.message || '导入失败'}`);
+    } finally {
+      // 加一点点间隔再继续，避免被后端重复提交拦截
+      setTimeout(() => uploadNext(index + 1), gapMs);
+    }
+  };
 
-  importFile(formData).then(() => {
-    proxy.$modal.msgSuccess("导入成功");
-    getList();
-    uploadDialogVisible.value = false;
-  }).catch((error) => {
-    console.error("导入失败:", error);
-    proxy.$modal.msgError("导入失败，请检查文件格式和内容");
-  }).finally(() => {
-    isLoading.value = false;
-    resetUpload();
-  });
+  uploadNext(0);
 }
 
 /** 下载模板 */

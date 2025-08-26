@@ -106,7 +106,7 @@ public class SecurityHazardousMaterialsSafetyInspectionServiceImpl implements IS
             log.info("开始读取文件: {}", fileName);
             try {
                 EasyExcel.read(excelFile.getInputStream(), SecurityHazardousMaterialsSafetyInspection.class,
-                        new HazardousMaterialsSafetyInspectioListener(securityHazardousMaterialsSafetyInspectionMapper)).headRowNumber(5).sheet().doRead();
+                        new HazardousMaterialsSafetyInspectioListener(securityHazardousMaterialsSafetyInspectionMapper)).headRowNumber(1).sheet().doRead();
                 log.info("读取文件成功: {}", fileName);
             } catch (Exception e) {
                 log.info("读取文件失败: {}", e.getMessage());

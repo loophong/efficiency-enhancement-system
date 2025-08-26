@@ -107,7 +107,7 @@ public class SecurityObsoleteControlledDocumentDisposalRegisterController extend
         return toAjax(securityObsoleteControlledDocumentDisposalRegisterService.deleteSecurityObsoleteControlledDocumentDisposalRegisterByIds(ids));
     }
 
-    @PreAuthorize("@ss.hasPermi('production:historyOrder:import')")
+    @PreAuthorize("@ss.hasPermi('security:obsoleteregister:import')")
     @PostMapping("/import")
     public AjaxResult importTable( MultipartFile excelFile) {
         log.info("传入的参数为 " + excelFile.getName() + " 文件");

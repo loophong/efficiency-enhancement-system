@@ -1,5 +1,6 @@
 package com.ruoyi.security.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -21,54 +22,67 @@ public class SecutityEnvironmentalFactorsImpact extends BaseEntity
 
     /** 作业活动 */
     @Excel(name = "作业活动")
+    @ExcelProperty(index = 0)
     private String activity;
 
     /** 环境因数 */
     @Excel(name = "环境因数")
+    @ExcelProperty(index = 1)
     private String environmentalFactor;
 
     /** 环境影响 */
     @Excel(name = "环境影响")
+    @ExcelProperty(index = 2)
     private String impactOfEnvironmentalFactor;
 
     /** A */
     @Excel(name = "A")
+    @ExcelProperty(index = 3)
     private String evaluationOfEnvironmentalFactorA;
 
     /** B */
     @Excel(name = "B")
+    @ExcelProperty(index = 4)
     private String evaluationOfEnvironmentalFactorB;
 
     /** C */
     @Excel(name = "C")
+    @ExcelProperty(index = 5)
     private String evaluationOfEnvironmentalFactorC;
 
     /** D */
     @Excel(name = "D")
+    @ExcelProperty(index = 6)
     private String evaluationOfEnvironmentalFactorD;
 
     /** E */
     @Excel(name = "E")
+    @ExcelProperty(index = 7)
     private String evaluationOfEnvironmentalFactorE;
 
     /** F */
     @Excel(name = "F")
+    @ExcelProperty(index = 8)
     private String evaluationOfEnvironmentalFactorF;
 
     /** G */
     @Excel(name = "G")
+    @ExcelProperty(index = 9)
     private String evaluationOfEnvironmentalFactorG;
 
     /** 环境影响程度 */
     @Excel(name = "环境影响程度")
+    @ExcelProperty(index = 10)
     private String environmentalImpact;
 
     /** 时态/状态 */
     @Excel(name = "时态/状态")
+    @ExcelProperty(index = 11)
     private String tense;
 
     /** 控制措施 */
     @Excel(name = "控制措施")
+    @ExcelProperty(index = 12)
     private String controlMeasures;
 
     /** 审批状态 */

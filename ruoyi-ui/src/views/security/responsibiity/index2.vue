@@ -1,26 +1,26 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="会议时间" prop="meetingTime">
+      <el-form-item label="上传时间" prop="uploadDate">
         <el-date-picker clearable
-          v-model="queryParams.meetingTime"
+          v-model="queryParams.uploadDate"
           type="date"
           value-format="YYYY-MM-DD"
-          placeholder="请选择会议时间">
+          placeholder="请选择上传时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="会议地点" prop="meetingLocation">
+      <el-form-item label="上传人" prop="uploadBy">
         <el-input
-          v-model="queryParams.meetingLocation"
-          placeholder="请输入会议地点"
+          v-model="queryParams.uploadBy"
+          placeholder="请输入上传人"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="会议主持" prop="meetingChairman">
+      <el-form-item label="上传部门" prop="uploadDept">
         <el-input
-          v-model="queryParams.meetingChairman"
-          placeholder="请输入会议主持"
+          v-model="queryParams.uploadDept"
+          placeholder="请输入上传部门"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -38,7 +38,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['security:MeetingRecord:add']"
+          v-hasPermi="['security:meeting:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -48,7 +48,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['security:MeetingRecord:edit']"
+          v-hasPermi="['security:meeting:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -58,7 +58,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['security:MeetingRecord:remove']"
+          v-hasPermi="['security:meeting:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -67,30 +67,29 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['security:MeetingRecord:export']"
+          v-hasPermi="['security:meeting:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="MeetingRecordList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="meetingList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="序号" align="center" type="index" width="100"/>
-      <el-table-column label="会议时间" align="center" prop="meetingTime" width="180">
+      <el-table-column label="序号" width="100" align="center" type="index" />
+      <el-table-column label="上传时间" align="center" prop="uploadDate" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.meetingTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.uploadDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="会议简要内容" align="center" prop="meetingContent" />
-      <el-table-column label="会议地点" align="center" prop="meetingLocation" />
-      <el-table-column label="参加会议人员" align="center" prop="attendees" />
-      <el-table-column label="会议主持" align="center" prop="meetingChairman" />
-      <el-table-column label="会议记录人" align="center" prop="meetingNotes" />
-      <el-table-column label="会议详细记录" align="center" prop="meetingContent2" />
+      <el-table-column label="上传人" align="center" prop="uploadBy" />
+      <el-table-column label="上传部门" align="center" prop="uploadDept" />
+      <el-table-column label="文件" align="center" prop="files" />
+      <el-table-column label="描述" align="center" prop="comment" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:MeetingRecord:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:MeetingRecord:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['security:meeting:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['security:meeting:remove']">删除</el-button>
+          <el-button link type="primary" icon="View" @click="handlePreview(scope.row)">预览</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,34 +102,38 @@
       @pagination="getList"
     />
 
+        <!-- 文件预览对话框 -->
+    <el-dialog title="文件预览" v-model="previewDialogVisible" width="80%" append-to-body>
+      <vue-office-docx
+          :src="previewSrc"
+          :style="comStyle"
+          @rendered="renderedHandler"
+          @error="errorHandler"
+      />
+    </el-dialog>
+
     <!-- 添加或修改安全会议记录对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="MeetingRecordRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="会议时间" prop="meetingTime">
+      <el-form ref="meetingRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="上传时间" prop="uploadDate">
           <el-date-picker clearable
-            v-model="form.meetingTime"
+            v-model="form.uploadDate"
             type="date"
             value-format="YYYY-MM-DD"
-            placeholder="请选择会议时间">
+            placeholder="请选择上传时间">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="会议简要内容" prop="meetingContent">
-          <el-input v-model="form.meetingContent" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="上传人" prop="uploadBy">
+          <el-input v-model="form.uploadBy" placeholder="请输入上传人" />
         </el-form-item>
-        <el-form-item label="会议地点" prop="meetingLocation">
-          <el-input v-model="form.meetingLocation" placeholder="请输入会议地点" />
+        <el-form-item label="上传部门" prop="uploadDept">
+          <el-input v-model="form.uploadDept" placeholder="请输入上传部门" />
         </el-form-item>
-        <el-form-item label="参加会议人员" prop="attendees">
-          <el-input v-model="form.attendees" type="textarea" placeholder="请输入内容" />
+        <el-form-item label="文件" prop="files">
+          <file-upload v-model="form.files"/>
         </el-form-item>
-        <el-form-item label="会议主持" prop="meetingChairman">
-          <el-input v-model="form.meetingChairman" placeholder="请输入会议主持" />
-        </el-form-item>
-        <el-form-item label="会议记录人" prop="meetingNotes">
-          <el-input v-model="form.meetingNotes" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="会议详细记录">
-          <editor v-model="form.meetingContent2" :min-height="192"/>
+        <el-form-item label="描述" prop="comment">
+          <el-input v-model="form.comment" placeholder="请输入描述" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -143,12 +146,13 @@
   </div>
 </template>
 
-<script setup name="MeetingRecord">
-import { listMeetingRecord, getMeetingRecord, delMeetingRecord, addMeetingRecord, updateMeetingRecord } from "@/api/security/MeetingRecord";
-
+<script setup name="Meeting">
+import { listMeeting, getMeeting, delMeeting, addMeeting, updateMeeting } from "@/api/security/meeting";
+import VueOfficeDocx from '@vue-office/docx'
+import '@vue-office/docx/lib/index.css'
 const { proxy } = getCurrentInstance();
 
-const MeetingRecordList = ref([]);
+const meetingList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -157,33 +161,20 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const previewSrc = ref(''); // 确保 previewSrc 被正确声明
+const comStyle = ref({ width: '100%', height: '600px' });
+const previewDialogVisible = ref(false); // 确保 previewDialogVisible 被正确声明
 
 const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    meetingTime: null,
-    meetingContent: null,
-    meetingLocation: null,
-    attendees: null,
-    meetingChairman: null,
-    meetingNotes: null,
-    meetingContent2: null
+    uploadDate: null,
+    uploadBy: null,
+    uploadDept: null,
   },
   rules: {
-    meetingTime: [
-      { required: true, message: "会议时间不能为空", trigger: "blur" }
-    ],
-    meetingContent: [
-      { required: true, message: "会议简要内容不能为空", trigger: "blur" }
-    ],
-    meetingLocation: [
-      { required: true, message: "会议地点不能为空", trigger: "blur" }
-    ],
-    attendees: [
-      { required: true, message: "参加会议人员不能为空", trigger: "blur" }
-    ],
   }
 });
 
@@ -192,8 +183,8 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询安全会议记录列表 */
 function getList() {
   loading.value = true;
-  listMeetingRecord(queryParams.value).then(response => {
-    MeetingRecordList.value = response.rows;
+  listMeeting(queryParams.value).then(response => {
+    meetingList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -209,15 +200,13 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    meetingTime: null,
-    meetingContent: null,
-    meetingLocation: null,
-    attendees: null,
-    meetingChairman: null,
-    meetingNotes: null,
-    meetingContent2: null
+    uploadDate: null,
+    uploadBy: null,
+    uploadDept: null,
+    files: null,
+    comment: null
   };
-  proxy.resetForm("MeetingRecordRef");
+  proxy.resetForm("meetingRef");
 }
 
 /** 搜索按钮操作 */
@@ -250,7 +239,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getMeetingRecord(_id).then(response => {
+  getMeeting(_id).then(response => {
     form.value = response.data;
     open.value = true;
     title.value = "修改安全会议记录";
@@ -259,16 +248,16 @@ function handleUpdate(row) {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["MeetingRecordRef"].validate(valid => {
+  proxy.$refs["meetingRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateMeetingRecord(form.value).then(response => {
+        updateMeeting(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addMeetingRecord(form.value).then(response => {
+        addMeeting(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -282,7 +271,7 @@ function submitForm() {
 function handleDelete(row) {
   const _ids = row.id || ids.value;
   proxy.$modal.confirm('是否确认删除安全会议记录编号为"' + _ids + '"的数据项？').then(function() {
-    return delMeetingRecord(_ids);
+    return delMeeting(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -291,9 +280,37 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('security/MeetingRecord/export', {
+  proxy.download('security/meeting/export', {
     ...queryParams.value
-  }, `MeetingRecord_${new Date().getTime()}.xlsx`)
+  }, `meeting_${new Date().getTime()}.xlsx`)
+}
+
+/** 预览文件 */
+function handlePreview(row) {
+  const staticPath = import.meta.env.VITE_APP_BASE_API  ; // 静态地址
+  const dynamicPath = row.files; // 动态地址
+  const fileExt = dynamicPath.split('.').pop().toLowerCase();
+  
+  if (fileExt === 'docx') {
+    previewSrc.value = staticPath + dynamicPath; // 静态地址和动态地址相加
+    console.log("文件地址: " + previewSrc.value);
+    previewDialogVisible.value = true;
+    console.log('预览文件路径:', previewSrc.value); // 添加日志以确认文件路径
+    console.log('预览对话框可见性:', previewDialogVisible.value); // 添加日志以确认对话框可见性
+  } else {
+    console.error('不支持的文件类型,只能查看docx文件:', fileExt);
+    proxy.$modal.msgError('不支持的文件类型,只能查看docx文件');
+  }
+}
+
+/** 渲染完成处理 */
+function renderedHandler() {
+  console.log('文档渲染完成');
+}
+
+/** 错误处理 */
+function errorHandler(error) {
+  console.error('文档渲染错误', error);
 }
 
 getList();

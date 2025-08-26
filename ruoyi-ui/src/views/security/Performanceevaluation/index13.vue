@@ -135,7 +135,7 @@
           <el-input v-model="form.uploadDept" placeholder="请输入上传部门" />
         </el-form-item>
         <el-form-item label="文件" prop="files">
-          <el-input v-model="form.files" placeholder="请输入文件" />
+          <file-upload v-model="form.files"/>
         </el-form-item>
         <el-form-item label="描述" prop="comment">
           <el-input v-model="form.comment" placeholder="请输入描述" />

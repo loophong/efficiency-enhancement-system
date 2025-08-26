@@ -129,7 +129,7 @@
           <el-input v-model="form.banFa" placeholder="请输入办法名称" />
         </el-form-item>
         <el-form-item label="文件" prop="fileList">
-          <file-upload v-model="form.fileList" :limit="5" />
+          <file-upload v-model="form.fileList" :limit="10" />
         </el-form-item>
       </el-form>
       <template #footer>
