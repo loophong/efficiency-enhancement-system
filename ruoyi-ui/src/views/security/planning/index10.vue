@@ -464,7 +464,7 @@ function uploadFile() {
   let successCount = 0;
   let failCount = 0;
   const failMsgs = [];
-  const gapMs = 600; // 两次请求之间的最小间隔，避免被判重复提交
+  const gapMs = 1000; // 两次请求之间的最小间隔，避免被判重复提交
 
   // 逐个串行上传，避免并发导致后端判重或资源占用
   const uploadNext = async (index) => {

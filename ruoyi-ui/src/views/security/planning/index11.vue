@@ -458,7 +458,7 @@ function uploadFile() {
   let successCount = 0;
   let failCount = 0;
   const failMsgs = [];
-  const gapMs = 600; // 请求间隔，避免后端重复提交拦截
+  const gapMs = 1000; // 请求间隔，避免后端重复提交拦截
 
   const uploadNext = async (index) => {
     if (index >= files.length) {
